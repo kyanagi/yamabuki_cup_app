@@ -4,5 +4,9 @@
   "devDependencies": {
     "vite": "^5.4.11",
     "vite-plugin-ruby": "^5.1.1"
+  },
+  "dependencies": {
+    "@hotwired/stimulus": "3.2.2",
+    "@hotwired/turbo-rails": "8.0.12"
   }
 }
