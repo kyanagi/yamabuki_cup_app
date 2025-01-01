@@ -20,7 +20,8 @@
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= vite_client_tag %>
-    <%= vite_typescript_tag 'scoreboard' %>
+    <%= vite_react_refresh_tag %>
+    <%= vite_typescript_tag "scoreboard.tsx" %>
   </head>
 
   <body>

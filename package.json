@@ -3,6 +3,9 @@
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@types/react": "19.0.2",
+    "@types/react-dom": "19.0.2",
+    "@vitejs/plugin-react-swc": "3.7.2",
     "typescript": "5.7.2",
     "vite": "^5.4.11",
     "vite-plugin-full-reload": "1.2.0",
@@ -10,6 +13,8 @@
   },
   "dependencies": {
     "@hotwired/stimulus": "3.2.2",
-    "@hotwired/turbo-rails": "8.0.12"
+    "@hotwired/turbo-rails": "8.0.12",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   }
 }
