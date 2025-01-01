@@ -7,3 +7,6 @@ inherit_gem:
 
 AllCops:
   SuggestExtensions: false
+
+Style/GlobalStdStream:
+  Enabled: false
