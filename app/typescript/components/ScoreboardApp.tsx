@@ -1,12 +1,11 @@
 import type React from "react";
+import "./ScoreBoardApp.css";
+import { Round2 } from "./Round2";
 
-const ScoreboardApp: React.FC = () => {
+export const ScoreboardApp: React.FC = () => {
   return (
-    <div>
-      <h1>Scoreboard</h1>
-      <p>Welcome to the Yamabuki Cup Scoreboard!</p>
+    <div className="scoreboard-app">
+      <Round2 />
     </div>
   );
 };
-
-export default ScoreboardApp;

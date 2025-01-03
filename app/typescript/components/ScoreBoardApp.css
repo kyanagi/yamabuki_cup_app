@@ -1,0 +1,14 @@
+@scope (.scoreboard-app) {
+  :scope {
+    background-color: black;
+    color: white;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    /* biome-ignore lint/a11y/useGenericFontNames: <explanation> */
+    font-family: 'Noto Sans JP';
+  }
+}

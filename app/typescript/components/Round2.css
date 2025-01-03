@@ -1,0 +1,61 @@
+@scope (.round2) {
+  :scope {
+    display: grid;
+    grid-template:
+      "round-name round-name" auto
+      "question-display score-areas" 1fr
+      "event-name event-name" auto
+      / 1fr 1fr;
+    background-color: gray;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .round-name {
+    grid-area: round-name;
+    background-color: red;
+  }
+
+  .question-display {
+    grid-area: question-display;
+  }
+
+  .score-areas {
+    grid-area: score-areas;
+  }
+
+  .event-name {
+    grid-area: event-name;
+    background-color: blue;
+  }
+}
+
+@scope (.score-areas) {
+  :scope {
+    display: grid;
+    grid-template-rows: repeat(10, 1fr);
+  }
+}
+
+@scope (.scoreboard-player) {
+  :scope {
+    background-color: green;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .player-name {
+    font-size: 6vh;
+    font-weight: 600;
+  }
+
+  .score {
+    font-size: 6vh;
+    font-weight: 600;
+  }
+
+  .wrong {
+    font-size: 6vh;
+    font-weight: 600;
+  }
+}
