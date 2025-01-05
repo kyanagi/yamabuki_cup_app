@@ -1,11 +1,13 @@
-import type React from "react";
-import "./ScoreBoardApp.css";
+import type { Round2Player } from "./Round2";
 import { Round2 } from "./Round2";
+import "./ScoreBoardApp.css";
 import { createConsumer } from "@rails/actioncable";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 const cable = createConsumer();
 
 export function ScoreboardApp(): React.ReactElement {
+  const [players, setPlayers] = useState<Round2Player[]>([]);
+
   useEffect(() => {
     const subscription = cable.subscriptions.create(
       { channel: "ScoreboardChannel" },
@@ -16,6 +18,9 @@ export function ScoreboardApp(): React.ReactElement {
         received: (data) => {
           console.log("received");
           console.dir(data);
+          if (data.players) {
+            setPlayers(data.players);
+          }
         },
       },
     );
@@ -27,7 +32,7 @@ export function ScoreboardApp(): React.ReactElement {
 
   return (
     <div className="scoreboard-app">
-      <Round2 />
+      <Round2 players={players} />
     </div>
   );
 }

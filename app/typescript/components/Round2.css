@@ -3,7 +3,7 @@
     display: grid;
     grid-template:
       "round-name round-name" auto
-      "question-display score-areas" 1fr
+      "question-display player-list" 1fr
       "event-name event-name" auto
       / 1fr 1fr;
     background-color: gray;
@@ -20,8 +20,8 @@
     grid-area: question-display;
   }
 
-  .score-areas {
-    grid-area: score-areas;
+  .scoreboard-player-list {
+    grid-area: player-list;
   }
 
   .event-name {
@@ -30,10 +30,11 @@
   }
 }
 
-@scope (.score-areas) {
+@scope (.scoreboard-player-list) {
   :scope {
     display: grid;
     grid-template-rows: repeat(10, 1fr);
+    background-color: #123456; /* TODO */
   }
 }
 
@@ -49,7 +50,7 @@
     font-weight: 600;
   }
 
-  .score {
+  .points {
     font-size: 6vh;
     font-weight: 600;
   }

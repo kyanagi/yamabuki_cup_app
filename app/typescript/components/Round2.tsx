@@ -1,5 +1,27 @@
 import "./Round2.css";
 
+type PlayerProfile = {
+  paperRank: number;
+  familyName: string;
+  givenName: string;
+};
+
+type Round2PlayerStatus = "playing" | "win" | "lose" | "wait";
+
+type Round2Score = {
+  points: number;
+  wrong: number;
+  status: Round2PlayerStatus;
+  winOrder?: number | undefined;
+};
+
+type RoundPlayer<T> = PlayerProfile &
+  T & {
+    displayed: boolean;
+  };
+
+export type Round2Player = RoundPlayer<Round2Score>;
+
 function QuestionDisplay(): React.ReactElement {
   return <div className="question-display">QuestionDisplay</div>;
 }
@@ -12,32 +34,34 @@ function RoundName(): React.ReactElement {
   return <div className="round-name">RoundName</div>;
 }
 
-function ScoreAreas(): React.ReactElement {
+function PlayerList({ players }: { players: Round2Player[] }): React.ReactElement {
   return (
-    <div className="score-areas">
-      {Array.from({ length: 10 }).map((_, index) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-        <ScoreboardPlayer key={index} />
+    <div className="scoreboard-player-list">
+      {players.map((player) => (
+        <ScoreboardPlayer key={player.paperRank} player={player} />
       ))}
     </div>
   );
 }
 
-function ScoreboardPlayer(): React.ReactElement {
+function ScoreboardPlayer({ player }: { player: Round2Player }): React.ReactElement {
   return (
     <div className="scoreboard-player">
-      <div className="player-name">山吹太郎</div>
-      <div className="score">0</div>
-      <div className="wrong">0</div>
+      <div className="player-name">
+        {player.familyName}
+        {player.givenName}
+      </div>
+      <div className="points">{player.points}</div>
+      <div className="wrong">{player.wrong}</div>
     </div>
   );
 }
 
-export function Round2(): React.ReactElement {
+export function Round2({ players }: { players: Round2Player[] }): React.ReactElement {
   return (
     <div className="round2">
       <QuestionDisplay />
-      <ScoreAreas />
+      <PlayerList players={players} />
       <EventName />
       <RoundName />
     </div>
