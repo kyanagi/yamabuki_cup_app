@@ -22,4 +22,11 @@ FactoryBot.define do
   factory :question_result do
     question_allocation
   end
+
+  factory :question_player_result do
+    question_result
+    player
+    result { 0 }
+    situation { 0 }
+  end
 end

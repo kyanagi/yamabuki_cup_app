@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_07_092131) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_07_141028) do
   create_table "matches", force: :cascade do |t|
     t.integer "round_id", null: false
     t.string "name", default: "", null: false
@@ -45,6 +45,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_07_092131) do
     t.index ["question_id"], name: "index_question_allocations_on_question_id", unique: true
   end
 
+  create_table "question_player_results", force: :cascade do |t|
+    t.integer "player_id", null: false
+    t.integer "question_result_id", null: false
+    t.integer "result", null: false
+    t.integer "situation", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["player_id"], name: "index_question_player_results_on_player_id"
+    t.index ["question_result_id"], name: "index_question_player_results_on_question_result_id"
+  end
+
   create_table "question_results", force: :cascade do |t|
     t.integer "question_allocation_id", null: false
     t.datetime "created_at", null: false
@@ -65,5 +76,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_07_092131) do
   add_foreign_key "matchings", "players"
   add_foreign_key "question_allocations", "matches"
   add_foreign_key "question_allocations", "questions"
+  add_foreign_key "question_player_results", "players"
+  add_foreign_key "question_player_results", "question_results"
   add_foreign_key "question_results", "question_allocations"
 end
