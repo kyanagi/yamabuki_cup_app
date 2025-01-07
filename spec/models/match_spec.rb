@@ -13,12 +13,12 @@ RSpec.describe Match, type: :model do
     let(:questions) { create_list(:question, 3) }
 
     before do
-      create(:question_allocation, match: match, question: questions[0], order: 1)
-      create(:question_allocation, match: match, question: questions[1], order: 2)
+      create(:question_allocation, match: match, question: questions[1], order: 1)
+      create(:question_allocation, match: match, question: questions[0], order: 2)
     end
 
-    xit "出題された問題が出題順に取得できること" do
-      expect(match.asked_questions).to eq([questions[0..1]])
+    it "出題された問題が出題順に取得できること" do
+      expect(match.asked_questions).to eq([questions[1], questions[0]])
     end
   end
 end
