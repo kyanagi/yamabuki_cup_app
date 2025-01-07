@@ -18,4 +18,8 @@ FactoryBot.define do
     question
     sequence(:order) { |n| n }
   end
+
+  factory :question_result do
+    question_allocation
+  end
 end

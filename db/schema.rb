@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_07_073631) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_07_092131) do
   create_table "matches", force: :cascade do |t|
     t.integer "round_id", null: false
     t.string "name", default: "", null: false
@@ -45,6 +45,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_07_073631) do
     t.index ["question_id"], name: "index_question_allocations_on_question_id", unique: true
   end
 
+  create_table "question_results", force: :cascade do |t|
+    t.integer "question_allocation_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["question_allocation_id"], name: "index_question_results_on_question_allocation_id"
+  end
+
   create_table "questions", force: :cascade do |t|
     t.string "text", default: "", null: false
     t.string "answer", default: "", null: false
@@ -58,4 +65,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_07_073631) do
   add_foreign_key "matchings", "players"
   add_foreign_key "question_allocations", "matches"
   add_foreign_key "question_allocations", "questions"
+  add_foreign_key "question_results", "question_allocations"
 end

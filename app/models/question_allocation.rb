@@ -3,4 +3,5 @@ class QuestionAllocation < ApplicationRecord
 
   belongs_to :question
   belongs_to :match
+  has_one :question_result, dependent: :destroy
 end
