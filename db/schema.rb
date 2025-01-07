@@ -10,9 +10,40 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_05_070337) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_07_073631) do
+  create_table "matchings", force: :cascade do |t|
+    t.integer "match_id", null: false
+    t.integer "player_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["match_id"], name: "index_matchings_on_match_id"
+    t.index ["player_id"], name: "index_matchings_on_player_id"
+  end
+
   create_table "players", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "question_allocations", force: :cascade do |t|
+    t.integer "match_id", null: false
+    t.integer "question_id", null: false
+    t.integer "order", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["match_id", "order"], name: "index_question_allocations_on_match_id_and_order", unique: true
+    t.index ["question_id"], name: "index_question_allocations_on_question_id", unique: true
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.string "text", default: "", null: false
+    t.string "answer", default: "", null: false
+    t.string "another_answer", default: "", null: false
+    t.string "note", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "matchings", "players"
+  add_foreign_key "question_allocations", "questions"
 end

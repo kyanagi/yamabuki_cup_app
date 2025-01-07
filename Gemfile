@@ -45,6 +45,7 @@ group :development, :test do
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
 
+  gem "factory_bot_rails"
   gem "kyanagi_cop", github: "kyanagi/kyanagi_cop", require: false
   gem "rspec-rails"
 end
@@ -60,4 +61,5 @@ group :test do
   gem "selenium-webdriver"
 end
 
+gem "active_hash"
 gem "vite_rails"
