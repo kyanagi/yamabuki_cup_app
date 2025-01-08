@@ -1,0 +1,288 @@
+class QuestionPlayerResult < ::ApplicationRecord
+  extend ::_ActiveRecord_Relation_ClassMethods[::QuestionPlayerResult, ::QuestionPlayerResult::ActiveRecord_Relation, ::Integer]
+
+  module GeneratedAttributeMethods
+    def id: () -> ::Integer
+
+    def id=: (::Integer) -> ::Integer
+
+    def id?: () -> bool
+
+    def id_changed?: () -> bool
+
+    def id_change: () -> [ ::Integer?, ::Integer? ]
+
+    def id_will_change!: () -> void
+
+    def id_was: () -> ::Integer?
+
+    def id_previously_changed?: () -> bool
+
+    def id_previous_change: () -> ::Array[::Integer?]?
+
+    def id_previously_was: () -> ::Integer?
+
+    def id_before_last_save: () -> ::Integer?
+
+    def id_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def id_in_database: () -> ::Integer?
+
+    def saved_change_to_id: () -> ::Array[::Integer?]?
+
+    def saved_change_to_id?: () -> bool
+
+    def will_save_change_to_id?: () -> bool
+
+    def restore_id!: () -> void
+
+    def clear_id_change: () -> void
+
+    def player_id: () -> ::Integer
+
+    def player_id=: (::Integer) -> ::Integer
+
+    def player_id?: () -> bool
+
+    def player_id_changed?: () -> bool
+
+    def player_id_change: () -> [ ::Integer?, ::Integer? ]
+
+    def player_id_will_change!: () -> void
+
+    def player_id_was: () -> ::Integer?
+
+    def player_id_previously_changed?: () -> bool
+
+    def player_id_previous_change: () -> ::Array[::Integer?]?
+
+    def player_id_previously_was: () -> ::Integer?
+
+    def player_id_before_last_save: () -> ::Integer?
+
+    def player_id_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def player_id_in_database: () -> ::Integer?
+
+    def saved_change_to_player_id: () -> ::Array[::Integer?]?
+
+    def saved_change_to_player_id?: () -> bool
+
+    def will_save_change_to_player_id?: () -> bool
+
+    def restore_player_id!: () -> void
+
+    def clear_player_id_change: () -> void
+
+    def question_result_id: () -> ::Integer
+
+    def question_result_id=: (::Integer) -> ::Integer
+
+    def question_result_id?: () -> bool
+
+    def question_result_id_changed?: () -> bool
+
+    def question_result_id_change: () -> [ ::Integer?, ::Integer? ]
+
+    def question_result_id_will_change!: () -> void
+
+    def question_result_id_was: () -> ::Integer?
+
+    def question_result_id_previously_changed?: () -> bool
+
+    def question_result_id_previous_change: () -> ::Array[::Integer?]?
+
+    def question_result_id_previously_was: () -> ::Integer?
+
+    def question_result_id_before_last_save: () -> ::Integer?
+
+    def question_result_id_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def question_result_id_in_database: () -> ::Integer?
+
+    def saved_change_to_question_result_id: () -> ::Array[::Integer?]?
+
+    def saved_change_to_question_result_id?: () -> bool
+
+    def will_save_change_to_question_result_id?: () -> bool
+
+    def restore_question_result_id!: () -> void
+
+    def clear_question_result_id_change: () -> void
+
+    def result: () -> ::Integer
+
+    def result=: (::Integer) -> ::Integer
+
+    def result?: () -> bool
+
+    def result_changed?: () -> bool
+
+    def result_change: () -> [ ::Integer?, ::Integer? ]
+
+    def result_will_change!: () -> void
+
+    def result_was: () -> ::Integer?
+
+    def result_previously_changed?: () -> bool
+
+    def result_previous_change: () -> ::Array[::Integer?]?
+
+    def result_previously_was: () -> ::Integer?
+
+    def result_before_last_save: () -> ::Integer?
+
+    def result_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def result_in_database: () -> ::Integer?
+
+    def saved_change_to_result: () -> ::Array[::Integer?]?
+
+    def saved_change_to_result?: () -> bool
+
+    def will_save_change_to_result?: () -> bool
+
+    def restore_result!: () -> void
+
+    def clear_result_change: () -> void
+
+    def situation: () -> ::Integer
+
+    def situation=: (::Integer) -> ::Integer
+
+    def situation?: () -> bool
+
+    def situation_changed?: () -> bool
+
+    def situation_change: () -> [ ::Integer?, ::Integer? ]
+
+    def situation_will_change!: () -> void
+
+    def situation_was: () -> ::Integer?
+
+    def situation_previously_changed?: () -> bool
+
+    def situation_previous_change: () -> ::Array[::Integer?]?
+
+    def situation_previously_was: () -> ::Integer?
+
+    def situation_before_last_save: () -> ::Integer?
+
+    def situation_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def situation_in_database: () -> ::Integer?
+
+    def saved_change_to_situation: () -> ::Array[::Integer?]?
+
+    def saved_change_to_situation?: () -> bool
+
+    def will_save_change_to_situation?: () -> bool
+
+    def restore_situation!: () -> void
+
+    def clear_situation_change: () -> void
+
+    def created_at: () -> ::ActiveSupport::TimeWithZone
+
+    def created_at=: (::ActiveSupport::TimeWithZone) -> ::ActiveSupport::TimeWithZone
+
+    def created_at?: () -> bool
+
+    def created_at_changed?: () -> bool
+
+    def created_at_change: () -> [ ::ActiveSupport::TimeWithZone?, ::ActiveSupport::TimeWithZone? ]
+
+    def created_at_will_change!: () -> void
+
+    def created_at_was: () -> ::ActiveSupport::TimeWithZone?
+
+    def created_at_previously_changed?: () -> bool
+
+    def created_at_previous_change: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def created_at_previously_was: () -> ::ActiveSupport::TimeWithZone?
+
+    def created_at_before_last_save: () -> ::ActiveSupport::TimeWithZone?
+
+    def created_at_change_to_be_saved: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def created_at_in_database: () -> ::ActiveSupport::TimeWithZone?
+
+    def saved_change_to_created_at: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_created_at?: () -> bool
+
+    def will_save_change_to_created_at?: () -> bool
+
+    def restore_created_at!: () -> void
+
+    def clear_created_at_change: () -> void
+
+    def updated_at: () -> ::ActiveSupport::TimeWithZone
+
+    def updated_at=: (::ActiveSupport::TimeWithZone) -> ::ActiveSupport::TimeWithZone
+
+    def updated_at?: () -> bool
+
+    def updated_at_changed?: () -> bool
+
+    def updated_at_change: () -> [ ::ActiveSupport::TimeWithZone?, ::ActiveSupport::TimeWithZone? ]
+
+    def updated_at_will_change!: () -> void
+
+    def updated_at_was: () -> ::ActiveSupport::TimeWithZone?
+
+    def updated_at_previously_changed?: () -> bool
+
+    def updated_at_previous_change: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def updated_at_previously_was: () -> ::ActiveSupport::TimeWithZone?
+
+    def updated_at_before_last_save: () -> ::ActiveSupport::TimeWithZone?
+
+    def updated_at_change_to_be_saved: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def updated_at_in_database: () -> ::ActiveSupport::TimeWithZone?
+
+    def saved_change_to_updated_at: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_updated_at?: () -> bool
+
+    def will_save_change_to_updated_at?: () -> bool
+
+    def restore_updated_at!: () -> void
+
+    def clear_updated_at_change: () -> void
+  end
+  include GeneratedAttributeMethods
+
+  def player: () -> ::Player
+  def player=: (::Player?) -> ::Player?
+  def reload_player: () -> ::Player?
+  def build_player: (untyped) -> ::Player
+  def create_player: (untyped) -> ::Player
+  def create_player!: (untyped) -> ::Player
+  def question_result: () -> ::QuestionResult
+  def question_result=: (::QuestionResult?) -> ::QuestionResult?
+  def reload_question_result: () -> ::QuestionResult?
+  def build_question_result: (untyped) -> ::QuestionResult
+  def create_question_result: (untyped) -> ::QuestionResult
+  def create_question_result!: (untyped) -> ::QuestionResult
+  module GeneratedAssociationMethods
+  end
+  include GeneratedAssociationMethods
+
+  module GeneratedRelationMethods
+  end
+
+  class ActiveRecord_Relation < ::ActiveRecord::Relation
+    include ::QuestionPlayerResult::GeneratedRelationMethods
+    include ::_ActiveRecord_Relation[::QuestionPlayerResult, ::Integer]
+    include ::Enumerable[::QuestionPlayerResult]
+  end
+
+  class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+    include ::QuestionPlayerResult::GeneratedRelationMethods
+    include ::_ActiveRecord_Relation[::QuestionPlayerResult, ::Integer]
+  end
+end

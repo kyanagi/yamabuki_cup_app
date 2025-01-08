@@ -1,0 +1,4 @@
+# Generated from app/models/question_result.rb with RBS::Inline
+
+class QuestionResult < ApplicationRecord
+end

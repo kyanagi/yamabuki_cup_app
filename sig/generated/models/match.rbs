@@ -1,0 +1,7 @@
+# Generated from app/models/match.rb with RBS::Inline
+
+class Match < ApplicationRecord
+  extend ActiveHash::Associations::ActiveRecordExtensions
+
+  def rule: () -> untyped
+end

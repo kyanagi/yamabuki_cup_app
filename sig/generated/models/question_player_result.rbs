@@ -1,0 +1,4 @@
+# Generated from app/models/question_player_result.rb with RBS::Inline
+
+class QuestionPlayerResult < ApplicationRecord
+end

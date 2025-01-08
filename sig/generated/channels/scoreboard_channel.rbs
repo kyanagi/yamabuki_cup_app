@@ -1,0 +1,7 @@
+# Generated from app/channels/scoreboard_channel.rb with RBS::Inline
+
+class ScoreboardChannel < ApplicationCable::Channel
+  def subscribed: () -> untyped
+
+  def unsubscribed: () -> untyped
+end

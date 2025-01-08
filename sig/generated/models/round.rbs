@@ -1,0 +1,6 @@
+# Generated from app/models/round.rb with RBS::Inline
+
+# rubocop:disable Rails/HasManyOrHasOneDependent
+class Round < ActiveHash::Base
+  include ActiveHash::Associations
+end

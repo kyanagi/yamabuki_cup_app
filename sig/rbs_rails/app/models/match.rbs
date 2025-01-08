@@ -1,0 +1,258 @@
+class Match < ::ApplicationRecord
+  extend ::_ActiveRecord_Relation_ClassMethods[::Match, ::Match::ActiveRecord_Relation, ::Integer]
+
+  module GeneratedAttributeMethods
+    def id: () -> ::Integer
+
+    def id=: (::Integer) -> ::Integer
+
+    def id?: () -> bool
+
+    def id_changed?: () -> bool
+
+    def id_change: () -> [ ::Integer?, ::Integer? ]
+
+    def id_will_change!: () -> void
+
+    def id_was: () -> ::Integer?
+
+    def id_previously_changed?: () -> bool
+
+    def id_previous_change: () -> ::Array[::Integer?]?
+
+    def id_previously_was: () -> ::Integer?
+
+    def id_before_last_save: () -> ::Integer?
+
+    def id_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def id_in_database: () -> ::Integer?
+
+    def saved_change_to_id: () -> ::Array[::Integer?]?
+
+    def saved_change_to_id?: () -> bool
+
+    def will_save_change_to_id?: () -> bool
+
+    def restore_id!: () -> void
+
+    def clear_id_change: () -> void
+
+    def round_id: () -> ::Integer
+
+    def round_id=: (::Integer) -> ::Integer
+
+    def round_id?: () -> bool
+
+    def round_id_changed?: () -> bool
+
+    def round_id_change: () -> [ ::Integer?, ::Integer? ]
+
+    def round_id_will_change!: () -> void
+
+    def round_id_was: () -> ::Integer?
+
+    def round_id_previously_changed?: () -> bool
+
+    def round_id_previous_change: () -> ::Array[::Integer?]?
+
+    def round_id_previously_was: () -> ::Integer?
+
+    def round_id_before_last_save: () -> ::Integer?
+
+    def round_id_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def round_id_in_database: () -> ::Integer?
+
+    def saved_change_to_round_id: () -> ::Array[::Integer?]?
+
+    def saved_change_to_round_id?: () -> bool
+
+    def will_save_change_to_round_id?: () -> bool
+
+    def restore_round_id!: () -> void
+
+    def clear_round_id_change: () -> void
+
+    def name: () -> ::String
+
+    def name=: (::String) -> ::String
+
+    def name?: () -> bool
+
+    def name_changed?: () -> bool
+
+    def name_change: () -> [ ::String?, ::String? ]
+
+    def name_will_change!: () -> void
+
+    def name_was: () -> ::String?
+
+    def name_previously_changed?: () -> bool
+
+    def name_previous_change: () -> ::Array[::String?]?
+
+    def name_previously_was: () -> ::String?
+
+    def name_before_last_save: () -> ::String?
+
+    def name_change_to_be_saved: () -> ::Array[::String?]?
+
+    def name_in_database: () -> ::String?
+
+    def saved_change_to_name: () -> ::Array[::String?]?
+
+    def saved_change_to_name?: () -> bool
+
+    def will_save_change_to_name?: () -> bool
+
+    def restore_name!: () -> void
+
+    def clear_name_change: () -> void
+
+    def rule_name: () -> ::String
+
+    def rule_name=: (::String) -> ::String
+
+    def rule_name?: () -> bool
+
+    def rule_name_changed?: () -> bool
+
+    def rule_name_change: () -> [ ::String?, ::String? ]
+
+    def rule_name_will_change!: () -> void
+
+    def rule_name_was: () -> ::String?
+
+    def rule_name_previously_changed?: () -> bool
+
+    def rule_name_previous_change: () -> ::Array[::String?]?
+
+    def rule_name_previously_was: () -> ::String?
+
+    def rule_name_before_last_save: () -> ::String?
+
+    def rule_name_change_to_be_saved: () -> ::Array[::String?]?
+
+    def rule_name_in_database: () -> ::String?
+
+    def saved_change_to_rule_name: () -> ::Array[::String?]?
+
+    def saved_change_to_rule_name?: () -> bool
+
+    def will_save_change_to_rule_name?: () -> bool
+
+    def restore_rule_name!: () -> void
+
+    def clear_rule_name_change: () -> void
+
+    def created_at: () -> ::ActiveSupport::TimeWithZone
+
+    def created_at=: (::ActiveSupport::TimeWithZone) -> ::ActiveSupport::TimeWithZone
+
+    def created_at?: () -> bool
+
+    def created_at_changed?: () -> bool
+
+    def created_at_change: () -> [ ::ActiveSupport::TimeWithZone?, ::ActiveSupport::TimeWithZone? ]
+
+    def created_at_will_change!: () -> void
+
+    def created_at_was: () -> ::ActiveSupport::TimeWithZone?
+
+    def created_at_previously_changed?: () -> bool
+
+    def created_at_previous_change: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def created_at_previously_was: () -> ::ActiveSupport::TimeWithZone?
+
+    def created_at_before_last_save: () -> ::ActiveSupport::TimeWithZone?
+
+    def created_at_change_to_be_saved: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def created_at_in_database: () -> ::ActiveSupport::TimeWithZone?
+
+    def saved_change_to_created_at: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_created_at?: () -> bool
+
+    def will_save_change_to_created_at?: () -> bool
+
+    def restore_created_at!: () -> void
+
+    def clear_created_at_change: () -> void
+
+    def updated_at: () -> ::ActiveSupport::TimeWithZone
+
+    def updated_at=: (::ActiveSupport::TimeWithZone) -> ::ActiveSupport::TimeWithZone
+
+    def updated_at?: () -> bool
+
+    def updated_at_changed?: () -> bool
+
+    def updated_at_change: () -> [ ::ActiveSupport::TimeWithZone?, ::ActiveSupport::TimeWithZone? ]
+
+    def updated_at_will_change!: () -> void
+
+    def updated_at_was: () -> ::ActiveSupport::TimeWithZone?
+
+    def updated_at_previously_changed?: () -> bool
+
+    def updated_at_previous_change: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def updated_at_previously_was: () -> ::ActiveSupport::TimeWithZone?
+
+    def updated_at_before_last_save: () -> ::ActiveSupport::TimeWithZone?
+
+    def updated_at_change_to_be_saved: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def updated_at_in_database: () -> ::ActiveSupport::TimeWithZone?
+
+    def saved_change_to_updated_at: () -> ::Array[::ActiveSupport::TimeWithZone?]?
+
+    def saved_change_to_updated_at?: () -> bool
+
+    def will_save_change_to_updated_at?: () -> bool
+
+    def restore_updated_at!: () -> void
+
+    def clear_updated_at_change: () -> void
+  end
+  include GeneratedAttributeMethods
+  def matchings: () -> ::Matching::ActiveRecord_Associations_CollectionProxy
+  def matchings=: (::Matching::ActiveRecord_Associations_CollectionProxy | ::Array[::Matching]) -> (::Matching::ActiveRecord_Associations_CollectionProxy | ::Array[::Matching])
+  def matching_ids: () -> ::Array[::Integer]
+  def matching_ids=: (::Array[::Integer]) -> ::Array[::Integer]
+  def question_allocations: () -> ::QuestionAllocation::ActiveRecord_Associations_CollectionProxy
+  def question_allocations=: (::QuestionAllocation::ActiveRecord_Associations_CollectionProxy | ::Array[::QuestionAllocation]) -> (::QuestionAllocation::ActiveRecord_Associations_CollectionProxy | ::Array[::QuestionAllocation])
+  def question_allocation_ids: () -> ::Array[::Integer]
+  def question_allocation_ids=: (::Array[::Integer]) -> ::Array[::Integer]
+  def asked_questions: () -> ::Question::ActiveRecord_Associations_CollectionProxy
+  def asked_questions=: (::Question::ActiveRecord_Associations_CollectionProxy | ::Array[::Question]) -> (::Question::ActiveRecord_Associations_CollectionProxy | ::Array[::Question])
+  def asked_question_ids: () -> ::Array[::Integer]
+  def asked_question_ids=: (::Array[::Integer]) -> ::Array[::Integer]
+
+  def round: () -> ::Round
+  def round=: (::Round?) -> ::Round?
+  def reload_round: () -> ::Round?
+  def build_round: (untyped) -> ::Round
+  def create_round: (untyped) -> ::Round
+  def create_round!: (untyped) -> ::Round
+  module GeneratedAssociationMethods
+  end
+  include GeneratedAssociationMethods
+
+  module GeneratedRelationMethods
+  end
+
+  class ActiveRecord_Relation < ::ActiveRecord::Relation
+    include ::Match::GeneratedRelationMethods
+    include ::_ActiveRecord_Relation[::Match, ::Integer]
+    include ::Enumerable[::Match]
+  end
+
+  class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+    include ::Match::GeneratedRelationMethods
+    include ::_ActiveRecord_Relation[::Match, ::Integer]
+  end
+end
