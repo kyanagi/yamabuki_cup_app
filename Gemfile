@@ -56,6 +56,7 @@ group :development do
 
   gem "rbs-inline", require: false
   gem "rbs_rails", require: false
+  gem "repl_type_completor"
   gem "steep", require: false
 end
 

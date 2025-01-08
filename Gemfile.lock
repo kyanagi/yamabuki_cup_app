@@ -294,6 +294,9 @@ GEM
     regexp_parser (2.10.0)
     reline (0.6.0)
       io-console (~> 0.5)
+    repl_type_completor (0.1.9)
+      prism (~> 1.0)
+      rbs (>= 2.7.0, < 4.0.0)
     rexml (3.4.0)
     rspec-core (3.13.2)
       rspec-support (~> 3.13.0)
@@ -470,6 +473,7 @@ DEPENDENCIES
   rails (~> 8.0.1)
   rbs-inline
   rbs_rails
+  repl_type_completor
   rspec-rails
   selenium-webdriver
   solid_cable
