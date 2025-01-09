@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/kyanagi/kyanagi_cop.git
-  revision: 7fd1d59409ae44a96d6fd79abd76e98236af534d
+  revision: c2236b77ec04d433becc936f0d708c1e612f3866
   specs:
     kyanagi_cop (0.0.1)
       rubocop-factory_bot
@@ -108,7 +108,7 @@ GEM
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
     concurrent-ruby (1.3.4)
-    connection_pool (2.4.1)
+    connection_pool (2.5.0)
     crass (1.0.6)
     date (3.4.1)
     debug (1.10.0)
