@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/kyanagi/kyanagi_cop.git
-  revision: c2236b77ec04d433becc936f0d708c1e612f3866
+  revision: 871b48746ecbde6f5b3feaab92206d4f04340a08
   specs:
     kyanagi_cop (0.0.1)
       rubocop-factory_bot
@@ -315,7 +315,7 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.2)
-    rubocop (1.69.2)
+    rubocop (1.70.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
