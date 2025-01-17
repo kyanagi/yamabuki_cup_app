@@ -46,7 +46,7 @@ group :development, :test do
   gem "brakeman", require: false
 
   gem "factory_bot_rails"
-  gem "kyanagi_cop", github: "kyanagi/kyanagi_cop", require: false
+  gem "rubocop-kyanagi", github: "kyanagi/rubocop-kyanagi", require: false
   gem "rspec-rails"
 end
 

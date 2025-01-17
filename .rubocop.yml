@@ -1,5 +1,5 @@
 inherit_gem:
-  kyanagi_cop:
+  rubocop-kyanagi:
     - ruby.yml
     - rails.yml
     - rspec.yml
@@ -7,6 +7,11 @@ inherit_gem:
 
 AllCops:
   SuggestExtensions: false
+
+Layout/CommentIndentation:
+  Enabled: true
+  Exclude:
+    - "config/**/*.rb"
 
 Style/GlobalStdStream:
   Enabled: false

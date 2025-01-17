@@ -1,8 +1,8 @@
 GIT
-  remote: https://github.com/kyanagi/kyanagi_cop.git
-  revision: ee88bde7364f41b731829d05328128a4ac9086c6
+  remote: https://github.com/kyanagi/rubocop-kyanagi.git
+  revision: 19fb5d3a9a109e9439b0f2da8815a5f4b40e37b3
   specs:
-    kyanagi_cop (0.0.1)
+    rubocop-kyanagi (0.0.1)
       rubocop-factory_bot
       rubocop-performance
       rubocop-rails
@@ -467,7 +467,6 @@ DEPENDENCIES
   factory_bot_rails
   jbuilder
   kamal
-  kyanagi_cop!
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.1)
@@ -475,6 +474,7 @@ DEPENDENCIES
   rbs_rails
   repl_type_completor
   rspec-rails
+  rubocop-kyanagi!
   selenium-webdriver
   solid_cable
   solid_cache
