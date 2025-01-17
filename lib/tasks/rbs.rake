@@ -20,9 +20,9 @@ rescue LoadError
 end
 
 namespace :rbs do
-  task setup: %i[collection rbs_rails:all inline]
-  task update: %i[rbs_rails:all inline]
-  task reset: %i[clean setup]
+  task setup: [:collection, :"rbs_rails:all", :inline]
+  task update: [:"rbs_rails:all", :inline]
+  task reset: [:clean, :setup]
 
   task :collection do # rubocop:disable Rails/RakeEnvironment
     sh "rbs", "collection", "install"
