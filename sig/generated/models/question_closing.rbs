@@ -1,0 +1,13 @@
+# Generated from app/models/question_closing.rb with RBS::Inline
+
+# 問題1問ごとの締めの処理を行うクラス。
+# 問題の正誤を記録し、勝ち抜けや失格の処理を行う。
+class QuestionClosing < ActiveType::Object
+  private
+
+  def validate_question_player_results_attributes: () -> void
+
+  def transfer_attributes: () -> void
+
+  def save_records: () -> void
+end

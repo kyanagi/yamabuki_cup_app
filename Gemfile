@@ -67,4 +67,5 @@ group :test do
 end
 
 gem "active_hash"
+gem "active_type"
 gem "vite_rails"

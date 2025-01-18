@@ -4,8 +4,10 @@ begin
   RbsRails::RakeTask.new do |task|
     # If you want to avoid generating RBS for some classes, comment in it.
     # default: nil
-    #
-    # task.ignore_model_if = -> (klass) { klass == MyClass }
+    task.ignore_model_if = ->(klass) do
+      # ActiveType::Object または ActiveType::Record[*] を継承したクラス。
+      klass <= ActiveType::NestedAttributes
+    end
 
     # If you want to change the rake task namespace, comment in it.
     # default: :rbs_rails
