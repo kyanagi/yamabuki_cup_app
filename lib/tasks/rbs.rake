@@ -1,6 +1,39 @@
 begin
   require "rbs_rails/rake_task"
 
+  # ActiveType でエラーになるのを回避するための workaround
+  module RbsRails
+    class RakeTask
+      def def_generate_rbs_for_models
+        desc "Generate RBS files for Active Record models"
+        task("#{name}:generate_rbs_for_models": :environment) do
+          require "rbs_rails"
+
+          Rails.application.eager_load!
+
+          dep_builder = DependencyBuilder.new
+
+          ::ActiveRecord::Base.descendants.each do |klass|
+            # この下の2行で、元のコードと順番を入れ替えている。
+            next if ignore_model_if&.call(klass)
+            next unless RbsRails::ActiveRecord.generatable?(klass)
+
+            path = signature_root_dir / "app/models/#{klass.name.underscore}.rbs"
+            path.dirname.mkpath
+
+            sig = RbsRails::ActiveRecord.class_to_rbs(klass, dependencies: dep_builder.deps)
+            path.write sig
+            dep_builder.done << klass.name
+          end
+
+          if dep_rbs = dep_builder.build
+            signature_root_dir.join("model_dependencies.rbs").write(dep_rbs)
+          end
+        end
+      end
+    end
+  end
+
   RbsRails::RakeTask.new do |task|
     # If you want to avoid generating RBS for some classes, comment in it.
     # default: nil
