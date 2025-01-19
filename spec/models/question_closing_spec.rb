@@ -8,6 +8,61 @@ RSpec.describe QuestionClosing do
     create(:question_allocation, question: question)
   end
 
+  context "question_idが存在しないIDのとき" do
+    let(:question_closing) do
+      QuestionClosing.new(
+        question_id: 0,
+        question_player_results_attributes: [
+          { player_id: players[0].id, result: "wrong", situation: "pushed" },
+        ]
+      )
+    end
+
+    it "valid?がfalseを返すこと" do
+      expect(question_closing).not_to be_valid
+    end
+
+    it "saveがfalseを返すこと" do
+      expect(question_closing.save).to be false
+    end
+
+    it "QuestionResultが作成されないこと" do
+      expect { question_closing.save }.not_to change(QuestionResult, :count)
+    end
+
+    it "QuestionPlayerResultが作成されないこと" do
+      expect { question_closing.save }.not_to change(QuestionPlayerResult, :count)
+    end
+  end
+
+  context "player_idが存在しないIDのとき" do
+    let(:question_closing) do
+      QuestionClosing.new(
+        question_id: question.id,
+        question_player_results_attributes: [
+          { player_id: players[0].id, result: "wrong", situation: "pushed" },
+          { player_id: 0, result: "wrong", situation: "unpushed" },
+        ]
+      )
+    end
+
+    it "valid?がfalseを返すこと" do
+      expect(question_closing).not_to be_valid
+    end
+
+    it "saveがfalseを返すこと" do
+      expect(question_closing.save).to be false
+    end
+
+    it "QuestionResultが作成されないこと" do
+      expect { question_closing.save }.not_to change(QuestionResult, :count)
+    end
+
+    it "QuestionPlayerResultが作成されないこと" do
+      expect { question_closing.save }.not_to change(QuestionPlayerResult, :count)
+    end
+  end
+
   context "早押しシングルチャンス・正解" do
     let(:question_closing) do
       QuestionClosing.new(
@@ -84,8 +139,8 @@ RSpec.describe QuestionClosing do
         question_id: question.id,
         question_player_results_attributes: [
           { player_id: players[0].id, result: "correct", situation: "pushed" },
-          { player_id: players[1].id, result: "wrong", situation: "not_pushed" },
-          { player_id: players[2].id, result: "correct", situation: "not_pushed" },
+          { player_id: players[1].id, result: "wrong", situation: "unpushed" },
+          { player_id: players[2].id, result: "correct", situation: "unpushed" },
         ]
       )
     end
@@ -102,7 +157,7 @@ RSpec.describe QuestionClosing do
       expect(prs.map(&:question_result).uniq).to eq [r]
       expect(prs.map(&:player_id)).to eq [players[0].id, players[1].id, players[2].id]
       expect(prs.map(&:result)).to eq ["correct", "wrong", "correct"]
-      expect(prs.map(&:situation)).to eq ["pushed", "not_pushed", "not_pushed"]
+      expect(prs.map(&:situation)).to eq ["pushed", "unpushed", "unpushed"]
     end
   end
 
@@ -112,8 +167,8 @@ RSpec.describe QuestionClosing do
         question_id: question.id,
         question_player_results_attributes: [
           { player_id: players[0].id, result: "wrong", situation: "pushed" },
-          { player_id: players[1].id, result: "correct", situation: "not_pushed" },
-          { player_id: players[2].id, result: "wrong", situation: "not_pushed" },
+          { player_id: players[1].id, result: "correct", situation: "unpushed" },
+          { player_id: players[2].id, result: "wrong", situation: "unpushed" },
         ]
       )
     end
@@ -130,7 +185,7 @@ RSpec.describe QuestionClosing do
       expect(prs.map(&:question_result).uniq).to eq [r]
       expect(prs.map(&:player_id)).to eq [players[0].id, players[1].id, players[2].id]
       expect(prs.map(&:result)).to eq ["wrong", "correct", "wrong"]
-      expect(prs.map(&:situation)).to eq ["pushed", "not_pushed", "not_pushed"]
+      expect(prs.map(&:situation)).to eq ["pushed", "unpushed", "unpushed"]
     end
   end
 
@@ -139,9 +194,9 @@ RSpec.describe QuestionClosing do
       QuestionClosing.new(
         question_id: question.id,
         question_player_results_attributes: [
-          { player_id: players[0].id, result: "wrong", situation: "not_pushed" },
-          { player_id: players[1].id, result: "wrong", situation: "not_pushed" },
-          { player_id: players[2].id, result: "correct", situation: "not_pushed" },
+          { player_id: players[0].id, result: "wrong", situation: "unpushed" },
+          { player_id: players[1].id, result: "wrong", situation: "unpushed" },
+          { player_id: players[2].id, result: "correct", situation: "unpushed" },
         ]
       )
     end
@@ -158,7 +213,7 @@ RSpec.describe QuestionClosing do
       expect(prs.map(&:question_result).uniq).to eq [r]
       expect(prs.map(&:player_id)).to eq [players[0].id, players[1].id, players[2].id]
       expect(prs.map(&:result)).to eq ["wrong", "wrong", "correct"]
-      expect(prs.map(&:situation)).to eq ["not_pushed", "not_pushed", "not_pushed"]
+      expect(prs.map(&:situation)).to eq ["unpushed", "unpushed", "unpushed"]
     end
   end
 end
