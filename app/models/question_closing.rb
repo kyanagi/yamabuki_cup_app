@@ -9,6 +9,7 @@ class QuestionClosing < ActiveType::Object
   before_validation :transfer_attributes
   before_save :save_records
 
+  validates :question, presence: true # rubocop:disable Rails/RedundantPresenceValidationOnBelongsTo
   validate :validate_question_player_results_attributes
 
   private
@@ -19,6 +20,10 @@ class QuestionClosing < ActiveType::Object
     question_player_results_attributes.each do |attr|
       unless attr[:player_id].is_a?(Integer)
         errors.add(:question_player_results_attributes, "player_id must be an integer")
+      end
+
+      unless Player.exists?(attr[:player_id])
+        errors.add(:question_player_results_attributes, "player_id must be an existing player_id")
       end
 
       unless QuestionPlayerResult.results.keys.include?(attr[:result])
