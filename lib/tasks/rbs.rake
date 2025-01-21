@@ -2,6 +2,7 @@ begin
   require "rbs_rails/rake_task"
 
   # ActiveType でエラーになるのを回避するための workaround
+  # rubocop:disable all
   module RbsRails
     class RakeTask
       def def_generate_rbs_for_models
@@ -33,6 +34,7 @@ begin
       end
     end
   end
+  # rubocop:enable all
 
   RbsRails::RakeTask.new do |task|
     # If you want to avoid generating RBS for some classes, comment in it.
