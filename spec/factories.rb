@@ -1,9 +1,20 @@
 FactoryBot.define do
   factory :player
 
+  factory :match do
+    round_id { 2 }
+    name { "2R 第1組" }
+    rule_name { "MatchRule::Round2" }
+  end
+
   factory :matching do
-    match_id { 21 }
+    match
     player
+    sequence(:seat)
+    status { "playing" }
+    points { 0 }
+    misses { 0 }
+    rank { nil }
   end
 
   factory :question do
@@ -14,7 +25,7 @@ FactoryBot.define do
   end
 
   factory :question_allocation do
-    match_id { 21 }
+    match
     question
     sequence(:order) { |n| n }
   end

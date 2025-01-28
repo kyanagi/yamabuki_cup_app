@@ -19,12 +19,12 @@ RSpec.describe QuestionPlayerResult, type: :model do
 
     it "resultが正誤を表すこと" do
       expect(question_player_result.result).to eq "correct"
-      expect(question_player_result.correct?).to be true
+      expect(question_player_result.result_correct?).to be true
     end
 
     it "situationが解答権を得た状況を表すこと" do
       expect(question_player_result.situation).to eq "pushed"
-      expect(question_player_result.pushed?).to be true
+      expect(question_player_result.situation_pushed?).to be true
     end
   end
 end

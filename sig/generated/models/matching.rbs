@@ -1,5 +1,11 @@
 # Generated from app/models/matching.rb with RBS::Inline
 
 class Matching < ApplicationRecord
-  extend ActiveHash::Associations::ActiveRecordExtensions
+  # @rbs match: Match
+  # @rbs return: Integer
+  def self.highest_vacant_rank: (Match match) -> Integer
+
+  # @rbs match: Match
+  # @rbs return: Integer
+  def self.lowest_vacant_rank: (Match match) -> Integer
 end

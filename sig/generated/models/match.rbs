@@ -3,5 +3,8 @@
 class Match < ApplicationRecord
   extend ActiveHash::Associations::ActiveRecordExtensions
 
-  def rule: () -> untyped
+  @rule: MatchRule::Base
+
+  # @rbs return: MatchRule::Base
+  def rule: () -> MatchRule::Base
 end

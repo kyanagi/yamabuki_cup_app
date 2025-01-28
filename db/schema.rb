@@ -21,7 +21,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_07_141028) do
 
   create_table "matchings", force: :cascade do |t|
     t.integer "match_id", null: false
+    t.integer "seat", null: false
     t.integer "player_id", null: false
+    t.string "status"
+    t.integer "points", default: 0, null: false
+    t.integer "misses", default: 0, null: false
+    t.integer "rank"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["match_id", "player_id"], name: "index_matchings_on_match_id_and_player_id", unique: true
