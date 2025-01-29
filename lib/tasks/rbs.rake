@@ -56,20 +56,49 @@ rescue LoadError
   # failed to load rbs_rails. Skip to load rbs_rails tasks.
 end
 
+RBS_INLINE_TARGET_DIRS = %w[app lib]
+
+# rubocop:disable Rails/RakeEnvironment
 namespace :rbs do
   task setup: [:collection, :"rbs_rails:all", :inline]
   task update: [:"rbs_rails:all", :inline]
   task reset: [:clean, :setup]
 
-  task :collection do # rubocop:disable Rails/RakeEnvironment
+  desc "Install rbs collection"
+  task :collection do
     sh "rbs", "collection", "install"
   end
 
-  task :inline do # rubocop:disable Rails/RakeEnvironment
-    sh "rbs-inline", "--output", "--opt-out", "app", "lib"
+  desc "Clean up RBS files"
+  task :clean do
+    sh "rm", "-rf", ".gem_rbs_collection", "sig/rbs_rails", "sig/generated"
   end
 
-  task :clean do # rubocop:disable Rails/RakeEnvironment
-    sh "rm", "-rf", ".gem_rbs_collection", "sig/rbs_rails", "sig/generated"
+  desc "Build RBS files from inline annotations in Ruby files"
+  task :inline do
+    sh "rbs-inline", "--output", "--opt-out", *RBS_INLINE_TARGET_DIRS
+  end
+
+  namespace :inline do
+    desc "Build RBS files automatically on file changes"
+    task watch: [:inline] do
+      require "listen"
+
+      listener = Listen.to(*RBS_INLINE_TARGET_DIRS, only: /\.rb\z/) do |modified, added, removed|
+        if removed.present?
+          warn "#{removed} are removed. Rebuild RBS files..."
+          sh "rm", "-rf", "sig/generated"
+          Rake::Task["rbs:inline"].execute
+        elsif modified.present? || added.present?
+          warn "#{modified + added} are modified. Build RBS files..."
+          sh "rbs-inline", "--output", "--opt-out", *modified, *added
+        end
+      end
+
+      listener.start
+      sleep
+    ensure
+      listener&.stop
+    end
   end
 end
