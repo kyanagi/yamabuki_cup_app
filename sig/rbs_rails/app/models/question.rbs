@@ -256,6 +256,19 @@ class Question < ::ApplicationRecord
   end
   include GeneratedAttributeMethods
 
+  def question_allocation: () -> ::QuestionAllocation?
+  def question_allocation=: (::QuestionAllocation?) -> ::QuestionAllocation?
+  def build_question_allocation: (?untyped) -> ::QuestionAllocation
+  def create_question_allocation: (untyped) -> ::QuestionAllocation
+  def create_question_allocation!: (untyped) -> ::QuestionAllocation
+  def reload_question_allocation: () -> ::QuestionAllocation?
+  def match: () -> ::Match?
+  def match=: (::Match?) -> ::Match?
+  def build_match: (?untyped) -> ::Match
+  def create_match: (untyped) -> ::Match
+  def create_match!: (untyped) -> ::Match
+  def reload_match: () -> ::Match?
+
   module GeneratedAssociationMethods
   end
   include GeneratedAssociationMethods
