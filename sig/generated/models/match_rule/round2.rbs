@@ -12,39 +12,6 @@ module MatchRule
 
     MISSES_TO_LOSE: ::Integer
 
-    # @rbs question_player_results: Array[QuestionPlayerResult]
-    # @rbs return: void
-    def process: (Array[QuestionPlayerResult] question_player_results) -> void
-
-    # @rbs return: void
-    def judge_on_quiz_completed: () -> void
-
-    private
-
-    # @rbs matching: Matching
-    # @rbs return: void
-    def process_correct: (Matching matching) -> void
-
-    # @rbs matching: Matching
-    # @rbs return: void
-    def process_wrong: (Matching matching) -> void
-
-    # @rbs matching: Matching
-    # @rbs return: void
-    def mark_as_winner: (Matching matching) -> void
-
-    # @rbs matching: Matching
-    # @rbs return: void
-    def mark_as_loser: (Matching matching) -> void
-
-    # @rbs return: void
-    def fill_vacant_buttons_with_waiting_players: () -> void
-
-    # @rbs return: bool
-    def num_left_players_is_equal_to_num_left_winners?: () -> bool
-
-    # @rbs matchings: Array[Matching]
-    # @rbs return: void
-    def sort_players_by_ranking_criteria!: (Array[Matching] matchings) -> void
+    include Hayaoshi
   end
 end
