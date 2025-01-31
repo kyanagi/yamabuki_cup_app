@@ -6,5 +6,12 @@ module MatchRule
 
     # @rbs match: Match
     def initialize: (Match match) -> untyped
+
+    # @rbs question_player_results: Array[QuestionPlayerResult]
+    # @rbs return: void
+    def process: (Array[QuestionPlayerResult] question_player_results) -> void
+
+    # @rbs return: void
+    def judge_on_quiz_completed: () -> void
   end
 end

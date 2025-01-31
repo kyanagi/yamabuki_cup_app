@@ -63,6 +63,14 @@ RSpec.describe QuestionClosing do
     end
   end
 
+  def setup_match_rule_mock
+    rule = instance_double(MatchRule::Round2)
+    allow_any_instance_of(QuestionResult).to receive_message_chain(:match, :rule).and_return(rule)
+    expect(rule).to receive(:process) do |question_player_results|
+      expect(question_player_results).to all be_a QuestionPlayerResult
+    end
+  end
+
   context "早押しシングルチャンス・正解" do
     let(:question_closing) do
       QuestionClosing.new(
@@ -71,6 +79,10 @@ RSpec.describe QuestionClosing do
           { player_id: players[0].id, result: "correct", situation: "pushed" },
         ]
       )
+    end
+
+    before do
+      setup_match_rule_mock
     end
 
     it "QuestionResultとQuestionPlayerResultが作成されること" do
@@ -99,6 +111,10 @@ RSpec.describe QuestionClosing do
       )
     end
 
+    before do
+      setup_match_rule_mock
+    end
+
     it "QuestionResultとQuestionPlayerResultが作成されること" do
       expect { question_closing.save! }
         .to change(QuestionResult, :count).by(1)
@@ -123,6 +139,10 @@ RSpec.describe QuestionClosing do
       )
     end
 
+    before do
+      setup_match_rule_mock
+    end
+
     it "QuestionResultが作成され、QuestionPlayerResultが作成されないこと" do
       expect { question_closing.save! }
         .to change(QuestionResult, :count).by(1)
@@ -143,6 +163,10 @@ RSpec.describe QuestionClosing do
           { player_id: players[2].id, result: "correct", situation: "unpushed" },
         ]
       )
+    end
+
+    before do
+      setup_match_rule_mock
     end
 
     it "QuestionResultとQuestionPlayerResultが作成されること" do
@@ -173,6 +197,10 @@ RSpec.describe QuestionClosing do
       )
     end
 
+    before do
+      setup_match_rule_mock
+    end
+
     it "QuestionResultとQuestionPlayerResultが作成されること" do
       expect { question_closing.save! }
         .to change(QuestionResult, :count).by(1)
@@ -199,6 +227,10 @@ RSpec.describe QuestionClosing do
           { player_id: players[2].id, result: "correct", situation: "unpushed" },
         ]
       )
+    end
+
+    before do
+      setup_match_rule_mock
     end
 
     it "QuestionResultとQuestionPlayerResultが作成されること" do

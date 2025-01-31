@@ -10,4 +10,6 @@ class QuestionClosing < ActiveType::Object
   def transfer_attributes: () -> void
 
   def save_records: () -> void
+
+  def update_scores: () -> void
 end

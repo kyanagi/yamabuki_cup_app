@@ -8,6 +8,7 @@ class QuestionClosing < ActiveType::Object
 
   before_validation :transfer_attributes
   before_save :save_records
+  before_save :update_scores
 
   validates :question, presence: true # rubocop:disable Rails/RedundantPresenceValidationOnBelongsTo
   validate :validate_question_player_results_attributes
@@ -53,5 +54,10 @@ class QuestionClosing < ActiveType::Object
   rescue
     errors.add(:base, "Failed to save records")
     throw(:abort)
+  end
+
+  def update_scores #: void
+    rule = @question_result.match.rule
+    rule.process(@question_player_results)
   end
 end
