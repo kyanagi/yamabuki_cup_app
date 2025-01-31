@@ -157,6 +157,12 @@ class QuestionResult < ::ApplicationRecord
   def create_question: (untyped) -> ::Question
   def create_question!: (untyped) -> ::Question
   def reload_question: () -> ::Question?
+  def match: () -> ::Match?
+  def match=: (::Match?) -> ::Match?
+  def build_match: (?untyped) -> ::Match
+  def create_match: (untyped) -> ::Match
+  def create_match!: (untyped) -> ::Match
+  def reload_match: () -> ::Match?
   def question_allocation: () -> ::QuestionAllocation
   def question_allocation=: (::QuestionAllocation?) -> ::QuestionAllocation?
   def reload_question_allocation: () -> ::QuestionAllocation?
