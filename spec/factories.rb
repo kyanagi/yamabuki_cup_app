@@ -40,4 +40,10 @@ FactoryBot.define do
     result { 0 }
     situation { 0 }
   end
+
+  factory :yontaku_player_result do
+    player
+    rank { 1 }
+    score { 1 }
+  end
 end

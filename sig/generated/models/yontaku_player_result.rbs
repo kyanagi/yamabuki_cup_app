@@ -1,0 +1,4 @@
+# Generated from app/models/yontaku_player_result.rb with RBS::Inline
+
+class YontakuPlayerResult < ApplicationRecord
+end

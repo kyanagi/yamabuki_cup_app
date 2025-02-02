@@ -4,6 +4,8 @@ class QuestionPlayerResult::ActiveRecord_Associations_CollectionProxy < ::Active
 end
 class Matching::ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
 end
+class YontakuPlayerResult < ::ApplicationRecord
+end
 class QuestionAllocation::ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
 end
 class Question::ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy

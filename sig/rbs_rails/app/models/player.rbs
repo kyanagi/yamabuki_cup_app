@@ -111,6 +111,20 @@ class Player < ::ApplicationRecord
     def clear_updated_at_change: () -> void
   end
   include GeneratedAttributeMethods
+  def question_player_results: () -> ::QuestionPlayerResult::ActiveRecord_Associations_CollectionProxy
+  def question_player_results=: (::QuestionPlayerResult::ActiveRecord_Associations_CollectionProxy | ::Array[::QuestionPlayerResult]) -> (::QuestionPlayerResult::ActiveRecord_Associations_CollectionProxy | ::Array[::QuestionPlayerResult])
+  def question_player_result_ids: () -> ::Array[::Integer]
+  def question_player_result_ids=: (::Array[::Integer]) -> ::Array[::Integer]
+  def matchings: () -> ::Matching::ActiveRecord_Associations_CollectionProxy
+  def matchings=: (::Matching::ActiveRecord_Associations_CollectionProxy | ::Array[::Matching]) -> (::Matching::ActiveRecord_Associations_CollectionProxy | ::Array[::Matching])
+  def matching_ids: () -> ::Array[::Integer]
+  def matching_ids=: (::Array[::Integer]) -> ::Array[::Integer]
+  def yontaku_player_result: () -> ::YontakuPlayerResult?
+  def yontaku_player_result=: (::YontakuPlayerResult?) -> ::YontakuPlayerResult?
+  def build_yontaku_player_result: (?untyped) -> ::YontakuPlayerResult
+  def create_yontaku_player_result: (untyped) -> ::YontakuPlayerResult
+  def create_yontaku_player_result!: (untyped) -> ::YontakuPlayerResult
+  def reload_yontaku_player_result: () -> ::YontakuPlayerResult?
 
   module GeneratedAssociationMethods
   end
