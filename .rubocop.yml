@@ -15,3 +15,9 @@ Layout/CommentIndentation:
 
 Style/GlobalStdStream:
   Enabled: false
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+Rails/StrongParametersExpect:
+  Enabled: false
