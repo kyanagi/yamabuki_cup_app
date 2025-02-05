@@ -69,4 +69,5 @@ end
 
 gem "active_hash"
 gem "active_type"
+gem "jabara_group"
 gem "vite_rails"

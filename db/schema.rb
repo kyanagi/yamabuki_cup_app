@@ -13,6 +13,7 @@
 ActiveRecord::Schema[8.0].define(version: 2025_02_02_022621) do
   create_table "matches", force: :cascade do |t|
     t.integer "round_id", null: false
+    t.integer "match_number", null: false
     t.string "name", default: "", null: false
     t.string "rule_name", default: "", null: false
     t.datetime "created_at", null: false

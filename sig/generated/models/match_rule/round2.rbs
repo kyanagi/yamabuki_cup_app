@@ -12,6 +12,16 @@ module MatchRule
 
     MISSES_TO_LOSE: ::Integer
 
+    NUM_ADVANTAGED_PLAYERS: ::Integer
+
     include Hayaoshi
+
+    private
+
+    # @rbs override
+    def initial_status_of: ...
+
+    # @rbs override
+    def initial_points_of: ...
   end
 end

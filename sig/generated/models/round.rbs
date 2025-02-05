@@ -3,4 +3,8 @@
 # rubocop:disable Rails/HasManyOrHasOneDependent
 class Round < ActiveHash::Base
   include ActiveHash::Associations
+
+  include ActiveHash::Enum
+
+  def matchings: () -> untyped
 end

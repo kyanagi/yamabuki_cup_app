@@ -9,13 +9,13 @@
 #   end
 
 [
-  { id: 21, name: "2R Group 1", round_id: 2, rule_name: "RoundRule::Round2" },
-  { id: 22, name: "2R Group 2", round_id: 2, rule_name: "RoundRule::Round2" },
-  { id: 23, name: "2R Group 3", round_id: 2, rule_name: "RoundRule::Round2" },
-  { id: 24, name: "2R Group 4", round_id: 2, rule_name: "RoundRule::Round2" },
-  { id: 25, name: "2R Group 5", round_id: 2, rule_name: "RoundRule::Round2" },
-  { id: 31, name: "3R Course A", round_id: 3, rule_name: "RoundRule::Round3Hayaoshi73" },
-  { id: 32, name: "3R Course B", round_id: 4, rule_name: "RoundRule::Round3Hayaoshi71" },
+  { id: 21, name: "2R Group 1", round_id: 2, match_number: 1, rule_name: "MatchRule::Round2" },
+  { id: 22, name: "2R Group 2", round_id: 2, match_number: 2, rule_name: "MatchRule::Round2" },
+  { id: 23, name: "2R Group 3", round_id: 2, match_number: 3, rule_name: "MatchRule::Round2" },
+  { id: 24, name: "2R Group 4", round_id: 2, match_number: 4, rule_name: "MatchRule::Round2" },
+  { id: 25, name: "2R Group 5", round_id: 2, match_number: 5, rule_name: "MatchRule::Round2" },
+  { id: 31, name: "3R Course A", round_id: 3, match_number: 1, rule_name: "MatchRule::Round3Hayaoshi73" },
+  { id: 32, name: "3R Course B", round_id: 3, match_number: 2, rule_name: "MatchRule::Round3Hayaoshi71" },
 ].each do |match_attr|
   m = Match.find_or_initialize_by(id: match_attr[:id])
   m.update!(match_attr)

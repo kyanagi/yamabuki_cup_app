@@ -6,8 +6,8 @@ RSpec.describe MatchRule::Round2 do
   let!(:players) { create_list(:player, 14) }
   let!(:matchings) do
     Array.new(players.size) do |i|
-      seat = i + 1
-      status = if seat <= MatchRule::Round2::NUM_BUTTONS
+      seat = i
+      status = if seat < MatchRule::Round2::NUM_BUTTONS
                  "playing"
                else
                  "waiting"
@@ -98,7 +98,7 @@ RSpec.describe MatchRule::Round2 do
       let!(:matchings) do
         statuses = ["win"] + (["lose"] * 8) + (["playing"] * 5)
         Array.new(players.size) do |i|
-          create(:matching, match:, seat: i + 1, player: players[i], status: statuses[i], points: 0, misses: 0)
+          create(:matching, match:, seat: i, player: players[i], status: statuses[i], points: 0, misses: 0)
         end
       end
 
@@ -134,7 +134,7 @@ RSpec.describe MatchRule::Round2 do
           ["playing", 0, 0],
           ["waiting", 0, 0],
         ].map.with_index do |(status, points, misses, rank), i|
-          create(:matching, match:, seat: i + 1, player: players[i], status:, points:, misses:, rank:)
+          create(:matching, match:, seat: i, player: players[i], status:, points:, misses:, rank:)
         end
       end
 
@@ -170,7 +170,7 @@ RSpec.describe MatchRule::Round2 do
           ["playing", 0, 0],
           ["waiting", 0, 0],
         ].map.with_index do |(status, points, misses, rank), i|
-          create(:matching, match:, seat: i + 1, player: players[i], status:, points:, misses:, rank:)
+          create(:matching, match:, seat: i, player: players[i], status:, points:, misses:, rank:)
         end
       end
 
@@ -206,7 +206,7 @@ RSpec.describe MatchRule::Round2 do
           ["playing", 0, 0],
           ["waiting", 0, 0],
         ].map.with_index do |(status, points, misses, rank), i|
-          create(:matching, match:, seat: i + 1, player: players[i], status:, points:, misses:, rank:)
+          create(:matching, match:, seat: i, player: players[i], status:, points:, misses:, rank:)
         end
       end
 

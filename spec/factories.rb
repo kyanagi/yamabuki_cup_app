@@ -4,6 +4,7 @@ FactoryBot.define do
   factory :match do
     round_id { 2 }
     name { "2R 第1組" }
+    match_number { 1 }
     rule_name { "MatchRule::Round2" }
   end
 

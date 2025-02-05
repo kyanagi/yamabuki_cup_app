@@ -13,5 +13,20 @@ module MatchRule
 
     # @rbs return: void
     def judge_on_quiz_completed: () -> void
+
+    # @rbs seat: Integer
+    # @rbs return: Hash[Symbol, untyped]
+    def initial_matching_attributes_of: (Integer seat) -> Hash[Symbol, untyped]
+
+    private
+
+    # @rbs (Integer) -> String
+    def initial_status_of: (Integer) -> String
+
+    # @rbs (Integer) -> Integer
+    def initial_points_of: (Integer) -> Integer
+
+    # @rbs (Integer) -> Integer
+    def initial_misses_of: (Integer) -> Integer
   end
 end

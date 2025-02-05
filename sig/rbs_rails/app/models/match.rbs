@@ -74,6 +74,42 @@ class Match < ::ApplicationRecord
 
     def clear_round_id_change: () -> void
 
+    def match_number: () -> ::Integer
+
+    def match_number=: (::Integer) -> ::Integer
+
+    def match_number?: () -> bool
+
+    def match_number_changed?: () -> bool
+
+    def match_number_change: () -> [ ::Integer?, ::Integer? ]
+
+    def match_number_will_change!: () -> void
+
+    def match_number_was: () -> ::Integer?
+
+    def match_number_previously_changed?: () -> bool
+
+    def match_number_previous_change: () -> ::Array[::Integer?]?
+
+    def match_number_previously_was: () -> ::Integer?
+
+    def match_number_before_last_save: () -> ::Integer?
+
+    def match_number_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def match_number_in_database: () -> ::Integer?
+
+    def saved_change_to_match_number: () -> ::Array[::Integer?]?
+
+    def saved_change_to_match_number?: () -> bool
+
+    def will_save_change_to_match_number?: () -> bool
+
+    def restore_match_number!: () -> void
+
+    def clear_match_number_change: () -> void
+
     def name: () -> ::String
 
     def name=: (::String) -> ::String
