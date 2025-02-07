@@ -1,8 +1,8 @@
 require "rails_helper"
 
-RSpec.describe MatchRule::Round3Hayabo do
+RSpec.describe MatchRule::Round3Hayabo2 do
   let(:round) { Round::ROUND3 }
-  let(:rule_name) { "MatchRule::Round3Hayabo" }
+  let(:rule_name) { "MatchRule::Round3Hayabo2" }
   let(:match) { create(:match, round:, rule_name:) }
   let!(:players) { create_list(:player, 8) }
   let!(:matchings) do
@@ -59,8 +59,8 @@ RSpec.describe MatchRule::Round3Hayabo do
         ]
       end
 
-      it "得点が1増えること" do
-        expect { match_rule.process(question_player_results) }.to change { matchings[0].reload.points }.by(1)
+      it "得点が2増えること" do
+        expect { match_rule.process(question_player_results) }.to change { matchings[0].reload.points }.by(2)
       end
     end
 
@@ -71,8 +71,8 @@ RSpec.describe MatchRule::Round3Hayabo do
         ]
       end
 
-      it "得点が2増えること" do
-        expect { match_rule.process(question_player_results) }.to change { matchings[0].reload.points }.by(2)
+      it "得点が3増えること" do
+        expect { match_rule.process(question_player_results) }.to change { matchings[0].reload.points }.by(3)
       end
     end
 
@@ -88,7 +88,7 @@ RSpec.describe MatchRule::Round3Hayabo do
       end
     end
 
-    context "正解で12点になったとき" do
+    context "正解で18点になったとき" do
       let(:question_player_results) do
         [
           build(:question_player_result, player: players[0], situation: "pushed", result: "correct"),
@@ -96,15 +96,15 @@ RSpec.describe MatchRule::Round3Hayabo do
       end
 
       it "勝ち抜けになること" do
-        matchings[0].update!(points: 8)
+        matchings[0].update!(points: 14)
         match_rule.process(question_player_results)
         matchings[0].reload
-        expect(matchings[0].points).to eq 12
+        expect(matchings[0].points).to eq 18
         expect(matchings[0].status).to eq "win"
       end
     end
 
-    context "正解で13点以上になったとき" do
+    context "正解で19点以上になったとき" do
       let(:question_player_results) do
         [
           build(:question_player_result, player: players[0], situation: "pushed", result: "correct"),
@@ -112,15 +112,15 @@ RSpec.describe MatchRule::Round3Hayabo do
       end
 
       it "勝ち抜けになること" do
-        matchings[0].update!(points: 10)
+        matchings[0].update!(points: 16)
         match_rule.process(question_player_results)
         matchings[0].reload
-        expect(matchings[0].points).to eq 14
+        expect(matchings[0].points).to eq 20
         expect(matchings[0].status).to eq "win"
       end
     end
 
-    context "複数人が同時に12点以上になったとき" do
+    context "複数人が同時に18点以上になったとき" do
       let(:question_player_results) do
         [
           build(:question_player_result, player: players[0], situation: "unpushed", result: "correct"),
@@ -129,21 +129,21 @@ RSpec.describe MatchRule::Round3Hayabo do
       end
 
       it "点数の高い順に上位になること" do
-        matchings[0].update!(points: 11)
-        matchings[1].update!(points: 10)
+        matchings[0].update!(points: 16)
+        matchings[1].update!(points: 16)
         match_rule.process(question_player_results)
         matchings[0].reload
         matchings[1].reload
-        expect(matchings[0].points).to eq 12
+        expect(matchings[0].points).to eq 18
         expect(matchings[0].status).to eq "win"
         expect(matchings[0].rank).to eq 2
-        expect(matchings[1].points).to eq 13
+        expect(matchings[1].points).to eq 19
         expect(matchings[1].status).to eq "win"
         expect(matchings[1].rank).to eq 1
       end
     end
 
-    context "複数人が同時に12点以上になり、点数が同じとき" do
+    context "複数人が同時に18点以上になり、点数が同じとき" do
       let(:question_player_results) do
         [
           build(:question_player_result, player: players[0], situation: "unpushed", result: "correct"),
@@ -152,15 +152,15 @@ RSpec.describe MatchRule::Round3Hayabo do
       end
 
       it "座席の昇順に勝ち抜けになること" do
-        matchings[0].update!(points: 11)
-        matchings[1].update!(points: 11)
+        matchings[0].update!(points: 16)
+        matchings[1].update!(points: 16)
         match_rule.process(question_player_results)
         matchings[0].reload
         matchings[1].reload
-        expect(matchings[0].points).to eq 12
+        expect(matchings[0].points).to eq 18
         expect(matchings[0].status).to eq "win"
         expect(matchings[0].rank).to eq 1
-        expect(matchings[1].points).to eq 12
+        expect(matchings[1].points).to eq 18
         expect(matchings[1].status).to eq "win"
         expect(matchings[1].rank).to eq 2
       end
@@ -184,7 +184,7 @@ RSpec.describe MatchRule::Round3Hayabo do
         expect(matchings.map(&:points)).to eq [0, 0, 0, 0, 0, 0, 0, 0]
         match_rule.process(question_player_results)
         matchings.each(&:reload)
-        expect(matchings.map(&:points)).to eq [1, 0, 3, 0, 1, 1, 0, 1]
+        expect(matchings.map(&:points)).to eq [2, 0, 3, 0, 2, 2, 0, 2]
       end
     end
   end
@@ -192,7 +192,7 @@ RSpec.describe MatchRule::Round3Hayabo do
   describe "#judge_on_quiz_completed" do
     context "勝ち抜け枠が残っていないとき" do
       before do
-        matchings[0, 4].each { it.update!(points: 12, status: "win") }
+        matchings[0, 4].each { it.update!(points: 18, status: "win") }
       end
 
       it "新たな勝ち抜け者が出ないこと" do
@@ -209,7 +209,7 @@ RSpec.describe MatchRule::Round3Hayabo do
           [8, "playing"],
           [9, "playing"],
           [11, "playing"],
-          [12, "win"],
+          [18, "win"],
           [10, "playing"],
           [7, "playing"],
           [6, "playing"],
@@ -233,7 +233,7 @@ RSpec.describe MatchRule::Round3Hayabo do
           [5, "playing"],
           [8, "playing"],
           [8, "playing"],
-          [12, "win"],
+          [18, "win"],
           [8, "playing"],
           [7, "playing"],
           [6, "playing"],

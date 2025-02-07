@@ -1,0 +1,25 @@
+# Generated from app/models/match_rule/round3_hayabo2.rb with RBS::Inline
+
+module MatchRule
+  class Round3Hayabo2 < Base
+    NUM_SEATS: ::Integer
+
+    NUM_BUTTONS: ::Integer
+
+    NUM_WINNERS: ::Integer
+
+    POINTS_TO_WIN: ::Integer
+
+    POINTS_ON_PUSHED_CORRECT: ::Integer
+
+    POINTS_ON_UNPUSHED_CORRECT: ::Integer
+
+    POINTS_ON_PUSHED_WRONG: ::Integer
+
+    POINTS_ON_UNPUSHED_WRONG: ::Integer
+
+    BONUS_POINTS_ON_SOLE_CORRECT: ::Integer
+
+    include Hayabo
+  end
+end
