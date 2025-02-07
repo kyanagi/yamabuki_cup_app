@@ -1,10 +1,14 @@
 require "rails_helper"
 
 RSpec.describe Matchmaking::Round2, type: :model do
+  before do
+    Rails.application.load_seed
+  end
+
   describe "#matching_should_not_exist" do
     context "2Rのマッチングが既に存在する場合" do
       let(:round) { Round::ROUND2 }
-      let(:match) { create(:match, round:) }
+      let(:match) { Round::ROUND2.matches[0] }
 
       before do
         create(:matching, match:)
@@ -26,7 +30,7 @@ RSpec.describe Matchmaking::Round2, type: :model do
 
     context "2Rのマッチングが存在しないが3Rのマッチングが存在する場合" do
       let(:round) { Round::ROUND3 }
-      let(:match) { create(:match, round:) }
+      let(:match) { Round::ROUND3.matches[0] }
 
       before do
         create(:matching, match:)

@@ -1,7 +1,9 @@
 require "rails_helper"
 
 RSpec.describe MatchRule::Round2 do
-  let(:match) { create(:match) }
+  let(:round) { Round::ROUND2 }
+  let(:rule_name) { "MatchRule::Round2" }
+  let(:match) { create(:match, round:, rule_name:) }
   let(:match_rule) { MatchRule::Round2.new(match) }
   let!(:players) { create_list(:player, 14) }
   let!(:matchings) do

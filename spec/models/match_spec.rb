@@ -2,19 +2,22 @@ require "rails_helper"
 
 RSpec.describe Match, type: :model do
   describe "#round" do
+    let(:match) { create(:match, round_id: Round::ROUND2.id) }
+
     it "関連するRoundが取得できること" do
-      match = Match.find(21)
-      expect(match.round).to eq(Round.find(2))
+      expect(match.round).to eq(Round::ROUND2)
     end
   end
 
   describe "#asked_questions" do
-    let(:match) { Match.find(21) }
+    let(:match) { create(:match) }
     let(:questions) { create_list(:question, 3) }
 
     before do
+      another_match = create(:match)
       create(:question_allocation, match: match, question: questions[1], order: 1)
       create(:question_allocation, match: match, question: questions[0], order: 2)
+      create(:question_allocation, match: another_match, question: questions[2], order: 1)
     end
 
     it "出題された問題が出題順に取得できること" do
