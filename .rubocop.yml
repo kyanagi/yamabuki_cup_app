@@ -13,6 +13,9 @@ Layout/CommentIndentation:
   Exclude:
     - "config/**/*.rb"
 
+Lint/ShadowingOuterLocalVariable:
+  Enabled: false
+
 Style/GlobalStdStream:
   Enabled: false
 
