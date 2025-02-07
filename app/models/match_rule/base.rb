@@ -5,7 +5,7 @@ module MatchRule
     # @rbs match: Match
     def initialize(match)
       @match = match
-      @matchings = match.matchings.to_a
+      @matchings = match.matchings
     end
 
     # @rbs question_player_results: Array[QuestionPlayerResult]
