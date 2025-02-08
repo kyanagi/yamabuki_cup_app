@@ -24,3 +24,6 @@ Style/EmptyMethod:
 
 Rails/StrongParametersExpect:
   Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
