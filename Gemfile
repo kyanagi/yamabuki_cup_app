@@ -42,29 +42,36 @@ group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: [:mri, :windows], require: "debug/prelude"
 
-  # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  gem "brakeman", require: false
-
   gem "factory_bot_rails"
   gem "rspec-rails"
-  gem "rubocop-kyanagi", github: "kyanagi/rubocop-kyanagi", require: false
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 
-  gem "listen"
-  gem "rbs-inline", require: false
-  gem "rbs_rails", require: false
   gem "repl_type_completor"
-  gem "steep", require: false
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+end
+
+group :brakeman do
+  gem "brakeman", require: false
+end
+
+group :rubocop do
+  gem "rubocop-kyanagi", github: "kyanagi/rubocop-kyanagi", require: false
+end
+
+group :rbs do
+  gem "listen" # rbs:inline:watch で使う。
+  gem "rbs-inline", require: false
+  gem "rbs_rails", require: false
+  gem "steep", require: false
 end
 
 gem "active_hash"
