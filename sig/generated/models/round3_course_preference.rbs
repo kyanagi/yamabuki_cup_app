@@ -1,0 +1,5 @@
+# Generated from app/models/round3_course_preference.rb with RBS::Inline
+
+class Round3CoursePreference < ApplicationRecord
+  def choices: () -> untyped
+end

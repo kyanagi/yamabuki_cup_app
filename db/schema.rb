@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_02_022621) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_05_072722) do
   create_table "matches", force: :cascade do |t|
     t.integer "round_id", null: false
     t.integer "match_number", null: false
@@ -78,6 +78,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_02_022621) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "round3_course_preferences", force: :cascade do |t|
+    t.integer "player_id", null: false
+    t.integer "choice1_match_id", null: false
+    t.integer "choice2_match_id", null: false
+    t.integer "choice3_match_id", null: false
+    t.integer "choice4_match_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["choice1_match_id"], name: "index_round3_course_preferences_on_choice1_match_id"
+    t.index ["choice2_match_id"], name: "index_round3_course_preferences_on_choice2_match_id"
+    t.index ["choice3_match_id"], name: "index_round3_course_preferences_on_choice3_match_id"
+    t.index ["choice4_match_id"], name: "index_round3_course_preferences_on_choice4_match_id"
+    t.index ["player_id"], name: "index_round3_course_preferences_on_player_id"
+  end
+
   create_table "yontaku_player_results", force: :cascade do |t|
     t.integer "player_id", null: false
     t.integer "rank", null: false
@@ -95,5 +110,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_02_022621) do
   add_foreign_key "question_player_results", "players"
   add_foreign_key "question_player_results", "question_results"
   add_foreign_key "question_results", "question_allocations"
+  add_foreign_key "round3_course_preferences", "matches", column: "choice1_match_id"
+  add_foreign_key "round3_course_preferences", "matches", column: "choice2_match_id"
+  add_foreign_key "round3_course_preferences", "matches", column: "choice3_match_id"
+  add_foreign_key "round3_course_preferences", "matches", column: "choice4_match_id"
+  add_foreign_key "round3_course_preferences", "players"
   add_foreign_key "yontaku_player_results", "players"
 end

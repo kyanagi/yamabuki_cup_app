@@ -125,6 +125,12 @@ class Player < ::ApplicationRecord
   def create_yontaku_player_result: (untyped) -> ::YontakuPlayerResult
   def create_yontaku_player_result!: (untyped) -> ::YontakuPlayerResult
   def reload_yontaku_player_result: () -> ::YontakuPlayerResult?
+  def round3_course_preference: () -> ::Round3CoursePreference?
+  def round3_course_preference=: (::Round3CoursePreference?) -> ::Round3CoursePreference?
+  def build_round3_course_preference: (?untyped) -> ::Round3CoursePreference
+  def create_round3_course_preference: (untyped) -> ::Round3CoursePreference
+  def create_round3_course_preference!: (untyped) -> ::Round3CoursePreference
+  def reload_round3_course_preference: () -> ::Round3CoursePreference?
 
   module GeneratedAssociationMethods
   end

@@ -47,4 +47,12 @@ FactoryBot.define do
     rank { 1 }
     score { 1 }
   end
+
+  factory :round3_course_preference do
+    player
+    choice1_match { association :match }
+    choice2_match { association :match }
+    choice3_match { association :match }
+    choice4_match { association :match }
+  end
 end

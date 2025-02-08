@@ -230,7 +230,10 @@ class YontakuPlayerResult < ::ApplicationRecord
   end
   include GeneratedAssociationMethods
 
+  def self.round2_seeded: () -> ::YontakuPlayerResult::ActiveRecord_Relation
+
   module GeneratedRelationMethods
+    def round2_seeded: () -> ::YontakuPlayerResult::ActiveRecord_Relation
   end
 
   class ActiveRecord_Relation < ::ActiveRecord::Relation
