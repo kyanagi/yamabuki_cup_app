@@ -1,0 +1,29 @@
+# Generated from app/models/match_rule/quarter_final.rb with RBS::Inline
+
+module MatchRule
+  class QuarterFinal < Base
+    NUM_SEATS: ::Integer
+
+    NUM_BUTTONS: ::Integer
+
+    NUM_WINNERS: ::Integer
+
+    MISSES_TO_WAIT: ::Integer
+
+    include Hayaoshi
+
+    private
+
+    # @rbs matching: Matching
+    # @rbs return: void
+    def process_correct: (Matching matching) -> void
+
+    # @rbs matching: Matching
+    # @rbs return: void
+    def process_wrong: (Matching matching) -> void
+
+    # @rbs matching: Matching
+    # @rbs return: void
+    def mark_as_waiting: (Matching matching) -> void
+  end
+end
