@@ -119,6 +119,12 @@ class Player < ::ApplicationRecord
   def matchings=: (::Matching::ActiveRecord_Associations_CollectionProxy | ::Array[::Matching]) -> (::Matching::ActiveRecord_Associations_CollectionProxy | ::Array[::Matching])
   def matching_ids: () -> ::Array[::Integer]
   def matching_ids=: (::Array[::Integer]) -> ::Array[::Integer]
+  def player_profile: () -> ::PlayerProfile?
+  def player_profile=: (::PlayerProfile?) -> ::PlayerProfile?
+  def build_player_profile: (?untyped) -> ::PlayerProfile
+  def create_player_profile: (untyped) -> ::PlayerProfile
+  def create_player_profile!: (untyped) -> ::PlayerProfile
+  def reload_player_profile: () -> ::PlayerProfile?
   def yontaku_player_result: () -> ::YontakuPlayerResult?
   def yontaku_player_result=: (::YontakuPlayerResult?) -> ::YontakuPlayerResult?
   def build_yontaku_player_result: (?untyped) -> ::YontakuPlayerResult
