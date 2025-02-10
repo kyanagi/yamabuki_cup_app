@@ -43,8 +43,8 @@ group :development, :test do
   gem "debug", platforms: [:mri, :windows], require: "debug/prelude"
 
   gem "factory_bot_rails"
-  gem "rspec-rails"
   gem "gimei"
+  gem "rspec-rails"
 end
 
 group :development do
@@ -52,6 +52,11 @@ group :development do
   gem "web-console"
 
   gem "repl_type_completor"
+end
+
+group :test do
+  gem "capybara"
+  gem "selenium-webdriver"
 end
 
 group :brakeman do

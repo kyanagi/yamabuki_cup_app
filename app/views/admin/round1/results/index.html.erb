@@ -1,0 +1,22 @@
+<%# frozen_string_literal: true %>
+
+<h1>ペーパークイズ結果</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>順位</th>
+      <th>得点</th>
+      <th>氏名</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @results.each do |result| %>
+      <tr>
+        <td><%= result.rank %></td>
+        <td><%= result.score %></td>
+        <td><%= "#{result.player.player_profile.family_name} #{result.player.player_profile.given_name}" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

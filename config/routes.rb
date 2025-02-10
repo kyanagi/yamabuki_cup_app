@@ -13,4 +13,10 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   get "/scoreboard", to: "scoreboard#show"
+
+  namespace :admin do
+    namespace :round1 do
+      resources :results, only: [:index]
+    end
+  end
 end
