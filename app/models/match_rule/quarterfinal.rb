@@ -1,5 +1,5 @@
 module MatchRule
-  class QuarterFinal < Base
+  class Quarterfinal < Base
     NUM_SEATS = 8
     NUM_BUTTONS = 8
     NUM_WINNERS = 4

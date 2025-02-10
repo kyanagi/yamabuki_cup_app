@@ -1,16 +1,16 @@
 require "rails_helper"
 
-RSpec.describe Matchmaking::QuarterFinal, type: :model do
+RSpec.describe Matchmaking::Quarterfinal, type: :model do
   before do
     Rails.application.load_seed
   end
 
   describe "#matching_should_not_exist" do
-    let(:matchmaking) { Matchmaking::QuarterFinal.new }
+    let(:matchmaking) { Matchmaking::Quarterfinal.new }
 
     context "準々決勝のマッチングが既に存在する場合" do
-      let(:round) { Round::QUARTER_FINAL }
-      let(:match) { Round::QUARTER_FINAL.matches[0] }
+      let(:round) { Round::QUARTERFINAL }
+      let(:match) { Round::QUARTERFINAL.matches[0] }
 
       before do
         create(:matching, match:)
@@ -44,8 +44,8 @@ RSpec.describe Matchmaking::QuarterFinal, type: :model do
 
   describe "#create_matchings" do
     let(:round3) { Round::ROUND3 }
-    let(:round) { Round::QUARTER_FINAL }
-    let(:matches) { Round::QUARTER_FINAL.matches.order(:match_number).to_a }
+    let(:round) { Round::QUARTERFINAL }
+    let(:matches) { Round::QUARTERFINAL.matches.order(:match_number).to_a }
     let(:force) { false }
 
     let!(:round3_winners) do
@@ -61,7 +61,7 @@ RSpec.describe Matchmaking::QuarterFinal, type: :model do
 
     shared_examples "準々決勝の組分けが正しく作成されること" do
       it "準々決勝の組分けが正しく作成されること" do
-        Matchmaking::QuarterFinal.create!(force:)
+        Matchmaking::Quarterfinal.create!(force:)
 
         matchings = matches[0].matchings.order(:seat).preload(player: :yontaku_player_result)
         expect(matchings.map(&:seat)).to eq [*0..7]
@@ -89,8 +89,8 @@ RSpec.describe Matchmaking::QuarterFinal, type: :model do
       end
 
       it "エラーになること" do
-        m = Matchmaking::QuarterFinal.new
-        expect { m.save }.not_to(change { Round::QUARTER_FINAL.matchings.count })
+        m = Matchmaking::Quarterfinal.new
+        expect { m.save }.not_to(change { Round::QUARTERFINAL.matchings.count })
         expect(m.errors).to be_added(:base, "準々決勝のマッチングが既に存在します")
       end
 

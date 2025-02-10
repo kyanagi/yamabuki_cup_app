@@ -18,8 +18,8 @@
   { id: 32, name: "3R B 7◯1×", round_id: Round::ROUND3.id, match_number: 2, rule_name: "MatchRule::Round3Hayaoshi71" },
   { id: 33, name: "3R C 早押しボード", round_id: Round::ROUND3.id, match_number: 3, rule_name: "MatchRule::Round3Hayabo" },
   { id: 34, name: "3R D 早押しボード2", round_id: Round::ROUND3.id, match_number: 4, rule_name: "MatchRule::Round3Hayabo2" },
-  { id: 41, name: "準々決勝 第1組", round_id: Round::QUARTER_FINAL.id, match_number: 1, rule_name: "MatchRule::QuarterFinal" },
-  { id: 42, name: "準々決勝 第2組", round_id: Round::QUARTER_FINAL.id, match_number: 2, rule_name: "MatchRule::QuarterFinal" },
+  { id: 41, name: "準々決勝 第1組", round_id: Round::QUARTERFINAL.id, match_number: 1, rule_name: "MatchRule::Quarterfinal" },
+  { id: 42, name: "準々決勝 第2組", round_id: Round::QUARTERFINAL.id, match_number: 2, rule_name: "MatchRule::Quarterfinal" },
 ].each do |match_attr|
   m = Match.find_or_initialize_by(id: match_attr[:id])
   m.update!(match_attr)

@@ -1,7 +1,7 @@
-# Generated from app/models/match_rule/quarter_final.rb with RBS::Inline
+# Generated from app/models/match_rule/quarterfinal.rb with RBS::Inline
 
 module MatchRule
-  class QuarterFinal < Base
+  class Quarterfinal < Base
     NUM_SEATS: ::Integer
 
     NUM_BUTTONS: ::Integer

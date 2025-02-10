@@ -1,7 +1,7 @@
-# Generated from app/models/matchmaking/quarter_final.rb with RBS::Inline
+# Generated from app/models/matchmaking/quarterfinal.rb with RBS::Inline
 
 module Matchmaking
-  class QuarterFinal < ActiveType::Object
+  class Quarterfinal < ActiveType::Object
     private
 
     def matching_should_not_exist: () -> void

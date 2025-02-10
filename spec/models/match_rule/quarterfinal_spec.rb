@@ -1,8 +1,8 @@
 require "rails_helper"
 
-RSpec.describe MatchRule::QuarterFinal do
-  let(:round) { Round::QUARTER_FINAL }
-  let(:rule_name) { "MatchRule::QuarterFinal" }
+RSpec.describe MatchRule::Quarterfinal do
+  let(:round) { Round::QUARTERFINAL }
+  let(:rule_name) { "MatchRule::Quarterfinal" }
   let(:match) { create(:match, round:, rule_name:) }
   let(:match_rule) { rule_name.constantize.new(match) }
   let!(:players) { create_list(:player, 8) }

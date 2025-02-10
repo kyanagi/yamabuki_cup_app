@@ -1,5 +1,5 @@
 module Matchmaking
-  class QuarterFinal < ActiveType::Object
+  class Quarterfinal < ActiveType::Object
     attribute :force, :boolean, default: false
 
     validate :matching_should_not_exist
@@ -11,15 +11,15 @@ module Matchmaking
     def matching_should_not_exist #: void
       return if force
 
-      if Round::QUARTER_FINAL.matchings.exists?
+      if Round::QUARTERFINAL.matchings.exists?
         errors.add(:base, "準々決勝のマッチングが既に存在します")
       end
     end
 
     def create_matchings #: void
-      Round::QUARTER_FINAL.matchings.each(&:destroy!)
+      Round::QUARTERFINAL.matchings.each(&:destroy!)
 
-      matches = Round::QUARTER_FINAL.matches.order(:match_number).to_a
+      matches = Round::QUARTERFINAL.matches.order(:match_number).to_a
 
       round3_winners = Round::ROUND3.matchings.status_win.map(&:player)
       sorted_target_players = round3_winners.sort_by { |player| player.yontaku_player_result.rank }
