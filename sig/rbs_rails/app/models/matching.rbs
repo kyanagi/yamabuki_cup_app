@@ -254,6 +254,42 @@ class Matching < ::ApplicationRecord
 
     def clear_misses_change: () -> void
 
+    def stars: () -> ::Integer
+
+    def stars=: (::Integer) -> ::Integer
+
+    def stars?: () -> bool
+
+    def stars_changed?: () -> bool
+
+    def stars_change: () -> [ ::Integer?, ::Integer? ]
+
+    def stars_will_change!: () -> void
+
+    def stars_was: () -> ::Integer?
+
+    def stars_previously_changed?: () -> bool
+
+    def stars_previous_change: () -> ::Array[::Integer?]?
+
+    def stars_previously_was: () -> ::Integer?
+
+    def stars_before_last_save: () -> ::Integer?
+
+    def stars_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def stars_in_database: () -> ::Integer?
+
+    def saved_change_to_stars: () -> ::Array[::Integer?]?
+
+    def saved_change_to_stars?: () -> bool
+
+    def will_save_change_to_stars?: () -> bool
+
+    def restore_stars!: () -> void
+
+    def clear_stars_change: () -> void
+
     def rank: () -> ::Integer?
 
     def rank=: (::Integer?) -> ::Integer?

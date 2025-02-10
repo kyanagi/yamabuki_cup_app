@@ -2,7 +2,7 @@ class Matching < ApplicationRecord
   belongs_to :match
   belongs_to :player
 
-  enum :status, { playing: "playing", waiting: "waiting", win: "win", lose: "lose" }, prefix: true
+  enum :status, { playing: "playing", waiting: "waiting", win: "win", lose: "lose", set_win: "set_win" }, prefix: true
 
   # @rbs match: Match
   # @rbs player: Player

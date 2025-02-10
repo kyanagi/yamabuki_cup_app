@@ -27,6 +27,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_05_072722) do
     t.string "status"
     t.integer "points", default: 0, null: false
     t.integer "misses", default: 0, null: false
+    t.integer "stars", default: 0, null: false
     t.integer "rank"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

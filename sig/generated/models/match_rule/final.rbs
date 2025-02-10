@@ -1,0 +1,53 @@
+# Generated from app/models/match_rule/final.rb with RBS::Inline
+
+module MatchRule
+  class Final < Base
+    NUM_SEATS: ::Integer
+
+    NUM_BUTTONS: ::Integer
+
+    NUM_WINNERS: ::Integer
+
+    POINTS_TO_SET_WIN: ::Integer
+
+    MISSES_TO_SET_LOSE: ::Integer
+
+    STARS_TO_WIN: ::Integer
+
+    # @rbs question_player_results: Array[QuestionPlayerResult]
+    # @rbs return: void
+    def process: (Array[QuestionPlayerResult] question_player_results) -> void
+
+    # @rbs question_player_result: QuestionPlayerResult
+    # @rbs return: void
+    def process_special_question: (QuestionPlayerResult question_player_result) -> void
+
+    # @rbs return: void
+    def start_new_set: () -> void
+
+    # @rbs seat: Integer
+    # @rbs return: Hash[Symbol, untyped]
+    def initial_matching_attributes_of: (Integer seat) -> Hash[Symbol, untyped]
+
+    private
+
+    # @rbs matching: Matching
+    # @rbs return: void
+    def process_correct: (Matching matching) -> void
+
+    # @rbs matching: Matching
+    # @rbs return: void
+    def process_wrong: (Matching matching) -> void
+
+    # @rbs matching: Matching
+    # @rbs return: void
+    def mark_as_set_winner: (Matching matching) -> void
+
+    # @rbs matching: Matching
+    # @rbs return: void
+    def mark_as_set_loser: (Matching matching) -> void
+
+    # @rbs return: bool
+    def only_one_player_is_playing?: () -> bool
+  end
+end

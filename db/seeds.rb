@@ -21,6 +21,7 @@
   { id: 41, name: "準々決勝 第1組", round_id: Round::QUARTERFINAL.id, match_number: 1, rule_name: "MatchRule::Quarterfinal" },
   { id: 42, name: "準々決勝 第2組", round_id: Round::QUARTERFINAL.id, match_number: 2, rule_name: "MatchRule::Quarterfinal" },
   { id: 51, name: "準決勝", round_id: Round::SEMIFINAL.id, match_number: 1, rule_name: "MatchRule::Semifinal" },
+  { id: 61, name: "決勝", round_id: Round::FINAL.id, match_number: 1, rule_name: "MatchRule::Final" },
 ].each do |match_attr|
   m = Match.find_or_initialize_by(id: match_attr[:id])
   m.update!(match_attr)
