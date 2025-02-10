@@ -12,7 +12,7 @@ class Round < ActiveHash::Base
     { id: 2, name: "2R", enum_name: "round2" },
     { id: 3, name: "3R", enum_name: "round3" },
     { id: 4, name: "準々決勝", enum_name: "quarterfinal" },
-    { id: 5, name: "準決勝", enum_name: "semi_final" },
+    { id: 5, name: "準決勝", enum_name: "semifinal" },
     { id: 6, name: "決勝", enum_name: "final" },
   ]
 

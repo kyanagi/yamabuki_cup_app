@@ -1,0 +1,34 @@
+# Generated from app/models/match_rule/semifinal.rb with RBS::Inline
+
+module MatchRule
+  class Semifinal < Base
+    NUM_SEATS: ::Integer
+
+    NUM_BUTTONS: ::Integer
+
+    NUM_WINNERS: ::Integer
+
+    # @rbs question_player_results: Array[QuestionPlayerResult]
+    # @rbs return: void
+    def process: (Array[QuestionPlayerResult] question_player_results) -> void
+
+    def start_new_set: () -> untyped
+
+    def disqualify: (player_id: untyped) -> untyped
+
+    # @rbs return: void
+    def judge_on_quiz_completed: () -> void
+
+    private
+
+    # @rbs matching: Matching
+    # @rbs return: void
+    def process_correct: (Matching matching) -> void
+
+    # @rbs matching: Matching
+    # @rbs return: void
+    def process_wrong: (Matching matching) -> void
+
+    def mark_as_lower: (untyped matching) -> untyped
+  end
+end
