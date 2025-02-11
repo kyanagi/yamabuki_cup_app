@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/round1/results_controller.rb with RBS::Inline
+
+module Admin
+  module Round1
+    class ResultsController < ApplicationController
+      def index: () -> untyped
+    end
+  end
+end

@@ -1,4 +1,23 @@
 # Generated from app/helpers/application_helper.rb with RBS::Inline
 
 module ApplicationHelper
+  # @rbs rank Integer
+  # @rbs return bool
+  def round2_seeded?: (Integer rank) -> bool
+
+  # @rbs rank Integer
+  # @rbs return bool
+  def round2_advantage?: (Integer rank) -> bool
+
+  # @rbs rank Integer
+  # @rbs return bool
+  def round2_normal?: (Integer rank) -> bool
+
+  # @rbs rank Integer
+  # @rbs return bool
+  def round2_waiting?: (Integer rank) -> bool
+
+  # @rbs rank Integer
+  # @rbs return String
+  def round2_rank_color_class: (Integer rank) -> String
 end

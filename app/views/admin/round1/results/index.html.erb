@@ -1,22 +1,53 @@
 <%# frozen_string_literal: true %>
 
-<h1>ペーパークイズ結果</h1>
+<section class="section">
+  <div class="container">
+    <h1 class="title is-2 has-text-centered mb-6">ペーパークイズ結果</h1>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>順位</th>
-      <th>得点</th>
-      <th>氏名</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @results.each do |result| %>
-      <tr>
-        <td><%= result.rank %></td>
-        <td><%= result.score %></td>
-        <td><%= "#{result.player.player_profile.family_name} #{result.player.player_profile.given_name}" %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped is-hoverable">
+        <thead>
+          <tr>
+            <th class="has-text-centered">順位</th>
+            <th class="has-text-centered">得点</th>
+            <th>氏名</th>
+            <th class="has-text-centered">ステータス</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @players.each do |player| %>
+            <% rank = player.yontaku_player_result&.rank %>
+            <tr>
+              <td class="has-text-centered">
+                <% if rank %>
+                  <span class="tag is-medium <%= round2_rank_color_class(rank) %>" style="min-width: 3em">
+                    <%= rank %>
+                  </span>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+              <td class="has-text-centered has-text-weight-bold is-size-5"><%= player.yontaku_player_result&.score %></td>
+              <td class="is-size-5"><%= "#{player.player_profile.family_name} #{player.player_profile.given_name}" %></td>
+              <td class="has-text-centered">
+                <% if round2_seeded?(rank) %>
+                  シード
+                <% elsif round2_advantage?(rank) %>
+                  2R Adv.
+                <% elsif round2_normal?(rank) %>
+                  2R
+                <% elsif round2_waiting?(rank) %>
+                  2R Wait
+                <% elsif rank %>
+                  DNQ
+                <% else %>
+                  欠席
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
