@@ -24,6 +24,26 @@
   </head>
 
   <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div id="navbarBasic" class="navbar-menu">
+        <div class="navbar-end">
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+            </a>
+
+            <div class="navbar-dropdown is-right">
+              <%= link_to "ペーパー結果", admin_round1_results_path, class: "navbar-item" %>
+              <%= link_to "2R", "#", class: "navbar-item" %>
+              <%= link_to "3R", "#", class: "navbar-item" %>
+              <%= link_to "準々決勝", "#", class: "navbar-item" %>
+              <%= link_to "準決勝", "#", class: "navbar-item" %>
+              <%= link_to "決勝", "#", class: "navbar-item" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
     <%= yield %>
   </body>
 </html>
