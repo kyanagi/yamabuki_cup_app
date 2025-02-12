@@ -1,0 +1,25 @@
+<%# locals: (matching:) %>
+<tr>
+  <td class="has-text-centered">
+    <%= button_to '正解',
+                '#',
+                method: :post,
+                class: 'button is-success is-small',
+                form: { style: 'display: inline-block;' }
+                %>
+  </td>
+  <td style="width: 8em">
+    <%= matching.player.player_profile.family_name %>
+    <%= matching.player.player_profile.given_name %>
+  </td>
+  <td class="has-text-centered">
+    <%= button_to '誤答',
+                '#',
+                class: 'button is-danger is-small',
+                form: { style: 'display: inline-block; margin-left: 0.5rem;' }
+                %>
+  </td>
+  <td class="has-text-centered"><%= matching.points %></td>
+  <td class="has-text-centered"><%= matching.misses %></td>
+  <td class="has-text-centered"><%= matching.status %></td>
+</tr>

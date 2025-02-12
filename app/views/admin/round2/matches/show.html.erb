@@ -1,0 +1,23 @@
+<div class="container">
+  <h1><%= @match.name %></h1>
+
+  <div class="table-container">
+    <table class="table is-fullwidth is-striped is-hoverable">
+      <thead>
+        <tr>
+          <th class="has-text-centered">正解</th>
+          <th style="width: 8em">氏名</th>
+          <th class="has-text-centered">誤答</th>
+          <th class="has-text-centered">得点</th>
+          <th class="has-text-centered">誤答数</th>
+          <th class="has-text-centered">ステータス</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @matchings.each do |matching| %>
+          <%= render "matching", matching: %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

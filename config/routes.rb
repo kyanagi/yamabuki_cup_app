@@ -18,5 +18,8 @@ Rails.application.routes.draw do
     namespace :round1 do
       resources :results, only: [:index]
     end
+    namespace :round2 do
+      get '/:match_number', to: 'matches#show', as: :match
+    end
   end
 end
