@@ -19,7 +19,8 @@ Rails.application.routes.draw do
       resources :results, only: [:index]
     end
     namespace :round2 do
-      get '/:match_number', to: 'matches#show', as: :match
+      get '/:match_number', to: 'matches#show'
+      put '/:match_number', to: 'matches#update'
     end
   end
 end

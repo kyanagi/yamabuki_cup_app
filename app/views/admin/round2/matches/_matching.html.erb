@@ -2,11 +2,14 @@
 <tr>
   <td class="has-text-centered">
     <%= button_to '正解',
-                '#',
-                method: :post,
-                class: 'button is-success is-small',
-                form: { style: 'display: inline-block;' }
-                %>
+          admin_round2_path(match_number: matching.match.match_number),
+          params: { matching_id: matching.id, situation: 'pushed', result: 'correct' },
+          method: :put,
+          class: 'button is-success is-small',
+          form: {
+            style: 'display: inline-block;',
+          }
+          %>
   </td>
   <td style="width: 8em">
     <%= matching.player.player_profile.family_name %>

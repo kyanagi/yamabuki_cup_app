@@ -1,6 +1,7 @@
 <div class="container">
   <h1><%= @match.name %></h1>
 
+  <%= turbo_frame_tag 'matchings' do %>
   <div class="table-container">
     <table class="table is-fullwidth is-striped is-hoverable">
       <thead>
@@ -20,4 +21,5 @@
       </tbody>
     </table>
   </div>
+  <% end %>
 </div>
