@@ -74,6 +74,10 @@ group :rbs do
   gem "steep", require: false
 end
 
+group :htmlbeautifier do
+  gem "htmlbeautifier"
+end
+
 gem "active_hash"
 gem "active_type"
 gem "jabara_group"
