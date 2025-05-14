@@ -4,9 +4,10 @@ class ApplicationController < ActionController::Base
 
   before_action :validate_sec_fetch_site
 
-  private
-
   ALLOWED_ORIGINS = [] # TODO
+  SEC_FETCH_SITE_ALLOWED_VALUES = ["same-origin", "same-site"]
+
+  private
 
   def validate_origin
     return if request.get? || request.head?
@@ -16,8 +17,6 @@ class ApplicationController < ActionController::Base
       raise CsrfProtectionError
     end
   end
-
-  SEC_FETCH_SITE_ALLOWED_VALUES = ["same-origin", "same-site"]
 
   def validate_sec_fetch_site
     return if request.get? || request.head?

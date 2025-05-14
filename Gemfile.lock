@@ -1,8 +1,9 @@
 GIT
   remote: https://github.com/kyanagi/rubocop-kyanagi.git
-  revision: 19fb5d3a9a109e9439b0f2da8815a5f4b40e37b3
+  revision: a451323ede56c7b1bd042c01d37a3d7b15035533
   specs:
-    rubocop-kyanagi (0.0.1)
+    rubocop-kyanagi (0.0.2)
+      rubocop (>= 1.72)
       rubocop-factory_bot
       rubocop-performance
       rubocop-rails

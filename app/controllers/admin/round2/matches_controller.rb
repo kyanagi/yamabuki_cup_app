@@ -15,7 +15,7 @@ module Admin
           question_order = (QuestionAllocation.maximum(:order) || 0) + 1
           question_allocation = QuestionAllocation.create!(
             match: @match,
-            question_id: 1, #params[:question_id],
+            question_id: 1, # params[:question_id],
             order: question_order
           )
 
