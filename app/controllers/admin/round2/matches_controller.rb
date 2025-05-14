@@ -4,6 +4,7 @@ module Admin
       def show
         @match = Round::ROUND2.matches.find_by!(match_number: params[:match_number])
         @matchings = @match.matchings.preload(player: :player_profile).order(:seat)
+        @question = Question.first # TODO
       end
 
       def update
