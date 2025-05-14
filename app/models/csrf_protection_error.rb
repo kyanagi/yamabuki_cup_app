@@ -1,0 +1,2 @@
+class CsrfProtectionError < StandardError
+end
