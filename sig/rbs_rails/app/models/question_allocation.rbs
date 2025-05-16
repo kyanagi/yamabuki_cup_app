@@ -229,7 +229,7 @@ class QuestionAllocation < ::ApplicationRecord
   def create_question_result: (untyped) -> ::QuestionResult
   def create_question_result!: (untyped) -> ::QuestionResult
   def reload_question_result: () -> ::QuestionResult?
-  def question: () -> ::Question
+  def question: () -> ::Question?
   def question=: (::Question?) -> ::Question?
   def reload_question: () -> ::Question?
   def build_question: (untyped) -> ::Question

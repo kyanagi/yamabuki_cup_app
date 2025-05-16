@@ -1,0 +1,4 @@
+# Generated from app/models/csrf_protection_error.rb with RBS::Inline
+
+class CsrfProtectionError < StandardError
+end

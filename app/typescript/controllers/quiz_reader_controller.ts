@@ -36,4 +36,28 @@ export default class extends Controller {
     console.log("stopReading");
     this.voiceStatus = "STOP";
   }
+
+  async switchToQuestion() {
+    const questionId = prompt("問題番号を入力してください");
+    if (!questionId) return;
+
+    try {
+      const response = await fetch("/admin/quiz_reader/next_question", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
+        },
+        body: JSON.stringify({ question_id: questionId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("更新に失敗しました");
+      }
+
+      window.location.reload();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "エラーが発生しました");
+    }
+  }
 }

@@ -16,6 +16,9 @@ Rails.application.routes.draw do
 
   namespace :admin do
     get "quiz_reader", to: "quiz_reader#show"
+    namespace :quiz_reader do
+      put "next_question", to: "next_question#update"
+    end
 
     namespace :round1 do
       resources :results, only: [:index]

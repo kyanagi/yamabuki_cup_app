@@ -1,4 +1,8 @@
 FactoryBot.define do
+  factory :question_provider do
+    next_question { association :question }
+  end
+
   factory :player
 
   factory :player_profile do

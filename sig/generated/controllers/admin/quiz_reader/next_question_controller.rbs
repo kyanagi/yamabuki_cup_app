@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/quiz_reader/next_question_controller.rb with RBS::Inline
+
+module Admin
+  module QuizReader
+    class NextQuestionController < ApplicationController
+      def update: () -> untyped
+    end
+  end
+end

@@ -14,16 +14,32 @@
   <div class="columns">
     <div class="column is-7">
       <h2 class="title is-4">Next</h2>
-      <div class="box has-background-success-light">
-        <h2 class="subtitle"><%= @next_question.id %></h2>
-        <p><%= @next_question.text %></p>
-        <p class="mt-4 is-size-4 has-text-weight-bold"><%= @next_question.answer %></p>
-        <p><%= @next_question.another_answer %></p>
-      </div>
-      <div class="box has-background-grey-lighter">
-        <h2 class="subtitle"><%= @next2_question.id %></h2>
-        <p><%= @next2_question.text %></p>
-        <p class="mt-4"><%= @next2_question.answer %></p>
+      <% if @next_question %>
+        <div class="box has-background-success-light">
+          <h2 class="subtitle"><%= @next_question.id %></h2>
+          <p><%= @next_question.text %></p>
+          <p class="mt-4 is-size-4 has-text-weight-bold"><%= @next_question.answer %></p>
+          <p><%= @next_question.another_answer %></p>
+        </div>
+      <% end %>
+      <% if @next2_question %>
+        <div class="box has-background-grey-lighter">
+          <h2 class="subtitle"><%= @next2_question.id %></h2>
+          <p><%= @next2_question.text %></p>
+          <p class="mt-4"><%= @next2_question.answer %></p>
+        </div>
+      <% end %>
+      <div class="dropdown is-hoverable">
+        <div class="dropdown-trigger">
+          <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+            <span>...</span>
+          </button>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu" role="menu">
+          <div class="dropdown-content">
+            <button class="dropdown-item" data-action="click->quiz-reader#switchToQuestion">問題選択</button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="column is-5">

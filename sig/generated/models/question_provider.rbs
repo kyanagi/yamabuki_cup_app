@@ -1,0 +1,9 @@
+# Generated from app/models/question_provider.rb with RBS::Inline
+
+class QuestionProvider < ApplicationRecord
+  # @rbs return: Question
+  def self.next_question: () -> Question
+
+  # @rbs return: Array[Question]
+  def self.next_questions: () -> Array[Question]
+end

@@ -26,3 +26,17 @@
   m = Match.find_or_initialize_by(id: match_attr[:id])
   m.update!(match_attr)
 end
+
+if !Question.exists?
+  10.times do
+    address = Gimei.address
+    Question.create!(
+      text: address.kanji,
+      answer: address.city.kanji,
+      another_answer: address.town.kanji,
+      note: address.prefecture.kanji
+    )
+  end
+end
+
+QuestionProvider.first || QuestionProvider.create!(next_question: Question.order(:id).first)

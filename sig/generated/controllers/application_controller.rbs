@@ -1,4 +1,13 @@
 # Generated from app/controllers/application_controller.rb with RBS::Inline
 
 class ApplicationController < ActionController::Base
+  ALLOWED_ORIGINS: ::Array[untyped]
+
+  SEC_FETCH_SITE_ALLOWED_VALUES: ::Array[untyped]
+
+  private
+
+  def validate_origin: () -> untyped
+
+  def validate_sec_fetch_site: () -> untyped
 end
