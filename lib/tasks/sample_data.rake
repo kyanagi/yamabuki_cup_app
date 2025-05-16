@@ -55,4 +55,19 @@ namespace :sample_data do
       end
     end
   end
+
+  desc "問題のサンプルデータを作成"
+  task create_questions: :environment do
+    Question.destroy_all
+
+    50.times do
+      address = Gimei.address
+      Question.create!(
+        text: address.kanji,
+        answer: address.city.kanji,
+        another_answer: address.town.kanji,
+        note: address.prefecture.kanji,
+      )
+    end
+  end
 end
