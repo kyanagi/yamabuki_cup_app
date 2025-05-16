@@ -8,4 +8,5 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
- @import "https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css";
+@import "https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css";
+@import "https://cdn.jsdelivr.net/npm/bulma-switch-control@1.2.2/css/main.min.css";

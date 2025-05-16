@@ -66,7 +66,7 @@ namespace :sample_data do
         text: address.kanji,
         answer: address.city.kanji,
         another_answer: address.town.kanji,
-        note: address.prefecture.kanji,
+        note: address.prefecture.kanji
       )
     end
   end
