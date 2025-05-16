@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { Turbo } from "@hotwired/turbo-rails";
 
 type VoiceStatus = "STOP" | "PLAYING";
 
@@ -55,7 +56,7 @@ export default class extends Controller {
         throw new Error("更新に失敗しました");
       }
 
-      window.location.reload();
+      Turbo.visit("/admin/quiz_reader");
     } catch (error) {
       alert(error instanceof Error ? error.message : "エラーが発生しました");
     }
