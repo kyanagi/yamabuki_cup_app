@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   get "/scoreboard", to: "scoreboard#show"
 
   namespace :admin do
+    get "quiz_reader", to: "quiz_reader#show"
+
     namespace :round1 do
       resources :results, only: [:index]
     end
