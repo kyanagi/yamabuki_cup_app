@@ -90,6 +90,10 @@ export default class extends Controller {
     console.log("QuizReaderController connected");
   }
 
+  disconnect() {
+    this.readingContext.stop();
+  }
+
   updateOnAirLabel() {
     if (this.isOnAirTarget.checked) {
       this.onAirLabelTarget.textContent = "問い読みON";
