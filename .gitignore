@@ -41,3 +41,4 @@ node_modules
 *.local
 
 /.gem_rbs_collection/
+/public/sample
