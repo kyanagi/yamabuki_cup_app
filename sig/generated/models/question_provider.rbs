@@ -5,5 +5,11 @@ class QuestionProvider < ApplicationRecord
   def self.next_question: () -> Question
 
   # @rbs return: Array[Question]
+  def next_questions: () -> Array[Question]
+
+  # @rbs return: Array[Question]
   def self.next_questions: () -> Array[Question]
+
+  # @rbs return: void
+  def proceed_to_next_question!: () -> void
 end

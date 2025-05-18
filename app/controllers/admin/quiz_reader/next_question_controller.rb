@@ -2,9 +2,15 @@ module Admin
   module QuizReader
     class NextQuestionController < ApplicationController
       def update
-        provider = QuestionProvider.first
-        provider.update(next_question: Question.find(params[:question_id]))
-        render json: { next_question_id: provider.next_question_id }
+        provider = QuestionProvider.first!
+        case params[:question_id]
+        when "next"
+          provider.proceed_to_next_question!
+        else
+          provider.update!(next_question: Question.find(params[:question_id]))
+        end
+
+        @next_question, @next2_question = provider.next_questions
       end
     end
   end
