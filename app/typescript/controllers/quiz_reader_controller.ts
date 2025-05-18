@@ -109,6 +109,31 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
   };
 }
 
+async function proceedToQuestion(questionId: string) {
+  try {
+    const response = await fetch("/admin/quiz_reader/next_question", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
+        Accept: "text/vnd.turbo-stream.html",
+      },
+      body: JSON.stringify({ question_id: questionId }),
+    });
+
+    if (!response.ok) {
+      throw new Error("エラーが発生しました。");
+    }
+
+    const html = await response.text();
+    Turbo.renderStreamMessage(html);
+  } catch (e) {
+    if (e instanceof Error) {
+      alert(`エラーが発生しました: ${e.message}`);
+    }
+  }
+}
+
 export default class extends Controller {
   static targets = ["isOnAir", "onAirLabel"];
 
@@ -158,53 +183,12 @@ export default class extends Controller {
     const questionId = prompt("問題番号を入力してください");
     if (!questionId) return;
 
-    try {
-      const response = await fetch("/admin/quiz_reader/next_question", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
-        },
-        body: JSON.stringify({ question_id: questionId }),
-      });
-
-      if (!response.ok) {
-        throw new Error("更新に失敗しました");
-      }
-
-      const html = await response.text();
-      Turbo.renderStreamMessage(html);
-    } catch (e) {
-      if (e instanceof Error) {
-        alert(`エラーが発生しました: ${e instanceof Error ? e.message : e}`);
-      }
-    }
+    proceedToQuestion(questionId);
   }
 
   async proceedToNextQuestion(event: KeyboardEvent) {
     if (event.repeat) return;
 
-    try {
-      const response = await fetch("/admin/quiz_reader/next_question", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
-          Accept: "text/vnd.turbo-stream.html",
-        },
-        body: JSON.stringify({ question_id: "next" }),
-      });
-
-      if (!response.ok) {
-        throw new Error("エラーが発生しました。");
-      }
-
-      const html = await response.text();
-      Turbo.renderStreamMessage(html);
-    } catch (e) {
-      if (e instanceof Error) {
-        alert(`エラーが発生しました: ${e.message}`);
-      }
-    }
+    proceedToQuestion("next");
   }
 }
