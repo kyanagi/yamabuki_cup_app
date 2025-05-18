@@ -1,0 +1,17 @@
+<%= turbo_stream.update "next_questions" do %>
+  <% if @next_question %>
+    <div class="box has-background-success-light">
+      <h2 class="subtitle"><%= @next_question.id %></h2>
+      <p><%= @next_question.text %></p>
+      <p class="mt-4 is-size-4 has-text-weight-bold"><%= @next_question.answer %></p>
+      <p><%= @next_question.another_answer %></p>
+    </div>
+  <% end %>
+  <% if @next2_question %>
+    <div class="box has-background-grey-lighter">
+      <h2 class="subtitle"><%= @next2_question.id %></h2>
+      <p><%= @next2_question.text %></p>
+      <p class="mt-4"><%= @next2_question.answer %></p>
+    </div>
+  <% end %>
+<% end %>

@@ -172,10 +172,38 @@ export default class extends Controller {
         throw new Error("更新に失敗しました");
       }
 
-      Turbo.visit("/admin/quiz_reader");
+      const html = await response.text();
+      Turbo.renderStreamMessage(html);
     } catch (e) {
       if (e instanceof Error) {
         alert(`エラーが発生しました: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+  }
+
+  async proceedToNextQuestion(event: KeyboardEvent) {
+    if (event.repeat) return;
+
+    try {
+      const response = await fetch("/admin/quiz_reader/next_question", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
+          Accept: "text/vnd.turbo-stream.html",
+        },
+        body: JSON.stringify({ question_id: "next" }),
+      });
+
+      if (!response.ok) {
+        throw new Error("エラーが発生しました。");
+      }
+
+      const html = await response.text();
+      Turbo.renderStreamMessage(html);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(`エラーが発生しました: ${e.message}`);
       }
     }
   }

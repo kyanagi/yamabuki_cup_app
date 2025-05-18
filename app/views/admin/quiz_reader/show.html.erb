@@ -2,6 +2,7 @@
   data-action="
   keydown.space@document->quiz-reader#startReading:prevent
   keyup.space@document->quiz-reader#pauseReading:prevent
+  keydown.right@document->quiz-reader#proceedToNextQuestion:prevent
   ">
   <h1 class="title">Quiz Reader</h1>
   <div class="field">
@@ -14,21 +15,23 @@
   <div class="columns">
     <div class="column is-7">
       <h2 class="title is-4">Next</h2>
-      <% if @next_question %>
-        <div class="box has-background-success-light">
-          <h2 class="subtitle"><%= @next_question.id %></h2>
-          <p><%= @next_question.text %></p>
-          <p class="mt-4 is-size-4 has-text-weight-bold"><%= @next_question.answer %></p>
-          <p><%= @next_question.another_answer %></p>
-        </div>
-      <% end %>
-      <% if @next2_question %>
-        <div class="box has-background-grey-lighter">
-          <h2 class="subtitle"><%= @next2_question.id %></h2>
-          <p><%= @next2_question.text %></p>
-          <p class="mt-4"><%= @next2_question.answer %></p>
-        </div>
-      <% end %>
+      <div id="next_questions">
+        <% if @next_question %>
+          <div class="box has-background-success-light">
+            <h2 class="subtitle"><%= @next_question.id %></h2>
+            <p><%= @next_question.text %></p>
+            <p class="mt-4 is-size-4 has-text-weight-bold"><%= @next_question.answer %></p>
+            <p><%= @next_question.another_answer %></p>
+          </div>
+        <% end %>
+        <% if @next2_question %>
+          <div class="box has-background-grey-lighter">
+            <h2 class="subtitle"><%= @next2_question.id %></h2>
+            <p><%= @next2_question.text %></p>
+            <p class="mt-4"><%= @next2_question.answer %></p>
+          </div>
+        <% end %>
+      </div>
       <div class="dropdown is-hoverable">
         <div class="dropdown-trigger">
           <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
