@@ -18,20 +18,33 @@ async function loadAudio(url: string): Promise<AudioBuffer> {
 type QuestionReadingContext = {
   start(): void;
   stop(): void;
+  get totalDuration(): number;
+  get readDuration(): number;
 };
 
 function createQuestionReadingContext(soundId: string): QuestionReadingContext {
   let currentSource: AudioBufferSourceNode | undefined;
+  let startTime: number | undefined;
+  let stopTime: number | undefined;
+  let questionDuration: number | undefined;
   const abortController = new AbortController();
 
   function playAudioBuffer(audioBuffer: AudioBuffer): Promise<void> {
     return new Promise((resolve, reject) => {
-      abortController.signal.addEventListener("abort", reject);
+      const abortHandler = () => {
+        reject();
+      };
+      abortController.signal.addEventListener("abort", abortHandler);
       currentSource = audioContext.createBufferSource();
       currentSource.buffer = audioBuffer;
       currentSource.connect(audioContext.destination);
-      // note: onended は stop() が呼ばれたときも呼ばれる
+      // note: onended は stop() が呼ばれたときも呼ばれるが、
+      // stop() の呼び出し元の処理が終わってからでないと onended は呼ばれない。
       currentSource.onended = () => {
+        abortController.signal.removeEventListener("abort", abortHandler);
+        if (stopTime === undefined) {
+          stopTime = audioContext.currentTime;
+        }
         resolve();
       };
       currentSource.start();
@@ -53,13 +66,20 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
         audioBuffer = await loadAudio(audioUrl);
         audioCache.set(soundId, audioBuffer);
       }
+      questionDuration = audioBuffer.duration;
 
       try {
         await playAudioBuffer(mondaiAudioBuffer);
-        await new Promise((resolve, reject) => {
-          abortController.signal.addEventListener("abort", reject);
-          setTimeout(resolve, INTERVAL_AFTER_MONDAI_MS);
+        await new Promise<void>((resolve, reject) => {
+          const abortHandler = () => reject();
+          abortController.signal.addEventListener("abort", abortHandler);
+          setTimeout(() => {
+            abortController.signal.removeEventListener("abort", abortHandler);
+            resolve();
+          }, INTERVAL_AFTER_MONDAI_MS);
         });
+        startTime = audioContext.currentTime;
+        stopTime = undefined;
         await playAudioBuffer(audioBuffer);
       } catch (e) {
         if (e instanceof Error) {
@@ -69,10 +89,22 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
     },
     stop() {
       if (currentSource) {
+        if (stopTime === undefined) {
+          stopTime = audioContext.currentTime;
+        }
         currentSource.stop();
+        currentSource.disconnect();
         currentSource = undefined;
       }
       abortController.abort();
+    },
+    get totalDuration() {
+      return questionDuration ?? 0;
+    },
+    get readDuration() {
+      if (!startTime || !stopTime) return 0;
+      const d = stopTime - startTime;
+      return d > this.totalDuration ? this.totalDuration : d;
     },
   };
 }
@@ -119,6 +151,7 @@ export default class extends Controller {
     this.voiceStatus = "PAUSED";
 
     this.readingContext.stop();
+    console.log(`${this.readingContext.readDuration} / ${this.readingContext.totalDuration}`);
   }
 
   async switchToQuestion() {
@@ -140,8 +173,10 @@ export default class extends Controller {
       }
 
       Turbo.visit("/admin/quiz_reader");
-    } catch (error) {
-      alert(error instanceof Error ? error.message : "エラーが発生しました");
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(`エラーが発生しました: ${e instanceof Error ? e.message : e}`);
+      }
     }
   }
 }
