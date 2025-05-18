@@ -17,19 +17,10 @@
       <h2 class="title is-4">Next</h2>
       <div id="next_questions">
         <% if @next_question %>
-          <div class="box has-background-success-light">
-            <h2 class="subtitle"><%= @next_question.id %></h2>
-            <p><%= @next_question.text %></p>
-            <p class="mt-4 is-size-4 has-text-weight-bold"><%= @next_question.answer %></p>
-            <p><%= @next_question.another_answer %></p>
-          </div>
+          <%= render partial: "admin/quiz_reader/next_question/next_question", locals: { question: @next_question } %>
         <% end %>
         <% if @next2_question %>
-          <div class="box has-background-grey-lighter">
-            <h2 class="subtitle"><%= @next2_question.id %></h2>
-            <p><%= @next2_question.text %></p>
-            <p class="mt-4"><%= @next2_question.answer %></p>
-          </div>
+          <%= render partial: "admin/quiz_reader/next_question/next2_question", locals: { question: @next2_question } %>
         <% end %>
       </div>
       <div class="dropdown is-hoverable">
