@@ -149,30 +149,32 @@ export default class extends Controller {
 
   readingContext: QuestionReadingContext = createQuestionReadingContext("dummy");
 
+  private beforeStreamRenderHandler = (e: Event) => {
+    const customEvent = e as CustomEvent;
+    const fallbackToDefaultActions = customEvent.detail.render;
+    customEvent.detail.render = (streamElement: HTMLElement) => {
+      if (streamElement.getAttribute("action") === "update-sound-id") {
+        const soundId = streamElement.getAttribute("sound-id");
+        console.log(soundId);
+        if (!soundId) {
+          throw new Error("sound-id が指定されていません。");
+        }
+        this.readingContext = createQuestionReadingContext(soundId);
+      } else {
+        fallbackToDefaultActions(streamElement);
+      }
+    };
+  };
+
   connect() {
     console.log("QuizReaderController connected");
-    document.addEventListener("turbo:before-stream-render", (e: Event) => {
-      const customEvent = e as CustomEvent;
-      const fallbackToDefaultActions = customEvent.detail.render;
-      customEvent.detail.render = (streamElement: HTMLElement) => {
-        if (streamElement.getAttribute("action") === "update-sound-id") {
-          const soundId = streamElement.getAttribute("sound-id");
-          console.log(soundId);
-          if (!soundId) {
-            throw new Error("sound-id が指定されていません。");
-          }
-          this.readingContext = createQuestionReadingContext(soundId);
-        } else {
-          fallbackToDefaultActions(streamElement);
-        }
-      };
-    });
-
+    document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     this.readingContext = createQuestionReadingContext(this.soundIdValue);
   }
 
   disconnect() {
     this.readingContext.stop();
+    document.removeEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
   }
 
   updateOnAirLabel() {
