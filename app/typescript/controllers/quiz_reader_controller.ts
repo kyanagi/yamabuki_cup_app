@@ -217,8 +217,9 @@ export default class extends Controller {
 
   async proceedToNextQuestion(event: KeyboardEvent) {
     if (event.repeat) return;
-
-    this.proceedToQuestion("next");
+    if (this.readingContext.voiceStatus === "PAUSED") {
+      this.proceedToQuestion("next");
+    }
   }
 
   async proceedToQuestion(questionId: string) {
