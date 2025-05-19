@@ -9,7 +9,8 @@ const audioContext = new AudioContext();
 const audioCache = new Map<string, AudioBuffer>();
 
 async function loadAudio(url: string): Promise<AudioBuffer> {
-  //await new Promise((resolve) => setTimeout(resolve, 1000)); // DEBUG
+  // await new Promise((resolve) => setTimeout(resolve, 1000)); // DEBUG
+  console.log(`loadAudio: ${url}`);
   const response = await fetch(url);
   const arrayBuffer = await response.arrayBuffer();
   return await audioContext.decodeAudioData(arrayBuffer);
@@ -21,9 +22,11 @@ type QuestionReadingContext = {
   stop(): void;
   get totalDuration(): number;
   get readDuration(): number;
+  get voiceStatus(): VoiceStatus;
 };
 
 function createQuestionReadingContext(soundId: string): QuestionReadingContext {
+  let voiceStatus: VoiceStatus = "STANDBY";
   let currentSource: AudioBufferSourceNode | undefined;
   let startTime: number | undefined;
   let stopTime: number | undefined;
@@ -73,12 +76,13 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
       };
 
       const mondaiAudioBufferPromise = createAudioBufferPromise("/sample/mondai.wav", "mondai");
-      const questionAudioBufferPromise = createAudioBufferPromise("/sample/question.wav", soundId);
+      const questionAudioBufferPromise = createAudioBufferPromise(`/sample/question${soundId}.wav`, soundId);
 
       audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
     },
 
     async start() {
+      voiceStatus = "PLAYING";
       this.load();
       if (!audioBuffersPromise) return;
       const [mondaiAudioBuffer, questionAudioBuffer] = await audioBuffersPromise;
@@ -104,7 +108,9 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
         }
       }
     },
+
     stop() {
+      voiceStatus = "PAUSED";
       if (currentSource) {
         if (stopTime === undefined) {
           stopTime = audioContext.currentTime;
@@ -115,6 +121,7 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
       }
       abortController.abort();
     },
+
     get totalDuration() {
       return questionDuration ?? 0;
     },
@@ -123,45 +130,45 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
       const d = stopTime - startTime;
       return d > this.totalDuration ? this.totalDuration : d;
     },
+    get voiceStatus() {
+      return voiceStatus;
+    },
   };
 }
 
-async function proceedToQuestion(questionId: string) {
-  try {
-    const response = await fetch("/admin/quiz_reader/next_question", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
-        Accept: "text/vnd.turbo-stream.html",
-      },
-      body: JSON.stringify({ question_id: questionId }),
-    });
-
-    if (!response.ok) {
-      throw new Error("エラーが発生しました。");
-    }
-
-    const html = await response.text();
-    Turbo.renderStreamMessage(html);
-  } catch (e) {
-    if (e instanceof Error) {
-      alert(`エラーが発生しました: ${e.message}`);
-    }
-  }
-}
-
 export default class extends Controller {
-  static targets = ["isOnAir", "onAirLabel"];
+  static targets = ["isOnAir", "onAirLabel", "duration"];
+  static values = {
+    soundId: String,
+  };
 
   declare isOnAirTarget: HTMLInputElement;
   declare onAirLabelTarget: HTMLElement;
+  declare durationTarget: HTMLElement;
+  declare soundIdValue: string;
 
-  voiceStatus: VoiceStatus = "STANDBY";
-  readingContext: QuestionReadingContext = createQuestionReadingContext("soundid:hogehoge");
+  readingContext: QuestionReadingContext = createQuestionReadingContext("dummy");
 
   connect() {
     console.log("QuizReaderController connected");
+    document.addEventListener("turbo:before-stream-render", (e: Event) => {
+      const customEvent = e as CustomEvent;
+      const fallbackToDefaultActions = customEvent.detail.render;
+      customEvent.detail.render = (streamElement: HTMLElement) => {
+        if (streamElement.getAttribute("action") === "update-sound-id") {
+          const soundId = streamElement.getAttribute("sound-id");
+          console.log(soundId);
+          if (!soundId) {
+            throw new Error("sound-id が指定されていません。");
+          }
+          this.readingContext = createQuestionReadingContext(soundId);
+        } else {
+          fallbackToDefaultActions(streamElement);
+        }
+      };
+    });
+
+    this.readingContext = createQuestionReadingContext(this.soundIdValue);
   }
 
   disconnect() {
@@ -182,35 +189,62 @@ export default class extends Controller {
 
   startReading() {
     if (!this.isOnAirTarget.checked) return;
-    if (this.voiceStatus !== "STANDBY") return;
+    if (this.readingContext.voiceStatus !== "STANDBY") return;
 
     console.log("startReading");
-    this.voiceStatus = "PLAYING";
     this.readingContext.load();
     this.readingContext.start();
     console.log("startReading done");
   }
 
   pauseReading() {
-    if (this.voiceStatus !== "PLAYING") return;
+    if (this.readingContext.voiceStatus !== "PLAYING") return;
 
     console.log("pauseReading");
-    this.voiceStatus = "PAUSED";
 
     this.readingContext.stop();
-    console.log(`${this.readingContext.readDuration} / ${this.readingContext.totalDuration}`);
+    this.durationTarget.textContent = this.durationText;
   }
 
   async switchToQuestion() {
     const questionId = prompt("問題番号を入力してください");
     if (!questionId) return;
 
-    proceedToQuestion(questionId);
+    this.proceedToQuestion(questionId);
   }
 
   async proceedToNextQuestion(event: KeyboardEvent) {
     if (event.repeat) return;
 
-    proceedToQuestion("next");
+    this.proceedToQuestion("next");
+  }
+
+  async proceedToQuestion(questionId: string) {
+    try {
+      const response = await fetch("/admin/quiz_reader/next_question", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
+          Accept: "text/vnd.turbo-stream.html",
+        },
+        body: JSON.stringify({ question_id: questionId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("エラーが発生しました。");
+      }
+
+      const html = await response.text();
+      Turbo.renderStreamMessage(html);
+    } catch (e) {
+      if (e instanceof Error) {
+        alert(`エラーが発生しました: ${e.message}`);
+      }
+    }
+  }
+
+  private get durationText(): string {
+    return `${this.readingContext.readDuration.toFixed(2)} / ${this.readingContext.totalDuration.toFixed(2)}`;
   }
 }

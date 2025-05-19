@@ -1,8 +1,10 @@
 <div class="container" data-controller="quiz-reader"
+  data-quiz-reader-sound-id-value="<%= @next_question.id % 2 %>"
   data-action="
   keydown.space@document->quiz-reader#startReading:prevent
   keyup.space@document->quiz-reader#pauseReading:prevent
   keydown.right@document->quiz-reader#proceedToNextQuestion:prevent
+  keydown.l@document->quiz-reader#load:prevent
   ">
   <h1 class="title">Quiz Reader</h1>
   <div class="field">
