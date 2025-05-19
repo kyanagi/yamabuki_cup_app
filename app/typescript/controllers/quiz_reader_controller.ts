@@ -57,11 +57,23 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
     async load() {
       if (audioBuffersPromise) return;
 
-      const mondaiAudioUrl = "/sample/mondai.wav";
-      const mondaiAudioBufferPromise = loadAudio(mondaiAudioUrl);
+      const createAudioBufferPromise = (url: string, cacheKey: string) => {
+        return new Promise<AudioBuffer>((resolve) => {
+          const buf = audioCache.get(cacheKey);
+          if (buf) {
+            console.log(`Use cached audio: ${cacheKey}`);
+            resolve(buf);
+          } else {
+            loadAudio(url).then((buffer) => {
+              audioCache.set(cacheKey, buffer);
+              resolve(buffer);
+            });
+          }
+        });
+      };
 
-      const questionAudioUrl = "/sample/question.wav";
-      const questionAudioBufferPromise = loadAudio(questionAudioUrl);
+      const mondaiAudioBufferPromise = createAudioBufferPromise("/sample/mondai.wav", "mondai");
+      const questionAudioBufferPromise = createAudioBufferPromise("/sample/question.wav", soundId);
 
       audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
     },
@@ -146,7 +158,7 @@ export default class extends Controller {
   declare onAirLabelTarget: HTMLElement;
 
   voiceStatus: VoiceStatus = "STANDBY";
-  readingContext: QuestionReadingContext = createQuestionReadingContext("");
+  readingContext: QuestionReadingContext = createQuestionReadingContext("soundid:hogehoge");
 
   connect() {
     console.log("QuizReaderController connected");
