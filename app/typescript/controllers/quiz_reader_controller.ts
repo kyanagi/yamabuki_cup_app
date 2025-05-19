@@ -16,7 +16,8 @@ async function loadAudio(url: string): Promise<AudioBuffer> {
 }
 
 type QuestionReadingContext = {
-  start(): void;
+  load(): Promise<void>;
+  start(): Promise<void>;
   stop(): void;
   get totalDuration(): number;
   get readDuration(): number;
@@ -27,6 +28,7 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
   let startTime: number | undefined;
   let stopTime: number | undefined;
   let questionDuration: number | undefined;
+  let audioBuffersPromise: Promise<[AudioBuffer, AudioBuffer]> | undefined;
   const abortController = new AbortController();
 
   function playAudioBuffer(audioBuffer: AudioBuffer): Promise<void> {
@@ -52,21 +54,24 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
   }
 
   return {
-    async start() {
-      let mondaiAudioBuffer = audioCache.get("mondai");
-      if (!mondaiAudioBuffer) {
-        const audioUrl = "/sample/mondai.wav";
-        mondaiAudioBuffer = await loadAudio(audioUrl);
-        audioCache.set("mondai", mondaiAudioBuffer);
-      }
+    async load() {
+      if (audioBuffersPromise) return;
 
-      let audioBuffer = audioCache.get(soundId);
-      if (!audioBuffer) {
-        const audioUrl = "/sample/question.wav"; // TODO
-        audioBuffer = await loadAudio(audioUrl);
-        audioCache.set(soundId, audioBuffer);
-      }
-      questionDuration = audioBuffer.duration;
+      const mondaiAudioUrl = "/sample/mondai.wav";
+      const mondaiAudioBufferPromise = loadAudio(mondaiAudioUrl);
+
+      const questionAudioUrl = "/sample/question.wav";
+      const questionAudioBufferPromise = loadAudio(questionAudioUrl);
+
+      audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
+    },
+
+    async start() {
+      this.load();
+      if (!audioBuffersPromise) return;
+      const [mondaiAudioBuffer, questionAudioBuffer] = await audioBuffersPromise;
+
+      questionDuration = questionAudioBuffer.duration;
 
       try {
         await playAudioBuffer(mondaiAudioBuffer);
@@ -80,7 +85,7 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
         });
         startTime = audioContext.currentTime;
         stopTime = undefined;
-        await playAudioBuffer(audioBuffer);
+        await playAudioBuffer(questionAudioBuffer);
       } catch (e) {
         if (e instanceof Error) {
           console.error(e);
@@ -159,12 +164,17 @@ export default class extends Controller {
     }
   }
 
+  load() {
+    this.readingContext.load();
+  }
+
   startReading() {
     if (!this.isOnAirTarget.checked) return;
     if (this.voiceStatus !== "STANDBY") return;
 
     console.log("startReading");
     this.voiceStatus = "PLAYING";
+    this.readingContext.load();
     this.readingContext.start();
     console.log("startReading done");
   }
