@@ -160,6 +160,7 @@ export default class extends Controller {
           throw new Error("sound-id が指定されていません。");
         }
         this.readingContext = createQuestionReadingContext(soundId);
+        this.readingContext.load();
       } else {
         fallbackToDefaultActions(streamElement);
       }
@@ -170,6 +171,7 @@ export default class extends Controller {
     console.log("QuizReaderController connected");
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     this.readingContext = createQuestionReadingContext(this.soundIdValue);
+    this.readingContext.load();
   }
 
   disconnect() {
@@ -185,18 +187,12 @@ export default class extends Controller {
     }
   }
 
-  load() {
-    this.readingContext.load();
-  }
-
   startReading() {
     if (!this.isOnAirTarget.checked) return;
     if (this.readingContext.voiceStatus !== "STANDBY") return;
 
     console.log("startReading");
-    this.readingContext.load();
     this.readingContext.start();
-    console.log("startReading done");
   }
 
   pauseReading() {
