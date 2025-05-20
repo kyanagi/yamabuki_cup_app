@@ -3,15 +3,27 @@ import { Turbo } from "@hotwired/turbo-rails";
 
 type VoiceStatus = "STANDBY" | "PLAYING" | "PAUSED";
 
+const CACHE_NAME = "yamabuki-cup-quiz-reader";
+
 // 「問題」と問題文の間の空白時間の長さ（ms）
 const INTERVAL_AFTER_MONDAI_MS = 300;
 const audioContext = new AudioContext();
-const audioCache = new Map<string, AudioBuffer>();
 
 async function loadAudio(url: string): Promise<AudioBuffer> {
   // await new Promise((resolve) => setTimeout(resolve, 1000)); // DEBUG
-  console.log(`loadAudio: ${url}`);
-  const response = await fetch(url);
+
+  const cache = await caches.open(CACHE_NAME);
+  let response = await cache.match(url);
+
+  if (response) {
+    console.log(`Use cached audio: ${url}`);
+  }
+  else {
+    response = await fetch(url);
+    console.log(`fetch: ${url}`);
+    await cache.put(url, response.clone());
+  }
+
   const arrayBuffer = await response.arrayBuffer();
   return await audioContext.decodeAudioData(arrayBuffer);
 }
@@ -60,27 +72,19 @@ function createQuestionReadingContext(soundId: string, onAudioBuffersLoaded?: ()
     async load() {
       if (audioBuffersPromise) return;
 
-      const createAudioBufferPromise = (url: string, cacheKey: string) => {
+      const createAudioBufferPromise = (url: string) => {
         return new Promise<AudioBuffer>((resolve, reject) => {
           const abortHandler = () => reject();
           abortController.signal.addEventListener("abort", abortHandler, { once: true });
-          const buf = audioCache.get(cacheKey);
-          if (buf) {
-            console.log(`Use cached audio: ${cacheKey}`);
+          loadAudio(url).then((buffer) => {
             abortController.signal.removeEventListener("abort", abortHandler);
-            resolve(buf);
-          } else {
-            loadAudio(url).then((buffer) => {
-              audioCache.set(cacheKey, buffer);
-              abortController.signal.removeEventListener("abort", abortHandler);
-              resolve(buffer);
-            });
-          }
+            resolve(buffer);
+          });
         });
       };
 
-      const mondaiAudioBufferPromise = createAudioBufferPromise("/sample/mondai.wav", "mondai");
-      const questionAudioBufferPromise = createAudioBufferPromise(`/sample/question${soundId}.wav`, soundId);
+      const mondaiAudioBufferPromise = createAudioBufferPromise("/sample/mondai.wav");
+      const questionAudioBufferPromise = createAudioBufferPromise(`/sample/question${soundId}.wav`);
 
       try {
         audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
@@ -209,13 +213,16 @@ export default class extends Controller {
 
   connect() {
     console.log("QuizReaderController connected");
+    caches.delete(CACHE_NAME);
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     this.createQuestionReadingContextAndLoad(this.soundIdValue);
   }
 
   disconnect() {
+    console.log("QuizReaderController disconnected");
     this.readingContext.stop();
     document.removeEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
+    caches.delete(CACHE_NAME);
   }
 
   updateOnAirLabel() {
