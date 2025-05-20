@@ -4,5 +4,11 @@
   <p><%= question.text %></p>
   <p class="mt-4 is-size-4 has-text-weight-bold"><%= question.answer %></p>
   <p><%= question.another_answer %></p>
-  <p class="has-text-right"><span class="icon"><i class="fa-solid fa-microphone"></i></span><span data-quiz-reader-target="duration"></span></p>
+  <p class="has-text-right">
+    <span class="icon" data-quiz-reader-target="iconOnNextQuestion batteryEmptyIcon"><i class="fa-solid fa-battery-empty"></i></span>
+    <span class="icon is-hidden" data-quiz-reader-target="iconOnNextQuestion loadingIcon"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+    <span class="icon is-hidden" data-quiz-reader-target="iconOnNextQuestion batteryFullIcon"><i class="fa-solid fa-battery-full"></i></span>
+    <span class="icon is-hidden" data-quiz-reader-target="iconOnNextQuestion pauseIcon"><i class="fa-solid fa-pause"></i></span>
+    <span data-quiz-reader-target="duration"></span>
+  </p>
 </div>

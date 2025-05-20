@@ -79,15 +79,17 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
       const questionAudioBufferPromise = createAudioBufferPromise(`/sample/question${soundId}.wav`, soundId);
 
       audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
+      questionDuration = (await audioBuffersPromise)[1].duration;
     },
 
     async start() {
       voiceStatus = "PLAYING";
       this.load();
-      if (!audioBuffersPromise) return;
-      const [mondaiAudioBuffer, questionAudioBuffer] = await audioBuffersPromise;
 
-      questionDuration = questionAudioBuffer.duration;
+      // load() を呼んでいるので audioBuffersPromise が undefined になることはないが、型ガードのため必要
+      if (!audioBuffersPromise) return;
+
+      const [mondaiAudioBuffer, questionAudioBuffer] = await audioBuffersPromise;
 
       try {
         await playAudioBuffer(mondaiAudioBuffer);
@@ -137,7 +139,16 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
 }
 
 export default class extends Controller {
-  static targets = ["isOnAir", "onAirLabel", "duration"];
+  static targets = [
+    "isOnAir",
+    "onAirLabel",
+    "duration",
+    "iconOnNextQuestion",
+    "loadingIcon",
+    "batteryEmptyIcon",
+    "batteryFullIcon",
+    "pauseIcon",
+  ];
   static values = {
     soundId: String,
   };
@@ -145,6 +156,11 @@ export default class extends Controller {
   declare isOnAirTarget: HTMLInputElement;
   declare onAirLabelTarget: HTMLElement;
   declare durationTarget: HTMLElement;
+  declare iconOnNextQuestionTargets: HTMLElement[];
+  declare loadingIconTarget: HTMLElement;
+  declare batteryEmptyIconTarget: HTMLElement;
+  declare batteryFullIconTarget: HTMLElement;
+  declare pauseIconTarget: HTMLElement;
   declare soundIdValue: string;
 
   readingContext: QuestionReadingContext = createQuestionReadingContext("dummy");
@@ -160,7 +176,7 @@ export default class extends Controller {
           throw new Error("sound-id が指定されていません。");
         }
         this.readingContext = createQuestionReadingContext(soundId);
-        this.readingContext.load();
+        this.load();
       } else {
         fallbackToDefaultActions(streamElement);
       }
@@ -171,7 +187,7 @@ export default class extends Controller {
     console.log("QuizReaderController connected");
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     this.readingContext = createQuestionReadingContext(this.soundIdValue);
-    this.readingContext.load();
+    this.load();
   }
 
   disconnect() {
@@ -187,6 +203,22 @@ export default class extends Controller {
     }
   }
 
+  private setShownIcon(selectedIcon: HTMLElement) {
+    for (const icon of this.iconOnNextQuestionTargets) {
+      icon.classList.add("is-hidden");
+    }
+    selectedIcon.classList.remove("is-hidden");
+  }
+
+  private load() {
+    this.setShownIcon(this.loadingIconTarget);
+
+    this.readingContext.load().then(() => {
+      console.log(`load done: duration=${this.readingContext.totalDuration}`);
+      this.setShownIcon(this.batteryFullIconTarget);
+    });
+  }
+
   startReading() {
     if (!this.isOnAirTarget.checked) return;
     if (this.readingContext.voiceStatus !== "STANDBY") return;
@@ -199,7 +231,7 @@ export default class extends Controller {
     if (this.readingContext.voiceStatus !== "PLAYING") return;
 
     console.log("pauseReading");
-
+    this.setShownIcon(this.pauseIconTarget);
     this.readingContext.stop();
     this.durationTarget.textContent = this.durationText;
   }
