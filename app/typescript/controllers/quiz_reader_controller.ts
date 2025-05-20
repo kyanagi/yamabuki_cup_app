@@ -322,7 +322,7 @@ export default class extends Controller {
     }
   }
 
-  async proceedToQuestion(questionId: string) {
+  private async proceedToQuestion(questionId: string) {
     try {
       const response = await fetch("/admin/quiz_reader/next_question", {
         method: "PUT",
