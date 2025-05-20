@@ -25,7 +25,7 @@ type QuestionReadingContext = {
   get voiceStatus(): VoiceStatus;
 };
 
-function createQuestionReadingContext(soundId: string): QuestionReadingContext {
+function createQuestionReadingContext(soundId: string, onAudioBuffersLoaded?: () => void): QuestionReadingContext {
   let voiceStatus: VoiceStatus = "STANDBY";
   let currentSource: AudioBufferSourceNode | undefined;
   let startTime: number | undefined;
@@ -85,6 +85,7 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
       try {
         audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
         questionDuration = (await audioBuffersPromise)[1].duration;
+        onAudioBuffersLoaded?.();
       } catch (e) {
         if (e instanceof Error) {
           console.error(e);
@@ -156,9 +157,9 @@ export default class extends Controller {
     "isOnAir",
     "onAirLabel",
     "duration",
-    "iconOnNextQuestion",
+    "loadingStatusIcon",
+    "playStatusIcon",
     "loadingIcon",
-    "batteryEmptyIcon",
     "batteryFullIcon",
     "playIcon",
     "pauseIcon",
@@ -170,15 +171,24 @@ export default class extends Controller {
   declare isOnAirTarget: HTMLInputElement;
   declare onAirLabelTarget: HTMLElement;
   declare durationTarget: HTMLElement;
-  declare iconOnNextQuestionTargets: HTMLElement[];
+  declare loadingStatusIconTargets: HTMLElement[];
+  declare playStatusIconTargets: HTMLElement[];
   declare loadingIconTarget: HTMLElement;
-  declare batteryEmptyIconTarget: HTMLElement;
   declare batteryFullIconTarget: HTMLElement;
   declare playIconTarget: HTMLElement;
   declare pauseIconTarget: HTMLElement;
   declare soundIdValue: string;
 
   readingContext: QuestionReadingContext = createQuestionReadingContext("dummy");
+
+  private createQuestionReadingContextAndLoad(soundId: string) {
+    const onAudioBuffersLoaded = () => {
+      console.log(`load done: duration=${this.readingContext.totalDuration}`);
+      this.setLoadingStatusIcon(this.batteryFullIconTarget);
+    };
+    this.readingContext = createQuestionReadingContext(soundId, onAudioBuffersLoaded);
+    this.load();
+  }
 
   private beforeStreamRenderHandler = (e: Event) => {
     const customEvent = e as CustomEvent;
@@ -190,8 +200,7 @@ export default class extends Controller {
         if (!soundId) {
           throw new Error("sound-id が指定されていません。");
         }
-        this.readingContext = createQuestionReadingContext(soundId);
-        this.load();
+        this.createQuestionReadingContextAndLoad(soundId);
       } else {
         fallbackToDefaultActions(streamElement);
       }
@@ -201,8 +210,7 @@ export default class extends Controller {
   connect() {
     console.log("QuizReaderController connected");
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
-    this.readingContext = createQuestionReadingContext(this.soundIdValue);
-    this.load();
+    this.createQuestionReadingContextAndLoad(this.soundIdValue);
   }
 
   disconnect() {
@@ -218,22 +226,23 @@ export default class extends Controller {
     }
   }
 
-  private setShownIcon(selectedIcon: HTMLElement) {
-    for (const icon of this.iconOnNextQuestionTargets) {
+  private setLoadingStatusIcon(selectedIcon: HTMLElement) {
+    for (const icon of this.loadingStatusIconTargets) {
+      icon.classList.add("is-hidden");
+    }
+    selectedIcon.classList.remove("is-hidden");
+  }
+
+  private setPlayStatusIcon(selectedIcon: HTMLElement) {
+    for (const icon of this.playStatusIconTargets) {
       icon.classList.add("is-hidden");
     }
     selectedIcon.classList.remove("is-hidden");
   }
 
   private load() {
-    this.setShownIcon(this.loadingIconTarget);
-
-    this.readingContext.load().then(() => {
-      console.log(`load done: duration=${this.readingContext.totalDuration}`);
-      if (this.readingContext.voiceStatus === "STANDBY") {
-        this.setShownIcon(this.batteryFullIconTarget);
-      }
-    });
+    this.setLoadingStatusIcon(this.loadingIconTarget);
+    this.readingContext.load();
   }
 
   startReading() {
@@ -241,7 +250,7 @@ export default class extends Controller {
     if (this.readingContext.voiceStatus !== "STANDBY") return;
 
     console.log("startReading");
-    this.setShownIcon(this.playIconTarget);
+    this.setPlayStatusIcon(this.playIconTarget);
     this.readingContext.start();
   }
 
@@ -249,7 +258,7 @@ export default class extends Controller {
     if (this.readingContext.voiceStatus !== "PLAYING") return;
 
     console.log("pauseReading");
-    this.setShownIcon(this.pauseIconTarget);
+    this.setPlayStatusIcon(this.pauseIconTarget);
     this.readingContext.stop();
     this.durationTarget.textContent = this.durationText;
   }
