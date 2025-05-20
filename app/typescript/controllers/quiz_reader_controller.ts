@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
 
 type VoiceStatus = "STANDBY" | "PLAYING" | "PAUSED";
+type LoadingStatus = "NOT_LOADED" | "LOADING" | "LOADED";
 
 const CACHE_NAME = "yamabuki-cup-quiz-reader";
 
@@ -35,9 +36,10 @@ type QuestionReadingContext = {
   get totalDuration(): number;
   get readDuration(): number;
   get voiceStatus(): VoiceStatus;
+  set loadingStatus(s: LoadingStatus);
 };
 
-function createQuestionReadingContext(soundId: string, onAudioBuffersLoaded?: () => void): QuestionReadingContext {
+function createQuestionReadingContext(soundId: string, onLoadingStatusChanged?: (s: LoadingStatus) => void): QuestionReadingContext {
   let voiceStatus: VoiceStatus = "STANDBY";
   let currentSource: AudioBufferSourceNode | undefined;
   let startTime: number | undefined;
@@ -72,6 +74,8 @@ function createQuestionReadingContext(soundId: string, onAudioBuffersLoaded?: ()
     async load() {
       if (audioBuffersPromise) return;
 
+      this.loadingStatus = "LOADING";
+
       const createAudioBufferPromise = (url: string) => {
         return new Promise<AudioBuffer>((resolve, reject) => {
           const abortHandler = () => reject();
@@ -89,11 +93,12 @@ function createQuestionReadingContext(soundId: string, onAudioBuffersLoaded?: ()
       try {
         audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
         questionDuration = (await audioBuffersPromise)[1].duration;
-        onAudioBuffersLoaded?.();
+        this.loadingStatus = "LOADED";
       } catch (e) {
         if (e instanceof Error) {
           console.error(e);
         }
+        this.loadingStatus = "NOT_LOADED";
       }
     },
 
@@ -153,6 +158,9 @@ function createQuestionReadingContext(soundId: string, onAudioBuffersLoaded?: ()
     get voiceStatus() {
       return voiceStatus;
     },
+    set loadingStatus(s: LoadingStatus) {
+      onLoadingStatusChanged?.(s);
+    }
   };
 }
 
@@ -186,11 +194,18 @@ export default class extends Controller {
   readingContext: QuestionReadingContext = createQuestionReadingContext("dummy");
 
   private createQuestionReadingContextAndLoad(soundId: string) {
-    const onAudioBuffersLoaded = () => {
-      console.log(`load done: duration=${this.readingContext.totalDuration}`);
-      this.setLoadingStatusIcon(this.batteryFullIconTarget);
+    const onLoaddingStatusChanged = (loadingStatus: LoadingStatus) => {
+      switch (loadingStatus) {
+        case "LOADING":
+          this.setLoadingStatusIcon(this.loadingIconTarget);
+          break;
+        case 'LOADED':
+          console.log(`load done: duration=${this.readingContext.totalDuration}`);
+          this.setLoadingStatusIcon(this.batteryFullIconTarget);
+          break;
+      }
     };
-    this.readingContext = createQuestionReadingContext(soundId, onAudioBuffersLoaded);
+    this.readingContext = createQuestionReadingContext(soundId, onLoaddingStatusChanged);
     this.load();
   }
 
@@ -248,7 +263,6 @@ export default class extends Controller {
   }
 
   private load() {
-    this.setLoadingStatusIcon(this.loadingIconTarget);
     this.readingContext.load();
   }
 
