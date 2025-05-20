@@ -39,7 +39,7 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
       const abortHandler = () => {
         reject();
       };
-      abortController.signal.addEventListener("abort", abortHandler);
+      abortController.signal.addEventListener("abort", abortHandler, { once: true });
       currentSource = audioContext.createBufferSource();
       currentSource.buffer = audioBuffer;
       currentSource.connect(audioContext.destination);
@@ -61,14 +61,18 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
       if (audioBuffersPromise) return;
 
       const createAudioBufferPromise = (url: string, cacheKey: string) => {
-        return new Promise<AudioBuffer>((resolve) => {
+        return new Promise<AudioBuffer>((resolve, reject) => {
+          const abortHandler = () => reject();
+          abortController.signal.addEventListener("abort", abortHandler, { once: true });
           const buf = audioCache.get(cacheKey);
           if (buf) {
             console.log(`Use cached audio: ${cacheKey}`);
+            abortController.signal.removeEventListener("abort", abortHandler);
             resolve(buf);
           } else {
             loadAudio(url).then((buffer) => {
               audioCache.set(cacheKey, buffer);
+              abortController.signal.removeEventListener("abort", abortHandler);
               resolve(buffer);
             });
           }
@@ -78,29 +82,38 @@ function createQuestionReadingContext(soundId: string): QuestionReadingContext {
       const mondaiAudioBufferPromise = createAudioBufferPromise("/sample/mondai.wav", "mondai");
       const questionAudioBufferPromise = createAudioBufferPromise(`/sample/question${soundId}.wav`, soundId);
 
-      audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
-      questionDuration = (await audioBuffersPromise)[1].duration;
+      try {
+        audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
+        questionDuration = (await audioBuffersPromise)[1].duration;
+      } catch (e) {
+        if (e instanceof Error) {
+          console.error(e);
+        }
+      }
     },
 
     async start() {
-      voiceStatus = "PLAYING";
-      this.load();
-
-      // load() を呼んでいるので audioBuffersPromise が undefined になることはないが、型ガードのため必要
-      if (!audioBuffersPromise) return;
-
-      const [mondaiAudioBuffer, questionAudioBuffer] = await audioBuffersPromise;
-
       try {
+        voiceStatus = "PLAYING";
+        this.load();
+
+        // load() を呼んでいるので audioBuffersPromise が undefined になることはないが、型ガードのため必要
+        if (!audioBuffersPromise) return;
+
+        const [mondaiAudioBuffer, questionAudioBuffer] = await audioBuffersPromise;
+
         await playAudioBuffer(mondaiAudioBuffer);
+
+        // 「問題」と問題文の間の空白
         await new Promise<void>((resolve, reject) => {
           const abortHandler = () => reject();
-          abortController.signal.addEventListener("abort", abortHandler);
+          abortController.signal.addEventListener("abort", abortHandler, { once: true });
           setTimeout(() => {
             abortController.signal.removeEventListener("abort", abortHandler);
             resolve();
           }, INTERVAL_AFTER_MONDAI_MS);
         });
+
         startTime = audioContext.currentTime;
         stopTime = undefined;
         await playAudioBuffer(questionAudioBuffer);
