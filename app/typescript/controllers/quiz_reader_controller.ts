@@ -147,6 +147,7 @@ export default class extends Controller {
     "loadingIcon",
     "batteryEmptyIcon",
     "batteryFullIcon",
+    "playIcon",
     "pauseIcon",
   ];
   static values = {
@@ -160,6 +161,7 @@ export default class extends Controller {
   declare loadingIconTarget: HTMLElement;
   declare batteryEmptyIconTarget: HTMLElement;
   declare batteryFullIconTarget: HTMLElement;
+  declare playIconTarget: HTMLElement;
   declare pauseIconTarget: HTMLElement;
   declare soundIdValue: string;
 
@@ -215,7 +217,9 @@ export default class extends Controller {
 
     this.readingContext.load().then(() => {
       console.log(`load done: duration=${this.readingContext.totalDuration}`);
-      this.setShownIcon(this.batteryFullIconTarget);
+      if (this.readingContext.voiceStatus === "STANDBY") {
+        this.setShownIcon(this.batteryFullIconTarget);
+      }
     });
   }
 
@@ -224,6 +228,7 @@ export default class extends Controller {
     if (this.readingContext.voiceStatus !== "STANDBY") return;
 
     console.log("startReading");
+    this.setShownIcon(this.playIconTarget);
     this.readingContext.start();
   }
 
