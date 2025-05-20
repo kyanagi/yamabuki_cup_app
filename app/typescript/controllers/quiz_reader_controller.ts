@@ -39,7 +39,11 @@ type QuestionReadingContext = {
   set loadingStatus(s: LoadingStatus);
 };
 
-function createQuestionReadingContext(soundId: string, onLoadingStatusChanged?: (s: LoadingStatus) => void): QuestionReadingContext {
+function createQuestionReadingContext(
+  soundId: string,
+  onLoadingStatusChanged?: (s: LoadingStatus) => void,
+  onVoiceStatusChanged?: (s: VoiceStatus) => void,
+): QuestionReadingContext {
   let voiceStatus: VoiceStatus = "STANDBY";
   let currentSource: AudioBufferSourceNode | undefined;
   let startTime: number | undefined;
@@ -69,6 +73,13 @@ function createQuestionReadingContext(soundId: string, onLoadingStatusChanged?: 
       currentSource.start();
     });
   }
+
+  function setVoiceStatus(s: VoiceStatus) {
+    voiceStatus = s;
+    onVoiceStatusChanged?.(s);
+  }
+
+  setVoiceStatus(voiceStatus);
 
   return {
     async load() {
@@ -104,7 +115,7 @@ function createQuestionReadingContext(soundId: string, onLoadingStatusChanged?: 
 
     async start() {
       try {
-        voiceStatus = "PLAYING";
+        setVoiceStatus("PLAYING");
         this.load();
 
         // load() を呼んでいるので audioBuffersPromise が undefined になることはないが、型ガードのため必要
@@ -135,7 +146,7 @@ function createQuestionReadingContext(soundId: string, onLoadingStatusChanged?: 
     },
 
     stop() {
-      voiceStatus = "PAUSED";
+      setVoiceStatus("PAUSED");
       if (currentSource) {
         if (stopTime === undefined) {
           stopTime = audioContext.currentTime;
@@ -173,6 +184,7 @@ export default class extends Controller {
     "playStatusIcon",
     "loadingIcon",
     "batteryFullIcon",
+    "stopIcon",
     "playIcon",
     "pauseIcon",
   ];
@@ -187,6 +199,7 @@ export default class extends Controller {
   declare playStatusIconTargets: HTMLElement[];
   declare loadingIconTarget: HTMLElement;
   declare batteryFullIconTarget: HTMLElement;
+  declare stopIconTarget: HTMLElement;
   declare playIconTarget: HTMLElement;
   declare pauseIconTarget: HTMLElement;
   declare soundIdValue: string;
@@ -205,7 +218,20 @@ export default class extends Controller {
           break;
       }
     };
-    this.readingContext = createQuestionReadingContext(soundId, onLoaddingStatusChanged);
+    const onVoiceStatusChanged = (voiceStatus: VoiceStatus) => {
+      switch (voiceStatus) {
+        case "STANDBY":
+          this.setPlayStatusIcon(this.stopIconTarget);
+          break;
+        case "PLAYING":
+          this.setPlayStatusIcon(this.playIconTarget);
+          break;
+        case "PAUSED":
+          this.setPlayStatusIcon(this.pauseIconTarget);
+          break;
+      }
+    };
+    this.readingContext = createQuestionReadingContext(soundId, onLoaddingStatusChanged, onVoiceStatusChanged);
     this.load();
   }
 
@@ -271,7 +297,6 @@ export default class extends Controller {
     if (this.readingContext.voiceStatus !== "STANDBY") return;
 
     console.log("startReading");
-    this.setPlayStatusIcon(this.playIconTarget);
     this.readingContext.start();
   }
 
@@ -279,7 +304,6 @@ export default class extends Controller {
     if (this.readingContext.voiceStatus !== "PLAYING") return;
 
     console.log("pauseReading");
-    this.setPlayStatusIcon(this.pauseIconTarget);
     this.readingContext.stop();
     this.durationTarget.textContent = this.durationText;
   }
