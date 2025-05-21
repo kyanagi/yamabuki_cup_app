@@ -350,14 +350,17 @@ export default class extends Controller {
       });
 
       if (!response.ok) {
-        throw new Error("エラーが発生しました。");
+        throw new Error(`HTTPエラー ${response.status} ${response.statusText}`);
       }
 
       const html = await response.text();
       Turbo.renderStreamMessage(html);
     } catch (e) {
+      console.error(e);
       if (e instanceof Error) {
         alert(`エラーが発生しました: ${e.message}`);
+      } else {
+        alert("予期せぬエラーが発生しました");
       }
     }
   }
