@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/quiz_reader/question_readings_controller.rb with RBS::Inline
+
+module Admin
+  module QuizReader
+    class QuestionReadingsController < ApplicationController
+      def create: () -> untyped
+    end
+  end
+end

@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     get "quiz_reader", to: "quiz_reader#show"
     namespace :quiz_reader do
       put "next_question", to: "next_question#update"
+      post "question_readings", to: "question_readings#create"
     end
 
     namespace :round1 do

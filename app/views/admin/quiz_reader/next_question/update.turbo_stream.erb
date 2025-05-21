@@ -6,4 +6,4 @@
     <%= render partial: "next2_question", locals: { question: @next2_question } %>
   <% end %>
 <% end %>
-<turbo-stream action="update-sound-id" sound-id="<%= @next_question.id % 2 %>"></turbo-stream>
+<turbo-stream action="update-question" question-id="<%= @next_question.id %>" sound-id="<%= @next_question.id % 2 %>"></turbo-stream>

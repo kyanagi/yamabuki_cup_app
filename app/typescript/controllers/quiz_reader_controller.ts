@@ -34,6 +34,7 @@ type QuestionReadingContext = {
   start(): Promise<void>;
   stop(): void;
   reset(): void;
+  get questionId(): number;
   get totalDuration(): number;
   get readDuration(): number;
   get voiceStatus(): VoiceStatus;
@@ -41,6 +42,7 @@ type QuestionReadingContext = {
 };
 
 function createQuestionReadingContext(
+  questionId: number,
   soundId: string,
   onLoadingStatusChanged?: (s: LoadingStatus) => void,
   onVoiceStatusChanged?: (s: VoiceStatus) => void,
@@ -165,6 +167,9 @@ function createQuestionReadingContext(
       setVoiceStatus("STANDBY");
     },
 
+    get questionId() {
+      return questionId;
+    },
     get totalDuration() {
       return questionDuration ?? 0;
     },
@@ -194,8 +199,10 @@ export default class extends Controller {
     "stopIcon",
     "playIcon",
     "pauseIcon",
+    "cloudIcon",
   ];
   static values = {
+    questionId: Number,
     soundId: String,
   };
 
@@ -209,11 +216,13 @@ export default class extends Controller {
   declare stopIconTarget: HTMLElement;
   declare playIconTarget: HTMLElement;
   declare pauseIconTarget: HTMLElement;
+  declare cloudIconTarget: HTMLElement;
+  declare questionIdValue: number;
   declare soundIdValue: string;
 
-  readingContext: QuestionReadingContext = createQuestionReadingContext("dummy");
+  readingContext: QuestionReadingContext = createQuestionReadingContext(0, "dummy");
 
-  private createQuestionReadingContextAndLoad(soundId: string) {
+  private createQuestionReadingContextAndLoad(questionId: number, soundId: string) {
     const onLoaddingStatusChanged = (loadingStatus: LoadingStatus) => {
       switch (loadingStatus) {
         case "LOADING":
@@ -238,7 +247,7 @@ export default class extends Controller {
           break;
       }
     };
-    this.readingContext = createQuestionReadingContext(soundId, onLoaddingStatusChanged, onVoiceStatusChanged);
+    this.readingContext = createQuestionReadingContext(questionId, soundId, onLoaddingStatusChanged, onVoiceStatusChanged);
     this.load();
   }
 
@@ -246,13 +255,16 @@ export default class extends Controller {
     const customEvent = e as CustomEvent;
     const fallbackToDefaultActions = customEvent.detail.render;
     customEvent.detail.render = (streamElement: HTMLElement) => {
-      if (streamElement.getAttribute("action") === "update-sound-id") {
+      if (streamElement.getAttribute("action") === "update-question") {
+        const questionId = streamElement.getAttribute("question-id");
         const soundId = streamElement.getAttribute("sound-id");
-        console.log(soundId);
+        if (!questionId) {
+          throw new Error("question-id が指定されていません。");
+        }
         if (!soundId) {
           throw new Error("sound-id が指定されていません。");
         }
-        this.createQuestionReadingContextAndLoad(soundId);
+        this.createQuestionReadingContextAndLoad(Number(questionId), soundId);
       } else {
         fallbackToDefaultActions(streamElement);
       }
@@ -263,7 +275,7 @@ export default class extends Controller {
     console.log("QuizReaderController connected");
     caches.delete(CACHE_NAME);
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
-    this.createQuestionReadingContextAndLoad(this.soundIdValue);
+    this.createQuestionReadingContextAndLoad(this.questionIdValue, this.soundIdValue);
   }
 
   disconnect() {
@@ -313,6 +325,7 @@ export default class extends Controller {
     console.log("pauseReading");
     this.readingContext.stop();
     this.durationTarget.textContent = this.durationText;
+    this.uploadQuestionReading();
   }
 
   resetReading() {
@@ -321,6 +334,7 @@ export default class extends Controller {
     console.log("resetReading");
     this.readingContext.reset();
     this.durationTarget.textContent = "";
+    this.cloudIconTarget.classList.add("is-hidden");
   }
 
   async switchToQuestion() {
@@ -369,6 +383,30 @@ export default class extends Controller {
       } else {
         alert("予期せぬエラーが発生しました");
       }
+    }
+  }
+
+  private async uploadQuestionReading() {
+    try {
+      // TODO: エラー時のリトライ
+      const response = await fetch("/admin/quiz_reader/question_readings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
+        },
+        body: JSON.stringify({ question_id: this.readingContext.questionId, duration: this.readingContext.readDuration }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTPエラー ${response.status} ${response.statusText}`);
+      }
+
+      await response.json();
+
+      this.cloudIconTarget.classList.remove("is-hidden");
+    } catch (e) {
+      console.error(e);
     }
   }
 

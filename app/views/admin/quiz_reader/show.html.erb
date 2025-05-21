@@ -1,4 +1,5 @@
 <div class="container" data-controller="quiz-reader"
+  data-quiz-reader-question-id-value="<%= @next_question.id %>"
   data-quiz-reader-sound-id-value="<%= @next_question.id % 2 %>"
   data-action="
   keydown.space@document->quiz-reader#startReading:prevent
