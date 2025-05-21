@@ -33,6 +33,7 @@ type QuestionReadingContext = {
   load(): Promise<void>;
   start(): Promise<void>;
   stop(): void;
+  reset(): void;
   get totalDuration(): number;
   get readDuration(): number;
   get voiceStatus(): VoiceStatus;
@@ -98,10 +99,9 @@ function createQuestionReadingContext(
         });
       };
 
-      const mondaiAudioBufferPromise = createAudioBufferPromise("/sample/mondai.wav");
-      const questionAudioBufferPromise = createAudioBufferPromise(`/sample/question${soundId}.wav`);
-
       try {
+        const mondaiAudioBufferPromise = createAudioBufferPromise("/sample/mondai.wav");
+        const questionAudioBufferPromise = createAudioBufferPromise(`/sample/question${soundId}.wav`);
         audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
         questionDuration = (await audioBuffersPromise)[1].duration;
         this.loadingStatus = "LOADED";
@@ -158,6 +158,13 @@ function createQuestionReadingContext(
       abortController.abort();
     },
 
+    reset() {
+      this.stop();
+      startTime = undefined;
+      stopTime = undefined;
+      setVoiceStatus("STANDBY");
+    },
+
     get totalDuration() {
       return questionDuration ?? 0;
     },
@@ -212,7 +219,7 @@ export default class extends Controller {
         case "LOADING":
           this.setLoadingStatusIcon(this.loadingIconTarget);
           break;
-        case 'LOADED':
+        case "LOADED":
           console.log(`load done: duration=${this.readingContext.totalDuration}`);
           this.setLoadingStatusIcon(this.batteryFullIconTarget);
           break;
@@ -306,6 +313,14 @@ export default class extends Controller {
     console.log("pauseReading");
     this.readingContext.stop();
     this.durationTarget.textContent = this.durationText;
+  }
+
+  resetReading() {
+    if (this.readingContext.voiceStatus !== "PAUSED") return;
+
+    console.log("resetReading");
+    this.readingContext.reset();
+    this.durationTarget.textContent = "";
   }
 
   async switchToQuestion() {
