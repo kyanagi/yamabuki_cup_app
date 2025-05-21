@@ -18,8 +18,7 @@ async function loadAudio(url: string): Promise<AudioBuffer> {
 
   if (response) {
     console.log(`Use cached audio: ${url}`);
-  }
-  else {
+  } else {
     response = await fetch(url);
     console.log(`fetch: ${url}`);
     await cache.put(url, response.clone());
@@ -178,7 +177,7 @@ function createQuestionReadingContext(
     },
     set loadingStatus(s: LoadingStatus) {
       onLoadingStatusChanged?.(s);
-    }
+    },
   };
 }
 
