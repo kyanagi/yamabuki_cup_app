@@ -1,13 +1,14 @@
 import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
 
+// 「問題」と問題文の間の空白時間の長さ（ms）
+const INTERVAL_AFTER_MONDAI_MS = 300;
+// キャッシュの名前
+const CACHE_NAME = "yamabuki-cup-quiz-reader";
+
 type VoiceStatus = "STANDBY" | "PLAYING" | "PAUSED";
 type LoadingStatus = "NOT_LOADED" | "LOADING" | "LOADED";
 
-const CACHE_NAME = "yamabuki-cup-quiz-reader";
-
-// 「問題」と問題文の間の空白時間の長さ（ms）
-const INTERVAL_AFTER_MONDAI_MS = 300;
 const audioContext = new AudioContext();
 
 async function loadAudio(url: string): Promise<AudioBuffer> {
