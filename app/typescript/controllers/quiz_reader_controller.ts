@@ -323,8 +323,15 @@ export default class extends Controller {
   }
 
   async switchToQuestion() {
-    const questionId = prompt("問題番号を入力してください");
-    if (!questionId) return;
+    const questionIdRaw = prompt("問題番号を入力してください");
+    if (questionIdRaw == null) return;
+
+    const questionId = questionIdRaw.trim();
+
+    if (!/^\d+$/.test(questionId)) {
+      alert("問題番号は数字で入力してください");
+      return;
+    }
 
     this.proceedToQuestion(questionId);
   }
