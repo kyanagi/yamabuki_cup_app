@@ -199,6 +199,8 @@ export default class extends Controller {
     "stopIcon",
     "playIcon",
     "pauseIcon",
+    "resultUploadingStatusIcon",
+    "resultUploadingIcon",
     "resultUploadedIcon",
   ];
   static values = {
@@ -216,6 +218,8 @@ export default class extends Controller {
   declare stopIconTarget: HTMLElement;
   declare playIconTarget: HTMLElement;
   declare pauseIconTarget: HTMLElement;
+  declare resultUploadingStatusIconTargets: HTMLElement[];
+  declare resultUploadingIconTarget: HTMLElement;
   declare resultUploadedIconTarget: HTMLElement;
   declare questionIdValue: number;
   declare soundIdValue: string;
@@ -307,6 +311,13 @@ export default class extends Controller {
     selectedIcon.classList.remove("is-hidden");
   }
 
+  private setResultUploadingStatusIcon(selectedIcon: HTMLElement | undefined) {
+    for (const icon of this.resultUploadingStatusIconTargets) {
+      icon.classList.add("is-hidden");
+    }
+    selectedIcon?.classList.remove("is-hidden");
+  }
+
   private load() {
     this.readingContext.load();
   }
@@ -334,7 +345,7 @@ export default class extends Controller {
     console.log("resetReading");
     this.readingContext.reset();
     this.durationTarget.textContent = "";
-    this.resultUploadedIconTarget.classList.add("is-hidden");
+    this.setResultUploadingStatusIcon(undefined);
   }
 
   async switchToQuestion() {
@@ -387,6 +398,8 @@ export default class extends Controller {
   }
 
   private async uploadQuestionReading() {
+    this.setResultUploadingStatusIcon(this.resultUploadingIconTarget);
+
     try {
       // TODO: エラー時のリトライ
       const response = await fetch("/admin/quiz_reader/question_readings", {
@@ -404,7 +417,7 @@ export default class extends Controller {
 
       await response.json();
 
-      this.cloudIconTarget.classList.remove("is-hidden");
+      this.setResultUploadingStatusIcon(this.resultUploadedIconTarget);
     } catch (e) {
       console.error(e);
     }
