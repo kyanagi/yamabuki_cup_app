@@ -232,28 +232,24 @@ export default class extends Controller {
     const onLoaddingStatusChanged = (loadingStatus: LoadingStatus) => {
       switch (loadingStatus) {
         case "LOADING":
-          this.setVoiceLoadingStatusIcon(this.voiceLoadingIconTarget);
+          this.setVoiceLoadingStatusIcon("LOADING");
           break;
         case "LOADED":
           console.log(`load done: duration=${this.readingContext.totalDuration}`);
-          this.setVoiceLoadingStatusIcon(this.voiceLoadedIconTarget);
+          this.setVoiceLoadingStatusIcon("LOADED");
           break;
       }
     };
     const onVoiceStatusChanged = (voiceStatus: VoiceStatus) => {
-      switch (voiceStatus) {
-        case "STANDBY":
-          this.setPlayStatusIcon(this.stopIconTarget);
-          break;
-        case "PLAYING":
-          this.setPlayStatusIcon(this.playIconTarget);
-          break;
-        case "PAUSED":
-          this.setPlayStatusIcon(this.pauseIconTarget);
-          break;
-      }
+      this.setPlayStatusIcon(voiceStatus);
     };
-    this.readingContext = createQuestionReadingContext(questionId, soundId, onLoaddingStatusChanged, onVoiceStatusChanged);
+
+    this.readingContext = createQuestionReadingContext(
+      questionId,
+      soundId,
+      onLoaddingStatusChanged,
+      onVoiceStatusChanged,
+    );
     this.load();
   }
 
@@ -299,18 +295,35 @@ export default class extends Controller {
     }
   }
 
-  private setVoiceLoadingStatusIcon(selectedIcon: HTMLElement) {
+  private setVoiceLoadingStatusIcon(status: LoadingStatus) {
     for (const icon of this.voiceLoadingStatusIconTargets) {
       icon.classList.add("is-hidden");
     }
-    selectedIcon.classList.remove("is-hidden");
+    switch (status) {
+      case "LOADING":
+        this.voiceLoadingIconTarget.classList.remove("is-hidden");
+        break;
+      case "LOADED":
+        this.voiceLoadedIconTarget.classList.remove("is-hidden");
+        break;
+    }
   }
 
-  private setPlayStatusIcon(selectedIcon: HTMLElement) {
+  private setPlayStatusIcon(status: VoiceStatus) {
     for (const icon of this.playStatusIconTargets) {
       icon.classList.add("is-hidden");
     }
-    selectedIcon.classList.remove("is-hidden");
+    switch (status) {
+      case "STANDBY":
+        this.stopIconTarget.classList.remove("is-hidden");
+        break;
+      case "PLAYING":
+        this.playIconTarget.classList.remove("is-hidden");
+        break;
+      case "PAUSED":
+        this.pauseIconTarget.classList.remove("is-hidden");
+        break;
+    }
   }
 
   private setResultUploadingStatusIcon(status: ResultUploadingStatus) {
