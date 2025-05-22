@@ -192,14 +192,14 @@ export default class extends Controller {
     "isOnAir",
     "onAirLabel",
     "duration",
-    "loadingStatusIcon",
+    "voiceLoadingStatusIcon",
     "playStatusIcon",
-    "loadingIcon",
-    "batteryFullIcon",
+    "voiceLoadingIcon",
+    "voiceLoadedIcon",
     "stopIcon",
     "playIcon",
     "pauseIcon",
-    "cloudIcon",
+    "resultUploadedIcon",
   ];
   static values = {
     questionId: Number,
@@ -209,14 +209,14 @@ export default class extends Controller {
   declare isOnAirTarget: HTMLInputElement;
   declare onAirLabelTarget: HTMLElement;
   declare durationTarget: HTMLElement;
-  declare loadingStatusIconTargets: HTMLElement[];
+  declare voiceLoadingStatusIconTargets: HTMLElement[];
   declare playStatusIconTargets: HTMLElement[];
-  declare loadingIconTarget: HTMLElement;
-  declare batteryFullIconTarget: HTMLElement;
+  declare voiceLoadingIconTarget: HTMLElement;
+  declare voiceLoadedIconTarget: HTMLElement;
   declare stopIconTarget: HTMLElement;
   declare playIconTarget: HTMLElement;
   declare pauseIconTarget: HTMLElement;
-  declare cloudIconTarget: HTMLElement;
+  declare resultUploadedIconTarget: HTMLElement;
   declare questionIdValue: number;
   declare soundIdValue: string;
 
@@ -226,11 +226,11 @@ export default class extends Controller {
     const onLoaddingStatusChanged = (loadingStatus: LoadingStatus) => {
       switch (loadingStatus) {
         case "LOADING":
-          this.setLoadingStatusIcon(this.loadingIconTarget);
+          this.setVoiceLoadingStatusIcon(this.voiceLoadingIconTarget);
           break;
         case "LOADED":
           console.log(`load done: duration=${this.readingContext.totalDuration}`);
-          this.setLoadingStatusIcon(this.batteryFullIconTarget);
+          this.setVoiceLoadingStatusIcon(this.voiceLoadedIconTarget);
           break;
       }
     };
@@ -293,8 +293,8 @@ export default class extends Controller {
     }
   }
 
-  private setLoadingStatusIcon(selectedIcon: HTMLElement) {
-    for (const icon of this.loadingStatusIconTargets) {
+  private setVoiceLoadingStatusIcon(selectedIcon: HTMLElement) {
+    for (const icon of this.voiceLoadingStatusIconTargets) {
       icon.classList.add("is-hidden");
     }
     selectedIcon.classList.remove("is-hidden");
@@ -334,7 +334,7 @@ export default class extends Controller {
     console.log("resetReading");
     this.readingContext.reset();
     this.durationTarget.textContent = "";
-    this.cloudIconTarget.classList.add("is-hidden");
+    this.resultUploadedIconTarget.classList.add("is-hidden");
   }
 
   async switchToQuestion() {
