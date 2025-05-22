@@ -434,7 +434,10 @@ export default class extends Controller {
           "Content-Type": "application/json",
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
         },
-        body: JSON.stringify({ question_id: this.readingContext.questionId, duration: this.readingContext.readDuration }),
+        body: JSON.stringify({
+          question_id: this.readingContext.questionId,
+          duration: this.readingContext.readDuration,
+        }),
       });
 
       if (!response.ok) {
