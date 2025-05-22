@@ -187,6 +187,8 @@ function createQuestionReadingContext(
   };
 }
 
+type ResultUploadingStatus = "NOT_UPLOADING" | "UPLOADING" | "UPLOADED" | "UPLOAD_ERROR";
+
 export default class extends Controller {
   static targets = [
     "isOnAir",
@@ -311,11 +313,22 @@ export default class extends Controller {
     selectedIcon.classList.remove("is-hidden");
   }
 
-  private setResultUploadingStatusIcon(selectedIcon: HTMLElement | undefined) {
+  private setResultUploadingStatusIcon(status: ResultUploadingStatus) {
     for (const icon of this.resultUploadingStatusIconTargets) {
       icon.classList.add("is-hidden");
     }
-    selectedIcon?.classList.remove("is-hidden");
+    switch (status) {
+      case "NOT_UPLOADING":
+        break;
+      case "UPLOADING":
+        this.resultUploadingIconTarget.classList.remove("is-hidden");
+        break;
+      case "UPLOADED":
+        this.resultUploadedIconTarget.classList.remove("is-hidden");
+        break;
+      case "UPLOAD_ERROR":
+        break;
+    }
   }
 
   private load() {
@@ -345,7 +358,7 @@ export default class extends Controller {
     console.log("resetReading");
     this.readingContext.reset();
     this.durationTarget.textContent = "";
-    this.setResultUploadingStatusIcon(undefined);
+    this.setResultUploadingStatusIcon("NOT_UPLOADING");
   }
 
   async switchToQuestion() {
@@ -398,7 +411,7 @@ export default class extends Controller {
   }
 
   private async uploadQuestionReading() {
-    this.setResultUploadingStatusIcon(this.resultUploadingIconTarget);
+    this.setResultUploadingStatusIcon("UPLOADING");
 
     try {
       // TODO: エラー時のリトライ
@@ -417,7 +430,7 @@ export default class extends Controller {
 
       await response.json();
 
-      this.setResultUploadingStatusIcon(this.resultUploadedIconTarget);
+      this.setResultUploadingStatusIcon("UPLOADED");
     } catch (e) {
       console.error(e);
     }
