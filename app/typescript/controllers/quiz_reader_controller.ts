@@ -1,6 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
 import { openDB } from "idb";
+import { fetchWithRetry } from "../lib/fetch_with_retry";
 
 // 「問題」と問題文の間の空白時間の長さ（ms）
 const INTERVAL_AFTER_MONDAI_MS = 300;
@@ -207,6 +208,7 @@ export default class extends Controller {
     "resultUploadingStatusIcon",
     "resultUploadingIcon",
     "resultUploadedIcon",
+    "resultUploadErrorIcon",
   ];
   static values = {
     questionId: Number,
@@ -226,6 +228,7 @@ export default class extends Controller {
   declare resultUploadingStatusIconTargets: HTMLElement[];
   declare resultUploadingIconTarget: HTMLElement;
   declare resultUploadedIconTarget: HTMLElement;
+  declare resultUploadErrorIconTarget: HTMLElement;
   declare questionIdValue: number;
   declare soundIdValue: string;
 
@@ -349,6 +352,7 @@ export default class extends Controller {
         this.resultUploadedIconTarget.classList.remove("is-hidden");
         break;
       case "UPLOAD_ERROR":
+        this.resultUploadErrorIconTarget.classList.remove("is-hidden");
         break;
     }
   }
@@ -457,8 +461,7 @@ export default class extends Controller {
     };
 
     try {
-      // TODO: エラー時のリトライ
-      const response = await fetch("/admin/quiz_reader/question_readings", {
+      const response = await fetchWithRetry("/admin/quiz_reader/question_readings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -476,6 +479,7 @@ export default class extends Controller {
       this.setResultUploadingStatusIcon("UPLOADED");
     } catch (e) {
       console.error(e);
+      this.setResultUploadingStatusIcon("UPLOAD_ERROR");
     }
   }
 
