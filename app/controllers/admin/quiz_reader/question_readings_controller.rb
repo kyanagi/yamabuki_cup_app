@@ -2,7 +2,8 @@ module Admin
   module QuizReader
     class QuestionReadingsController < ApplicationController
       def create
-        render json: { result: "OK" }
+        r = QuestionReading.create!(params.expect(question_reading: [:question_id, :duration]))
+        render json: r
       end
     end
   end

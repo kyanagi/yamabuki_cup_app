@@ -1,4 +1,9 @@
 FactoryBot.define do
+  factory :question_reading do
+    question { nil }
+    duration { 1.5 }
+  end
+
   factory :question_provider do
     next_question { association :question }
   end

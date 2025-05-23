@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_16_085852) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_23_031357) do
   create_table "matches", force: :cascade do |t|
     t.integer "round_id", null: false
     t.integer "match_number", null: false
@@ -82,6 +82,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_16_085852) do
     t.index ["next_question_id"], name: "index_question_providers_on_next_question_id"
   end
 
+  create_table "question_readings", force: :cascade do |t|
+    t.integer "question_id", null: false
+    t.float "duration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_question_readings_on_created_at"
+    t.index ["question_id"], name: "index_question_readings_on_question_id"
+  end
+
   create_table "question_results", force: :cascade do |t|
     t.integer "question_allocation_id", null: false
     t.datetime "created_at", null: false
@@ -131,6 +140,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_16_085852) do
   add_foreign_key "question_player_results", "players"
   add_foreign_key "question_player_results", "question_results"
   add_foreign_key "question_providers", "questions", column: "next_question_id"
+  add_foreign_key "question_readings", "questions"
   add_foreign_key "question_results", "question_allocations"
   add_foreign_key "round3_course_preferences", "matches", column: "choice1_match_id"
   add_foreign_key "round3_course_preferences", "matches", column: "choice2_match_id"

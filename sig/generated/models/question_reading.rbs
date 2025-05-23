@@ -1,0 +1,4 @@
+# Generated from app/models/question_reading.rb with RBS::Inline
+
+class QuestionReading < ApplicationRecord
+end
