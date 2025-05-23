@@ -1,10 +1,13 @@
 import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
+import { openDB } from "idb";
 
 // 「問題」と問題文の間の空白時間の長さ（ms）
 const INTERVAL_AFTER_MONDAI_MS = 300;
 // キャッシュの名前
 const CACHE_NAME = "yamabuki-cup-quiz-reader";
+// IndexedDB の名前
+const IDB_NAME = "yamabuki-cup-quiz-reader";
 
 type VoiceStatus = "STANDBY" | "PLAYING" | "PAUSED";
 type LoadingStatus = "NOT_LOADED" | "LOADING" | "LOADED";
@@ -226,6 +229,12 @@ export default class extends Controller {
   declare questionIdValue: number;
   declare soundIdValue: string;
 
+  private idbPromise = openDB(IDB_NAME, 1, {
+    upgrade(db) {
+      db.createObjectStore("question-readings", { keyPath: "id", autoIncrement: true });
+    },
+  });
+
   readingContext: QuestionReadingContext = createQuestionReadingContext(0, "dummy");
 
   private createQuestionReadingContextAndLoad(questionId: number, soundId: string) {
@@ -362,6 +371,7 @@ export default class extends Controller {
     console.log("pauseReading");
     this.readingContext.stop();
     this.durationTarget.textContent = this.durationText;
+    this.saveQuestionReading();
     this.uploadQuestionReading();
   }
 
@@ -420,6 +430,22 @@ export default class extends Controller {
       } else {
         alert("予期せぬエラーが発生しました");
       }
+    }
+  }
+
+  private async saveQuestionReading() {
+    const data = {
+      questionId: this.readingContext.questionId,
+      readDuration: this.readingContext.readDuration,
+      timestamp: new Date().toISOString(),
+    }
+
+    try {
+      const db = await this.idbPromise;
+      await db.add("question-readings", data);
+    } catch (e) {
+      console.error("問い読みの結果の保存に失敗しました:", e);
+      throw e;
     }
   }
 
