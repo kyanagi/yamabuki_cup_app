@@ -39,7 +39,7 @@ type QuestionReadingContext = {
   stop(): void;
   reset(): void;
   get questionId(): number;
-  get totalDuration(): number;
+  get fullDuration(): number;
   get readDuration(): number;
   get voiceStatus(): VoiceStatus;
   set loadingStatus(s: LoadingStatus);
@@ -174,13 +174,13 @@ function createQuestionReadingContext(
     get questionId() {
       return questionId;
     },
-    get totalDuration() {
+    get fullDuration() {
       return questionDuration ?? 0;
     },
     get readDuration() {
       if (!startTime || !stopTime) return 0;
       const d = stopTime - startTime;
-      return d > this.totalDuration ? this.totalDuration : d;
+      return d > this.fullDuration ? this.fullDuration : d;
     },
     get voiceStatus() {
       return voiceStatus;
@@ -247,7 +247,7 @@ export default class extends Controller {
           this.setVoiceLoadingStatusIcon("LOADING");
           break;
         case "LOADED":
-          console.log(`load done: duration=${this.readingContext.totalDuration}`);
+          console.log(`load done: duration=${this.readingContext.fullDuration}`);
           this.setVoiceLoadingStatusIcon("LOADED");
           break;
       }
@@ -457,7 +457,8 @@ export default class extends Controller {
     this.setResultUploadingStatusIcon("UPLOADING");
     const data = {
       question_id: this.readingContext.questionId,
-      duration: this.readingContext.readDuration,
+      read_duration: this.readingContext.readDuration,
+      full_duration: this.readingContext.fullDuration,
     };
 
     try {
@@ -484,6 +485,6 @@ export default class extends Controller {
   }
 
   private get durationText(): string {
-    return `${this.readingContext.readDuration.toFixed(2)} / ${this.readingContext.totalDuration.toFixed(2)}`;
+    return `${this.readingContext.readDuration.toFixed(2)} / ${this.readingContext.fullDuration.toFixed(2)}`;
   }
 }

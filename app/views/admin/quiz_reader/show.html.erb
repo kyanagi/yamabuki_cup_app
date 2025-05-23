@@ -57,25 +57,8 @@
     </div>
     <div class="column is-5">
       <h2 class="title is-4">History</h2>
-      <div class="box">
-        <p>1</p>
-        <p class="mt-1">銀塩カメラにデジタルカメラが取って代わった例のように...</p>
-        <p class="mt-1 has-text-weight-bold">破壊的イノベーション</p>
-      </div>
-      <div class="box">
-        <p>1</p>
-        <p class="mt-1">銀塩カメラにデジタルカメラが取って代わった例のように...</p>
-        <p class="mt-1 has-text-weight-bold">破壊的イノベーション</p>
-      </div>
-      <div class="box">
-        <p>1</p>
-        <p class="mt-1">銀塩カメラにデジタルカメラが取って代わった例のように...</p>
-        <p class="mt-1 has-text-weight-bold">破壊的イノベーション</p>
-      </div>
-      <div class="box">
-        <p>1</p>
-        <p class="mt-1">銀塩カメラにデジタルカメラが取って代わった例のように...</p>
-        <p class="mt-1 has-text-weight-bold">破壊的イノベーション</p>
+      <div id="reading_histories">
+        <%= render partial: "admin/quiz_reader/histories", locals: { reading_histories: @reading_histories } %>
       </div>
     </div>
   </div>

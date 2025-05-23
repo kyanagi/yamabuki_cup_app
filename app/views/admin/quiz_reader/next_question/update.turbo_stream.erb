@@ -6,4 +6,7 @@
     <%= render partial: "next2_question", locals: { question: @next2_question } %>
   <% end %>
 <% end %>
+<%= turbo_stream.update "reading_histories" do %>
+  <%= render partial: "admin/quiz_reader/histories", locals: { reading_histories: @reading_histories } %>
+<% end %>
 <turbo-stream action="update-question" question-id="<%= @next_question.id %>" sound-id="<%= @next_question.id % 2 %>"></turbo-stream>

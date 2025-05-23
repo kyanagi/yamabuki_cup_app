@@ -74,41 +74,77 @@ class QuestionReading < ::ApplicationRecord
 
     def clear_question_id_change: () -> void
 
-    def duration: () -> ::Float?
+    def read_duration: () -> ::Float?
 
-    def duration=: (::Float?) -> ::Float?
+    def read_duration=: (::Float?) -> ::Float?
 
-    def duration?: () -> bool
+    def read_duration?: () -> bool
 
-    def duration_changed?: () -> bool
+    def read_duration_changed?: () -> bool
 
-    def duration_change: () -> [ ::Float?, ::Float? ]
+    def read_duration_change: () -> [ ::Float?, ::Float? ]
 
-    def duration_will_change!: () -> void
+    def read_duration_will_change!: () -> void
 
-    def duration_was: () -> ::Float?
+    def read_duration_was: () -> ::Float?
 
-    def duration_previously_changed?: () -> bool
+    def read_duration_previously_changed?: () -> bool
 
-    def duration_previous_change: () -> ::Array[::Float?]?
+    def read_duration_previous_change: () -> ::Array[::Float?]?
 
-    def duration_previously_was: () -> ::Float?
+    def read_duration_previously_was: () -> ::Float?
 
-    def duration_before_last_save: () -> ::Float?
+    def read_duration_before_last_save: () -> ::Float?
 
-    def duration_change_to_be_saved: () -> ::Array[::Float?]?
+    def read_duration_change_to_be_saved: () -> ::Array[::Float?]?
 
-    def duration_in_database: () -> ::Float?
+    def read_duration_in_database: () -> ::Float?
 
-    def saved_change_to_duration: () -> ::Array[::Float?]?
+    def saved_change_to_read_duration: () -> ::Array[::Float?]?
 
-    def saved_change_to_duration?: () -> bool
+    def saved_change_to_read_duration?: () -> bool
 
-    def will_save_change_to_duration?: () -> bool
+    def will_save_change_to_read_duration?: () -> bool
 
-    def restore_duration!: () -> void
+    def restore_read_duration!: () -> void
 
-    def clear_duration_change: () -> void
+    def clear_read_duration_change: () -> void
+
+    def full_duration: () -> ::Float?
+
+    def full_duration=: (::Float?) -> ::Float?
+
+    def full_duration?: () -> bool
+
+    def full_duration_changed?: () -> bool
+
+    def full_duration_change: () -> [ ::Float?, ::Float? ]
+
+    def full_duration_will_change!: () -> void
+
+    def full_duration_was: () -> ::Float?
+
+    def full_duration_previously_changed?: () -> bool
+
+    def full_duration_previous_change: () -> ::Array[::Float?]?
+
+    def full_duration_previously_was: () -> ::Float?
+
+    def full_duration_before_last_save: () -> ::Float?
+
+    def full_duration_change_to_be_saved: () -> ::Array[::Float?]?
+
+    def full_duration_in_database: () -> ::Float?
+
+    def saved_change_to_full_duration: () -> ::Array[::Float?]?
+
+    def saved_change_to_full_duration?: () -> bool
+
+    def will_save_change_to_full_duration?: () -> bool
+
+    def restore_full_duration!: () -> void
+
+    def clear_full_duration_change: () -> void
 
     def created_at: () -> ::ActiveSupport::TimeWithZone
 

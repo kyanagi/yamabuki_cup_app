@@ -84,7 +84,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_031357) do
 
   create_table "question_readings", force: :cascade do |t|
     t.integer "question_id", null: false
-    t.float "duration"
+    t.float "read_duration"
+    t.float "full_duration"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_question_readings_on_created_at"

@@ -1,0 +1,12 @@
+<%# locals: (reading_histories:) %>
+<% reading_histories.each do |reading_history| %>
+  <div class="box">
+    <div class="is-flex is-justify-content-space-between">
+      <div class="is-flex">
+        <p class="mr-4"><%= reading_history.question.id %>.</p>
+        <p><%= reading_history.question.answer %></p>
+      </div>
+      <p><span class="icon"><i class="fas fa-stopwatch"></i></span><%= '%.2f' % reading_history.read_duration %> / <%= '%.2f' % reading_history.full_duration %></p>
+    </div>
+  </div>
+<% end %>

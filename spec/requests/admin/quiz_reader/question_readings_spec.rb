@@ -7,7 +7,8 @@ RSpec.describe "Admin::QuizReader::QuestionReadings", type: :request do
       {
         question_reading: {
           question_id: question.id,
-          duration: 30.0,
+          read_duration: 3.0,
+          full_duration: 6.0,
         },
       }
     end
@@ -21,7 +22,8 @@ RSpec.describe "Admin::QuizReader::QuestionReadings", type: :request do
         expect(response).to have_http_status(:ok)
         json = response.parsed_body
         expect(json["question_id"]).to eq question.id
-        expect(json["duration"]).to eq 30.0
+        expect(json["read_duration"]).to eq 3.0
+        expect(json["full_duration"]).to eq 6.0
       end
     end
 
@@ -31,7 +33,8 @@ RSpec.describe "Admin::QuizReader::QuestionReadings", type: :request do
           {
             question_reading: {
               question_id: 999999,
-              duration: 30.0,
+              read_duration: 3.0,
+              full_duration: 6.0,
             },
           }
         end
