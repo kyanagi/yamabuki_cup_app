@@ -1,6 +1,7 @@
 <div class="container">
   <%= turbo_frame_tag 'match' do %>
     <h1 class="title"><%= @match.name %></h1>
+    <p><%= @match.progress_summary %></p>
     <div class="table-container">
       <table class="table is-fullwidth is-striped is-hoverable">
         <thead>

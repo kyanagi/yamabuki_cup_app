@@ -12,4 +12,10 @@ class Match < ApplicationRecord
   def rule
     @rule ||= rule_name.constantize.new(self)
   end
+
+  # 現在の試合状況の概要を返す
+  # @rbs return: String
+  def progress_summary
+    rule.progress_summary
+  end
 end

@@ -224,4 +224,10 @@ RSpec.describe MatchRule::Round2 do
       end
     end
   end
+
+  describe "#progress_summary" do
+    it "現在の試合状況の概要を返すこと" do
+      expect(match_rule.progress_summary).to eq "14→5／現在0人勝ち抜け、残り5人"
+    end
+  end
 end

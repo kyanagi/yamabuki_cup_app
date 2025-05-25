@@ -25,6 +25,13 @@ module MatchRule
       { status: initial_status_of(seat), points: initial_points_of(seat), misses: initial_misses_of(seat) }
     end
 
+    # @rbs return: String
+    def progress_summary
+      num_winners = @matchings.count(&:status_win?)
+      num_winners_left = self.class::NUM_WINNERS - num_winners
+      "#{self.class::NUM_SEATS}→#{self.class::NUM_WINNERS}／現在#{num_winners}人勝ち抜け、残り#{num_winners_left}人"
+    end
+
     private
 
     # @rbs (Integer) -> String

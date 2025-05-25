@@ -18,6 +18,9 @@ module MatchRule
     # @rbs return: Hash[Symbol, untyped]
     def initial_matching_attributes_of: (Integer seat) -> Hash[Symbol, untyped]
 
+    # @rbs return: String
+    def progress_summary: () -> String
+
     private
 
     # @rbs (Integer) -> String
