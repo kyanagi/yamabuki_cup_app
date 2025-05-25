@@ -55,7 +55,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_031357) do
 
   create_table "question_allocations", force: :cascade do |t|
     t.integer "match_id", null: false
-    t.integer "question_id", null: false
+    t.integer "question_id"
     t.integer "order", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

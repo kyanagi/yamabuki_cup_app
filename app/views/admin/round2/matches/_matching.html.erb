@@ -6,6 +6,7 @@
           params: { matching_id: matching.id, situation: 'pushed', result: 'correct' },
           method: :put,
           class: 'button is-success is-small',
+          disabled: !matching.status_playing?,
           form: {
             style: 'display: inline-block;',
           }
@@ -17,10 +18,15 @@
   </td>
   <td class="has-text-centered">
     <%= button_to '誤答',
-                '#',
-                class: 'button is-danger is-small',
-                form: { style: 'display: inline-block; margin-left: 0.5rem;' }
-                %>
+          admin_round2_path(match_number: matching.match.match_number),
+          params: { matching_id: matching.id, situation: 'pushed', result: 'wrong' },
+          method: :put,
+          class: 'button is-danger is-small',
+          disabled: !matching.status_playing?,
+          form: {
+            style: 'display: inline-block;',
+          }
+          %>
   </td>
   <td class="has-text-centered"><%= matching.points %></td>
   <td class="has-text-centered"><%= matching.misses %></td>

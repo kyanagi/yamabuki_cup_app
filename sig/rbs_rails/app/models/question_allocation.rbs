@@ -74,9 +74,9 @@ class QuestionAllocation < ::ApplicationRecord
 
     def clear_match_id_change: () -> void
 
-    def question_id: () -> ::Integer
+    def question_id: () -> ::Integer?
 
-    def question_id=: (::Integer) -> ::Integer
+    def question_id=: (::Integer?) -> ::Integer?
 
     def question_id?: () -> bool
 

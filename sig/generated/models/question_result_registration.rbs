@@ -1,0 +1,5 @@
+# Generated from app/models/question_result_registration.rb with RBS::Inline
+
+class QuestionResultRegistration < ActiveType::Object
+  def hoge: () -> untyped
+end

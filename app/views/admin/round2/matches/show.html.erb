@@ -1,11 +1,6 @@
 <div class="container">
-  <h1><%= @match.name %></h1>
-
-  <%= turbo_frame_tag 'question' do %>
-    <%= render "admin/questions/question", question: @question %>
-  <% end %>
-
-  <%= turbo_frame_tag 'matchings' do %>
+  <%= turbo_frame_tag 'match' do %>
+    <h1 class="title"><%= @match.name %></h1>
     <div class="table-container">
       <table class="table is-fullwidth is-striped is-hoverable">
         <thead>
