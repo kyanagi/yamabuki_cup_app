@@ -15,9 +15,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @matchings.each do |matching| %>
-            <%= render "admin/round2/matches/matching", matching: %>
-          <% end %>
+          <%= render partial: "admin/round2/matches/matching", collection: @matchings %>
         </tbody>
       </table>
     </div>
