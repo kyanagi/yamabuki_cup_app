@@ -9,7 +9,6 @@ module Admin
 
         @matchings = @match.matchings.reload.preload(player: :player_profile).order(:seat)
         render "admin/round2/matches/show"
-        # redirect_to admin_round2_path(match_number: @match.match_number)
       end
     end
   end

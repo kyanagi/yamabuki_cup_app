@@ -4,20 +4,24 @@
       <h1 class="title mb-0"><%= @match.name %></h1>
       <p><%= @match.progress_summary %></p>
     </div>
-    <div class="table-container">
-      <table class="table is-fullwidth is-striped is-hoverable">
-        <thead>
-          <tr>
-            <th class="has-text-centered">ステータス</th>
-            <th style="width: 8em">氏名</th>
-            <th class="has-text-centered">得点</th>
-            <th class="has-text-centered">誤答数</th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= render partial: "admin/round2/matches/matching", collection: @matchings %>
-        </tbody>
-      </table>
+    <div class="columns">
+      <% @matchings.in_groups(2, false) do |matchings| %>
+        <div class="column">
+          <table class="table is-fullwidth is-striped is-hoverable">
+            <thead>
+              <tr>
+                <th class="has-text-centered">ステータス</th>
+                <th style="width: 8em">氏名</th>
+                <th class="has-text-centered">得点</th>
+                <th class="has-text-centered">誤答数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= render partial: "admin/round2/matches/matching", collection: matchings %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
     </div>
     <div class="buttons is-justify-content-space-between mt-4">
       <%= form_with url: "/admin/round2/#{@match.match_number}/question_results",
