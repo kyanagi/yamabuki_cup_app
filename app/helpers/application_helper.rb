@@ -44,4 +44,12 @@ module ApplicationHelper
       ""
     end
   end
+
+  def player_button_color(status)
+    if status == "playing"
+      "is-info"
+    else
+      "has-background-grey-lighter"
+    end
+  end
 end

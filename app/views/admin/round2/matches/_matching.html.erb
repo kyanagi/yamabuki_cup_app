@@ -1,34 +1,46 @@
 <%# locals: (matching:) %>
-<tr>
-  <td class="has-text-centered">
-    <%= button_to '正解',
-          admin_round2_path(match_number: matching.match.match_number),
-          params: { matching_id: matching.id, situation: 'pushed', result: 'correct' },
-          method: :put,
-          class: 'button is-success is-small',
-          disabled: !matching.status_playing?,
-          form: {
-            style: 'display: inline-block;',
-          }
-          %>
+<tr data-controller="modal">
+  <td class="has-text-centered is-vcentered"><%= matching.status %></td>
+  <td style="width: 8em" class="is-vcentered">
+    <%= button_tag "#{matching.player.player_profile.family_name} #{matching.player.player_profile.given_name}",
+      class: "button #{player_button_color(matching.status)}",
+      disabled: !matching.status_playing?,
+      data: { action: "click->modal#open" } %>
+    <div class="modal" data-modal-target="modal">
+      <div class="modal-background" data-action="click->modal#close"></div>
+      <div class="modal-content">
+        <div class="box">
+          <p class="is-size-2">
+            <%= matching.player.player_profile.family_name %>
+            <%= matching.player.player_profile.given_name %>
+          </p>
+          <div class="is-flex is-justify-content-space-between buttons are-large">
+            <%= button_to '正解',
+              admin_round2_path(match_number: matching.match.match_number),
+              params: { matching_id: matching.id, situation: 'pushed', result: 'correct' },
+              method: :put,
+              class: 'button is-success',
+              disabled: !matching.status_playing?,
+              form: {
+                style: 'display: inline-block;',
+              }
+            %>
+            <%= button_to '誤答',
+              admin_round2_path(match_number: matching.match.match_number),
+              params: { matching_id: matching.id, situation: 'pushed', result: 'wrong' },
+              method: :put,
+              class: 'button is-danger',
+              disabled: !matching.status_playing?,
+              form: {
+                style: 'display: inline-block;',
+              }
+            %>
+          </div>
+        </div>
+      </div>
+      <button class="modal-close is-large" aria-label="close" data-action="click->modal#close"></button>
+    </div>
   </td>
-  <td style="width: 8em">
-    <%= matching.player.player_profile.family_name %>
-    <%= matching.player.player_profile.given_name %>
-  </td>
-  <td class="has-text-centered">
-    <%= button_to '誤答',
-          admin_round2_path(match_number: matching.match.match_number),
-          params: { matching_id: matching.id, situation: 'pushed', result: 'wrong' },
-          method: :put,
-          class: 'button is-danger is-small',
-          disabled: !matching.status_playing?,
-          form: {
-            style: 'display: inline-block;',
-          }
-          %>
-  </td>
-  <td class="has-text-centered"><%= matching.points %></td>
-  <td class="has-text-centered"><%= matching.misses %></td>
-  <td class="has-text-centered"><%= matching.status %></td>
+  <td class="has-text-centered is-vcentered"><%= matching.points %></td>
+  <td class="has-text-centered is-vcentered"><%= matching.misses %></td>
 </tr>
