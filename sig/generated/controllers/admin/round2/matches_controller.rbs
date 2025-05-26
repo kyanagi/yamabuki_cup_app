@@ -4,8 +4,6 @@ module Admin
   module Round2
     class MatchesController < ApplicationController
       def show: () -> untyped
-
-      def update: () -> untyped
     end
   end
 end

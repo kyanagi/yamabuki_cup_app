@@ -16,23 +16,18 @@
         </thead>
         <tbody>
           <% @matchings.each do |matching| %>
-            <%= render "matching", matching: %>
+            <%= render "admin/round2/matches/matching", matching: %>
           <% end %>
         </tbody>
       </table>
     </div>
     <div class="buttons is-justify-content-space-between mt-4">
-      <%= button_to "スルー",
-        admin_round2_path(match_number: @match.match_number),
-        method: :put,
-        class: "button is-warning",
-        form: {
-          style: 'display: inline-block;',
-          data: {
-            turbo_confirm: "この問題をスルーにします。"
-          }
-        }
-      %>
+      <%= form_with url: "/admin/round2/#{@match.match_number}/question_results",
+                         method: :post,
+                         style: 'display: inline-block;',
+                         data: { turbo_confirm: "この問題をスルーにします。" } do |f| %>
+        <%= f.submit 'スルー', class: 'button is-warning' %>
+      <% end %>
       <%# TODO %>
       <%= button_to "限定問題終了",
         admin_round2_path(match_number: @match.match_number),

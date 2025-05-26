@@ -19,26 +19,22 @@
             <%= matching.player.player_profile.given_name %>
           </p>
           <div class="is-flex is-justify-content-space-between buttons are-large">
-            <%= button_to '正解',
-              admin_round2_path(match_number: matching.match.match_number),
-              params: { player_results: [matching_id: matching.id, situation: 'pushed', result: 'correct'] },
-              method: :put,
-              class: 'button is-info',
-              disabled: !matching.status_playing?,
-              form: {
-                style: 'display: inline-block;',
-              }
-            %>
-            <%= button_to '誤答',
-              admin_round2_path(match_number: matching.match.match_number),
-              params: { player_results: [matching_id: matching.id, situation: 'pushed', result: 'wrong'] },
-              method: :put,
-              class: 'button is-danger',
-              disabled: !matching.status_playing?,
-              form: {
-                style: 'display: inline-block;',
-              }
-            %>
+            <%= form_with url: "/admin/round2/#{matching.match.match_number}/question_results",
+                         method: :post,
+                         style: 'display: inline-block;' do |f| %>
+              <%= hidden_field_tag "player_results[][matching_id]", matching.id %>
+              <%= hidden_field_tag "player_results[][situation]", 'pushed' %>
+              <%= hidden_field_tag "player_results[][result]", 'correct' %>
+              <%= f.submit '正解', class: 'button is-info', disabled: !matching.status_playing? %>
+            <% end %>
+            <%= form_with url: "/admin/round2/#{matching.match.match_number}/question_results",
+                         method: :post,
+                         style: 'display: inline-block;' do |f| %>
+              <%= hidden_field_tag "player_results[][matching_id]", matching.id %>
+              <%= hidden_field_tag "player_results[][situation]", 'pushed' %>
+              <%= hidden_field_tag "player_results[][result]", 'wrong' %>
+              <%= f.submit '誤答', class: 'button is-danger', disabled: !matching.status_playing? %>
+            <% end %>
           </div>
         </div>
       </div>
