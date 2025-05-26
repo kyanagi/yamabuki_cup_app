@@ -1,8 +1,8 @@
 class QuestionResultRegistration < ActiveType::Object
-  attribute :matching_id, :integer
-  attribute :result, :string
+  attribute :match_id, :integer
+  attribute :player_results
 
-  belongs_to :matching
+  belongs_to :match
 
   before_save :register_question_result_and_process
 
@@ -15,19 +15,20 @@ class QuestionResultRegistration < ActiveType::Object
 
     question_order = (QuestionAllocation.maximum(:order) || 0) + 1
     question_allocation = QuestionAllocation.create!(
-      match: matching.match,
+      match:,
       question_id: last_question_reading&.question_id,
       order: question_order
     )
 
     question_result = QuestionResult.new(question_allocation:)
-    question_result.question_player_results.build(
-      player_id: matching.player_id,
-      result:,
-      situation: "pushed"
-    )
+    player_results.each do |r|
+      matching = match.matchings.find(r[:matching_id])
+      situation = r[:situation]
+      result = r[:result]
+      question_result.question_player_results.build(player_id: matching.player_id, result:, situation:)
+    end
     question_result.save!
 
-    matching.match.rule.process(question_result.question_player_results)
+    match.rule.process(question_result.question_player_results)
   end
 end

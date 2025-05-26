@@ -21,7 +21,7 @@
           <div class="is-flex is-justify-content-space-between buttons are-large">
             <%= button_to '正解',
               admin_round2_path(match_number: matching.match.match_number),
-              params: { matching_id: matching.id, situation: 'pushed', result: 'correct' },
+              params: { player_results: [matching_id: matching.id, situation: 'pushed', result: 'correct'] },
               method: :put,
               class: 'button is-info',
               disabled: !matching.status_playing?,
@@ -31,7 +31,7 @@
             %>
             <%= button_to '誤答',
               admin_round2_path(match_number: matching.match.match_number),
-              params: { matching_id: matching.id, situation: 'pushed', result: 'wrong' },
+              params: { player_results: [matching_id: matching.id, situation: 'pushed', result: 'wrong'] },
               method: :put,
               class: 'button is-danger',
               disabled: !matching.status_playing?,

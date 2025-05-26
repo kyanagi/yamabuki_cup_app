@@ -8,10 +8,8 @@ module Admin
 
       def update
         @match = Round::ROUND2.matches.find_by!(match_number: params[:match_number])
-        matching = @match.matchings.find(params[:matching_id])
-
         ActiveRecord::Base.transaction do
-          QuestionResultRegistration.create!(matching:, result: params[:result])
+          QuestionResultRegistration.create!(match: @match, player_results: params[:player_results])
         end
 
         @matchings = @match.matchings.reload.preload(player: :player_profile).order(:seat)
