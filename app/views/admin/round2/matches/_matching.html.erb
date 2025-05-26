@@ -1,6 +1,10 @@
 <%# locals: (matching:) %>
 <tr data-controller="modal">
-  <td class="has-text-centered is-vcentered"><%= matching.status %></td>
+  <td class="has-text-centered is-vcentered">
+    <span class="tag <%= player_status_color(matching.status) %>">
+      <%= matching.status %>
+    </span>
+  </td>
   <td style="width: 8em" class="is-vcentered">
     <%= button_tag "#{matching.player.player_profile.family_name} #{matching.player.player_profile.given_name}",
       class: "button #{player_button_color(matching.status)}",
@@ -19,7 +23,7 @@
               admin_round2_path(match_number: matching.match.match_number),
               params: { matching_id: matching.id, situation: 'pushed', result: 'correct' },
               method: :put,
-              class: 'button is-success',
+              class: 'button is-info',
               disabled: !matching.status_playing?,
               form: {
                 style: 'display: inline-block;',

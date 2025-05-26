@@ -20,4 +20,8 @@ module ApplicationHelper
   # @rbs rank Integer
   # @rbs return String
   def round2_rank_color_class: (Integer rank) -> String
+
+  def player_button_color: (untyped status) -> untyped
+
+  def player_status_color: (untyped status) -> untyped
 end

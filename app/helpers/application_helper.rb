@@ -52,4 +52,15 @@ module ApplicationHelper
       "has-background-grey-lighter"
     end
   end
+
+  def player_status_color(status)
+    case status
+    when "playing"
+      ""
+    when "win"
+      "is-success"
+    when "lose", "waiting"
+      "has-background-grey-lighter"
+    end
+  end
 end
