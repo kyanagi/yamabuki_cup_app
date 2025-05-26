@@ -21,5 +21,30 @@
         </tbody>
       </table>
     </div>
+    <div class="buttons is-justify-content-space-between mt-4">
+      <%= button_to "スルー",
+        admin_round2_path(match_number: @match.match_number),
+        method: :put,
+        class: "button is-warning",
+        form: {
+          style: 'display: inline-block;',
+          data: {
+            turbo_confirm: "この問題をスルーにします。"
+          }
+        }
+      %>
+      <%# TODO %>
+      <%= button_to "限定問題終了",
+        admin_round2_path(match_number: @match.match_number),
+        method: :put,
+        class: "button is-danger",
+        form: {
+          style: 'display: inline-block;',
+          data: {
+            turbo_confirm: "限定問題終了処理を行います。"
+          }
+        }
+      %>
+    </div>
   <% end %>
 </div>

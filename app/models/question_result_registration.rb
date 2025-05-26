@@ -4,9 +4,14 @@ class QuestionResultRegistration < ActiveType::Object
 
   belongs_to :match
 
+  before_save :set_default_player_results
   before_save :register_question_result_and_process
 
-  def register_question_result_and_process
+  def set_default_player_results #: void
+    self.player_results ||= []
+  end
+
+  def register_question_result_and_process #: void
     last_question_reading = QuestionReading.order(:created_at).last
 
     if last_question_reading && QuestionAllocation.exists?(question_id: last_question_reading.question_id)
