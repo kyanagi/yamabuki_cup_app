@@ -4,9 +4,9 @@ class QuestionResultRegistration < ActiveType::Object
 
   belongs_to :matching
 
-  before_save :hoge
+  before_save :register_question_result_and_process
 
-  def hoge
+  def register_question_result_and_process
     last_question_reading = QuestionReading.order(:created_at).last
 
     if last_question_reading && QuestionAllocation.exists?(question_id: last_question_reading.question_id)
