@@ -1,0 +1,4 @@
+# Generated from app/models/match_opening.rb with RBS::Inline
+
+class MatchOpening < ScoreOperation
+end

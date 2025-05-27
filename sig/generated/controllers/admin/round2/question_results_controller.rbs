@@ -4,6 +4,10 @@ module Admin
   module Round2
     class QuestionResultsController < ApplicationController
       def create: () -> untyped
+
+      private
+
+      def create_params: () -> untyped
     end
   end
 end

@@ -5,6 +5,7 @@ class Match < ApplicationRecord
   has_many :matchings, dependent: :destroy
   has_many :question_allocations, dependent: :destroy
   has_many :asked_questions, -> { order('"question_allocations"."order"') }, through: :question_allocations, source: :question
+  has_many :score_operations, dependent: :destroy
 
   # @rbs @rule: MatchRule::Base
 

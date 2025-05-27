@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/round2/match_closings_controller.rb with RBS::Inline
+
+module Admin
+  module Round2
+    class MatchClosingsController < ApplicationController
+      def create: () -> untyped
+    end
+  end
+end

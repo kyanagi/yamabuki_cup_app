@@ -22,17 +22,17 @@
             <%= form_with url: "/admin/round2/#{matching.match.match_number}/question_results",
                          method: :post,
                          style: 'display: inline-block;' do |f| %>
-              <%= hidden_field_tag "player_results[][matching_id]", matching.id %>
-              <%= hidden_field_tag "player_results[][situation]", 'pushed' %>
-              <%= hidden_field_tag "player_results[][result]", 'correct' %>
+              <%= hidden_field_tag "question_player_results_attributes[][player_id]", matching.player_id %>
+              <%= hidden_field_tag "question_player_results_attributes[][situation]", 'pushed' %>
+              <%= hidden_field_tag "question_player_results_attributes[][result]", 'correct' %>
               <%= f.submit '正解', class: 'button is-info', disabled: !matching.status_playing? %>
             <% end %>
             <%= form_with url: "/admin/round2/#{matching.match.match_number}/question_results",
                          method: :post,
                          style: 'display: inline-block;' do |f| %>
-              <%= hidden_field_tag "player_results[][matching_id]", matching.id %>
-              <%= hidden_field_tag "player_results[][situation]", 'pushed' %>
-              <%= hidden_field_tag "player_results[][result]", 'wrong' %>
+              <%= hidden_field_tag "question_player_results_attributes[][player_id]", matching.player_id %>
+              <%= hidden_field_tag "question_player_results_attributes[][situation]", 'pushed' %>
+              <%= hidden_field_tag "question_player_results_attributes[][result]", 'wrong' %>
               <%= f.submit '誤答', class: 'button is-danger', disabled: !matching.status_playing? %>
             <% end %>
           </div>

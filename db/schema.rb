@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_23_031357) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_27_044413) do
   create_table "matches", force: :cascade do |t|
     t.integer "round_id", null: false
     t.integer "match_number", null: false
@@ -123,6 +123,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_031357) do
     t.index ["player_id"], name: "index_round3_course_preferences_on_player_id"
   end
 
+  create_table "score_operations", force: :cascade do |t|
+    t.string "type"
+    t.integer "match_id", null: false
+    t.integer "question_result_id"
+    t.integer "previous_score_operation_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["match_id"], name: "index_score_operations_on_match_id"
+    t.index ["previous_score_operation_id"], name: "index_score_operations_on_previous_score_operation_id"
+    t.index ["question_result_id"], name: "index_score_operations_on_question_result_id"
+  end
+
   create_table "yontaku_player_results", force: :cascade do |t|
     t.integer "player_id", null: false
     t.integer "rank", null: false
@@ -148,5 +160,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_23_031357) do
   add_foreign_key "round3_course_preferences", "matches", column: "choice3_match_id"
   add_foreign_key "round3_course_preferences", "matches", column: "choice4_match_id"
   add_foreign_key "round3_course_preferences", "players"
+  add_foreign_key "score_operations", "matches"
+  add_foreign_key "score_operations", "question_results"
+  add_foreign_key "score_operations", "score_operations", column: "previous_score_operation_id"
   add_foreign_key "yontaku_player_results", "players"
 end

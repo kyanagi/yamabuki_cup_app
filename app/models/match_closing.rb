@@ -1,0 +1,2 @@
+class MatchClosing < ScoreOperation
+end

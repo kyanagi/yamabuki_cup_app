@@ -1,16 +1,12 @@
 # 問題1問ごとの締めの処理を行うクラス。
 # 問題の正誤を記録し、勝ち抜けや失格の処理を行う。
-class QuestionClosing < ActiveType::Object
-  attribute :question_id, :integer
+class QuestionClosing < ScoreOperation
   attribute :question_player_results_attributes
-
-  belongs_to :question
 
   before_validation :transfer_attributes
   before_save :save_records
   before_save :update_scores
 
-  validates :question, presence: true # rubocop:disable Rails/RedundantPresenceValidationOnBelongsTo
   validate :validate_question_player_results_attributes
 
   private
@@ -19,7 +15,7 @@ class QuestionClosing < ActiveType::Object
     return errors.add(:question_player_results_attributes, "must be an array") unless question_player_results_attributes.is_a?(Array)
 
     question_player_results_attributes.each do |attr|
-      unless attr[:player_id].is_a?(Integer)
+      unless attr[:player_id].is_a?(Integer) || /\A\d+\z/ =~ attr[:player_id]
         errors.add(:question_player_results_attributes, "player_id must be an integer")
       end
 
@@ -37,20 +33,33 @@ class QuestionClosing < ActiveType::Object
     end
   end
 
+  def last_question_reading #: QuestionReading?
+    last_question_reading = QuestionReading.order(:created_at).last
+
+    if last_question_reading && QuestionAllocation.exists?(question_id: last_question_reading.question_id)
+      return nil
+    end
+
+    last_question_reading
+  end
+
   def transfer_attributes #: void
-    question_allocation = QuestionAllocation.find_by(question_id:)
-    @question_result = QuestionResult.new(question_allocation:)
-    @question_player_results = question_player_results_attributes.map do |attr|
-      QuestionPlayerResult.new(attr)
+    question_order = (QuestionAllocation.maximum(:order) || 0) + 1
+
+    @question_result = QuestionResult.new
+    @question_result.question_allocation = QuestionAllocation.new(
+      match:,
+      question_id: last_question_reading&.question_id,
+      order: question_order
+    )
+    question_player_results_attributes.map do |attr|
+      @question_result.question_player_results.build(attr)
     end
   end
 
   def save_records #: void
     @question_result.save!
-    @question_player_results.each do |r|
-      r.question_result = @question_result
-      r.save!
-    end
+    self.question_result_id = @question_result.id
   rescue
     errors.add(:base, "Failed to save records")
     throw(:abort)
@@ -58,6 +67,6 @@ class QuestionClosing < ActiveType::Object
 
   def update_scores #: void
     rule = @question_result.match.rule
-    rule.process(@question_player_results)
+    rule.process(@question_result.question_player_results)
   end
 end

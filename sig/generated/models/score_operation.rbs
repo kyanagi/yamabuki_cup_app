@@ -1,0 +1,4 @@
+# Generated from app/models/score_operation.rb with RBS::Inline
+
+class ScoreOperation < ApplicationRecord
+end

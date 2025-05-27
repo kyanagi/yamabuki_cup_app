@@ -8,6 +8,8 @@ class QuestionAllocation::ActiveRecord_Associations_CollectionProxy < ::ActiveRe
 end
 class Question::ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
 end
+class ScoreOperation::ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+end
 class Round < ::ActiveHash::Base
 end
 class ActiveRecord::Associations::CollectionProxy < ::ActiveRecord::Relation

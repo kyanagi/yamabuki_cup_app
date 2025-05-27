@@ -267,6 +267,10 @@ class Match < ::ApplicationRecord
   def asked_questions=: (::Question::ActiveRecord_Associations_CollectionProxy | ::Array[::Question]) -> (::Question::ActiveRecord_Associations_CollectionProxy | ::Array[::Question])
   def asked_question_ids: () -> ::Array[::Integer]
   def asked_question_ids=: (::Array[::Integer]) -> ::Array[::Integer]
+  def score_operations: () -> ::ScoreOperation::ActiveRecord_Associations_CollectionProxy
+  def score_operations=: (::ScoreOperation::ActiveRecord_Associations_CollectionProxy | ::Array[::ScoreOperation]) -> (::ScoreOperation::ActiveRecord_Associations_CollectionProxy | ::Array[::ScoreOperation])
+  def score_operation_ids: () -> ::Array[::Integer]
+  def score_operation_ids=: (::Array[::Integer]) -> ::Array[::Integer]
 
   def round: () -> ::Round
   def round=: (::Round?) -> ::Round?

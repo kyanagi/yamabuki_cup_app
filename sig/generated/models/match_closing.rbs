@@ -1,0 +1,4 @@
+# Generated from app/models/match_closing.rb with RBS::Inline
+
+class MatchClosing < ScoreOperation
+end
