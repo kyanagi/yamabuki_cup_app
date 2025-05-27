@@ -42,3 +42,5 @@ node_modules
 
 /.gem_rbs_collection/
 /public/sample
+
+/.cursor/
