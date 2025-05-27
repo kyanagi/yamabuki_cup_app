@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     namespace :round2 do
       get '/:match_number', to: 'matches#show'
       post '/:match_number/question_results', to: 'question_results#create'
+      post '/:match_number/match_closings', to: 'match_closings#create'
     end
   end
 end
