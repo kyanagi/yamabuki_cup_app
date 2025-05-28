@@ -11,12 +11,22 @@ class Match < ApplicationRecord
 
   # @rbs return: MatchRule::Base
   def rule
-    @rule ||= rule_name.constantize.new(self)
+    @rule ||= rule_class.new(self)
+  end
+
+  def rule_class
+    rule_name.constantize
   end
 
   # 現在の試合状況の概要を返す
   # @rbs return: String
   def progress_summary
     rule.progress_summary
+  end
+
+  # @rbs return: Score::ActiveRecord_Associations_CollectionProxy
+  def current_scores
+    last_score_operation = score_operations.last
+    last_score_operation.scores
   end
 end

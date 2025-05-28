@@ -1,49 +1,80 @@
+# 試合のルールの基底となるクラス。
+#
+# process_* でスコアを更新するときは、このクラスでは Score は save しない。
+# （ScoreOperation 側から save されるため）
 module MatchRule
   class Base
     # @rbs @match: Match
+    # @rbs @scores: Array[Score]
 
     # @rbs match: Match
     def initialize(match)
       @match = match
-      @matchings = match.matchings
+      last_score_operation = @match.score_operations.last
+      @scores = last_score_operation.scores
     end
 
+    # 問題ごとの締め処理を行い、得点を更新する。
+    # @rbs score_operation: QuestionClosing
     # @rbs question_player_results: Array[QuestionPlayerResult]
     # @rbs return: void
-    def process(question_player_results)
+    def process_question_closing(score_operation, question_player_results)
       raise NotImplementedError
     end
 
+    # 試合終了の処理を行う。
+    # @rbs score_operation: MatchClosing
     # @rbs return: void
-    def judge_on_quiz_completed
-      raise NotImplementedError
+    def process_match_closing(score_operation)
+      @score_operation = score_operation
+      prepare_new_scores(score_operation)
+      judge_on_quiz_completed
     end
 
+    # 試合開始時のスコアの初期値を返す。
     # @rbs seat: Integer
     # @rbs return: Hash[Symbol, untyped]
-    def initial_matching_attributes_of(seat)
+    def initial_score_attributes_of(seat)
       { status: initial_status_of(seat), points: initial_points_of(seat), misses: initial_misses_of(seat) }
     end
 
     # @rbs return: String
     def progress_summary
-      num_winners = @matchings.count(&:status_win?)
+      num_winners = @scores.count(&:status_win?)
       num_winners_left = self.class::NUM_WINNERS - num_winners
       "#{self.class::NUM_SEATS}→#{self.class::NUM_WINNERS}／現在#{num_winners}人勝ち抜け、残り#{num_winners_left}人"
     end
 
     private
 
+    # スコア更新に向けて、新しいScoreオブジェクトを作成する。
+    # @rbs score_operation: QuestionClosing
+    # @rbs return: void
+    def prepare_new_scores(score_operation)
+      previous_operation = @match.score_operations.last
+      previous_scores = previous_operation.scores
+      score_operation.scores = @scores = previous_scores.map(&:dup)
+    end
+
+    # 問題限定終了時の順位判定を行う。
+    # @rbs return: void
+    def judge_on_quiz_completed
+      raise NotImplementedError
+    end
+
+    # 試合開始時のステータスの初期値を返す。
     # @rbs (Integer) -> String
     def initial_status_of(_seat)
       "playing"
     end
 
+    # 試合開始時の得点の初期値を返す。
     # @rbs (Integer) -> Integer
     def initial_points_of(_seat)
       0
     end
 
+    # 試合開始時の誤答数の初期値を返す。
     # @rbs (Integer) -> Integer
     def initial_misses_of(_seat)
       0

@@ -16,14 +16,14 @@ module MatchRule
 
     # @rbs matching: Matching
     # @rbs return: void
-    def process_correct: (Matching matching) -> void
+    def process_correct: (untyped score) -> void
 
     # @rbs matching: Matching
     # @rbs return: void
-    def process_wrong: (Matching matching) -> void
+    def process_wrong: (untyped score) -> void
 
     # @rbs matching: Matching
     # @rbs return: void
-    def mark_as_waiting: (Matching matching) -> void
+    def mark_as_waiting: (untyped score) -> void
   end
 end

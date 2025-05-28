@@ -8,27 +8,37 @@ module MatchRule
 
     NUM_WINNERS: ::Integer
 
+    # @rbs override
+    # @rbs score_operation: QuestionClosing
     # @rbs question_player_results: Array[QuestionPlayerResult]
     # @rbs return: void
-    def process: (Array[QuestionPlayerResult] question_player_results) -> void
+    def process_question_closing: ...
 
-    def start_new_set: () -> untyped
-
-    def disqualify: (player_id: untyped) -> untyped
-
+    # @rbs score_operation: ScoreOperation
     # @rbs return: void
-    def judge_on_quiz_completed: () -> void
+    def start_new_set: (ScoreOperation score_operation) -> void
+
+    # @rbs score_operation: ScoreOperation
+    # @rbs player_id: Integer
+    # @rbs return: void
+    def disqualify: (ScoreOperation score_operation, player_id: Integer) -> void
 
     private
 
-    # @rbs matching: Matching
+    # @rbs override
     # @rbs return: void
-    def process_correct: (Matching matching) -> void
+    def judge_on_quiz_completed: ...
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def process_wrong: (Matching matching) -> void
+    def process_correct: (Score score) -> void
 
-    def mark_as_lower: (untyped matching) -> untyped
+    # @rbs score: Score
+    # @rbs return: void
+    def process_wrong: (Score score) -> void
+
+    # @rbs score: Score
+    # @rbs return: void
+    def mark_as_loser: (Score score) -> void
   end
 end

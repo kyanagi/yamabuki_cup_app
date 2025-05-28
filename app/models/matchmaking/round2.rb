@@ -30,8 +30,9 @@ module Matchmaking
       target_player_ids = YontakuPlayerResult.where(rank: rank_first..rank_last).order(:rank).pluck(:player_id)
       target_player_ids.jabara_for(matches).each do |match, player_ids|
         player_ids.each_with_index do |player_id, seat|
-          Matching.create!(match:, player_id:, seat:, **match.rule.initial_matching_attributes_of(seat))
+          Matching.create!(match:, player_id:, seat:)
         end
+        MatchOpening.create!(match:)
       end
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_27_044413) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_27_082049) do
   create_table "matches", force: :cascade do |t|
     t.integer "round_id", null: false
     t.integer "match_number", null: false
@@ -24,11 +24,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_044413) do
     t.integer "match_id", null: false
     t.integer "seat", null: false
     t.integer "player_id", null: false
-    t.string "status"
-    t.integer "points", default: 0, null: false
-    t.integer "misses", default: 0, null: false
-    t.integer "stars", default: 0, null: false
-    t.integer "rank"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["match_id", "player_id"], name: "index_matchings_on_match_id_and_player_id", unique: true
@@ -135,6 +130,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_044413) do
     t.index ["question_result_id"], name: "index_score_operations_on_question_result_id"
   end
 
+  create_table "scores", force: :cascade do |t|
+    t.integer "matching_id", null: false
+    t.integer "score_operation_id", null: false
+    t.string "status"
+    t.integer "points", default: 0, null: false
+    t.integer "misses", default: 0, null: false
+    t.integer "stars", default: 0, null: false
+    t.integer "rank"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["matching_id"], name: "index_scores_on_matching_id"
+    t.index ["score_operation_id", "matching_id"], name: "index_scores_on_score_operation_id_and_matching_id", unique: true
+    t.index ["score_operation_id"], name: "index_scores_on_score_operation_id"
+  end
+
   create_table "yontaku_player_results", force: :cascade do |t|
     t.integer "player_id", null: false
     t.integer "rank", null: false
@@ -163,5 +173,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_044413) do
   add_foreign_key "score_operations", "matches"
   add_foreign_key "score_operations", "question_results"
   add_foreign_key "score_operations", "score_operations", column: "previous_score_operation_id"
+  add_foreign_key "scores", "matchings"
+  add_foreign_key "scores", "score_operations"
   add_foreign_key "yontaku_player_results", "players"
 end

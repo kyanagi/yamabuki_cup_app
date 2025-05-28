@@ -35,6 +35,33 @@ FactoryBot.define do
     match
     player
     sequence(:seat)
+  end
+
+  factory :score_operation do
+    type { "" }
+    match
+    question_result { nil }
+    previous_score_operation { nil }
+  end
+
+  factory :question_closing do
+    type { "QuestionClosing" }
+    match
+    question_result { nil }
+    previous_score_operation { nil }
+    question_player_results_attributes { [] }
+  end
+
+  factory :match_closing do
+    type { "MatchClosing" }
+    match
+    question_result { nil }
+    previous_score_operation { nil }
+  end
+
+  factory :score do
+    matching
+    score_operation
     status { "playing" }
     points { 0 }
     misses { 0 }

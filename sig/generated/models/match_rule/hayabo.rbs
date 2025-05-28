@@ -2,41 +2,44 @@
 
 module MatchRule
   module Hayabo
+    # @rbs override
+    # @rbs score_operation: QuestionClosing
     # @rbs question_player_results: Array[QuestionPlayerResult]
     # @rbs return: void
-    def process: (Array[QuestionPlayerResult] question_player_results) -> void
-
-    # @rbs return: void
-    def judge_on_quiz_completed: () -> void
+    def process_question_closing: ...
 
     private
 
-    # @rbs matching: Matching
+    # @rbs override
     # @rbs return: void
-    def process_pushed_correct: (Matching matching, untyped is_sole_correct) -> void
+    def judge_on_quiz_completed: ...
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def process_unpushed_correct: (Matching matching, untyped is_sole_correct) -> void
+    def process_pushed_correct: (Score score, untyped is_sole_correct) -> void
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def process_pushed_wrong: (Matching matching) -> void
+    def process_unpushed_correct: (Score score, untyped is_sole_correct) -> void
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def process_unpushed_wrong: (Matching matching) -> void
+    def process_pushed_wrong: (Score score) -> void
+
+    # @rbs score: Score
+    # @rbs return: void
+    def process_unpushed_wrong: (Score score) -> void
 
     # 新たに勝ち抜けポイントを超えた選手を勝者として記録する。
     # @rbs return: void
     def promote_and_save_new_winners: () -> void
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def mark_as_winner: (Matching matching) -> void
+    def mark_as_winner: (Score score) -> void
 
     # @rbs matchings: Array[Matching]
     # @rbs return: void
-    def sort_players_by_ranking_criteria!: (Array[Matching] matchings) -> void
+    def sort_players_by_ranking_criteria!: (untyped scores) -> void
   end
 end

@@ -7,7 +7,11 @@ module Admin
           QuestionClosing.create!(match: @match, question_player_results_attributes: create_params)
         end
 
-        @matchings = @match.matchings.reload.preload(player: :player_profile).order(:seat)
+        @scores = @match.current_scores
+          .eager_load(matching: :player)
+          .preload(matching: [{ player: :player_profile }, :match])
+          .order("matchings.seat")
+
         render "admin/round2/matches/show"
       end
 

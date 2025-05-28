@@ -47,22 +47,25 @@ RSpec.describe Matchmaking::Final, type: :model do
     let(:match) { Round::FINAL.matches.first! }
     let(:force) { false }
 
+    let(:sf_match) { Round::SEMIFINAL.matches.first! }
+    let(:sf_score_operation) { create(:score_operation, match: Round::SEMIFINAL.matches.first!) }
+
     let!(:sf_winners) do
       yontaku_rank = 1
-      match = Round::SEMIFINAL.matches.first!
       create_list(:player, 4).each.with_index(1) do |player, hayaoshi_rank|
         create(:yontaku_player_result, player:, rank: yontaku_rank)
-        create(:matching, match:, player:, seat: hayaoshi_rank - 1, status: "win", rank: hayaoshi_rank)
+        matching = create(:matching, match: sf_match, player:, seat: hayaoshi_rank - 1)
+        create(:score, score_operation: sf_score_operation, matching:, status: "win", rank: hayaoshi_rank)
         yontaku_rank += 1
       end
     end
 
     let!(:sf_losers) do
-      match = Round::SEMIFINAL.matches.first!
       yontaku_rank = 10
       create_list(:player, 4).each.with_index(1) do |player, hayaoshi_rank|
         create(:yontaku_player_result, player:, rank: yontaku_rank)
-        create(:matching, match:, player:, seat: hayaoshi_rank - 1, status: "lose", rank: hayaoshi_rank)
+        matching = create(:matching, match: sf_match, player:, seat: hayaoshi_rank - 1)
+        create(:score, score_operation: sf_score_operation, matching:, status: "lose", rank: hayaoshi_rank)
         yontaku_rank += 1
       end
     end
@@ -71,12 +74,13 @@ RSpec.describe Matchmaking::Final, type: :model do
       it "決勝の組分けが正しく作成されること" do
         Matchmaking::Final.create!(force:)
 
-        matchings = match.matchings.order(:seat).preload(player: :yontaku_player_result)
-        expect(matchings.map(&:seat)).to eq [*0..3]
-        expect(matchings.map(&:points)).to eq [0] * 4
-        expect(matchings.map(&:misses)).to eq [0] * 4
-        expect(matchings.map(&:status)).to eq ["playing"] * 4
-        expect(matchings.map(&:player_id)).to eq sf_winners.map(&:id)
+        last_score_operation = match.score_operations.last
+        scores = last_score_operation.scores.preload(:matching).sort_by { it.matching.seat }
+        expect(scores.map { |s| s.matching.seat }).to eq [*0..3]
+        expect(scores.map(&:points)).to eq [0] * 4
+        expect(scores.map(&:misses)).to eq [0] * 4
+        expect(scores.map(&:status)).to eq ["playing"] * 4
+        expect(scores.map { |s| s.matching.player_id }).to eq sf_winners.map(&:id)
       end
     end
 

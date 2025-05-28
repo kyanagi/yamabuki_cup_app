@@ -255,6 +255,10 @@ class MatchOpening < ::ScoreOperation
     def clear_updated_at_change: () -> void
   end
   include GeneratedAttributeMethods
+  def scores: () -> ::Score::ActiveRecord_Associations_CollectionProxy
+  def scores=: (::Score::ActiveRecord_Associations_CollectionProxy | ::Array[::Score]) -> (::Score::ActiveRecord_Associations_CollectionProxy | ::Array[::Score])
+  def score_ids: () -> ::Array[::Integer]
+  def score_ids=: (::Array[::Integer]) -> ::Array[::Integer]
 
   def match: () -> ::Match
   def match=: (::Match?) -> ::Match?

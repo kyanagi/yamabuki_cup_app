@@ -21,7 +21,10 @@ module Matchmaking
 
       matches = Round::SEMIFINAL.matches.order(:match_number).to_a
 
-      qf_winners = Round::QUARTERFINAL.matchings.status_win.map(&:player)
+      qf_winners = Round::QUARTERFINAL.matches.flat_map do |match|
+        last_score_operation = match.score_operations.last
+        last_score_operation.scores.status_win.map { |s| s.matching.player }
+      end
       sorted_target_players = qf_winners.sort_by { |player| player.yontaku_player_result.rank }
 
       players_by_match = matches.index_with { [] }
@@ -31,8 +34,9 @@ module Matchmaking
 
       players_by_match.each do |match, players|
         players.each_with_index do |player, seat|
-          Matching.create_with_initial_state!(match:, player:, seat:)
+          Matching.create!(match:, player:, seat:)
         end
+        MatchOpening.create!(match:)
       end
     end
   end

@@ -5,7 +5,7 @@
       <p><%= @match.progress_summary %></p>
     </div>
     <div class="columns">
-      <% @matchings.in_groups(2, false) do |matchings| %>
+      <% @scores.in_groups(2, false) do |scores| %>
         <div class="column">
           <table class="table is-fullwidth is-striped is-hoverable">
             <thead>
@@ -17,7 +17,7 @@
               </tr>
             </thead>
             <tbody>
-              <%= render partial: "admin/round2/matches/matching", collection: matchings %>
+              <%= render partial: "admin/round2/matches/score", collection: scores %>
             </tbody>
           </table>
         </div>

@@ -67,6 +67,6 @@ class QuestionClosing < ScoreOperation
 
   def update_scores #: void
     rule = @question_result.match.rule
-    rule.process(@question_result.question_player_results)
+    rule.process_question_closing(self, @question_result.question_player_results)
   end
 end

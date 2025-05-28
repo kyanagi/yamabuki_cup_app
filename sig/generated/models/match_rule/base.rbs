@@ -1,34 +1,57 @@
 # Generated from app/models/match_rule/base.rb with RBS::Inline
 
+# 試合のルールの基底となるクラス。
+#
+# process_* でスコアを更新するときは、このクラスでは Score は save しない。
+# （ScoreOperation 側から save されるため）
 module MatchRule
   class Base
     @match: Match
 
+    @scores: Array[Score]
+
     # @rbs match: Match
     def initialize: (Match match) -> untyped
 
+    # 問題ごとの締め処理を行い、得点を更新する。
+    # @rbs score_operation: QuestionClosing
     # @rbs question_player_results: Array[QuestionPlayerResult]
     # @rbs return: void
-    def process: (Array[QuestionPlayerResult] question_player_results) -> void
+    def process_question_closing: (QuestionClosing score_operation, Array[QuestionPlayerResult] question_player_results) -> void
 
+    # 試合終了の処理を行う。
+    # @rbs score_operation: MatchClosing
     # @rbs return: void
-    def judge_on_quiz_completed: () -> void
+    def process_match_closing: (MatchClosing score_operation) -> void
 
+    # 試合開始時のスコアの初期値を返す。
     # @rbs seat: Integer
     # @rbs return: Hash[Symbol, untyped]
-    def initial_matching_attributes_of: (Integer seat) -> Hash[Symbol, untyped]
+    def initial_score_attributes_of: (Integer seat) -> Hash[Symbol, untyped]
 
     # @rbs return: String
     def progress_summary: () -> String
 
     private
 
+    # スコア更新に向けて、新しいScoreオブジェクトを作成する。
+    # @rbs score_operation: QuestionClosing
+    # @rbs return: void
+    def prepare_new_scores: (QuestionClosing score_operation) -> void
+
+    # 問題限定終了時の順位判定を行う。
+    # @rbs return: void
+    def judge_on_quiz_completed: () -> void
+
+    # 試合開始時のステータスの初期値を返す。
     # @rbs (Integer) -> String
     def initial_status_of: (Integer) -> String
 
+    # 試合開始時の得点の初期値を返す。
     # @rbs (Integer) -> Integer
     def initial_points_of: (Integer) -> Integer
 
+    # 試合開始時の誤答数の初期値を返す。
     # @rbs (Integer) -> Integer
     def initial_misses_of: (Integer) -> Integer
   end

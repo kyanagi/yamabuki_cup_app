@@ -58,40 +58,55 @@ RSpec.describe Matchmaking::Round2, type: :model do
       it "2Rの組分けが正しく作成されること" do
         Matchmaking::Round2.create!(force:)
 
-        matchings = matches[0].matchings.order(:seat).preload(player: :yontaku_player_result).to_a
-        expect(matchings.map(&:seat)).to eq [*0..13]
-        expect(matchings.map { |m| m.player.yontaku_player_result.rank }).to eq [8, 17, 18, 27, 28, 37, 38, 47, 48, 57, 58, 67, 68, 77]
-        expect(matchings.map(&:points)).to eq [[1] * 3, [0] * 11].flatten
-        expect(matchings.map(&:misses)).to eq [0] * 14
-        expect(matchings.map(&:status)).to eq [["playing"] * 10, ["waiting"] * 4].flatten
+        last_score_operation = matches[0].score_operations.last
+        scores = last_score_operation.scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+        expect(scores.map { |s| s.matching.seat }).to eq [*0..13]
+        expect(scores.map do |s|
+          s.matching.player.yontaku_player_result.rank
+        end).to eq [8, 17, 18, 27, 28, 37, 38, 47, 48, 57, 58, 67, 68, 77]
+        expect(scores.map { |s| s.points }).to eq [[1] * 3, [0] * 11].flatten
+        expect(scores.map { |s| s.misses }).to eq [0] * 14
+        expect(scores.map { |s| s.status }).to eq [["playing"] * 10, ["waiting"] * 4].flatten
 
-        matchings = matches[1].matchings.order(:seat).preload(player: :yontaku_player_result).to_a
-        expect(matchings.map(&:seat)).to eq [*0..13]
-        expect(matchings.map { |m| m.player.yontaku_player_result.rank }).to eq [9, 16, 19, 26, 29, 36, 39, 46, 49, 56, 59, 66, 69, 76]
-        expect(matchings.map(&:points)).to eq [[1] * 3, [0] * 11].flatten
-        expect(matchings.map(&:misses)).to eq [0] * 14
-        expect(matchings.map(&:status)).to eq [["playing"] * 10, ["waiting"] * 4].flatten
+        last_score_operation = matches[1].score_operations.last
+        scores = last_score_operation.scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+        expect(scores.map { |s| s.matching.seat }).to eq [*0..13]
+        expect(scores.map do |s|
+          s.matching.player.yontaku_player_result.rank
+        end).to eq [9, 16, 19, 26, 29, 36, 39, 46, 49, 56, 59, 66, 69, 76]
+        expect(scores.map { |s| s.points }).to eq [[1] * 3, [0] * 11].flatten
+        expect(scores.map { |s| s.misses }).to eq [0] * 14
+        expect(scores.map { |s| s.status }).to eq [["playing"] * 10, ["waiting"] * 4].flatten
 
-        matchings = matches[2].matchings.order(:seat).preload(player: :yontaku_player_result).to_a
-        expect(matchings.map(&:seat)).to eq [*0..13]
-        expect(matchings.map { |m| m.player.yontaku_player_result.rank }).to eq [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75]
-        expect(matchings.map(&:points)).to eq [[1] * 3, [0] * 11].flatten
-        expect(matchings.map(&:misses)).to eq [0] * 14
-        expect(matchings.map(&:status)).to eq [["playing"] * 10, ["waiting"] * 4].flatten
+        last_score_operation = matches[2].score_operations.last
+        scores = last_score_operation.scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+        expect(scores.map { |s| s.matching.seat }).to eq [*0..13]
+        expect(scores.map do |s|
+          s.matching.player.yontaku_player_result.rank
+        end).to eq [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75]
+        expect(scores.map { |s| s.points }).to eq [[1] * 3, [0] * 11].flatten
+        expect(scores.map { |s| s.misses }).to eq [0] * 14
+        expect(scores.map { |s| s.status }).to eq [["playing"] * 10, ["waiting"] * 4].flatten
 
-        matchings = matches[3].matchings.order(:seat).preload(player: :yontaku_player_result).to_a
-        expect(matchings.map(&:seat)).to eq [*0..13]
-        expect(matchings.map { |m| m.player.yontaku_player_result.rank }).to eq [11, 14, 21, 24, 31, 34, 41, 44, 51, 54, 61, 64, 71, 74]
-        expect(matchings.map(&:points)).to eq [[1] * 3, [0] * 11].flatten
-        expect(matchings.map(&:misses)).to eq [0] * 14
-        expect(matchings.map(&:status)).to eq [["playing"] * 10, ["waiting"] * 4].flatten
+        last_score_operation = matches[3].score_operations.last
+        scores = last_score_operation.scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+        expect(scores.map { |s| s.matching.seat }).to eq [*0..13]
+        expect(scores.map do |s|
+          s.matching.player.yontaku_player_result.rank
+        end).to eq [11, 14, 21, 24, 31, 34, 41, 44, 51, 54, 61, 64, 71, 74]
+        expect(scores.map { |s| s.points }).to eq [[1] * 3, [0] * 11].flatten
+        expect(scores.map { |s| s.misses }).to eq [0] * 14
+        expect(scores.map { |s| s.status }).to eq [["playing"] * 10, ["waiting"] * 4].flatten
 
-        matchings = matches[4].matchings.order(:seat).preload(player: :yontaku_player_result).to_a
-        expect(matchings.map(&:seat)).to eq [*0..13]
-        expect(matchings.map { |m| m.player.yontaku_player_result.rank }).to eq [12, 13, 22, 23, 32, 33, 42, 43, 52, 53, 62, 63, 72, 73]
-        expect(matchings.map(&:points)).to eq [[1] * 3, [0] * 11].flatten
-        expect(matchings.map(&:misses)).to eq [0] * 14
-        expect(matchings.map(&:status)).to eq [["playing"] * 10, ["waiting"] * 4].flatten
+        last_score_operation = matches[4].score_operations.last
+        scores = last_score_operation.scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+        expect(scores.map { |s| s.matching.seat }).to eq [*0..13]
+        expect(scores.map do |s|
+          s.matching.player.yontaku_player_result.rank
+        end).to eq [12, 13, 22, 23, 32, 33, 42, 43, 52, 53, 62, 63, 72, 73]
+        expect(scores.map { |s| s.points }).to eq [[1] * 3, [0] * 11].flatten
+        expect(scores.map { |s| s.misses }).to eq [0] * 14
+        expect(scores.map { |s| s.status }).to eq [["playing"] * 10, ["waiting"] * 4].flatten
       end
     end
 

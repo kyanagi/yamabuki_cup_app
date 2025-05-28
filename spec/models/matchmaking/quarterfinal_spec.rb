@@ -51,9 +51,11 @@ RSpec.describe Matchmaking::Quarterfinal, type: :model do
     let!(:round3_winners) do
       yontaku_rank = 1
       Round::ROUND3.matches.flat_map do |match|
+        score_operation = create(:score_operation, match:)
         create_list(:player, 4).each.with_index(1) do |player, hayaoshi_rank|
           create(:yontaku_player_result, player:, rank: yontaku_rank)
-          create(:matching, match:, player:, seat: hayaoshi_rank - 1, status: "win", rank: hayaoshi_rank)
+          matching = create(:matching, match:, player:, seat: hayaoshi_rank - 1)
+          create(:score, score_operation:, matching:, status: "win", rank: hayaoshi_rank)
           yontaku_rank += 1
         end
       end
@@ -63,19 +65,21 @@ RSpec.describe Matchmaking::Quarterfinal, type: :model do
       it "準々決勝の組分けが正しく作成されること" do
         Matchmaking::Quarterfinal.create!(force:)
 
-        matchings = matches[0].matchings.order(:seat).preload(player: :yontaku_player_result)
-        expect(matchings.map(&:seat)).to eq [*0..7]
-        expect(matchings.map(&:points)).to eq [0] * 8
-        expect(matchings.map(&:misses)).to eq [0] * 8
-        expect(matchings.map(&:status)).to eq ["playing"] * 8
-        expect(matchings.map(&:player_id)).to eq([0, 2, 4, 6, 8, 10, 12, 14].map { round3_winners[it].id })
+        last_score_operation = matches[0].score_operations.last
+        scores = last_score_operation.scores.preload(:matching).sort_by { it.matching.seat }
+        expect(scores.map { |s| s.matching.seat }).to eq [*0..7]
+        expect(scores.map(&:points)).to eq [0] * 8
+        expect(scores.map(&:misses)).to eq [0] * 8
+        expect(scores.map(&:status)).to eq ["playing"] * 8
+        expect(scores.map { |s| s.matching.player_id }).to eq([0, 2, 4, 6, 8, 10, 12, 14].map { round3_winners[it].id })
 
-        matchings = matches[1].matchings.order(:seat).preload(player: :yontaku_player_result)
-        expect(matchings.map(&:seat)).to eq [*0..7]
-        expect(matchings.map(&:points)).to eq [0] * 8
-        expect(matchings.map(&:misses)).to eq [0] * 8
-        expect(matchings.map(&:status)).to eq ["playing"] * 8
-        expect(matchings.map(&:player_id)).to eq([1, 3, 5, 7, 9, 11, 13, 15].map { round3_winners[it].id })
+        last_score_operation = matches[1].score_operations.last
+        scores = last_score_operation.scores.preload(:matching).sort_by { it.matching.seat }
+        expect(scores.map { |s| s.matching.seat }).to eq [*0..7]
+        expect(scores.map(&:points)).to eq [0] * 8
+        expect(scores.map(&:misses)).to eq [0] * 8
+        expect(scores.map(&:status)).to eq ["playing"] * 8
+        expect(scores.map { |s| s.matching.player_id }).to eq([1, 3, 5, 7, 9, 11, 13, 15].map { round3_winners[it].id })
       end
     end
 

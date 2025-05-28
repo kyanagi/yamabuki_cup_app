@@ -7,54 +7,57 @@ module MatchRule
     # * POINTS_TO_WIN
     # * MISSES_TO_LOSE
 
+    # @rbs override
+    # @rbs score_operation: QuestionClosing
     # @rbs question_player_results: Array[QuestionPlayerResult]
     # @rbs return: void
-    def process(question_player_results)
+    def process_question_closing(score_operation, question_player_results)
+      @score_operation = score_operation
+      prepare_new_scores(score_operation)
+
       question_player_results.each do |question_player_result|
-        m = @matchings.find { |matching| matching.player_id == question_player_result.player_id }
-        next unless m.status_playing?
+        s = @scores.find { |score| score.matching.player_id == question_player_result.player_id }
+        next unless s.status_playing?
 
         if question_player_result.result_correct?
-          process_correct(m)
+          process_correct(s)
         elsif question_player_result.result_wrong?
-          process_wrong(m)
+          process_wrong(s)
         end
-
-        m.save!
-      end
-    end
-
-    # @rbs return: void
-    def judge_on_quiz_completed
-      num_left_winners = self.class::NUM_WINNERS - @matchings.count(&:status_win?)
-      return if num_left_winners <= 0
-
-      judgment_targets = @matchings.select { it.status.in?(["playing", "waiting"]) }
-      sort_players_by_ranking_criteria!(judgment_targets)
-      judgment_targets.first(num_left_winners).each do |matching|
-        mark_as_winner(matching)
-        matching.save!
       end
     end
 
     private
 
-    # @rbs matching: Matching
+    # @rbs override
     # @rbs return: void
-    def process_correct(matching)
-      matching.points += 1
-      if matching.points >= self.class::POINTS_TO_WIN
-        mark_as_winner(matching)
+    def judge_on_quiz_completed
+      num_left_winners = self.class::NUM_WINNERS - @scores.count(&:status_win?)
+      return if num_left_winners <= 0
+
+      judgment_targets = @scores.select { it.status.in?(["playing", "waiting"]) }
+      sort_players_by_ranking_criteria!(judgment_targets)
+      judgment_targets.first(num_left_winners).each do |score|
+        mark_as_winner(score)
+      end
+    end
+
+    # @rbs score: Score
+    # @rbs return: void
+    def process_correct(score)
+      score.points += 1
+      if score.points >= self.class::POINTS_TO_WIN
+        mark_as_winner(score)
       end
       fill_vacant_buttons_with_waiting_players
     end
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def process_wrong(matching)
-      matching.misses += 1
-      if matching.misses >= self.class::MISSES_TO_LOSE
-        mark_as_loser(matching)
+    def process_wrong(score)
+      score.misses += 1
+      if score.misses >= self.class::MISSES_TO_LOSE
+        mark_as_loser(score)
       end
       fill_vacant_buttons_with_waiting_players
 
@@ -64,37 +67,40 @@ module MatchRule
       end
     end
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def mark_as_winner(matching)
-      matching.status = "win"
-      matching.rank = Matching.highest_vacant_rank(@match)
+    def mark_as_winner(score)
+      score.status = "win"
+      score.rank = Score.highest_vacant_rank(@scores)
     end
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def mark_as_loser(matching)
-      matching.status = "lose"
-      matching.rank = Matching.lowest_vacant_rank(@match)
+    def mark_as_loser(score)
+      score.status = "lose"
+      score.rank = Score.lowest_vacant_rank(@scores)
     end
 
     # @rbs return: void
     def fill_vacant_buttons_with_waiting_players
-      n = self.class::NUM_BUTTONS - @matchings.count(&:status_playing?)
+      n = self.class::NUM_BUTTONS - @scores.count(&:status_playing?)
       return if n <= 0
 
-      @matchings.select(&:status_waiting?).sort_by(&:seat).first(n).each(&:status_playing!)
+      promoting_players = @scores.select(&:status_waiting?).sort_by { |s| s.matching.seat }.first(n)
+      promoting_players.each do |score|
+        score.status = "playing"
+      end
     end
 
     # @rbs return: bool
     def num_left_players_is_equal_to_num_left_winners?
-      @matchings.count(&:status_lose?) == self.class::NUM_SEATS - self.class::NUM_WINNERS
+      @scores.count(&:status_lose?) == self.class::NUM_SEATS - self.class::NUM_WINNERS
     end
 
     # @rbs matchings: Array[Matching]
     # @rbs return: void
-    def sort_players_by_ranking_criteria!(matchings)
-      matchings.sort_by! { |m| [-m.points, m.misses, m.seat] }
+    def sort_players_by_ranking_criteria!(scores)
+      scores.sort_by! { |s| [-s.points, s.misses, s.matching.seat] }
     end
   end
 end

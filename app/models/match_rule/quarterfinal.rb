@@ -11,24 +11,24 @@ module MatchRule
 
     # @rbs matching: Matching
     # @rbs return: void
-    def process_correct(matching)
-      matching.points += 1
+    def process_correct(score)
+      score.points += 1
     end
 
     # @rbs matching: Matching
     # @rbs return: void
-    def process_wrong(matching)
-      matching.points -= 1
-      matching.misses += 1
-      if matching.misses >= MISSES_TO_WAIT
-        mark_as_waiting(matching)
+    def process_wrong(score)
+      score.points -= 1
+      score.misses += 1
+      if score.misses >= MISSES_TO_WAIT
+        mark_as_waiting(score)
       end
     end
 
     # @rbs matching: Matching
     # @rbs return: void
-    def mark_as_waiting(matching)
-      matching.status = "waiting"
+    def mark_as_waiting(score)
+      score.status = "waiting"
     end
   end
 end

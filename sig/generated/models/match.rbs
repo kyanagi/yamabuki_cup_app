@@ -8,7 +8,12 @@ class Match < ApplicationRecord
   # @rbs return: MatchRule::Base
   def rule: () -> MatchRule::Base
 
+  def rule_class: () -> untyped
+
   # 現在の試合状況の概要を返す
   # @rbs return: String
   def progress_summary: () -> String
+
+  # @rbs return: Score::ActiveRecord_Associations_CollectionProxy
+  def current_scores: () -> Score::ActiveRecord_Associations_CollectionProxy
 end

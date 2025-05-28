@@ -1,17 +1,4 @@
 # Generated from app/models/matching.rb with RBS::Inline
 
 class Matching < ApplicationRecord
-  # @rbs match: Match
-  # @rbs player: Player
-  # @rbs seat: Integer
-  # @rbs return: Matching
-  def self.create_with_initial_state!: (match: Match, player: Player, seat: Integer) -> Matching
-
-  # @rbs match: Match
-  # @rbs return: Integer
-  def self.highest_vacant_rank: (Match match) -> Integer
-
-  # @rbs match: Match
-  # @rbs return: Integer
-  def self.lowest_vacant_rank: (Match match) -> Integer
 end

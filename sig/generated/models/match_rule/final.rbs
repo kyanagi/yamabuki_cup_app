@@ -14,38 +14,42 @@ module MatchRule
 
     STARS_TO_WIN: ::Integer
 
+    # @rbs override
+    # @rbs score_operation: QuestionClosing
     # @rbs question_player_results: Array[QuestionPlayerResult]
     # @rbs return: void
-    def process: (Array[QuestionPlayerResult] question_player_results) -> void
+    def process_question_closing: ...
 
+    # @rbs score_operation: ScoreOperation
     # @rbs question_player_result: QuestionPlayerResult
     # @rbs return: void
-    def process_special_question: (QuestionPlayerResult question_player_result) -> void
+    def process_special_question_closing: (ScoreOperation score_operation, QuestionPlayerResult question_player_result) -> void
 
+    # @rbs score_operation: ScoreOperation
     # @rbs return: void
-    def start_new_set: () -> void
+    def start_new_set: (ScoreOperation score_operation) -> void
 
     # @rbs seat: Integer
     # @rbs return: Hash[Symbol, untyped]
-    def initial_matching_attributes_of: (Integer seat) -> Hash[Symbol, untyped]
+    def initial_score_attributes_of: (Integer seat) -> Hash[Symbol, untyped]
 
     private
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def process_correct: (Matching matching) -> void
+    def process_correct: (Score score) -> void
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def process_wrong: (Matching matching) -> void
+    def process_wrong: (Score score) -> void
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def mark_as_set_winner: (Matching matching) -> void
+    def mark_as_set_winner: (Score score) -> void
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def mark_as_set_loser: (Matching matching) -> void
+    def mark_as_set_loser: (Score score) -> void
 
     # @rbs return: bool
     def only_one_player_is_playing?: () -> bool

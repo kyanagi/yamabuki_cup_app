@@ -4,59 +4,71 @@ module MatchRule
     NUM_BUTTONS = 8
     NUM_WINNERS = 4
 
+    # @rbs override
+    # @rbs score_operation: QuestionClosing
     # @rbs question_player_results: Array[QuestionPlayerResult]
     # @rbs return: void
-    def process(question_player_results)
+    def process_question_closing(score_operation, question_player_results)
+      @score_operation = score_operation
+      prepare_new_scores(score_operation)
+
       question_player_results.each do |question_player_result|
-        m = @matchings.find { |matching| matching.player_id == question_player_result.player_id }
-        next unless m.status_playing?
+        s = @scores.find { |score| score.matching.player_id == question_player_result.player_id }
+        next unless s.status_playing?
 
         if question_player_result.result_correct?
-          process_correct(m)
+          process_correct(s)
         elsif question_player_result.result_wrong?
-          process_wrong(m)
+          process_wrong(s)
         end
-
-        m.save!
       end
     end
 
-    def start_new_set
-      @matchings.update_all(points: 0)
-    end
-
-    def disqualify(player_id:)
-      m = @matchings.find { |matching| matching.player_id == player_id }
-
-      mark_as_lower(m)
-      m.save!
-    end
-
+    # @rbs score_operation: ScoreOperation
     # @rbs return: void
-    def judge_on_quiz_completed
-      winners = @matchings.select(&:status_playing?)
-      winners.each do |matching|
-        matching.status = "win"
-        matching.save!
+    def start_new_set(score_operation)
+      prepare_new_scores(score_operation)
+      @scores.each do |score|
+        score.points = 0
       end
+    end
+
+    # @rbs score_operation: ScoreOperation
+    # @rbs player_id: Integer
+    # @rbs return: void
+    def disqualify(score_operation, player_id:)
+      prepare_new_scores(score_operation)
+      s = @scores.find { |score| score.matching.player_id == player_id }
+
+      mark_as_loser(s)
     end
 
     private
 
-    # @rbs matching: Matching
+    # @rbs override
     # @rbs return: void
-    def process_correct(matching)
-      matching.points += 1
+    def judge_on_quiz_completed
+      @scores.select(&:status_playing?).each do |score|
+        score.status = "win"
+      end
     end
 
-    # @rbs matching: Matching
+    # @rbs score: Score
     # @rbs return: void
-    def process_wrong(matching)
+    def process_correct(score)
+      score.points += 1
+    end
+
+    # @rbs score: Score
+    # @rbs return: void
+    def process_wrong(score)
       # noop
     end
 
-    def mark_as_lower(matching)
-      matching.status = "lose"
+    # @rbs score: Score
+    # @rbs return: void
+    def mark_as_loser(score)
+      score.status = "lose"
     end
   end
 end

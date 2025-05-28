@@ -24,14 +24,17 @@ module Matchmaking
       matches = Round::ROUND3.matches.order(:match_number).to_a
 
       seeded_players = YontakuPlayerResult.round2_seeded.preload(:player).map(&:player)
-      round2_winners = Round::ROUND2.matchings.status_win.map(&:player)
+      round2_winners = Round::ROUND2.matches.flat_map do |match|
+        last_score_operation = match.score_operations.last
+        last_score_operation.scores.status_win.map { |s| s.matching.player }
+      end
       sorted_target_players = (seeded_players + round2_winners).sort_by { |player| player.yontaku_player_result.rank }
 
       players_by_match = matches.index_with { [] }
       sorted_target_players.each do |player|
         preference = player.round3_course_preference
         preference.choices.each do |wanted_match|
-          if players_by_match[wanted_match].size < wanted_match.rule.class::NUM_SEATS
+          if players_by_match[wanted_match].size < wanted_match.rule_class::NUM_SEATS
             players_by_match[wanted_match] << player
             break
           end
@@ -40,8 +43,9 @@ module Matchmaking
 
       players_by_match.each do |match, players|
         players.each_with_index do |player, seat|
-          Matching.create_with_initial_state!(match:, player:, seat:)
+          Matching.create!(match:, player:, seat:)
         end
+        MatchOpening.create!(match:)
       end
     end
   end

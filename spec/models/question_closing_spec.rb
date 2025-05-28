@@ -35,8 +35,38 @@ RSpec.describe QuestionClosing do
   def setup_match_rule_mock
     rule = instance_double(MatchRule::Round2)
     allow_any_instance_of(QuestionResult).to receive_message_chain(:match, :rule).and_return(rule)
-    expect(rule).to receive(:process) do |question_player_results|
+    expect(rule).to receive(:process_question_closing) do |score_operation, question_player_results|
+      expect(score_operation).to be_a QuestionClosing
       expect(question_player_results).to all be_a QuestionPlayerResult
+    end
+  end
+
+  describe "モックなしでScoreが作成されることの確認" do
+    let(:matchings) do
+      Array.new(players.size) do |i|
+        create(:matching, match:, seat: i, player: players[i])
+      end
+    end
+    let(:match_opening) { create(:score_operation, match:) }
+
+    let(:question_closing) do
+      QuestionClosing.new(
+        match:,
+        question_player_results_attributes: [
+          { player_id: players[0].id, result: "correct", situation: "pushed" },
+        ]
+      )
+    end
+
+    before do
+      players.size.times do |i|
+        create(:score, score_operation: match_opening, matching: matchings[i], **match.rule.initial_score_attributes_of(i))
+      end
+    end
+
+    it "Scoreが作成されること" do
+      expect { question_closing.save! }
+        .to change(Score, :count).by(3)
     end
   end
 
