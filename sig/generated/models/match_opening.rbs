@@ -6,4 +6,6 @@ class MatchOpening < ScoreOperation
   private
 
   def create_scores: () -> void
+
+  def update_match_last_score_operation: () -> void
 end

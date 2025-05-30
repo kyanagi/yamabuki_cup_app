@@ -70,12 +70,17 @@ RSpec.describe Matchmaking::Final, type: :model do
       end
     end
 
+    before do
+      sf_match.update!(last_score_operation: sf_score_operation)
+    end
+
     shared_examples "決勝の組分けが正しく作成されること" do
       it "決勝の組分けが正しく作成されること" do
         Matchmaking::Final.create!(force:)
 
-        last_score_operation = match.score_operations.last
-        scores = last_score_operation.scores.preload(:matching).sort_by { it.matching.seat }
+        match.reload
+
+        scores = match.current_scores.preload(:matching).sort_by { it.matching.seat }
         expect(scores.map { |s| s.matching.seat }).to eq [*0..3]
         expect(scores.map(&:points)).to eq [0] * 4
         expect(scores.map(&:misses)).to eq [0] * 4

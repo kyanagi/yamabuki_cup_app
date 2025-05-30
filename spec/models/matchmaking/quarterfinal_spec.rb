@@ -52,6 +52,7 @@ RSpec.describe Matchmaking::Quarterfinal, type: :model do
       yontaku_rank = 1
       Round::ROUND3.matches.flat_map do |match|
         score_operation = create(:score_operation, match:)
+        match.update!(last_score_operation: score_operation)
         create_list(:player, 4).each.with_index(1) do |player, hayaoshi_rank|
           create(:yontaku_player_result, player:, rank: yontaku_rank)
           matching = create(:matching, match:, player:, seat: hayaoshi_rank - 1)
@@ -65,16 +66,16 @@ RSpec.describe Matchmaking::Quarterfinal, type: :model do
       it "準々決勝の組分けが正しく作成されること" do
         Matchmaking::Quarterfinal.create!(force:)
 
-        last_score_operation = matches[0].score_operations.last
-        scores = last_score_operation.scores.preload(:matching).sort_by { it.matching.seat }
+        matches.each(&:reload)
+
+        scores = matches[0].current_scores.preload(:matching).sort_by { it.matching.seat }
         expect(scores.map { |s| s.matching.seat }).to eq [*0..7]
         expect(scores.map(&:points)).to eq [0] * 8
         expect(scores.map(&:misses)).to eq [0] * 8
         expect(scores.map(&:status)).to eq ["playing"] * 8
         expect(scores.map { |s| s.matching.player_id }).to eq([0, 2, 4, 6, 8, 10, 12, 14].map { round3_winners[it].id })
 
-        last_score_operation = matches[1].score_operations.last
-        scores = last_score_operation.scores.preload(:matching).sort_by { it.matching.seat }
+        scores = matches[1].current_scores.preload(:matching).sort_by { it.matching.seat }
         expect(scores.map { |s| s.matching.seat }).to eq [*0..7]
         expect(scores.map(&:points)).to eq [0] * 8
         expect(scores.map(&:misses)).to eq [0] * 8

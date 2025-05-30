@@ -20,6 +20,10 @@ RSpec.describe MatchRule::Round3Hayabo2 do
 
   let(:question_closing) { build(:question_closing, match:) }
 
+  before do
+    match.update!(last_score_operation: match_opening)
+  end
+
   describe "#process_question_closing" do
     context "押して正解のとき" do
       let(:question_player_results) do

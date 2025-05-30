@@ -51,6 +51,7 @@ RSpec.describe Matchmaking::Semifinal, type: :model do
       yontaku_rank = 1
       Round::QUARTERFINAL.matches.flat_map do |match|
         score_operation = create(:score_operation, match:)
+        match.update!(last_score_operation: score_operation)
         create_list(:player, 4).each.with_index(1) do |player, hayaoshi_rank|
           create(:yontaku_player_result, player:, rank: yontaku_rank)
           matching = create(:matching, match:, player:, seat: hayaoshi_rank - 1)
@@ -64,8 +65,8 @@ RSpec.describe Matchmaking::Semifinal, type: :model do
       it "準決勝の組分けが正しく作成されること" do
         Matchmaking::Semifinal.create!(force:)
 
-        last_score_operation = matches[0].score_operations.last
-        scores = last_score_operation.scores.preload(:matching).sort_by { it.matching.seat }
+        matches[0].reload
+        scores = matches[0].current_scores.preload(:matching).sort_by { it.matching.seat }
         expect(scores.map { |s| s.matching.seat }).to eq [*0..7]
         expect(scores.map(&:points)).to eq [0] * 8
         expect(scores.map(&:misses)).to eq [0] * 8

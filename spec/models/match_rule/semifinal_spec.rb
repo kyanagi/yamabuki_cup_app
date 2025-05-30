@@ -20,6 +20,10 @@ RSpec.describe MatchRule::Semifinal do
 
   let(:question_closing) { build(:question_closing, match:) }
 
+  before do
+    match.update!(last_score_operation: match_opening)
+  end
+
   describe "#process_question_closing" do
     context "正解のとき" do
       it "得点が1増え、参加中のままであること" do

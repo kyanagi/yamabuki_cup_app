@@ -59,6 +59,7 @@ RSpec.describe QuestionClosing do
     end
 
     before do
+      match.update!(last_score_operation: match_opening)
       players.size.times do |i|
         create(:score, score_operation: match_opening, matching: matchings[i], **match.rule.initial_score_attributes_of(i))
       end

@@ -58,8 +58,9 @@ RSpec.describe Matchmaking::Round2, type: :model do
       it "2Rの組分けが正しく作成されること" do
         Matchmaking::Round2.create!(force:)
 
-        last_score_operation = matches[0].score_operations.last
-        scores = last_score_operation.scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+        matches.each(&:reload)
+
+        scores = matches[0].current_scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
         expect(scores.map { |s| s.matching.seat }).to eq [*0..13]
         expect(scores.map do |s|
           s.matching.player.yontaku_player_result.rank
@@ -68,8 +69,7 @@ RSpec.describe Matchmaking::Round2, type: :model do
         expect(scores.map { |s| s.misses }).to eq [0] * 14
         expect(scores.map { |s| s.status }).to eq [["playing"] * 10, ["waiting"] * 4].flatten
 
-        last_score_operation = matches[1].score_operations.last
-        scores = last_score_operation.scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+        scores = matches[1].current_scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
         expect(scores.map { |s| s.matching.seat }).to eq [*0..13]
         expect(scores.map do |s|
           s.matching.player.yontaku_player_result.rank
@@ -78,8 +78,7 @@ RSpec.describe Matchmaking::Round2, type: :model do
         expect(scores.map { |s| s.misses }).to eq [0] * 14
         expect(scores.map { |s| s.status }).to eq [["playing"] * 10, ["waiting"] * 4].flatten
 
-        last_score_operation = matches[2].score_operations.last
-        scores = last_score_operation.scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+        scores = matches[2].current_scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
         expect(scores.map { |s| s.matching.seat }).to eq [*0..13]
         expect(scores.map do |s|
           s.matching.player.yontaku_player_result.rank
@@ -88,8 +87,7 @@ RSpec.describe Matchmaking::Round2, type: :model do
         expect(scores.map { |s| s.misses }).to eq [0] * 14
         expect(scores.map { |s| s.status }).to eq [["playing"] * 10, ["waiting"] * 4].flatten
 
-        last_score_operation = matches[3].score_operations.last
-        scores = last_score_operation.scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+        scores = matches[3].current_scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
         expect(scores.map { |s| s.matching.seat }).to eq [*0..13]
         expect(scores.map do |s|
           s.matching.player.yontaku_player_result.rank
@@ -98,8 +96,7 @@ RSpec.describe Matchmaking::Round2, type: :model do
         expect(scores.map { |s| s.misses }).to eq [0] * 14
         expect(scores.map { |s| s.status }).to eq [["playing"] * 10, ["waiting"] * 4].flatten
 
-        last_score_operation = matches[4].score_operations.last
-        scores = last_score_operation.scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+        scores = matches[4].current_scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
         expect(scores.map { |s| s.matching.seat }).to eq [*0..13]
         expect(scores.map do |s|
           s.matching.player.yontaku_player_result.rank

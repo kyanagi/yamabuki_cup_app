@@ -10,8 +10,7 @@ module MatchRule
     # @rbs match: Match
     def initialize(match)
       @match = match
-      last_score_operation = @match.score_operations.last
-      @scores = last_score_operation.scores
+      @scores = @match.current_scores
     end
 
     # 問題ごとの締め処理を行い、得点を更新する。
@@ -51,9 +50,8 @@ module MatchRule
     # @rbs score_operation: QuestionClosing
     # @rbs return: void
     def prepare_new_scores(score_operation)
-      previous_operation = @match.score_operations.last
-      previous_scores = previous_operation.scores
-      score_operation.scores = @scores = previous_scores.map(&:dup)
+      previous_scores = @match.current_scores.map(&:dup)
+      score_operation.scores = @scores = previous_scores
     end
 
     # 問題限定終了時の順位判定を行う。

@@ -25,8 +25,7 @@ module Matchmaking
 
       seeded_players = YontakuPlayerResult.round2_seeded.preload(:player).map(&:player)
       round2_winners = Round::ROUND2.matches.flat_map do |match|
-        last_score_operation = match.score_operations.last
-        last_score_operation.scores.status_win.map { |s| s.matching.player }
+        match.current_scores.status_win.map { |s| s.matching.player }
       end
       sorted_target_players = (seeded_players + round2_winners).sort_by { |player| player.yontaku_player_result.rank }
 
