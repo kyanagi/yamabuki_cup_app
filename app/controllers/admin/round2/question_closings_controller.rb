@@ -1,6 +1,6 @@
 module Admin
   module Round2
-    class QuestionResultsController < ApplicationController
+    class QuestionClosingsController < ApplicationController
       def create
         @match = Round::ROUND2.matches.find_by!(match_number: params[:match_number])
         ActiveRecord::Base.transaction do

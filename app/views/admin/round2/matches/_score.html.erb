@@ -24,7 +24,7 @@
             <%= score.matching.player.player_profile.given_name %>
           </p>
           <div class="is-flex is-justify-content-space-between buttons are-large">
-            <%= form_with url: "/admin/round2/#{score.matching.match.match_number}/question_results",
+            <%= form_with url: "/admin/round2/#{score.matching.match.match_number}/question_closings",
                          method: :post,
                          style: 'display: inline-block;' do |f| %>
               <%= hidden_field_tag "question_player_results_attributes[][player_id]", score.matching.player_id %>
@@ -32,7 +32,7 @@
               <%= hidden_field_tag "question_player_results_attributes[][result]", 'correct' %>
               <%= f.submit '正解', class: 'button is-info', disabled: !score.status_playing? %>
             <% end %>
-            <%= form_with url: "/admin/round2/#{score.matching.match.match_number}/question_results",
+            <%= form_with url: "/admin/round2/#{score.matching.match.match_number}/question_closings",
                          method: :post,
                          style: 'display: inline-block;' do |f| %>
               <%= hidden_field_tag "question_player_results_attributes[][player_id]", score.matching.player_id %>

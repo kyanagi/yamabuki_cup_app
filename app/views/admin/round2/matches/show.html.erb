@@ -24,7 +24,7 @@
       <% end %>
     </div>
     <div class="buttons is-justify-content-space-between mt-4">
-      <%= form_with url: "/admin/round2/#{@match.match_number}/question_results",
+      <%= form_with url: "/admin/round2/#{@match.match_number}/question_closings",
                          method: :post,
                          style: 'display: inline-block;',
                          data: { turbo_confirm: "この問題をスルーにします。" } do |f| %>
