@@ -11,6 +11,8 @@ RSpec.describe MatchClosing do
   end
   let(:match_opening) { create(:score_operation, match:) }
 
+  let(:match_closing) { build(:match_closing, match:) }
+
   before do
     players.size.times do |i|
       create(:score, score_operation: match_opening, matching: matchings[i], **match.rule.initial_score_attributes_of(i))
@@ -18,8 +20,13 @@ RSpec.describe MatchClosing do
   end
 
   it "Scoreが作成されること" do
-    expect { MatchClosing.create!(match:) }
+    expect { match_closing.save! }
       .to change(Score, :count).by(3)
+  end
+
+  it "Matchのlast_score_operationが更新されること" do
+    expect { match_closing.save! }
+      .to change { match.reload.last_score_operation }.to(match_closing)
   end
 
   it "MatchRuleのprocess_match_closingが呼ばれること" do
@@ -28,6 +35,6 @@ RSpec.describe MatchClosing do
       expect(score_operation).to be_a MatchClosing
     end
 
-    MatchClosing.create!(match:)
+    match_closing.save!
   end
 end

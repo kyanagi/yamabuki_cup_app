@@ -68,6 +68,11 @@ RSpec.describe QuestionClosing do
       expect { question_closing.save! }
         .to change(Score, :count).by(3)
     end
+
+    it "Matchのlast_score_operationが更新されること" do
+      expect { question_closing.save! }
+        .to change { match.reload.last_score_operation }.to(question_closing)
+    end
   end
 
   context "早押しシングルチャンス・正解" do

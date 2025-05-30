@@ -2,6 +2,7 @@
 # 各選手の初期スコアを登録する。
 class MatchOpening < ScoreOperation
   after_create :create_scores
+  after_create :update_match_last_score_operation
 
   private
 
@@ -16,5 +17,9 @@ class MatchOpening < ScoreOperation
       }
     end
     Score.insert_all!(data)
+  end
+
+  def update_match_last_score_operation #: void
+    match.update!(last_score_operation: self)
   end
 end

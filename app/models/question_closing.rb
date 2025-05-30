@@ -6,6 +6,7 @@ class QuestionClosing < ScoreOperation
   before_validation :transfer_attributes
   before_create :save_records
   before_create :update_scores
+  after_create :update_match_last_score_operation
 
   validate :validate_question_player_results_attributes
 
@@ -67,5 +68,9 @@ class QuestionClosing < ScoreOperation
 
   def update_scores #: void
     match.rule.process_question_closing(self, @question_result.question_player_results)
+  end
+
+  def update_match_last_score_operation #: void
+    match.update!(last_score_operation: self)
   end
 end

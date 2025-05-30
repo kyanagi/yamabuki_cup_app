@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_27_082049) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_30_024802) do
   create_table "matches", force: :cascade do |t|
     t.integer "round_id", null: false
     t.integer "match_number", null: false
@@ -18,6 +18,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_082049) do
     t.string "rule_name", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "last_score_operation_id"
+    t.index ["last_score_operation_id"], name: "index_matches_on_last_score_operation_id"
   end
 
   create_table "matchings", force: :cascade do |t|
@@ -155,6 +157,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_27_082049) do
     t.index ["rank"], name: "index_yontaku_player_results_on_rank", unique: true
   end
 
+  add_foreign_key "matches", "score_operations", column: "last_score_operation_id"
   add_foreign_key "matchings", "matches"
   add_foreign_key "matchings", "players"
   add_foreign_key "player_profiles", "players"

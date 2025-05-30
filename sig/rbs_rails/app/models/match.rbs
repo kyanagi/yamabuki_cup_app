@@ -253,6 +253,42 @@ class Match < ::ApplicationRecord
     def restore_updated_at!: () -> void
 
     def clear_updated_at_change: () -> void
+
+    def last_score_operation_id: () -> ::Integer?
+
+    def last_score_operation_id=: (::Integer?) -> ::Integer?
+
+    def last_score_operation_id?: () -> bool
+
+    def last_score_operation_id_changed?: () -> bool
+
+    def last_score_operation_id_change: () -> [ ::Integer?, ::Integer? ]
+
+    def last_score_operation_id_will_change!: () -> void
+
+    def last_score_operation_id_was: () -> ::Integer?
+
+    def last_score_operation_id_previously_changed?: () -> bool
+
+    def last_score_operation_id_previous_change: () -> ::Array[::Integer?]?
+
+    def last_score_operation_id_previously_was: () -> ::Integer?
+
+    def last_score_operation_id_before_last_save: () -> ::Integer?
+
+    def last_score_operation_id_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def last_score_operation_id_in_database: () -> ::Integer?
+
+    def saved_change_to_last_score_operation_id: () -> ::Array[::Integer?]?
+
+    def saved_change_to_last_score_operation_id?: () -> bool
+
+    def will_save_change_to_last_score_operation_id?: () -> bool
+
+    def restore_last_score_operation_id!: () -> void
+
+    def clear_last_score_operation_id_change: () -> void
   end
   include GeneratedAttributeMethods
   def matchings: () -> ::Matching::ActiveRecord_Associations_CollectionProxy
@@ -278,6 +314,12 @@ class Match < ::ApplicationRecord
   def build_round: (untyped) -> ::Round
   def create_round: (untyped) -> ::Round
   def create_round!: (untyped) -> ::Round
+  def last_score_operation: () -> ::ScoreOperation?
+  def last_score_operation=: (::ScoreOperation?) -> ::ScoreOperation?
+  def reload_last_score_operation: () -> ::ScoreOperation?
+  def build_last_score_operation: (untyped) -> ::ScoreOperation
+  def create_last_score_operation: (untyped) -> ::ScoreOperation
+  def create_last_score_operation!: (untyped) -> ::ScoreOperation
   module GeneratedAssociationMethods
   end
   include GeneratedAssociationMethods

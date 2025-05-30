@@ -14,4 +14,6 @@ class QuestionClosing < ScoreOperation
   def save_records: () -> void
 
   def update_scores: () -> void
+
+  def update_match_last_score_operation: () -> void
 end

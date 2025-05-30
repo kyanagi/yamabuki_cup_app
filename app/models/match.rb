@@ -6,6 +6,7 @@ class Match < ApplicationRecord
   has_many :question_allocations, dependent: :destroy
   has_many :asked_questions, -> { order('"question_allocations"."order"') }, through: :question_allocations, source: :question
   has_many :score_operations, dependent: :destroy
+  belongs_to :last_score_operation, class_name: "ScoreOperation", optional: true
 
   # @rbs @rule: MatchRule::Base
 
@@ -26,7 +27,6 @@ class Match < ApplicationRecord
 
   # @rbs return: Score::ActiveRecord_Associations_CollectionProxy
   def current_scores
-    last_score_operation = score_operations.last
-    last_score_operation.scores
+    last_score_operation&.scores || Score.none
   end
 end
