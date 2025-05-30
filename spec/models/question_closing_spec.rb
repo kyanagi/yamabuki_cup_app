@@ -34,7 +34,7 @@ RSpec.describe QuestionClosing do
 
   def setup_match_rule_mock
     rule = instance_double(MatchRule::Round2)
-    allow_any_instance_of(QuestionResult).to receive_message_chain(:match, :rule).and_return(rule)
+    allow(match).to receive(:rule).and_return(rule)
     expect(rule).to receive(:process_question_closing) do |score_operation, question_player_results|
       expect(score_operation).to be_a QuestionClosing
       expect(question_player_results).to all be_a QuestionPlayerResult
