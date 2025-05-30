@@ -4,6 +4,11 @@
     <span class="tag <%= player_status_color(score.status) %>">
       <%= score.status %>
     </span>
+    <% if score.rank %>
+      <span>
+        <%= score.rank.ordinalize %>
+      </span>
+    <% end %>
   </td>
   <td style="width: 8em" class="is-vcentered">
     <%= button_tag "#{score.matching.player.player_profile.family_name} #{score.matching.player.player_profile.given_name}",
