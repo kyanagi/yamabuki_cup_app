@@ -1,0 +1,15 @@
+# Generated from app/controllers/admin/round2/question_closings_controller.rb with RBS::Inline
+
+module Admin
+  module Round2
+    class QuestionClosingsController < ApplicationController
+      include MatchInstanceVariables
+
+      def create: () -> untyped
+
+      private
+
+      def create_params: () -> untyped
+    end
+  end
+end

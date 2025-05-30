@@ -1,17 +1,15 @@
 module Admin
   module Round2
     class QuestionClosingsController < ApplicationController
+      include MatchInstanceVariables
+
       def create
         @match = Round::ROUND2.matches.find_by!(match_number: params[:match_number])
         ActiveRecord::Base.transaction do
           QuestionClosing.create!(match: @match, question_player_results_attributes: create_params)
         end
 
-        @scores = @match.current_scores
-          .eager_load(matching: :player)
-          .preload(matching: [{ player: :player_profile }, :match])
-          .order("matchings.seat")
-
+        setup_instance_variables(@match)
         render "admin/round2/matches/show"
       end
 

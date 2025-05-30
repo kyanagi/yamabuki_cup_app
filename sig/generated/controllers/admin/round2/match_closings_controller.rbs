@@ -3,6 +3,8 @@
 module Admin
   module Round2
     class MatchClosingsController < ApplicationController
+      include MatchInstanceVariables
+
       def create: () -> untyped
     end
   end
