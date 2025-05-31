@@ -39,6 +39,14 @@
     </div>
     <div class="mt-6">
       <h2 class="title is-4">操作履歴</h2>
+      <div class="block">
+        <%= form_with url: "/admin/round2/#{@match.match_number}/undos",
+                    method: :post,
+                    style: 'display: inline-block;',
+                    data: { turbo_confirm: "直前の操作を取り消します。" } do |f| %>
+          <%= f.submit 'アンドゥ', class: 'button is-warning' %>
+        <% end %>
+      </div>
       <div class="columns is-multiline">
         <% @histories.each do |history| %>
           <div class="column is-one-fifth">

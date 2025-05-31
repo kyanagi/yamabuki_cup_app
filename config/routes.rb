@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       get '/:match_number', to: 'matches#show'
       post '/:match_number/question_closings', to: 'question_closings#create'
       post '/:match_number/match_closings', to: 'match_closings#create'
+      post '/:match_number/undos', to: 'undos#create'
     end
   end
 end

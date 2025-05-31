@@ -6,7 +6,12 @@ class ScoreOperation < ApplicationRecord
   # @rbs return: Array[ScoreOperation]
   def operation_history: () -> Array[ScoreOperation]
 
+  def previous_score_operation: () -> untyped
+
   private
 
   def set_path: () -> void
+
+  # @rbs return: Array[String]
+  def ids_in_path: () -> Array[String]
 end

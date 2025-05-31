@@ -7,8 +7,13 @@ class ScoreOperation < ApplicationRecord
   # 戻り値の ScoreOperation は新しい順に並んでいる。
   # @rbs return: Array[ScoreOperation]
   def operation_history
-    score_operation_ids = path.split(",").compact_blank.reverse
+    score_operation_ids = ids_in_path.reverse
     ScoreOperation.find(score_operation_ids).prepend(self)
+  end
+
+  def previous_score_operation
+    id = ids_in_path.last
+    id ? ScoreOperation.find(id) : nil
   end
 
   private
@@ -20,5 +25,10 @@ class ScoreOperation < ApplicationRecord
     else
       self.path = ""
     end
+  end
+
+  # @rbs return: Array[String]
+  def ids_in_path
+    path.split(",").compact_blank
   end
 end
