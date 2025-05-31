@@ -27,6 +27,30 @@ module MatchRule
       end
     end
 
+    # @rbs score_operation: ScoreOperation
+    # @rbs return: String
+    def summarize_score_operation(score_operation)
+      case score_operation
+      when QuestionClosing
+        r = score_operation.question_result
+        if r.question_player_results.empty?
+          "スルー"
+        else
+          r.question_player_results.map do |result|
+            name = result.player.player_profile.family_name
+            ox = result.result_correct? ? "◯" : "×"
+            "#{name}#{ox}"
+          end.join(", ")
+        end
+      when MatchClosing
+        "限定問題終了判定"
+      when MatchOpening
+        "試合開始"
+      else
+        score_operation.class.name
+      end
+    end
+
     private
 
     # @rbs override

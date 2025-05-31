@@ -37,5 +37,15 @@
         <%= f.submit '限定問題終了', class: 'button is-danger' %>
       <% end %>
     </div>
+    <div class="mt-6">
+      <h2 class="title is-4">操作履歴</h2>
+      <div class="columns is-multiline">
+        <% @histories.each do |history| %>
+          <div class="column is-one-fifth">
+            <p class="box has-background-white-ter"><%= history %></p>
+          </div>
+        <% end %>
+      </div>
+    </div>
   <% end %>
 </div>

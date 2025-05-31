@@ -11,6 +11,13 @@ module Admin
           .eager_load(matching: :player)
           .preload(matching: [{ player: :player_profile }, :match])
           .order("matchings.seat")
+
+        @histories = []
+        op = match.last_score_operation
+        while op
+          @histories << match.rule.summarize_score_operation(op)
+          op = op.previous_score_operation
+        end
       end
     end
   end
