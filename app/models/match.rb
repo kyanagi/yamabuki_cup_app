@@ -25,8 +25,16 @@ class Match < ApplicationRecord
     rule.progress_summary
   end
 
+  # 現在の参加選手の Score の一覧を返す。
   # @rbs return: Score::ActiveRecord_Associations_CollectionProxy
   def current_scores
     last_score_operation&.scores || Score.none
+  end
+
+  # 操作の ScoreOperation の履歴を返す。
+  # 戻り値の ScoreOperation は新しい順に並んでいる。
+  # @rbs return: Array[ScoreOperation]
+  def operation_history
+    last_score_operation&.operation_history || []
   end
 end

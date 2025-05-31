@@ -1,4 +1,12 @@
 # Generated from app/models/score_operation.rb with RBS::Inline
 
 class ScoreOperation < ApplicationRecord
+  # 自身を含め、それまでに実行された ScoreOperation の履歴を返す。
+  # 戻り値の ScoreOperation は新しい順に並んでいる。
+  # @rbs return: Array[ScoreOperation]
+  def operation_history: () -> Array[ScoreOperation]
+
+  private
+
+  def set_path: () -> void
 end

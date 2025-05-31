@@ -75,9 +75,9 @@ RSpec.describe QuestionClosing do
         .to change { match.reload.last_score_operation }.to(question_closing)
     end
 
-    it "previous_score_operation_idが設定されること" do
+    it "pathが設定されること" do
       question_closing.save!
-      expect(question_closing.previous_score_operation_id).to eq match_opening.id
+      expect(question_closing.path).to eq "#{match_opening.path},#{match_opening.id}"
     end
   end
 

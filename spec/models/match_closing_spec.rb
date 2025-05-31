@@ -30,6 +30,11 @@ RSpec.describe MatchClosing do
       .to change { match.reload.last_score_operation }.to(match_closing)
   end
 
+  it "pathが設定されること" do
+    match_closing.save!
+    expect(match_closing.path).to eq "#{match_opening.path},#{match_opening.id}"
+  end
+
   it "MatchRuleのprocess_match_closingが呼ばれること" do
     rule = match.rule
     expect(rule).to receive(:process_match_closing) do |score_operation|

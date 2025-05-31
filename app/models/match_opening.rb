@@ -1,6 +1,7 @@
 # 試合開始の操作に対応するクラス。
 # 各選手の初期スコアを登録する。
 class MatchOpening < ScoreOperation
+  before_create :set_path
   after_create :create_scores
   after_create :update_match_last_score_operation
 

@@ -146,41 +146,41 @@ class MatchClosing < ::ScoreOperation
 
     def clear_question_result_id_change: () -> void
 
-    def previous_score_operation_id: () -> ::Integer?
+    def path: () -> ::String?
 
-    def previous_score_operation_id=: (::Integer?) -> ::Integer?
+    def path=: (::String?) -> ::String?
 
-    def previous_score_operation_id?: () -> bool
+    def path?: () -> bool
 
-    def previous_score_operation_id_changed?: () -> bool
+    def path_changed?: () -> bool
 
-    def previous_score_operation_id_change: () -> [ ::Integer?, ::Integer? ]
+    def path_change: () -> [ ::String?, ::String? ]
 
-    def previous_score_operation_id_will_change!: () -> void
+    def path_will_change!: () -> void
 
-    def previous_score_operation_id_was: () -> ::Integer?
+    def path_was: () -> ::String?
 
-    def previous_score_operation_id_previously_changed?: () -> bool
+    def path_previously_changed?: () -> bool
 
-    def previous_score_operation_id_previous_change: () -> ::Array[::Integer?]?
+    def path_previous_change: () -> ::Array[::String?]?
 
-    def previous_score_operation_id_previously_was: () -> ::Integer?
+    def path_previously_was: () -> ::String?
 
-    def previous_score_operation_id_before_last_save: () -> ::Integer?
+    def path_before_last_save: () -> ::String?
 
-    def previous_score_operation_id_change_to_be_saved: () -> ::Array[::Integer?]?
+    def path_change_to_be_saved: () -> ::Array[::String?]?
 
-    def previous_score_operation_id_in_database: () -> ::Integer?
+    def path_in_database: () -> ::String?
 
-    def saved_change_to_previous_score_operation_id: () -> ::Array[::Integer?]?
+    def saved_change_to_path: () -> ::Array[::String?]?
 
-    def saved_change_to_previous_score_operation_id?: () -> bool
+    def saved_change_to_path?: () -> bool
 
-    def will_save_change_to_previous_score_operation_id?: () -> bool
+    def will_save_change_to_path?: () -> bool
 
-    def restore_previous_score_operation_id!: () -> void
+    def restore_path!: () -> void
 
-    def clear_previous_score_operation_id_change: () -> void
+    def clear_path_change: () -> void
 
     def created_at: () -> ::ActiveSupport::TimeWithZone
 
@@ -272,12 +272,6 @@ class MatchClosing < ::ScoreOperation
   def build_question_result: (untyped) -> ::QuestionResult
   def create_question_result: (untyped) -> ::QuestionResult
   def create_question_result!: (untyped) -> ::QuestionResult
-  def previous_score_operation: () -> ::ScoreOperation?
-  def previous_score_operation=: (::ScoreOperation?) -> ::ScoreOperation?
-  def reload_previous_score_operation: () -> ::ScoreOperation?
-  def build_previous_score_operation: (untyped) -> ::ScoreOperation
-  def create_previous_score_operation: (untyped) -> ::ScoreOperation
-  def create_previous_score_operation!: (untyped) -> ::ScoreOperation
   module GeneratedAssociationMethods
   end
   include GeneratedAssociationMethods

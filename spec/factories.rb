@@ -41,14 +41,13 @@ FactoryBot.define do
     type { "" }
     match
     question_result { nil }
-    previous_score_operation { nil }
+    path { "" }
   end
 
   factory :question_closing do
     type { "QuestionClosing" }
     match
     question_result { nil }
-    previous_score_operation { nil }
     question_player_results_attributes { [] }
   end
 
@@ -56,7 +55,6 @@ FactoryBot.define do
     type { "MatchClosing" }
     match
     question_result { nil }
-    previous_score_operation { nil }
   end
 
   factory :score do
