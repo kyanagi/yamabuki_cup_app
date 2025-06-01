@@ -8,7 +8,10 @@ class ScoreOperation < ApplicationRecord
   # @rbs return: Array[ScoreOperation]
   def operation_history
     score_operation_ids = ids_in_path.reverse
-    ScoreOperation.find(score_operation_ids).prepend(self)
+    ScoreOperation
+      .preload(question_result: { question_player_results: { player: :player_profile } })
+      .find(score_operation_ids)
+      .prepend(self)
   end
 
   def previous_score_operation
