@@ -44,7 +44,7 @@
                     method: :post,
                     style: 'display: inline-block;',
                     data: { turbo_confirm: "直前の操作を取り消します。" } do |f| %>
-          <%= f.submit 'アンドゥ', class: 'button is-warning' %>
+          <%= f.submit 'アンドゥ', class: 'button is-warning', disabled: @histories.one? %>
         <% end %>
       </div>
       <div class="columns is-multiline">
