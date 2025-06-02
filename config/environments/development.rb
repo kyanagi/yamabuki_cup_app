@@ -71,6 +71,6 @@ Rails.application.configure do
   config.generators.apply_rubocop_autocorrect_after_generate!
 
   config.active_record.strict_loading_by_default = true
-  config.active_record.action_on_strict_loading_violation = :raise
-  config.active_record.strict_loading_mode = :all
+  config.active_record.action_on_strict_loading_violation = :log
+  config.active_record.strict_loading_mode = :n_plus_one_only
 end
