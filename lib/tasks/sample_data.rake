@@ -46,6 +46,14 @@ namespace :sample_data do
           **data[:player_profile]
         )
 
+        Round3CoursePreference.create!(
+          player:,
+          choice1_match_id: 31,
+          choice2_match_id: 32,
+          choice3_match_id: 33,
+          choice4_match_id: 34
+        )
+
         if data[:yontaku_player_result]
           YontakuPlayerResult.create!(
             player:,
