@@ -4,12 +4,13 @@ module Admin
       include MatchInstanceVariables
 
       def create
-        @match = Round::ROUND2.matches.find_by!(match_number: params[:match_number])
+        match = nil
         ActiveRecord::Base.transaction do
-          ScoreUndo.create!(match: @match)
+          match = Round::ROUND2.matches.find_by!(match_number: params[:match_number])
+          ScoreUndo.create!(match:)
         end
 
-        setup_instance_variables(@match)
+        setup_instance_variables(match)
         render "admin/round2/matches/show"
       end
     end

@@ -7,13 +7,20 @@ module Admin
       private
 
       def setup_instance_variables(match) #: void
-        @scores = match.current_scores
+        @match = Match
+          .preload(last_score_operation: [
+            { question_result: { question_player_results: { player: :player_profile } } },
+            :scores,
+          ])
+          .find(match.id)
+
+        @scores = @match.current_scores
           .eager_load(matching: :player)
           .preload(matching: [{ player: :player_profile }, :match])
           .order("matchings.seat")
 
-        @histories = match.operation_history.map do |op|
-          match.rule.summarize_score_operation(op)
+        @histories = @match.operation_history.map do |op|
+          @match.rule.summarize_score_operation(op)
         end
       end
     end

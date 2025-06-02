@@ -4,12 +4,15 @@ module Admin
       include MatchInstanceVariables
 
       def create
-        @match = Round::ROUND2.matches.find_by!(match_number: params[:match_number])
+        match = nil
         ActiveRecord::Base.transaction do
-          QuestionClosing.create!(match: @match, question_player_results_attributes: create_params)
+          match = Round::ROUND2.matches
+            .preload(last_score_operation: { scores: :matching })
+            .find_by!(match_number: params[:match_number])
+          QuestionClosing.create!(match:, question_player_results_attributes: create_params)
         end
 
-        setup_instance_variables(@match)
+        setup_instance_variables(match)
         render "admin/round2/matches/show"
       end
 

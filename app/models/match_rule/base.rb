@@ -50,7 +50,13 @@ module MatchRule
     # @rbs score_operation: QuestionClosing
     # @rbs return: void
     def prepare_new_scores(score_operation)
-      previous_scores = @match.current_scores.map(&:dup)
+      previous_scores = @match.current_scores.map do |score|
+        # dup だけだと preload していても N+1 問題が発生するため、
+        # 明示的に matching をコピーする。
+        score.dup.tap do |s|
+          s.matching = score.matching
+        end
+      end
       score_operation.scores = @scores = previous_scores
     end
 
