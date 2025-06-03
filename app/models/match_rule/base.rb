@@ -44,6 +44,20 @@ module MatchRule
       "#{self.class::NUM_SEATS}→#{self.class::NUM_WINNERS}／現在#{num_winners}人勝ち抜け、残り#{num_winners_left}人"
     end
 
+    # 引数で与えられた ScoreOperation を要約した文字列を返す。
+    # @rbs score_operation: ScoreOperation
+    # @rbs return: String
+    def summarize_score_operation(score_operation)
+      case score_operation
+      when MatchClosing
+        "限定問題終了判定"
+      when MatchOpening
+        "試合開始"
+      else
+        score_operation.class.name
+      end
+    end
+
     private
 
     # スコア更新に向けて、新しいScoreオブジェクトを作成する。

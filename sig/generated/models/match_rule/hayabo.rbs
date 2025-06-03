@@ -8,6 +8,11 @@ module MatchRule
     # @rbs return: void
     def process_question_closing: ...
 
+    # @rbs override
+    # @rbs score_operation: ScoreOperation
+    # @rbs return: String
+    def summarize_score_operation: ...
+
     private
 
     # @rbs override

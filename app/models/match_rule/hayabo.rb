@@ -40,6 +40,38 @@ module MatchRule
       promote_and_save_new_winners
     end
 
+    # @rbs override
+    # @rbs score_operation: ScoreOperation
+    # @rbs return: String
+    def summarize_score_operation(score_operation)
+      case score_operation
+      when QuestionClosing
+        player_results = score_operation.question_result.question_player_results
+        h = player_results.group_by(&:situation_pushed?)
+        pushed_result = h[true]&.first
+        unpushed_results = h[false] || []
+
+        text = ""
+        if pushed_result
+          text << pushed_result.to_s(correct: "◎")
+        else
+          text << "スルー"
+        end
+
+        text << "／"
+
+        unpushed_correct_results = unpushed_results.select(&:result_correct?)
+        if unpushed_correct_results.empty?
+          text << "ボード正解者なし"
+        else
+          names = unpushed_correct_results.map { |result| result.player.player_profile.family_name }.join(",")
+          text << "◯#{names}"
+        end
+      else
+        super
+      end
+    end
+
     private
 
     # @rbs override

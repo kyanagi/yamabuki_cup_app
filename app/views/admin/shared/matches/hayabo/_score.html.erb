@@ -1,0 +1,36 @@
+<%# locals: (score:) %>
+<tr data-controller="modal">
+  <td class="has-text-centered is-vcentered">
+    <span class="tag <%= player_status_color(score.status) %>">
+      <%= score.status %>
+    </span>
+    <% if score.rank %>
+      <span>
+        <%= score.rank.ordinalize %>
+      </span>
+    <% end %>
+  </td>
+  <td class="has-text-centered is-vcentered">
+    <div class="field">
+      <label class="switch" data-controller="checkbox-hidden-toggler">
+        <%= hidden_field_tag "question_player_results_attributes[][situation]", "unpushed", disabled: true, data: { "checkbox-hidden-toggler-target": "hidden" } %>
+        <%= checkbox_tag "question_player_results_attributes[][situation]", "pushed", false, data: { "checkbox-hidden-toggler-target": "checkbox", action: "checkbox-hidden-toggler#toggle" }, disabled: !score.status_playing? %>
+        <span class="check is-success"></span>
+      </label>
+    </div>
+  </td>
+  <td style="width: 8em" class="is-vcentered">
+    <%= "#{score.matching.player.player_profile.family_name} #{score.matching.player.player_profile.given_name}" %>
+    <%= hidden_field_tag "question_player_results_attributes[][player_id]", score.matching.player_id, disabled: !score.status_playing? %>
+  </td>
+  <td class="has-text-centered is-vcentered">
+    <div class="field">
+      <label class="switch" data-controller="checkbox-hidden-toggler">
+        <%= hidden_field_tag "question_player_results_attributes[][result]", "wrong", disabled: true, data: { "checkbox-hidden-toggler-target": "hidden" } %>
+        <%= checkbox_tag "question_player_results_attributes[][result]", "correct", false, data: { "checkbox-hidden-toggler-target": "checkbox", action: "checkbox-hidden-toggler#toggle" }, disabled: !score.status_playing? %>
+        <span class="check is-success"></span>
+      </label>
+    </div>
+  </td>
+  <td class="has-text-centered is-vcentered"><%= score.points %></td>
+</tr>

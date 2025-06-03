@@ -32,6 +32,11 @@ module MatchRule
     # @rbs return: String
     def progress_summary: () -> String
 
+    # 引数で与えられた ScoreOperation を要約した文字列を返す。
+    # @rbs score_operation: ScoreOperation
+    # @rbs return: String
+    def summarize_score_operation: (ScoreOperation score_operation) -> String
+
     private
 
     # スコア更新に向けて、新しいScoreオブジェクトを作成する。

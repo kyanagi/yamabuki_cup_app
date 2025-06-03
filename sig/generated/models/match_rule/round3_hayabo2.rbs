@@ -20,6 +20,8 @@ module MatchRule
 
     BONUS_POINTS_ON_SOLE_CORRECT: ::Integer
 
+    ADMIN_VIEW_TEMPLATE: ::String
+
     include Hayabo
   end
 end

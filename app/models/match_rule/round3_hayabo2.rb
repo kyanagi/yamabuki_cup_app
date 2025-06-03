@@ -9,6 +9,7 @@ module MatchRule
     POINTS_ON_PUSHED_WRONG = -3
     POINTS_ON_UNPUSHED_WRONG = 0
     BONUS_POINTS_ON_SOLE_CORRECT = 1
+    ADMIN_VIEW_TEMPLATE = "hayabo"
 
     include Hayabo
   end
