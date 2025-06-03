@@ -4,6 +4,7 @@ module MatchRule
     NUM_BUTTONS = 8
     NUM_WINNERS = 4
     MISSES_TO_WAIT = 3
+    ADMIN_VIEW_TEMPLATE = "hayaoshi"
 
     include Hayaoshi
 
