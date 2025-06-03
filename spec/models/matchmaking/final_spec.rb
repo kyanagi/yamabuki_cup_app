@@ -8,6 +8,23 @@ RSpec.describe Matchmaking::Final, type: :model do
   describe "#matching_should_not_exist" do
     let(:matchmaking) { Matchmaking::Final.new }
 
+    let(:sf_match) { Round::SEMIFINAL.matches.first! }
+    let(:sf_score_operation) { create(:score_operation, match: Round::SEMIFINAL.matches.first!) }
+
+    let!(:sf_winners) do
+      yontaku_rank = 1
+      create_list(:player, 4).each.with_index(1) do |player, hayaoshi_rank|
+        create(:yontaku_player_result, player:, rank: yontaku_rank)
+        matching = create(:matching, match: sf_match, player:, seat: hayaoshi_rank - 1)
+        create(:score, score_operation: sf_score_operation, matching:, status: "win", rank: hayaoshi_rank)
+        yontaku_rank += 1
+      end
+    end
+
+    before do
+      sf_match.update!(last_score_operation: sf_score_operation)
+    end
+
     context "決勝のマッチングが既に存在する場合" do
       let(:round) { Round::FINAL }
       let(:match) { Round::FINAL.matches[0] }
@@ -109,6 +126,26 @@ RSpec.describe Matchmaking::Final, type: :model do
 
         it_behaves_like "決勝の組分けが正しく作成されること"
       end
+    end
+  end
+
+  context "準決勝の勝者が4人揃っていない場合" do
+    let(:matchmaking) { Matchmaking::Final.new }
+    let(:sf_match) { Round::SEMIFINAL.matches.first! }
+    let(:sf_score_operation) { create(:score_operation, match: sf_match) }
+
+    before do
+      create_list(:player, 3).each.with_index(1) do |player, hayaoshi_rank|
+        create(:yontaku_player_result, player:, rank: hayaoshi_rank)
+        matching = create(:matching, match: sf_match, player:, seat: hayaoshi_rank - 1)
+        create(:score, score_operation: sf_score_operation, matching:, status: "win", rank: hayaoshi_rank)
+      end
+      sf_match.update!(last_score_operation: sf_score_operation)
+    end
+
+    it "バリデーションが失敗し、エラーメッセージが追加されること" do
+      expect(matchmaking).to be_invalid
+      expect(matchmaking.errors[:base]).to include "準決勝の勝者が4人揃っていません"
     end
   end
 end

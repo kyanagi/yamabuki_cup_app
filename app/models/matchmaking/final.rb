@@ -3,6 +3,7 @@ module Matchmaking
     attribute :force, :boolean, default: false
 
     validate :matching_should_not_exist
+    validate :semifinal_winners_should_be_complete
 
     before_save :create_matchings
 
@@ -13,6 +14,15 @@ module Matchmaking
 
       if Round::FINAL.matchings.exists?
         errors.add(:base, "決勝のマッチングが既に存在します")
+      end
+    end
+
+    def semifinal_winners_should_be_complete #: void
+      sf_winners_count = Round::SEMIFINAL.matches.sum do |match|
+        match.current_scores.count(&:status_win?)
+      end
+      if sf_winners_count != 4
+        errors.add(:base, "準決勝の勝者が4人揃っていません")
       end
     end
 
