@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/match_closings_controller.rb with RBS::Inline
+
+module Admin
+  class MatchClosingsController < ApplicationController
+    include MatchInstanceVariables
+
+    def create: () -> untyped
+  end
+end

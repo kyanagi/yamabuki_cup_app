@@ -1,7 +1,0 @@
-# Generated from app/models/question_result_registration.rb with RBS::Inline
-
-class QuestionResultRegistration < ActiveType::Object
-  def set_default_player_results: () -> void
-
-  def register_question_result_and_process: () -> void
-end

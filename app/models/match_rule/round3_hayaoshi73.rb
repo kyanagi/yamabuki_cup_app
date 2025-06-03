@@ -5,6 +5,7 @@ module MatchRule
     NUM_WINNERS = 4
     POINTS_TO_WIN = 7
     MISSES_TO_LOSE = 3
+    ADMIN_VIEW_TEMPLATE = "hayaoshi"
 
     include Hayaoshi
   end

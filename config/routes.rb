@@ -5,13 +5,6 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  # root "posts#index"
-
   get "/scoreboard", to: "scoreboard#show"
 
   namespace :admin do
@@ -24,11 +17,11 @@ Rails.application.routes.draw do
     namespace :round1 do
       resources :results, only: [:index]
     end
-    namespace :round2 do
-      get '/:match_number', to: 'matches#show'
-      post '/:match_number/question_closings', to: 'question_closings#create'
-      post '/:match_number/match_closings', to: 'match_closings#create'
-      post '/:match_number/undos', to: 'undos#create'
+
+    resources :matches, only: [:show] do
+      post :question_closings, to: 'question_closings#create'
+      post :match_closings, to: 'match_closings#create'
+      post :undos, to: 'score_operation_undos#create'
     end
   end
 end

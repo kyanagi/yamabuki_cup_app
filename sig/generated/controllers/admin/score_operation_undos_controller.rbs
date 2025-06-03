@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/score_operation_undos_controller.rb with RBS::Inline
+
+module Admin
+  class ScoreOperationUndosController < ApplicationController
+    include MatchInstanceVariables
+
+    def create: () -> untyped
+  end
+end

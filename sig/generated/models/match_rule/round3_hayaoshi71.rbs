@@ -12,6 +12,8 @@ module MatchRule
 
     MISSES_TO_LOSE: ::Integer
 
+    ADMIN_VIEW_TEMPLATE: ::String
+
     include Hayaoshi
   end
 end

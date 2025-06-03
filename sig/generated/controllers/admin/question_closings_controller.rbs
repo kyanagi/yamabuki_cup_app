@@ -1,0 +1,13 @@
+# Generated from app/controllers/admin/question_closings_controller.rb with RBS::Inline
+
+module Admin
+  class QuestionClosingsController < ApplicationController
+    include MatchInstanceVariables
+
+    def create: () -> untyped
+
+    private
+
+    def create_params: () -> untyped
+  end
+end

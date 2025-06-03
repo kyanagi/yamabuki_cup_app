@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/matches_controller.rb with RBS::Inline
+
+module Admin
+  class MatchesController < ApplicationController
+    include MatchInstanceVariables
+
+    def show: () -> untyped
+  end
+end

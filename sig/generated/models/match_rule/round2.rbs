@@ -14,6 +14,8 @@ module MatchRule
 
     NUM_ADVANTAGED_PLAYERS: ::Integer
 
+    ADMIN_VIEW_TEMPLATE: ::String
+
     include Hayaoshi
 
     private

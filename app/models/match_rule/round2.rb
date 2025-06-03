@@ -6,6 +6,7 @@ module MatchRule
     POINTS_TO_WIN = 3
     MISSES_TO_LOSE = 2
     NUM_ADVANTAGED_PLAYERS = 3
+    ADMIN_VIEW_TEMPLATE = "round2"
 
     include Hayaoshi
 
