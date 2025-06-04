@@ -1,0 +1,17 @@
+<%= turbo_stream.update "flash" do %>
+  <% if notice %>
+    <div class="notification is-success is-light">
+      <%= notice %>
+    </div>
+  <% end %>
+  <% if alert %>
+    <div class="notification is-danger is-light">
+      <%= alert %>
+    </div>
+  <% end %>
+<% end %>
+<% if @matchmaking.persisted? %>
+  <%= turbo_stream.update "grouping_round_#{@round.id}" do %>
+    完了
+  <% end %>
+<% end %>

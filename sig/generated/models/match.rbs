@@ -22,4 +22,7 @@ class Match < ApplicationRecord
   # 戻り値の ScoreOperation は新しい順に並んでいる。
   # @rbs return: Array[ScoreOperation]
   def operation_history: () -> Array[ScoreOperation]
+
+  # @rbs return: String
+  def full_name: () -> String
 end

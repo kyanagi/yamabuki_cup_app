@@ -8,6 +8,11 @@ module Matchmaking
 
     before_save :create_matchings
 
+    # @rbs return: bool
+    def self.done?
+      Round::ROUND2.matchings.count == Round::ROUND2.matches.sum { |m| m.rule_class::NUM_SEATS }
+    end
+
     private
 
     def matching_should_not_exist #: void

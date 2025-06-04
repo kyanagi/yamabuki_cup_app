@@ -1,7 +1,7 @@
 <div class="container">
   <%= turbo_frame_tag 'match' do %>
     <div class="is-flex is-justify-content-space-between is-align-items-flex-end">
-      <h1 class="title mb-0"><%= @match.name %></h1>
+      <h1 class="title mb-0"><%= @match.full_name %></h1>
       <p><%= @match.progress_summary %></p>
     </div>
     <div class="columns">

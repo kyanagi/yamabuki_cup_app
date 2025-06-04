@@ -24,4 +24,12 @@ RSpec.describe Match, type: :model do
       expect(match.asked_questions).to eq([questions[1], questions[0]])
     end
   end
+
+  describe "#full_name" do
+    let(:match) { create(:match, round_id: Round::ROUND2.id, name: "第1組") }
+
+    it "full_name が取得できること" do
+      expect(match.full_name).to eq("2R 第1組")
+    end
+  end
 end

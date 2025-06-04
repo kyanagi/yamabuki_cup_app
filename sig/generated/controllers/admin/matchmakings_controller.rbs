@@ -1,0 +1,7 @@
+# Generated from app/controllers/admin/matchmakings_controller.rb with RBS::Inline
+
+module Admin
+  class MatchmakingsController < ApplicationController
+    def create: () -> untyped
+  end
+end

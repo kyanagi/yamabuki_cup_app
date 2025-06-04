@@ -4,6 +4,8 @@ module Admin
   class MatchesController < ApplicationController
     include MatchInstanceVariables
 
+    def index: () -> untyped
+
     def show: () -> untyped
   end
 end

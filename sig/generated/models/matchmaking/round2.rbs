@@ -4,6 +4,9 @@ module Matchmaking
   class Round2 < ActiveType::Object
     NUM_SEED_PLAYERS: ::Integer
 
+    # @rbs return: bool
+    def self.done?: () -> bool
+
     private
 
     def matching_should_not_exist: () -> void

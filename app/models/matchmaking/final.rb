@@ -7,6 +7,11 @@ module Matchmaking
 
     before_save :create_matchings
 
+    # @rbs return: bool
+    def self.done?
+      Round::FINAL.matchings.count == MatchRule::Final::NUM_SEATS * Round::FINAL.matches.count
+    end
+
     private
 
     def matching_should_not_exist #: void

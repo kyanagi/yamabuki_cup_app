@@ -37,4 +37,9 @@ class Match < ApplicationRecord
   def operation_history
     last_score_operation&.operation_history || []
   end
+
+  # @rbs return: String
+  def full_name
+    "#{round.name} #{name}"
+  end
 end

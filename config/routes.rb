@@ -18,12 +18,14 @@ Rails.application.routes.draw do
       resources :results, only: [:index]
     end
 
-    resources :matches, only: [:show] do
+    resources :matches, only: [:show, :index] do
       post :question_closings, to: 'question_closings#create'
       post :set_transitions, to: 'set_transitions#create'
       post :disqualifications, to: 'disqualifications#create'
       post :match_closings, to: 'match_closings#create'
       post :undos, to: 'score_operation_undos#create'
     end
+
+    resources :matchmakings, only: [:create]
   end
 end

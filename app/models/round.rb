@@ -8,12 +8,12 @@ class Round < ActiveHash::Base
   enum_accessor :enum_name
 
   self.data = [
-    { id: 1, name: "1R", enum_name: "round1" },
-    { id: 2, name: "2R", enum_name: "round2" },
-    { id: 3, name: "3R", enum_name: "round3" },
-    { id: 4, name: "準々決勝", enum_name: "quarterfinal" },
-    { id: 5, name: "準決勝", enum_name: "semifinal" },
-    { id: 6, name: "決勝", enum_name: "final" },
+    { id: 1, name: "1R", enum_name: "round1", matchmaking_class: nil },
+    { id: 2, name: "2R", enum_name: "round2", matchmaking_class: Matchmaking::Round2 },
+    { id: 3, name: "3R", enum_name: "round3", matchmaking_class: Matchmaking::Round3 },
+    { id: 4, name: "準々決勝", enum_name: "quarterfinal", matchmaking_class: Matchmaking::Quarterfinal },
+    { id: 5, name: "準決勝", enum_name: "semifinal", matchmaking_class: Matchmaking::Semifinal },
+    { id: 6, name: "決勝", enum_name: "final", matchmaking_class: Matchmaking::Final },
   ]
 
   def matchings

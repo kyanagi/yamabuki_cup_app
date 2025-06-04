@@ -2,6 +2,9 @@
 
 module Matchmaking
   class Quarterfinal < ActiveType::Object
+    # @rbs return: bool
+    def self.done?: () -> bool
+
     private
 
     def matching_should_not_exist: () -> void

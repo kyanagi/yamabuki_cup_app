@@ -1,0 +1,53 @@
+<div class="container">
+  <h1 class="title">試合一覧</h1>
+  <div id="flash"></div>
+  <table class="table is-fullwidth is-striped is-hoverable">
+    <thead>
+      <tr>
+        <th>ラウンド</th>
+        <th>組分け</th>
+        <% @matches_by_round_id.values.map(&:size).max.times do %>
+          <th style="width: 10rem"></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1R</td>
+        <td></td>
+        <td>
+          <%= link_to "結果", admin_round1_results_path %>
+        </td>
+        <% (@matches_by_round_id.values.map(&:size).max - 1).times do %>
+          <td></td>
+        <% end %>
+      </tr>
+      <% @rounds.each do |round|%>
+        <tr>
+          <td><%= round.name %></td>
+          <td id="grouping_round_<%= round.id %>">
+            <% if round.matchmaking_class.done? %>
+              完了
+            <% else %>
+              <%= form_with url: "/admin/matchmakings",
+                         method: :post,
+                         style: 'display: inline-block;',
+                         data: { turbo_confirm: "組分け処理を行います。" } do |f| %>
+                <%= f.hidden_field :round_id, value: round.id %>
+                <%= f.submit '組分け実行', class: 'button is-success' %>
+              <% end %>
+            <% end %>
+          </td>
+          <% @matches_by_round_id[round.id].each do |match| %>
+            <td>
+              <%= link_to(match.name.presence || round.name, admin_match_path(match)) %>
+            </td>
+          <% end %>
+          <% (@matches_by_round_id.values.map(&:size).max - @matches_by_round_id[round.id].size).times do %>
+            <td></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
