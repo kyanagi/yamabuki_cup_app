@@ -27,7 +27,7 @@ module MatchRule
 
     # @rbs score_operation: ScoreOperation
     # @rbs return: void
-    def start_new_set(score_operation)
+    def process_set_transition(score_operation)
       prepare_new_scores(score_operation)
       @scores.each do |score|
         score.points = 0

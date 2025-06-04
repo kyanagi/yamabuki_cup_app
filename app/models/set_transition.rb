@@ -7,7 +7,7 @@ class SetTransition < ScoreOperation
   private
 
   def update_scores #: void
-    match.rule.start_new_set(self)
+    match.rule.process_set_transition(self)
   end
 
   def update_match_last_score_operation #: void

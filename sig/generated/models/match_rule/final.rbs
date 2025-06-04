@@ -24,7 +24,7 @@ module MatchRule
 
     # @rbs score_operation: ScoreOperation
     # @rbs return: void
-    def start_new_set: (ScoreOperation score_operation) -> void
+    def process_set_transition: (ScoreOperation score_operation) -> void
 
     # @rbs seat: Integer
     # @rbs return: Hash[Symbol, untyped]

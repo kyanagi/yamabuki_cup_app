@@ -24,7 +24,7 @@ RSpec.describe MatchRule::Final do
     match.update!(last_score_operation: match_opening)
   end
 
-  describe "#start_new_set" do
+  describe "#process_set_transition" do
     let(:set_transition) { build(:set_transition, match:) }
     let!(:initial_scores) do
       [
@@ -36,14 +36,14 @@ RSpec.describe MatchRule::Final do
     end
 
     it "全員のstatusがplayingになり、pointsとmissesが0になること" do
-      match_rule.start_new_set(set_transition)
+      match_rule.process_set_transition(set_transition)
 
       scores = match_rule.instance_variable_get(:@scores)
       expect(scores).to all have_attributes(status: "playing", points: 0, misses: 0)
     end
 
     it "starsの値は保持されること" do
-      match_rule.start_new_set(set_transition)
+      match_rule.process_set_transition(set_transition)
 
       scores = match_rule.instance_variable_get(:@scores)
       expect(scores.pluck(:stars)).to eq [1, 2, 0, 2]
