@@ -21,7 +21,16 @@ module ApplicationHelper
   # @rbs return String
   def round2_rank_color_class: (Integer rank) -> String
 
-  def player_button_color: (untyped status) -> untyped
+  # @rbs status String
+  # @rbs return String
+  def player_button_color: (String status) -> String
 
-  def player_status_color: (untyped status) -> untyped
+  # @rbs status String
+  # @rbs return String
+  def player_status_color: (String status) -> String
+
+  # @rbs status String
+  # @rbs statuses Array[String]
+  # @rbs return bool
+  def final_round_player_button_disabled?: (String status, Array[String] statuses) -> bool
 end

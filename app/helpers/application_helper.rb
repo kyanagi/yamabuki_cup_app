@@ -45,22 +45,40 @@ module ApplicationHelper
     end
   end
 
+  # @rbs status String
+  # @rbs return String
   def player_button_color(status)
-    if status == "playing"
+    case status
+    when "playing", "set_win"
       "is-info"
     else
       "has-background-grey-lighter"
     end
   end
 
+  # @rbs status String
+  # @rbs return String
   def player_status_color(status)
     case status
     when "playing"
       ""
     when "win"
       "is-success"
+    when "set_win"
+      "is-info"
     when "lose", "waiting"
       "has-background-grey-lighter"
+    end
+  end
+
+  # @rbs status String
+  # @rbs statuses Array[String]
+  # @rbs return bool
+  def final_round_player_button_disabled?(status, statuses)
+    if statuses.include?("set_win")
+      status != "set_win"
+    else
+      status != "playing"
     end
   end
 end
