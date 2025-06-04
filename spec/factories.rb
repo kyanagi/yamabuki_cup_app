@@ -67,6 +67,13 @@ FactoryBot.define do
     player { nil }
   end
 
+  factory :set_transition do
+    type { "SetTransition" }
+    match
+    question_result { nil }
+    player { nil }
+  end
+
   factory :score do
     matching
     score_operation
