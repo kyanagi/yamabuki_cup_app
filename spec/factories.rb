@@ -41,6 +41,7 @@ FactoryBot.define do
     type { "" }
     match
     question_result { nil }
+    player { nil }
     path { "" }
   end
 
@@ -48,6 +49,7 @@ FactoryBot.define do
     type { "QuestionClosing" }
     match
     question_result { nil }
+    player { nil }
     question_player_results_attributes { [] }
   end
 
@@ -55,6 +57,14 @@ FactoryBot.define do
     type { "MatchClosing" }
     match
     question_result { nil }
+    player { nil }
+  end
+
+  factory :disqualification do
+    type { "Disqualification" }
+    match
+    question_result { nil }
+    player { nil }
   end
 
   factory :score do
