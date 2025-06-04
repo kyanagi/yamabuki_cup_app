@@ -52,11 +52,11 @@ RSpec.describe MatchRule::Semifinal do
     end
   end
 
-  describe "#disqualify" do
+  describe "#process_disqualification" do
     let(:disqualification) { build(:disqualification, match:, player: players[0]) }
 
     it "選手を敗者にすること" do
-      match_rule.disqualify(disqualification)
+      match_rule.process_disqualification(disqualification)
       scores = match_rule.instance_variable_get(:@scores)
       expect(scores[0].status).to eq "lose"
       expect(scores[1..]).to all be_status_playing

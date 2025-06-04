@@ -37,7 +37,7 @@ module MatchRule
     # @rbs score_operation: ScoreOperation
     # @rbs player_id: Integer
     # @rbs return: void
-    def disqualify(score_operation)
+    def process_disqualification(score_operation)
       prepare_new_scores(score_operation)
       s = @scores.find { |score| score.matching.player_id == score_operation.player_id }
 

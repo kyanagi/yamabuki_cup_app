@@ -7,7 +7,7 @@ class Disqualification < ScoreOperation
   private
 
   def update_scores #: void
-    match.rule.disqualify(self)
+    match.rule.process_disqualification(self)
   end
 
   def update_match_last_score_operation #: void

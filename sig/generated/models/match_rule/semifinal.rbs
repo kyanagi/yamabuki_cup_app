@@ -23,7 +23,7 @@ module MatchRule
     # @rbs score_operation: ScoreOperation
     # @rbs player_id: Integer
     # @rbs return: void
-    def disqualify: (ScoreOperation score_operation) -> void
+    def process_disqualification: (ScoreOperation score_operation) -> void
 
     # @rbs override
     # @rbs score_operation: ScoreOperation
