@@ -5,6 +5,7 @@ module Matchmaking
     attribute :force, :boolean, default: false
 
     validate :matching_should_not_exist
+    validate :previous_round_should_be_complete
 
     before_save :create_matchings
 
@@ -20,6 +21,16 @@ module Matchmaking
 
       if Round::ROUND3.matchings.exists?
         errors.add(:base, "3Rのマッチングが既に存在します")
+      end
+    end
+
+    def previous_round_should_be_complete #: void
+      seeded_players_count = YontakuPlayerResult.round2_seeded.count
+      round2_winners_count = Round::ROUND2.matches.sum do |match|
+        match.current_scores.status_win.count
+      end
+      if seeded_players_count + round2_winners_count != Round::ROUND3.matches.sum { |m| m.rule_class::NUM_SEATS }
+        errors.add(:base, "2Rの勝者がそろっていません。")
       end
     end
 

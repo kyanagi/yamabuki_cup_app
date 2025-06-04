@@ -8,6 +8,24 @@ RSpec.describe Matchmaking::Round3, type: :model do
   describe "#matching_should_not_exist" do
     let(:matchmaking) { Matchmaking::Round3.new }
 
+    before do
+      1.upto(7) do |i|
+        create(:yontaku_player_result, rank: i)
+      end
+
+      yontaku_rank = 8
+      Round::ROUND2.matches.flat_map do |match|
+        score_operation = create(:score_operation, match:)
+        match.update!(last_score_operation: score_operation)
+        create_list(:player, 14).each.with_index(1) do |player, hayaoshi_rank|
+          create(:yontaku_player_result, player:, rank: yontaku_rank)
+          matching = create(:matching, match:, player:, seat: hayaoshi_rank - 1)
+          create(:score, score_operation:, matching:, status: hayaoshi_rank <= 5 ? "win" : "playing", rank: hayaoshi_rank)
+          yontaku_rank += 1
+        end
+      end
+    end
+
     context "3Rのマッチングが既に存在する場合" do
       let(:round) { Round::ROUND3 }
       let(:match) { Round::ROUND3.matches[0] }
@@ -137,6 +155,30 @@ RSpec.describe Matchmaking::Round3, type: :model do
 
         it_behaves_like "3Rの組分けが正しく作成されること"
       end
+    end
+  end
+
+  context "2Rの勝者が25人揃っていない場合" do
+    let(:matchmaking) { Matchmaking::Round3.new(force: force) }
+    let(:force) { false }
+
+    before do
+      yontaku_rank = 8
+      Round::ROUND2.matches.flat_map do |match|
+        score_operation = create(:score_operation, match:)
+        match.update!(last_score_operation: score_operation)
+        create_list(:player, 4).each.with_index(1) do |player, hayaoshi_rank|
+          create(:yontaku_player_result, player:, rank: yontaku_rank)
+          matching = create(:matching, match:, player:, seat: hayaoshi_rank - 1)
+          create(:score, score_operation:, matching:, status: "win", rank: hayaoshi_rank)
+          yontaku_rank += 1
+        end
+      end
+    end
+
+    it "バリデーションが失敗し、エラーメッセージが追加されること" do
+      expect(matchmaking).to be_invalid
+      expect(matchmaking.errors[:base]).to include "2Rの勝者がそろっていません。"
     end
   end
 end
