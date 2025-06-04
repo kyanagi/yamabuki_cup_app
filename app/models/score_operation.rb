@@ -1,6 +1,7 @@
 class ScoreOperation < ApplicationRecord
   belongs_to :match
   belongs_to :question_result, optional: true
+  belongs_to :player, optional: true
   has_many :scores, dependent: :destroy
 
   # 自身を含め、それまでに実行された ScoreOperation の履歴を返す。

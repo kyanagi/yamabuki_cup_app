@@ -1,5 +1,5 @@
-class QuestionClosing < ::ScoreOperation
-  extend ::_ActiveRecord_Relation_ClassMethods[::QuestionClosing, ::QuestionClosing::ActiveRecord_Relation, ::Integer]
+class SetTransition < ::ScoreOperation
+  extend ::_ActiveRecord_Relation_ClassMethods[::SetTransition, ::SetTransition::ActiveRecord_Relation, ::Integer]
 
   module GeneratedAttributeMethods
     def id: () -> ::Integer
@@ -322,13 +322,13 @@ class QuestionClosing < ::ScoreOperation
   end
 
   class ActiveRecord_Relation < ::ActiveRecord::Relation
-    include ::QuestionClosing::GeneratedRelationMethods
-    include ::_ActiveRecord_Relation[::QuestionClosing, ::Integer]
-    include ::Enumerable[::QuestionClosing]
+    include ::SetTransition::GeneratedRelationMethods
+    include ::_ActiveRecord_Relation[::SetTransition, ::Integer]
+    include ::Enumerable[::SetTransition]
   end
 
   class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
-    include ::QuestionClosing::GeneratedRelationMethods
-    include ::_ActiveRecord_Relation[::QuestionClosing, ::Integer]
+    include ::SetTransition::GeneratedRelationMethods
+    include ::_ActiveRecord_Relation[::SetTransition, ::Integer]
   end
 end

@@ -1,0 +1,10 @@
+# Generated from app/models/disqualification.rb with RBS::Inline
+
+# 新しいセットに移行するクラス。
+class Disqualification < ScoreOperation
+  private
+
+  def update_scores: () -> void
+
+  def update_match_last_score_operation: () -> void
+end

@@ -3,6 +3,7 @@ module MatchRule
     NUM_SEATS = 8
     NUM_BUTTONS = 8
     NUM_WINNERS = 4
+    ADMIN_VIEW_TEMPLATE = "board"
 
     # @rbs override
     # @rbs score_operation: QuestionClosing
@@ -36,11 +37,32 @@ module MatchRule
     # @rbs score_operation: ScoreOperation
     # @rbs player_id: Integer
     # @rbs return: void
-    def disqualify(score_operation, player_id:)
+    def disqualify(score_operation)
       prepare_new_scores(score_operation)
-      s = @scores.find { |score| score.matching.player_id == player_id }
+      s = @scores.find { |score| score.matching.player_id == score_operation.player_id }
 
       mark_as_loser(s)
+    end
+
+    # @rbs override
+    # @rbs score_operation: ScoreOperation
+    # @rbs return: String
+    def summarize_score_operation(score_operation)
+      case score_operation
+      when QuestionClosing
+        player_results = score_operation.question_result.question_player_results
+        correct_results = player_results.select(&:result_correct?)
+        if correct_results.empty?
+          "正解者なし"
+        else
+          names = correct_results.map { |result| result.player.player_profile.family_name }.join(",")
+          "◯#{names}"
+        end
+      when MatchClosing
+        "勝抜け者確定"
+      else
+        super
+      end
     end
 
     private

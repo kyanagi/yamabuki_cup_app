@@ -53,6 +53,10 @@ module MatchRule
         "限定問題終了判定"
       when MatchOpening
         "試合開始"
+      when Disqualification
+        "敗退: #{score_operation.player.player_profile.family_name}"
+      when SetTransition
+        "新セット開始"
       else
         score_operation.class.name
       end

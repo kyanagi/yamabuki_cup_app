@@ -146,6 +146,42 @@ class MatchOpening < ::ScoreOperation
 
     def clear_question_result_id_change: () -> void
 
+    def player_id: () -> ::Integer?
+
+    def player_id=: (::Integer?) -> ::Integer?
+
+    def player_id?: () -> bool
+
+    def player_id_changed?: () -> bool
+
+    def player_id_change: () -> [ ::Integer?, ::Integer? ]
+
+    def player_id_will_change!: () -> void
+
+    def player_id_was: () -> ::Integer?
+
+    def player_id_previously_changed?: () -> bool
+
+    def player_id_previous_change: () -> ::Array[::Integer?]?
+
+    def player_id_previously_was: () -> ::Integer?
+
+    def player_id_before_last_save: () -> ::Integer?
+
+    def player_id_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def player_id_in_database: () -> ::Integer?
+
+    def saved_change_to_player_id: () -> ::Array[::Integer?]?
+
+    def saved_change_to_player_id?: () -> bool
+
+    def will_save_change_to_player_id?: () -> bool
+
+    def restore_player_id!: () -> void
+
+    def clear_player_id_change: () -> void
+
     def path: () -> ::String?
 
     def path=: (::String?) -> ::String?
@@ -272,6 +308,12 @@ class MatchOpening < ::ScoreOperation
   def build_question_result: (untyped) -> ::QuestionResult
   def create_question_result: (untyped) -> ::QuestionResult
   def create_question_result!: (untyped) -> ::QuestionResult
+  def player: () -> ::Player?
+  def player=: (::Player?) -> ::Player?
+  def reload_player: () -> ::Player?
+  def build_player: (untyped) -> ::Player
+  def create_player: (untyped) -> ::Player
+  def create_player!: (untyped) -> ::Player
   module GeneratedAssociationMethods
   end
   include GeneratedAssociationMethods

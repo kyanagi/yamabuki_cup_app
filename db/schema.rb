@@ -124,10 +124,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_30_024802) do
     t.string "type"
     t.integer "match_id", null: false
     t.integer "question_result_id"
+    t.integer "player_id"
     t.text "path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["match_id"], name: "index_score_operations_on_match_id"
+    t.index ["player_id"], name: "index_score_operations_on_player_id"
     t.index ["question_result_id"], name: "index_score_operations_on_question_result_id"
   end
 
@@ -173,6 +175,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_30_024802) do
   add_foreign_key "round3_course_preferences", "matches", column: "choice4_match_id"
   add_foreign_key "round3_course_preferences", "players"
   add_foreign_key "score_operations", "matches"
+  add_foreign_key "score_operations", "players"
   add_foreign_key "score_operations", "question_results"
   add_foreign_key "scores", "matchings"
   add_foreign_key "scores", "score_operations"

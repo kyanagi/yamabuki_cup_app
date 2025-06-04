@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/set_transitions_controller.rb with RBS::Inline
+
+module Admin
+  class SetTransitionsController < ApplicationController
+    include MatchInstanceVariables
+
+    def create: () -> untyped
+  end
+end

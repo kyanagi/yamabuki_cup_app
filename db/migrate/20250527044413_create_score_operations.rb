@@ -4,6 +4,7 @@ class CreateScoreOperations < ActiveRecord::Migration[8.0]
       t.string :type
       t.references :match, null: false, foreign_key: true
       t.references :question_result, null: true, foreign_key: true
+      t.references :player, null: true, foreign_key: true
       t.text :path, comment: "ScoreOperationの履歴のパス。idをカンマ区切りにしたもの。自分自身は含まない。"
 
       t.timestamps

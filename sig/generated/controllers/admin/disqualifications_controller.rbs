@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/disqualifications_controller.rb with RBS::Inline
+
+module Admin
+  class DisqualificationsController < ApplicationController
+    include MatchInstanceVariables
+
+    def create: () -> untyped
+  end
+end

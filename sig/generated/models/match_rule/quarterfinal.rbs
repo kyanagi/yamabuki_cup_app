@@ -10,6 +10,8 @@ module MatchRule
 
     MISSES_TO_WAIT: ::Integer
 
+    ADMIN_VIEW_TEMPLATE: ::String
+
     include Hayaoshi
 
     private

@@ -8,6 +8,8 @@ module MatchRule
 
     NUM_WINNERS: ::Integer
 
+    ADMIN_VIEW_TEMPLATE: ::String
+
     # @rbs override
     # @rbs score_operation: QuestionClosing
     # @rbs question_player_results: Array[QuestionPlayerResult]
@@ -21,7 +23,12 @@ module MatchRule
     # @rbs score_operation: ScoreOperation
     # @rbs player_id: Integer
     # @rbs return: void
-    def disqualify: (ScoreOperation score_operation, player_id: Integer) -> void
+    def disqualify: (ScoreOperation score_operation) -> void
+
+    # @rbs override
+    # @rbs score_operation: ScoreOperation
+    # @rbs return: String
+    def summarize_score_operation: ...
 
     private
 
