@@ -9,7 +9,7 @@ module Matchmaking
 
     def matching_should_not_exist: () -> void
 
-    def quarterfinal_winners_should_be_complete: () -> void
+    def previous_round_should_be_complete: () -> void
 
     def create_matchings: () -> void
   end

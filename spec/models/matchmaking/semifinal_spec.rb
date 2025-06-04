@@ -135,7 +135,7 @@ RSpec.describe Matchmaking::Semifinal, type: :model do
 
     it "バリデーションが失敗し、エラーメッセージが追加されること" do
       expect(matchmaking).to be_invalid
-      expect(matchmaking.errors[:base]).to include "準々決勝の勝者が8人揃っていません"
+      expect(matchmaking.errors[:base]).to include "準々決勝の勝者がそろっていません。"
     end
   end
 end

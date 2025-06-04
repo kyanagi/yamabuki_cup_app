@@ -3,6 +3,7 @@ module Matchmaking
     attribute :force, :boolean, default: false
 
     validate :matching_should_not_exist
+    validate :previous_round_should_be_completed
 
     before_save :create_matchings
 
@@ -18,6 +19,15 @@ module Matchmaking
 
       if Round::QUARTERFINAL.matchings.exists?
         errors.add(:base, "準々決勝のマッチングが既に存在します")
+      end
+    end
+
+    def previous_round_should_be_completed #: void
+      round3_winners_count = Round::ROUND3.matches.sum do |match|
+        match.current_scores.status_win.count
+      end
+      if round3_winners_count != MatchRule::Quarterfinal::NUM_SEATS * Round::QUARTERFINAL.matches.count
+        errors.add(:base, "3Rの勝者がそろっていません。")
       end
     end
 

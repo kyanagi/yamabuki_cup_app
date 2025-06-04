@@ -7,6 +7,19 @@ RSpec.describe Matchmaking::Quarterfinal, type: :model do
 
   describe "#matching_should_not_exist" do
     let(:matchmaking) { Matchmaking::Quarterfinal.new }
+    let!(:round3_players) do
+      yontaku_rank = 1
+      Round::ROUND3.matches.flat_map do |match|
+        score_operation = create(:score_operation, match:)
+        match.update!(last_score_operation: score_operation)
+        create_list(:player, 8).each.with_index(1) do |player, hayaoshi_rank|
+          create(:yontaku_player_result, player:, rank: yontaku_rank)
+          matching = create(:matching, match:, player:, seat: hayaoshi_rank - 1)
+          create(:score, score_operation:, matching:, status: hayaoshi_rank <= 4 ? "win" : "playing", rank: hayaoshi_rank)
+          yontaku_rank += 1
+        end
+      end
+    end
 
     context "準々決勝のマッチングが既に存在する場合" do
       let(:round) { Round::QUARTERFINAL }
@@ -48,18 +61,24 @@ RSpec.describe Matchmaking::Quarterfinal, type: :model do
     let(:matches) { Round::QUARTERFINAL.matches.order(:match_number).to_a }
     let(:force) { false }
 
-    let!(:round3_winners) do
+    let!(:round3_players) do
       yontaku_rank = 1
       Round::ROUND3.matches.flat_map do |match|
         score_operation = create(:score_operation, match:)
         match.update!(last_score_operation: score_operation)
-        create_list(:player, 4).each.with_index(1) do |player, hayaoshi_rank|
+        create_list(:player, 8).each.with_index(1) do |player, hayaoshi_rank|
           create(:yontaku_player_result, player:, rank: yontaku_rank)
           matching = create(:matching, match:, player:, seat: hayaoshi_rank - 1)
-          create(:score, score_operation:, matching:, status: "win", rank: hayaoshi_rank)
+          create(:score, score_operation:, matching:, status: hayaoshi_rank <= 4 ? "win" : "playing", rank: hayaoshi_rank)
           yontaku_rank += 1
         end
       end
+    end
+
+    let(:round3_winners) do
+      Round::ROUND3.matches.flat_map do |match|
+        match.current_scores.status_win.map { |s| s.matching.player }
+      end.sort_by { |player| player.yontaku_player_result.rank }
     end
 
     shared_examples "準々決勝の組分けが正しく作成されること" do
@@ -104,6 +123,30 @@ RSpec.describe Matchmaking::Quarterfinal, type: :model do
 
         it_behaves_like "準々決勝の組分けが正しく作成されること"
       end
+    end
+  end
+
+  context "3Rの勝者が16人揃っていない場合" do
+    let(:matchmaking) { Matchmaking::Quarterfinal.new(force: force) }
+    let(:force) { false }
+
+    before do
+      yontaku_rank = 1
+      Round::ROUND3.matches.flat_map do |match|
+        score_operation = create(:score_operation, match:)
+        match.update!(last_score_operation: score_operation)
+        create_list(:player, 8).each.with_index(1) do |player, hayaoshi_rank|
+          create(:yontaku_player_result, player:, rank: yontaku_rank)
+          matching = create(:matching, match:, player:, seat: hayaoshi_rank - 1)
+          create(:score, score_operation:, matching:, status: hayaoshi_rank <= 3 ? "win" : "playing", rank: hayaoshi_rank)
+          yontaku_rank += 1
+        end
+      end
+    end
+
+    it "バリデーションが失敗し、エラーメッセージが追加されること" do
+      expect(matchmaking).to be_invalid
+      expect(matchmaking.errors[:base]).to include "3Rの勝者がそろっていません。"
     end
   end
 end
