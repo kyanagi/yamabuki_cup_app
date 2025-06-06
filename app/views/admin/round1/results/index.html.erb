@@ -1,15 +1,18 @@
 <%# frozen_string_literal: true %>
-
 <section class="section">
   <div class="container">
     <h1 class="title is-2 has-text-centered mb-6">ペーパークイズ結果</h1>
-
     <div class="table-container">
       <table class="table is-fullwidth is-striped is-hoverable">
         <thead>
           <tr>
             <th class="has-text-centered">順位</th>
             <th class="has-text-centered">得点</th>
+            <th class="has-text-centered">近似値1誤差</th>
+            <th class="has-text-centered">近似値2誤差</th>
+            <th class="has-text-centered">用紙1</th>
+            <th class="has-text-centered">用紙2</th>
+            <th class="has-text-centered">用紙近</th>
             <th>氏名</th>
             <th class="has-text-centered">ステータス</th>
           </tr>
@@ -27,9 +30,14 @@
                   -
                 <% end %>
               </td>
-              <td class="has-text-centered has-text-weight-bold is-size-5"><%= player.yontaku_player_result&.score %></td>
-              <td class="is-size-5"><%= "#{player.player_profile.family_name} #{player.player_profile.given_name}" %></td>
-              <td class="has-text-centered">
+              <td class="has-text-centered has-text-weight-bold is-size-5 is-vcentered"><%= player.yontaku_player_result&.score %></td>
+              <td class="has-text-centered is-vcentered"><%= player.yontaku_player_result&.approximation_quiz_diff1 %></td>
+              <td class="has-text-centered is-vcentered"><%= player.yontaku_player_result&.approximation_quiz_diff2 %></td>
+              <td class="has-text-centered is-vcentered"><%= '✓' if player.yontaku_player_papers.find { it.paper_number == 1 } %></td>
+              <td class="has-text-centered is-vcentered"><%= '✓' if player.yontaku_player_papers.find { it.paper_number == 2 } %></td>
+              <td class="has-text-centered is-vcentered"><%= '✓' if player.approximation_quiz_answer %></td>
+              <td class="is-size-5 is-vcentered"><%= "#{player.player_profile.family_name} #{player.player_profile.given_name}" %></td>
+              <td class="has-text-centered is-vcentered">
                 <% if round2_seeded?(rank) %>
                   シード
                 <% elsif round2_advantage?(rank) %>
@@ -48,6 +56,9 @@
           <% end %>
         </tbody>
       </table>
+      <div class="block">
+        <%= button_to "順位更新", admin_round1_paper_quiz_gradings_path, method: :post, class: "button is-primary", data: { turbo_confirm: "順位を更新しますか？" } %>
+      </div>
     </div>
   </div>
 </section>

@@ -25,6 +25,8 @@ RSpec.describe "Admin::Round1::Results", type: :system do
             player:,
             rank: data[:rank],
             score: data[:score],
+            approximation_quiz_diff1: 1,
+            approximation_quiz_diff2: 2,
             tiebreaker: data[:tiebreaker]
           )
         end

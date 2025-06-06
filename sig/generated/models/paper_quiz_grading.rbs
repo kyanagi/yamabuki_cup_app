@@ -1,5 +1,6 @@
 # Generated from app/models/paper_quiz_grading.rb with RBS::Inline
 
+# 1Rペーパークイズの採点および順位付けを行う。
 class PaperQuizGrading < ActiveType::Object
   PAPER1_QUESTION_COUNT: ::Integer
 

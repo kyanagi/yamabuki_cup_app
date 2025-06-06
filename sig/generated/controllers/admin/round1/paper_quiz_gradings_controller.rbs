@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/round1/paper_quiz_gradings_controller.rb with RBS::Inline
+
+module Admin
+  module Round1
+    class PaperQuizGradingsController < ApplicationController
+      def create: () -> untyped
+    end
+  end
+end

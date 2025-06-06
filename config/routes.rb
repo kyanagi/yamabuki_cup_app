@@ -22,6 +22,7 @@ Rails.application.routes.draw do
         end
       end
       resources :approximation_quiz_answers, only: [:create, :new, :index]
+      resources :paper_quiz_gradings, only: [:create]
     end
 
     resources :matches, only: [:show, :index] do

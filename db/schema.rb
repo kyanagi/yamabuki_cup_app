@@ -177,10 +177,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_113618) do
   create_table "yontaku_player_results", force: :cascade do |t|
     t.integer "player_id", null: false
     t.integer "rank", null: false
-    t.integer "score", default: 0, null: false
-    t.integer "approximation_quiz_diff1", default: 0, null: false
-    t.integer "approximation_quiz_diff2", default: 0, null: false
-    t.integer "tiebreaker", default: 0, null: false
+    t.integer "score", null: false
+    t.integer "approximation_quiz_diff1", null: false
+    t.integer "approximation_quiz_diff2", null: false
+    t.integer "tiebreaker", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["player_id"], name: "index_yontaku_player_results_on_player_id", unique: true
