@@ -24,7 +24,7 @@
         <td>
           <%= link_to "結果", admin_round1_results_path %>
         </td>
-        <% (@matches_by_round_id.values.map(&:size).max - 1).times do %>
+        <% (@matches_by_round_id.values.map(&:size).max - 3).times do %>
           <td></td>
         <% end %>
       </tr>
