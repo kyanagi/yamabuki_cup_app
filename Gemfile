@@ -57,6 +57,7 @@ end
 group :test do
   gem "capybara"
   gem "selenium-webdriver"
+  gem "rspec-request_describer"
 end
 
 group :brakeman do

@@ -69,6 +69,7 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include FactoryBot::Syntax::Methods
+  config.include RSpec::RequestDescriber, type: :request
 
   config.before(:each, type: :system) do
     driven_by :selenium_chrome_headless

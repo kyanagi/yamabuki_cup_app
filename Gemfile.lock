@@ -328,6 +328,7 @@ GEM
       rspec-expectations (~> 3.13)
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
+    rspec-request_describer (0.6.0)
     rspec-support (3.13.4)
     rubocop (1.74.0)
       json (~> 2.3)
@@ -504,6 +505,7 @@ DEPENDENCIES
   rbs_rails
   repl_type_completor
   rspec-rails
+  rspec-request_describer
   rubocop-kyanagi!
   selenium-webdriver
   solid_cable
