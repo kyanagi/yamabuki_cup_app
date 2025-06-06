@@ -1,0 +1,4 @@
+# Generated from app/models/approximation_question.rb with RBS::Inline
+
+class ApproximationQuestion < ApplicationRecord
+end

@@ -10,7 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_06_033846) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_06_113618) do
+  create_table "approximation_questions", force: :cascade do |t|
+    t.string "text", default: "", null: false
+    t.integer "answer", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "approximation_quiz_answers", force: :cascade do |t|
     t.integer "player_id", null: false
     t.integer "answer1"
@@ -171,10 +178,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_033846) do
     t.integer "player_id", null: false
     t.integer "rank", null: false
     t.integer "score", default: 0, null: false
+    t.integer "approximation_quiz_diff1", default: 0, null: false
+    t.integer "approximation_quiz_diff2", default: 0, null: false
+    t.integer "tiebreaker", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["player_id"], name: "index_yontaku_player_results_on_player_id", unique: true
     t.index ["rank"], name: "index_yontaku_player_results_on_rank", unique: true
+    t.index ["tiebreaker"], name: "index_yontaku_player_results_on_tiebreaker", unique: true
+  end
+
+  create_table "yontaku_questions", force: :cascade do |t|
+    t.string "text", default: "", null: false
+    t.string "choice1", default: "", null: false
+    t.string "choice2", default: "", null: false
+    t.string "choice3", default: "", null: false
+    t.string "choice4", default: "", null: false
+    t.integer "answer", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.check_constraint "answer IN (1, 2, 3, 4)", name: "answer_in_choices"
   end
 
   add_foreign_key "approximation_quiz_answers", "players"

@@ -1,0 +1,2 @@
+class YontakuQuestion < ApplicationRecord
+end

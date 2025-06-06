@@ -1,4 +1,18 @@
 FactoryBot.define do
+  factory :approximation_question do
+    text { "MyString" }
+    answer { 1 }
+  end
+
+  factory :yontaku_question do
+    text { "MyString" }
+    choice1 { "MyString" }
+    choice2 { "MyString" }
+    choice3 { "MyText" }
+    choice4 { "MyText" }
+    answer { 1 }
+  end
+
   factory :approximation_quiz_answer do
     player { nil }
     answer1 { 1 }
@@ -113,10 +127,19 @@ FactoryBot.define do
     situation { 0 }
   end
 
+  factory :yontaku_player_paper do
+    player
+    paper_number { 1 }
+    answers { "[]" }
+  end
+
   factory :yontaku_player_result do
     player
     rank { 1 }
     score { 1 }
+    approximation_quiz_diff1 { 0 }
+    approximation_quiz_diff2 { 0 }
+    sequence(:tiebreaker)
   end
 
   factory :round3_course_preference do

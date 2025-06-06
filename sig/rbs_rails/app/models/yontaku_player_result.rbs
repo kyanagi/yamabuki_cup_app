@@ -146,6 +146,114 @@ class YontakuPlayerResult < ::ApplicationRecord
 
     def clear_score_change: () -> void
 
+    def approximation_quiz_diff1: () -> ::Integer
+
+    def approximation_quiz_diff1=: (::Integer) -> ::Integer
+
+    def approximation_quiz_diff1?: () -> bool
+
+    def approximation_quiz_diff1_changed?: () -> bool
+
+    def approximation_quiz_diff1_change: () -> [ ::Integer?, ::Integer? ]
+
+    def approximation_quiz_diff1_will_change!: () -> void
+
+    def approximation_quiz_diff1_was: () -> ::Integer?
+
+    def approximation_quiz_diff1_previously_changed?: () -> bool
+
+    def approximation_quiz_diff1_previous_change: () -> ::Array[::Integer?]?
+
+    def approximation_quiz_diff1_previously_was: () -> ::Integer?
+
+    def approximation_quiz_diff1_before_last_save: () -> ::Integer?
+
+    def approximation_quiz_diff1_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def approximation_quiz_diff1_in_database: () -> ::Integer?
+
+    def saved_change_to_approximation_quiz_diff1: () -> ::Array[::Integer?]?
+
+    def saved_change_to_approximation_quiz_diff1?: () -> bool
+
+    def will_save_change_to_approximation_quiz_diff1?: () -> bool
+
+    def restore_approximation_quiz_diff1!: () -> void
+
+    def clear_approximation_quiz_diff1_change: () -> void
+
+    def approximation_quiz_diff2: () -> ::Integer
+
+    def approximation_quiz_diff2=: (::Integer) -> ::Integer
+
+    def approximation_quiz_diff2?: () -> bool
+
+    def approximation_quiz_diff2_changed?: () -> bool
+
+    def approximation_quiz_diff2_change: () -> [ ::Integer?, ::Integer? ]
+
+    def approximation_quiz_diff2_will_change!: () -> void
+
+    def approximation_quiz_diff2_was: () -> ::Integer?
+
+    def approximation_quiz_diff2_previously_changed?: () -> bool
+
+    def approximation_quiz_diff2_previous_change: () -> ::Array[::Integer?]?
+
+    def approximation_quiz_diff2_previously_was: () -> ::Integer?
+
+    def approximation_quiz_diff2_before_last_save: () -> ::Integer?
+
+    def approximation_quiz_diff2_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def approximation_quiz_diff2_in_database: () -> ::Integer?
+
+    def saved_change_to_approximation_quiz_diff2: () -> ::Array[::Integer?]?
+
+    def saved_change_to_approximation_quiz_diff2?: () -> bool
+
+    def will_save_change_to_approximation_quiz_diff2?: () -> bool
+
+    def restore_approximation_quiz_diff2!: () -> void
+
+    def clear_approximation_quiz_diff2_change: () -> void
+
+    def tiebreaker: () -> ::Integer
+
+    def tiebreaker=: (::Integer) -> ::Integer
+
+    def tiebreaker?: () -> bool
+
+    def tiebreaker_changed?: () -> bool
+
+    def tiebreaker_change: () -> [ ::Integer?, ::Integer? ]
+
+    def tiebreaker_will_change!: () -> void
+
+    def tiebreaker_was: () -> ::Integer?
+
+    def tiebreaker_previously_changed?: () -> bool
+
+    def tiebreaker_previous_change: () -> ::Array[::Integer?]?
+
+    def tiebreaker_previously_was: () -> ::Integer?
+
+    def tiebreaker_before_last_save: () -> ::Integer?
+
+    def tiebreaker_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def tiebreaker_in_database: () -> ::Integer?
+
+    def saved_change_to_tiebreaker: () -> ::Array[::Integer?]?
+
+    def saved_change_to_tiebreaker?: () -> bool
+
+    def will_save_change_to_tiebreaker?: () -> bool
+
+    def restore_tiebreaker!: () -> void
+
+    def clear_tiebreaker_change: () -> void
+
     def created_at: () -> ::ActiveSupport::TimeWithZone
 
     def created_at=: (::ActiveSupport::TimeWithZone) -> ::ActiveSupport::TimeWithZone

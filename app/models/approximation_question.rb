@@ -1,0 +1,2 @@
+class ApproximationQuestion < ApplicationRecord
+end

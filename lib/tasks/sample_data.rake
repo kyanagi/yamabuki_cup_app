@@ -21,6 +21,7 @@ namespace :sample_data do
       if i >= num_absent_players
         h[:yontaku_player_result] = {
           score: rand(score_range),
+          tiebreaker: i,
         }
       end
 

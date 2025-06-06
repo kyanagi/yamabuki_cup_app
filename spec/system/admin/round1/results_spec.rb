@@ -6,9 +6,9 @@ RSpec.describe "Admin::Round1::Results", type: :system do
       before do
         # テストデータの作成
         players_data = [
-          { rank: 1, score: 250, family_name: "山田", given_name: "太郎" },
-          { rank: 2, score: 200, family_name: "鈴木", given_name: "花子" },
-          { rank: 3, score: 150, family_name: "佐藤", given_name: "一郎" },
+          { rank: 1, score: 250, family_name: "山田", given_name: "太郎", tiebreaker: 1 },
+          { rank: 2, score: 200, family_name: "鈴木", given_name: "花子", tiebreaker: 2 },
+          { rank: 3, score: 150, family_name: "佐藤", given_name: "一郎", tiebreaker: 3 },
         ]
 
         players_data.each do |data|
@@ -24,7 +24,8 @@ RSpec.describe "Admin::Round1::Results", type: :system do
           YontakuPlayerResult.create!(
             player:,
             rank: data[:rank],
-            score: data[:score]
+            score: data[:score],
+            tiebreaker: data[:tiebreaker]
           )
         end
 
