@@ -1,0 +1,17 @@
+# Generated from app/controllers/admin/round1/yontaku_player_papers_controller.rb with RBS::Inline
+
+module Admin
+  module Round1
+    class YontakuPlayerPapersController < ApplicationController
+      def index: () -> untyped
+
+      def create: () -> untyped
+
+      def destroy_all: () -> untyped
+
+      private
+
+      def setup_index_instance_variables: () -> untyped
+    end
+  end
+end

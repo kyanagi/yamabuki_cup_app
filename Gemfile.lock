@@ -488,6 +488,7 @@ DEPENDENCIES
   bootsnap
   brakeman
   capybara
+  csv
   debug
   factory_bot_rails
   gimei

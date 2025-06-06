@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_30_024802) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_05_050906) do
   create_table "matches", force: :cascade do |t|
     t.integer "round_id", null: false
     t.integer "match_number", null: false
@@ -148,6 +148,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_30_024802) do
     t.index ["score_operation_id"], name: "index_scores_on_score_operation_id"
   end
 
+  create_table "yontaku_player_papers", force: :cascade do |t|
+    t.integer "player_id", null: false
+    t.integer "paper_number", null: false
+    t.text "answers"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["player_id", "paper_number"], name: "index_yontaku_player_papers_on_player_id_and_paper_number", unique: true
+    t.index ["player_id"], name: "index_yontaku_player_papers_on_player_id"
+  end
+
   create_table "yontaku_player_results", force: :cascade do |t|
     t.integer "player_id", null: false
     t.integer "rank", null: false
@@ -179,5 +189,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_30_024802) do
   add_foreign_key "score_operations", "question_results"
   add_foreign_key "scores", "matchings"
   add_foreign_key "scores", "score_operations"
+  add_foreign_key "yontaku_player_papers", "players"
   add_foreign_key "yontaku_player_results", "players"
 end

@@ -1,0 +1,73 @@
+<div class="container mb-6">
+  <h1 class="title">四択クイズ解答用紙</h1>
+  <div class="block">
+    <% if notice %>
+      <div class="notification is-success is-light">
+        <%= notice %>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="notification is-danger is-light">
+        <%= alert %>
+      </div>
+    <% end %>
+    <%= form_with model: @upload, url: admin_round1_yontaku_player_papers_path, multipart: true do |f| %>
+      <div class="field has-addons">
+        <div class="control is-expanded">
+          <%= f.file_field :csv_file, accept: ".csv", class: "input" %>
+        </div>
+        <div class="control">
+          <%= f.submit "アップロード", class: "button is-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="block">
+    <%= @paper_count %>枚アップロード済み
+    (
+    2枚: <%= @players_count_by_paper_count[2] %>人 /
+    1枚: <%= @players_count_by_paper_count[1] %>人 /
+    0枚: <%= @players_count_by_paper_count[0] %>人
+    )
+  </div>
+  <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>氏名</th>
+        <th>解答用紙1</th>
+        <th>解答用紙2</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @players.each do |player| %>
+        <tr>
+          <td><%= player.id %></td>
+          <td><%= player.player_profile&.full_name %></td>
+          <td>
+            <% if player.yontaku_player_papers.find { it.paper_number == 1 } %>
+              <span class="tag is-success">アップロード済</span>
+            <% else %>
+              <span class="tag has-background-grey-lighter">未アップロード</span>
+            <% end %>
+          </td>
+          <td>
+            <% if player.yontaku_player_papers.find { it.paper_number == 2 } %>
+              <span class="tag is-success">アップロード済</span>
+            <% else %>
+              <span class="tag has-background-grey-lighter">未アップロード</span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <div class="block has-text-right">
+    <%= form_with url: admin_round1_yontaku_player_papers_path,
+                method: :delete,
+                style: 'display: inline-block;',
+                data: { turbo_confirm: "全ての解答用紙を削除します。" } do |f| %>
+      <%= f.submit '全て削除', class: 'button is-danger' %>
+    <% end %>
+  </div>
+</div>
