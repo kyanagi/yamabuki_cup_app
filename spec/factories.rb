@@ -1,4 +1,10 @@
 FactoryBot.define do
+  factory :approximation_quiz_answer do
+    player { nil }
+    answer1 { 1 }
+    answer2 { 1 }
+  end
+
   factory :question_reading do
     question { nil }
     duration { 1.5 }

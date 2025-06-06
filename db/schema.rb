@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_05_050906) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_06_033846) do
+  create_table "approximation_quiz_answers", force: :cascade do |t|
+    t.integer "player_id", null: false
+    t.integer "answer1"
+    t.integer "answer2"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["player_id"], name: "index_approximation_quiz_answers_on_player_id", unique: true
+  end
+
   create_table "matches", force: :cascade do |t|
     t.integer "round_id", null: false
     t.integer "match_number", null: false
@@ -168,6 +177,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_05_050906) do
     t.index ["rank"], name: "index_yontaku_player_results_on_rank", unique: true
   end
 
+  add_foreign_key "approximation_quiz_answers", "players"
   add_foreign_key "matches", "score_operations", column: "last_score_operation_id"
   add_foreign_key "matchings", "matches"
   add_foreign_key "matchings", "players"

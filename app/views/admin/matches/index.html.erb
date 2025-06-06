@@ -16,6 +16,12 @@
         <td>1R</td>
         <td></td>
         <td>
+          <%= link_to "四択解答用紙", admin_round1_yontaku_player_papers_path %>
+        </td>
+        <td>
+          <%= link_to "近似値", admin_round1_approximation_quiz_answers_path %>
+        </td>
+        <td>
           <%= link_to "結果", admin_round1_results_path %>
         </td>
         <% (@matches_by_round_id.values.map(&:size).max - 1).times do %>

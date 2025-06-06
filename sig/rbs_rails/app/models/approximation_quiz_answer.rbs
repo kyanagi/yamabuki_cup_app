@@ -1,5 +1,5 @@
-class Player < ::ApplicationRecord
-  extend ::_ActiveRecord_Relation_ClassMethods[::Player, ::Player::ActiveRecord_Relation, ::Integer]
+class ApproximationQuizAnswer < ::ApplicationRecord
+  extend ::_ActiveRecord_Relation_ClassMethods[::ApproximationQuizAnswer, ::ApproximationQuizAnswer::ActiveRecord_Relation, ::Integer]
 
   module GeneratedAttributeMethods
     def id: () -> ::Integer
@@ -37,6 +37,114 @@ class Player < ::ApplicationRecord
     def restore_id!: () -> void
 
     def clear_id_change: () -> void
+
+    def player_id: () -> ::Integer
+
+    def player_id=: (::Integer) -> ::Integer
+
+    def player_id?: () -> bool
+
+    def player_id_changed?: () -> bool
+
+    def player_id_change: () -> [ ::Integer?, ::Integer? ]
+
+    def player_id_will_change!: () -> void
+
+    def player_id_was: () -> ::Integer?
+
+    def player_id_previously_changed?: () -> bool
+
+    def player_id_previous_change: () -> ::Array[::Integer?]?
+
+    def player_id_previously_was: () -> ::Integer?
+
+    def player_id_before_last_save: () -> ::Integer?
+
+    def player_id_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def player_id_in_database: () -> ::Integer?
+
+    def saved_change_to_player_id: () -> ::Array[::Integer?]?
+
+    def saved_change_to_player_id?: () -> bool
+
+    def will_save_change_to_player_id?: () -> bool
+
+    def restore_player_id!: () -> void
+
+    def clear_player_id_change: () -> void
+
+    def answer1: () -> ::Integer?
+
+    def answer1=: (::Integer?) -> ::Integer?
+
+    def answer1?: () -> bool
+
+    def answer1_changed?: () -> bool
+
+    def answer1_change: () -> [ ::Integer?, ::Integer? ]
+
+    def answer1_will_change!: () -> void
+
+    def answer1_was: () -> ::Integer?
+
+    def answer1_previously_changed?: () -> bool
+
+    def answer1_previous_change: () -> ::Array[::Integer?]?
+
+    def answer1_previously_was: () -> ::Integer?
+
+    def answer1_before_last_save: () -> ::Integer?
+
+    def answer1_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def answer1_in_database: () -> ::Integer?
+
+    def saved_change_to_answer1: () -> ::Array[::Integer?]?
+
+    def saved_change_to_answer1?: () -> bool
+
+    def will_save_change_to_answer1?: () -> bool
+
+    def restore_answer1!: () -> void
+
+    def clear_answer1_change: () -> void
+
+    def answer2: () -> ::Integer?
+
+    def answer2=: (::Integer?) -> ::Integer?
+
+    def answer2?: () -> bool
+
+    def answer2_changed?: () -> bool
+
+    def answer2_change: () -> [ ::Integer?, ::Integer? ]
+
+    def answer2_will_change!: () -> void
+
+    def answer2_was: () -> ::Integer?
+
+    def answer2_previously_changed?: () -> bool
+
+    def answer2_previous_change: () -> ::Array[::Integer?]?
+
+    def answer2_previously_was: () -> ::Integer?
+
+    def answer2_before_last_save: () -> ::Integer?
+
+    def answer2_change_to_be_saved: () -> ::Array[::Integer?]?
+
+    def answer2_in_database: () -> ::Integer?
+
+    def saved_change_to_answer2: () -> ::Array[::Integer?]?
+
+    def saved_change_to_answer2?: () -> bool
+
+    def will_save_change_to_answer2?: () -> bool
+
+    def restore_answer2!: () -> void
+
+    def clear_answer2_change: () -> void
 
     def created_at: () -> ::ActiveSupport::TimeWithZone
 
@@ -111,43 +219,13 @@ class Player < ::ApplicationRecord
     def clear_updated_at_change: () -> void
   end
   include GeneratedAttributeMethods
-  def yontaku_player_papers: () -> ::YontakuPlayerPaper::ActiveRecord_Associations_CollectionProxy
-  def yontaku_player_papers=: (::YontakuPlayerPaper::ActiveRecord_Associations_CollectionProxy | ::Array[::YontakuPlayerPaper]) -> (::YontakuPlayerPaper::ActiveRecord_Associations_CollectionProxy | ::Array[::YontakuPlayerPaper])
-  def yontaku_player_paper_ids: () -> ::Array[::Integer]
-  def yontaku_player_paper_ids=: (::Array[::Integer]) -> ::Array[::Integer]
-  def question_player_results: () -> ::QuestionPlayerResult::ActiveRecord_Associations_CollectionProxy
-  def question_player_results=: (::QuestionPlayerResult::ActiveRecord_Associations_CollectionProxy | ::Array[::QuestionPlayerResult]) -> (::QuestionPlayerResult::ActiveRecord_Associations_CollectionProxy | ::Array[::QuestionPlayerResult])
-  def question_player_result_ids: () -> ::Array[::Integer]
-  def question_player_result_ids=: (::Array[::Integer]) -> ::Array[::Integer]
-  def matchings: () -> ::Matching::ActiveRecord_Associations_CollectionProxy
-  def matchings=: (::Matching::ActiveRecord_Associations_CollectionProxy | ::Array[::Matching]) -> (::Matching::ActiveRecord_Associations_CollectionProxy | ::Array[::Matching])
-  def matching_ids: () -> ::Array[::Integer]
-  def matching_ids=: (::Array[::Integer]) -> ::Array[::Integer]
-  def player_profile: () -> ::PlayerProfile?
-  def player_profile=: (::PlayerProfile?) -> ::PlayerProfile?
-  def build_player_profile: (?untyped) -> ::PlayerProfile
-  def create_player_profile: (untyped) -> ::PlayerProfile
-  def create_player_profile!: (untyped) -> ::PlayerProfile
-  def reload_player_profile: () -> ::PlayerProfile?
-  def approximation_quiz_answer: () -> ::ApproximationQuizAnswer?
-  def approximation_quiz_answer=: (::ApproximationQuizAnswer?) -> ::ApproximationQuizAnswer?
-  def build_approximation_quiz_answer: (?untyped) -> ::ApproximationQuizAnswer
-  def create_approximation_quiz_answer: (untyped) -> ::ApproximationQuizAnswer
-  def create_approximation_quiz_answer!: (untyped) -> ::ApproximationQuizAnswer
-  def reload_approximation_quiz_answer: () -> ::ApproximationQuizAnswer?
-  def yontaku_player_result: () -> ::YontakuPlayerResult?
-  def yontaku_player_result=: (::YontakuPlayerResult?) -> ::YontakuPlayerResult?
-  def build_yontaku_player_result: (?untyped) -> ::YontakuPlayerResult
-  def create_yontaku_player_result: (untyped) -> ::YontakuPlayerResult
-  def create_yontaku_player_result!: (untyped) -> ::YontakuPlayerResult
-  def reload_yontaku_player_result: () -> ::YontakuPlayerResult?
-  def round3_course_preference: () -> ::Round3CoursePreference?
-  def round3_course_preference=: (::Round3CoursePreference?) -> ::Round3CoursePreference?
-  def build_round3_course_preference: (?untyped) -> ::Round3CoursePreference
-  def create_round3_course_preference: (untyped) -> ::Round3CoursePreference
-  def create_round3_course_preference!: (untyped) -> ::Round3CoursePreference
-  def reload_round3_course_preference: () -> ::Round3CoursePreference?
 
+  def player: () -> ::Player
+  def player=: (::Player?) -> ::Player?
+  def reload_player: () -> ::Player?
+  def build_player: (untyped) -> ::Player
+  def create_player: (untyped) -> ::Player
+  def create_player!: (untyped) -> ::Player
   module GeneratedAssociationMethods
   end
   include GeneratedAssociationMethods
@@ -156,13 +234,13 @@ class Player < ::ApplicationRecord
   end
 
   class ActiveRecord_Relation < ::ActiveRecord::Relation
-    include ::Player::GeneratedRelationMethods
-    include ::_ActiveRecord_Relation[::Player, ::Integer]
-    include ::Enumerable[::Player]
+    include ::ApproximationQuizAnswer::GeneratedRelationMethods
+    include ::_ActiveRecord_Relation[::ApproximationQuizAnswer, ::Integer]
+    include ::Enumerable[::ApproximationQuizAnswer]
   end
 
   class ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
-    include ::Player::GeneratedRelationMethods
-    include ::_ActiveRecord_Relation[::Player, ::Integer]
+    include ::ApproximationQuizAnswer::GeneratedRelationMethods
+    include ::_ActiveRecord_Relation[::ApproximationQuizAnswer, ::Integer]
   end
 end

@@ -21,6 +21,7 @@ Rails.application.routes.draw do
           delete :destroy, to: "yontaku_player_papers#destroy_all"
         end
       end
+      resources :approximation_quiz_answers, only: [:create, :new, :index]
     end
 
     resources :matches, only: [:show, :index] do

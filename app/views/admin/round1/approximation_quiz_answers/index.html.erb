@@ -1,0 +1,19 @@
+<div class="container mb-6">
+  <h1 class="title">近似値クイズ解答用紙</h1>
+  <div class="block has-text-right">
+    <%= link_to "新規入力", new_admin_round1_approximation_quiz_answer_path %>
+  </div>
+  <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>氏名</th>
+        <th>近似値1</th>
+        <th>近似値2</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render partial: "player", collection: @players %>
+    </tbody>
+  </table>
+</div>

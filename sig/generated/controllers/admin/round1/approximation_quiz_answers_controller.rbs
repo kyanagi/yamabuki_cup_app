@@ -1,0 +1,13 @@
+# Generated from app/controllers/admin/round1/approximation_quiz_answers_controller.rb with RBS::Inline
+
+module Admin
+  module Round1
+    class ApproximationQuizAnswersController < ApplicationController
+      def index: () -> untyped
+
+      def new: () -> untyped
+
+      def create: () -> untyped
+    end
+  end
+end
