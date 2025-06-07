@@ -1,0 +1,126 @@
+<section class="section">
+  <div class="container is-max-tablet" data-controller="entry-form modal">
+    <h1 class="title is-2">新規エントリー</h1>
+    <%= form_with model: @registration do |f| %>
+      <% if @registration.errors.any? %>
+        <div class="notification is-danger">
+          <h2 class="subtitle">
+            <%= pluralize(@registration.errors.count, "error") %> が発生しました：
+          </h2>
+          <ul>
+            <% @registration.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <div class="field">
+        <%= f.label :email, "メールアドレス", class: "label" %>
+        <div class="control has-icons-left has-icons-right">
+          <%= f.email_field :email, class: "input", data: { entry_form_target: "formElement email" }, autocomplete: "email", placeholder: "yamabuki@example.com" %>
+          <span class="icon is-small is-left">
+            <i class="fas fa-envelope"></i>
+          </span>
+        </div>
+        <p class="help">メールを確認できるメールアドレスを入力してください。マイページにログインする際にも使用します。</p>
+        <p class="help is-danger" data-entry-form-target="errorElement emailError"></p>
+      </div>
+      <div class="field">
+        <%= f.label :password, "パスワード", class: "label" %>
+        <div class="control has-icons-left">
+          <%= f.password_field :password, class: "input", data: { entry_form_target: "formElement password" }, autocomplete: "new-password" %>
+          <span class="icon is-small is-left">
+            <i class="fas fa-lock"></i>
+          </span>
+        </div>
+        <p class="help">ログインする際に使用するパスワードを入力してください。</p>
+        <p class="help is-danger" data-entry-form-target="errorElement passwordError"></p>
+      </div>
+      <%= f.label :family_name, "姓/名", class: "label" %>
+      <div class="field is-grouped">
+        <div class="control is-expanded">
+          <%= f.text_field :family_name, class: "input", data: { entry_form_target: "formElement familyName" }, autocomplete: "family-name", placeholder: "山吹" %>
+          <p class="help is-danger" data-entry-form-target="errorElement familyNameError"></p>
+        </div>
+        <div class="control is-expanded">
+          <%= f.text_field :given_name, class: "input", data: { entry_form_target: "formElement givenName" }, autocomplete: "given-name", placeholder: "太郎" %>
+          <p class="help is-danger" data-entry-form-target="errorElement givenNameError"></p>
+        </div>
+      </div>
+      <%= f.label :family_name, "姓/名 ふりがな", class: "label" %>
+      <div class="field is-grouped">
+        <div class="control is-expanded">
+          <%= f.text_field :family_name_kana, class: "input", data: { entry_form_target: "formElement familyNameKana" }, autocomplete: "family-name", placeholder: "やまぶき" %>
+          <p class="help is-danger" data-entry-form-target="errorElement familyNameKanaError"></p>
+        </div>
+        <div class="control is-expanded">
+          <%= f.text_field :given_name_kana, class: "input", data: { entry_form_target: "formElement givenNameKana" }, autocomplete: "given-name", placeholder: "たろう" %>
+          <p class="help is-danger" data-entry-form-target="errorElement givenNameKanaError"></p>
+        </div>
+      </div>
+      <div class="field">
+        <%= f.label :entry_list_name, "エントリーリストの名前", class: "label" %>
+        <div class="control">
+          <%= f.text_field :entry_list_name, class: "input", data: { entry_form_target: "formElement entryListName" }, autocomplete: "nickname" %>
+        </div>
+        <p class="help is-danger" data-entry-form-target="errorElement entryListNameError"></p>
+      </div>
+      <div class="field">
+        <%= f.label :notes, "その他", class: "label" %>
+        <div class="control">
+          <%= f.text_area :notes, rows: 4, class: "textarea", data: { entry_form_target: "formElement notes" } %>
+        </div>
+        <p class="help">その他、主催者への連絡事項などありましたら入力してください。</p>
+      </div>
+      <div class="field is-grouped is-grouped-right">
+        <div class="control">
+          <%= button_tag "確認する", class: "button is-primary", data: { action: "entry-form#validate:prevent entry-form#updateConfirmationDisplay:prevent modal#open:prevent" } %>
+        </div>
+      </div>
+      <div class="modal" data-modal-target="modal">
+        <div class="modal-background" data-action="click->modal#close"></div>
+        <div class="modal-content">
+          <div class="box">
+            <h2 class="title is-4">エントリー内容の確認</h2>
+            <p>以下の内容でエントリーします。</p>
+            <table class="table is-fullwidth">
+              <tbody>
+                <tr>
+                  <th>メールアドレス</th>
+                  <td data-entry-form-target="confirmationEmail"></td>
+                </tr>
+                <tr>
+                  <th>姓/名</th>
+                  <td>
+                    <span data-entry-form-target="confirmationFamilyName"></span>
+                    <span data-entry-form-target="confirmationGivenName"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th>姓/名 ふりがな</th>
+                  <td>
+                    <span data-entry-form-target="confirmationFamilyNameKana"></span>
+                    <span data-entry-form-target="confirmationGivenNameKana"></span>
+                  </td>
+                </tr>
+                <tr>
+                  <th>エントリーリストの名前</th>
+                  <td data-entry-form-target="confirmationEntryListName"></td>
+                </tr>
+                <tr>
+                  <th>その他</th>
+                  <td data-entry-form-target="confirmationNotes"></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="is-flex is-justify-content-space-between buttons are-large">
+              <button class="button" data-action="click->modal#close:prevent">キャンセル</button>
+              <%= f.submit "送信する", class: "button is-primary" %>
+            </div>
+          </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close" data-action="click->modal#close:prevent"></button>
+      </div>
+    <% end %>
+  </div>
+</section>

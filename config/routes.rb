@@ -35,4 +35,6 @@ Rails.application.routes.draw do
 
     resources :matchmakings, only: [:create]
   end
+
+  resources :registrations, only: [:new, :create]
 end

@@ -24,6 +24,21 @@
   </head>
 
   <body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div id="navbarBasic" class="navbar-menu">
+        <div class="navbar-end">
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+            </a>
+
+            <div class="navbar-dropdown is-right">
+              <%= link_to "試合一覧", "/admin/matches", class: "navbar-item" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
     <%= yield %>
   </body>
 </html>
