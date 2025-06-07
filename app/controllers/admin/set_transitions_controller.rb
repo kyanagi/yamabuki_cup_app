@@ -1,5 +1,5 @@
 module Admin
-  class SetTransitionsController < ApplicationController
+  class SetTransitionsController < AdminController
     include MatchInstanceVariables
 
     def create

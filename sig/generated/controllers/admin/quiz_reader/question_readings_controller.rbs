@@ -2,7 +2,7 @@
 
 module Admin
   module QuizReader
-    class QuestionReadingsController < ApplicationController
+    class QuestionReadingsController < AdminController
       def create: () -> untyped
     end
   end

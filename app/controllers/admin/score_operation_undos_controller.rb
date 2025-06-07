@@ -1,5 +1,5 @@
 module Admin
-  class ScoreOperationUndosController < ApplicationController
+  class ScoreOperationUndosController < AdminController
     include MatchInstanceVariables
 
     def create

@@ -1,6 +1,6 @@
 module Admin
   module Round1
-    class PaperQuizGradingsController < ApplicationController
+    class PaperQuizGradingsController < AdminController
       def create
         ActiveRecord::Base.transaction do
           PaperQuizGrading.create!

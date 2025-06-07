@@ -1,7 +1,7 @@
 # Generated from app/controllers/admin/matches_controller.rb with RBS::Inline
 
 module Admin
-  class MatchesController < ApplicationController
+  class MatchesController < AdminController
     include MatchInstanceVariables
 
     def index: () -> untyped

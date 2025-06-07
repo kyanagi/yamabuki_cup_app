@@ -1,6 +1,6 @@
 module Admin
   module Round1
-    class ResultsController < ApplicationController
+    class ResultsController < AdminController
       def index
         @players = Player
           .preload(:yontaku_player_papers)

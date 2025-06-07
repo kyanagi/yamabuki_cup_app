@@ -1,6 +1,6 @@
 module Admin
   module Round1
-    class ApproximationQuizAnswersController < ApplicationController
+    class ApproximationQuizAnswersController < AdminController
       def index
         @players = Player.eager_load(:player_profile, :approximation_quiz_answer).order(:id)
       end

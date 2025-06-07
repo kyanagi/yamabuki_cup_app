@@ -1,6 +1,6 @@
 module Admin
   module QuizReader
-    class NextQuestionController < ApplicationController
+    class NextQuestionController < AdminController
       def update
         provider = QuestionProvider.first!
         case params[:question_id]

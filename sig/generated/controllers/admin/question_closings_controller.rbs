@@ -1,7 +1,7 @@
 # Generated from app/controllers/admin/question_closings_controller.rb with RBS::Inline
 
 module Admin
-  class QuestionClosingsController < ApplicationController
+  class QuestionClosingsController < AdminController
     include MatchInstanceVariables
 
     def create: () -> untyped

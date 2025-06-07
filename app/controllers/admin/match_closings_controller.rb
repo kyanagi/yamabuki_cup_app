@@ -1,5 +1,5 @@
 module Admin
-  class MatchClosingsController < ApplicationController
+  class MatchClosingsController < AdminController
     include MatchInstanceVariables
 
     def create

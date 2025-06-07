@@ -1,0 +1,4 @@
+# Generated from app/controllers/admin_controller.rb with RBS::Inline
+
+class AdminController < ApplicationController
+end

@@ -2,7 +2,7 @@
 
 module Admin
   module Round1
-    class YontakuPlayerPapersController < ApplicationController
+    class YontakuPlayerPapersController < AdminController
       def index: () -> untyped
 
       def create: () -> untyped

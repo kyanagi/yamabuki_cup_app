@@ -2,7 +2,7 @@
 
 module Admin
   module Round1
-    class ResultsController < ApplicationController
+    class ResultsController < AdminController
       def index: () -> untyped
     end
   end

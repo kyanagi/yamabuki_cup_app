@@ -1,5 +1,5 @@
 module Admin
-  class MatchmakingsController < ApplicationController
+  class MatchmakingsController < AdminController
     def create
       ActiveRecord::Base.transaction do
         @round = Round.find(params[:round_id])

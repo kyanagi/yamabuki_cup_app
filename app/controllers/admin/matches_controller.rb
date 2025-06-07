@@ -1,5 +1,5 @@
 module Admin
-  class MatchesController < ApplicationController
+  class MatchesController < AdminController
     include MatchInstanceVariables
 
     def index

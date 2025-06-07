@@ -1,5 +1,5 @@
 module Admin
-  class CurrentQuestionController < ApplicationController
+  class CurrentQuestionController < AdminController
     def show
       # TODO
       question = Question.first

@@ -1,7 +1,7 @@
 # Generated from app/controllers/admin/current_question_controller.rb with RBS::Inline
 
 module Admin
-  class CurrentQuestionController < ApplicationController
+  class CurrentQuestionController < AdminController
     def show: () -> untyped
 
     def update: () -> untyped

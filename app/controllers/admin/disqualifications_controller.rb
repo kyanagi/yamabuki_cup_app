@@ -1,5 +1,5 @@
 module Admin
-  class DisqualificationsController < ApplicationController
+  class DisqualificationsController < AdminController
     include MatchInstanceVariables
 
     def create

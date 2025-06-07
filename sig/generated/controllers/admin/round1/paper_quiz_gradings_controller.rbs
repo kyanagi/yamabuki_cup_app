@@ -2,7 +2,7 @@
 
 module Admin
   module Round1
-    class PaperQuizGradingsController < ApplicationController
+    class PaperQuizGradingsController < AdminController
       def create: () -> untyped
     end
   end

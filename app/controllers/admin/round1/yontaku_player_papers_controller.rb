@@ -1,6 +1,6 @@
 module Admin
   module Round1
-    class YontakuPlayerPapersController < ApplicationController
+    class YontakuPlayerPapersController < AdminController
       def index
         @upload = YontakuResultUpload.new
         setup_index_instance_variables

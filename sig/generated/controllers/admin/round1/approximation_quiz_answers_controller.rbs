@@ -2,7 +2,7 @@
 
 module Admin
   module Round1
-    class ApproximationQuizAnswersController < ApplicationController
+    class ApproximationQuizAnswersController < AdminController
       def index: () -> untyped
 
       def new: () -> untyped
