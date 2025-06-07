@@ -84,6 +84,7 @@ RSpec.describe PaperQuizGrading, type: :model do
 
           expect(players[0].yontaku_player_result.rank).to eq(1)
           expect(players[1].yontaku_player_result.rank).to eq(2)
+          expect(players[2].yontaku_player_result).to be_nil
         end
       end
 
@@ -105,6 +106,7 @@ RSpec.describe PaperQuizGrading, type: :model do
 
           expect(players[0].yontaku_player_result.rank).to eq(1)
           expect(players[1].yontaku_player_result.rank).to eq(2)
+          expect(players[2].yontaku_player_result).to be_nil
         end
       end
 
@@ -125,6 +127,7 @@ RSpec.describe PaperQuizGrading, type: :model do
 
           expect(players[0].yontaku_player_result.rank).to eq(2)
           expect(players[1].yontaku_player_result.rank).to eq(1)
+          expect(players[2].yontaku_player_result).to be_nil
         end
       end
 
@@ -140,14 +143,14 @@ RSpec.describe PaperQuizGrading, type: :model do
           create(:approximation_quiz_answer, player: players[0], answer1: 90, answer2: 190)
           create(:approximation_quiz_answer, player: players[1], answer1: 90, answer2: 190)
 
-          # タイブレーカーの値を固定
-          allow_any_instance_of(PaperQuizGrading).to receive(:rand).and_return(1, 2)
-
           PaperQuizGrading.create!
           players.each(&:reload)
 
-          expect(players[0].yontaku_player_result.rank).to eq(1)
-          expect(players[1].yontaku_player_result.rank).to eq(2)
+          players_sorted_by_tiebreaker = players.select(&:yontaku_player_result).sort_by { it.yontaku_player_result.tiebreaker }
+          players_sorted_by_rank = players.select(&:yontaku_player_result).sort_by { it.yontaku_player_result.rank }
+          expect(players_sorted_by_rank).to eq(players_sorted_by_tiebreaker)
+
+          expect(players[2].yontaku_player_result).to be_nil
         end
       end
     end
