@@ -5,7 +5,11 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
+  root "root#show"
+
   get "/scoreboard", to: "scoreboard#show"
+
+  resources :registrations, only: [:new, :create]
 
   namespace :admin do
     get "quiz_reader", to: "quiz_reader#show"
@@ -35,6 +39,4 @@ Rails.application.routes.draw do
 
     resources :matchmakings, only: [:create]
   end
-
-  resources :registrations, only: [:new, :create]
 end

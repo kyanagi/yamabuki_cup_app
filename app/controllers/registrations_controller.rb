@@ -1,4 +1,6 @@
-class RegistrationsController < ApplicationController
+class RegistrationsController < PublicController
+  allow_unauthenticated_access
+
   def new
     @registration = Registration.new
   end
@@ -6,7 +8,8 @@ class RegistrationsController < ApplicationController
   def create
     @registration = Registration.new(registration_params)
     if @registration.save
-      redirect_to root_path, notice: "エントリーが完了しました。"
+      start_new_session_for(@registration.player)
+      redirect_to root_path
     else
       render :new, status: :unprocessable_entity
     end

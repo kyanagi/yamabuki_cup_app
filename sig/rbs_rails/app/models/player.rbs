@@ -111,6 +111,10 @@ class Player < ::ApplicationRecord
     def clear_updated_at_change: () -> void
   end
   include GeneratedAttributeMethods
+  def sessions: () -> ::Session::ActiveRecord_Associations_CollectionProxy
+  def sessions=: (::Session::ActiveRecord_Associations_CollectionProxy | ::Array[::Session]) -> (::Session::ActiveRecord_Associations_CollectionProxy | ::Array[::Session])
+  def session_ids: () -> ::Array[::Integer]
+  def session_ids=: (::Array[::Integer]) -> ::Array[::Integer]
   def yontaku_player_papers: () -> ::YontakuPlayerPaper::ActiveRecord_Associations_CollectionProxy
   def yontaku_player_papers=: (::YontakuPlayerPaper::ActiveRecord_Associations_CollectionProxy | ::Array[::YontakuPlayerPaper]) -> (::YontakuPlayerPaper::ActiveRecord_Associations_CollectionProxy | ::Array[::YontakuPlayerPaper])
   def yontaku_player_paper_ids: () -> ::Array[::Integer]

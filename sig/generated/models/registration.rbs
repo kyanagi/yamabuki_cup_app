@@ -1,6 +1,8 @@
 # Generated from app/models/registration.rb with RBS::Inline
 
 class Registration < ActiveType::Object
+  attr_reader player: untyped
+
   private
 
   def create_player_data: () -> untyped

@@ -18,13 +18,15 @@ class Registration < ActiveType::Object
 
   before_save :create_player_data
 
+  attr_reader :player
+
   private
 
   def create_player_data
     ActiveRecord::Base.transaction do
-      player = Player.create!
-      PlayerEmailCredential.create!(player:, email:)
-      PlayerProfile.create!(player:, family_name:, given_name:, family_name_kana:, given_name_kana:, entry_list_name:)
+      @player = Player.create!
+      PlayerEmailCredential.create!(player: @player, email:)
+      PlayerProfile.create!(player: @player, family_name:, given_name:, family_name_kana:, given_name_kana:, entry_list_name:)
     end
   end
 end

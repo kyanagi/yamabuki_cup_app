@@ -2,6 +2,8 @@ class ApplicationRecord < ::ActiveRecord::Base
 end
 class QuestionPlayerResult::ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
 end
+class Session::ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
+end
 class YontakuPlayerPaper::ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy
 end
 class Matching::ActiveRecord_Associations_CollectionProxy < ::ActiveRecord::Associations::CollectionProxy

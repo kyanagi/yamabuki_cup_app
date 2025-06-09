@@ -1,6 +1,6 @@
 # Generated from app/controllers/registrations_controller.rb with RBS::Inline
 
-class RegistrationsController < ApplicationController
+class RegistrationsController < PublicController
   def new: () -> untyped
 
   def create: () -> untyped

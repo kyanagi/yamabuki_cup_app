@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_09_054900) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_09_084855) do
   create_table "approximation_questions", force: :cascade do |t|
     t.string "text", default: "", null: false
     t.integer "answer", null: false
@@ -173,6 +173,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_054900) do
     t.index ["score_operation_id"], name: "index_scores_on_score_operation_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.integer "player_id", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["player_id"], name: "index_sessions_on_player_id"
+  end
+
   create_table "yontaku_player_papers", force: :cascade do |t|
     t.integer "player_id", null: false
     t.integer "paper_number", null: false
@@ -232,6 +241,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_054900) do
   add_foreign_key "score_operations", "question_results"
   add_foreign_key "scores", "matchings"
   add_foreign_key "scores", "score_operations"
+  add_foreign_key "sessions", "players"
   add_foreign_key "yontaku_player_papers", "players"
   add_foreign_key "yontaku_player_results", "players"
 end

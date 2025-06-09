@@ -1,4 +1,10 @@
 FactoryBot.define do
+  factory :session do
+    player { nil }
+    ip_address { "MyString" }
+    user_agent { "MyString" }
+  end
+
   factory :player_email_credential do
     player { nil }
     sequence(:email) { |n| "#{n}@example.com" }
