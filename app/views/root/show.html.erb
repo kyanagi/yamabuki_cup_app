@@ -4,6 +4,9 @@
       <p class="has-text-centered">
         <%= @message %>
       </p>
+      <p class="has-text-centered">
+        <%= link_to "ログアウト", sessions_path, data: { turbo_method: :delete }, class: "button is-danger" %>
+      </p>
     </div>
   </div>
 </div>

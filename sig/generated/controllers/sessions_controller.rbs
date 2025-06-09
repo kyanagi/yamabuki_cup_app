@@ -1,0 +1,5 @@
+# Generated from app/controllers/sessions_controller.rb with RBS::Inline
+
+class SessionsController < PublicController
+  def destroy: () -> untyped
+end
