@@ -1,0 +1,11 @@
+# Generated from app/controllers/registrations_controller.rb with RBS::Inline
+
+class RegistrationsController < ApplicationController
+  def new: () -> untyped
+
+  def create: () -> untyped
+
+  private
+
+  def registration_params: () -> untyped
+end

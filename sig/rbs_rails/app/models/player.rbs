@@ -129,6 +129,12 @@ class Player < ::ApplicationRecord
   def create_player_profile: (untyped) -> ::PlayerProfile
   def create_player_profile!: (untyped) -> ::PlayerProfile
   def reload_player_profile: () -> ::PlayerProfile?
+  def player_email_credential: () -> ::PlayerEmailCredential?
+  def player_email_credential=: (::PlayerEmailCredential?) -> ::PlayerEmailCredential?
+  def build_player_email_credential: (?untyped) -> ::PlayerEmailCredential
+  def create_player_email_credential: (untyped) -> ::PlayerEmailCredential
+  def create_player_email_credential!: (untyped) -> ::PlayerEmailCredential
+  def reload_player_email_credential: () -> ::PlayerEmailCredential?
   def approximation_quiz_answer: () -> ::ApproximationQuizAnswer?
   def approximation_quiz_answer=: (::ApproximationQuizAnswer?) -> ::ApproximationQuizAnswer?
   def build_approximation_quiz_answer: (?untyped) -> ::ApproximationQuizAnswer

@@ -1,4 +1,9 @@
 FactoryBot.define do
+  factory :player_email_credential do
+    player { nil }
+    sequence(:email) { |n| "#{n}@example.com" }
+  end
+
   factory :approximation_question do
     text { "MyString" }
     answer { 1 }

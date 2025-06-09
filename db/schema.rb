@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_06_113618) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_09_054900) do
   create_table "approximation_questions", force: :cascade do |t|
     t.string "text", default: "", null: false
     t.integer "answer", null: false
@@ -49,6 +49,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_113618) do
     t.index ["player_id"], name: "index_matchings_on_player_id"
   end
 
+  create_table "player_email_credentials", force: :cascade do |t|
+    t.integer "player_id", null: false
+    t.string "email", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_player_email_credentials_on_email", unique: true
+    t.index ["player_id"], name: "index_player_email_credentials_on_player_id"
+  end
+
   create_table "player_profiles", force: :cascade do |t|
     t.integer "player_id", null: false
     t.string "entry_list_name", default: "", null: false
@@ -58,7 +67,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_113618) do
     t.string "given_name_kana", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["player_id"], name: "index_player_profiles_on_player_id"
+    t.index ["player_id"], name: "index_player_profiles_on_player_id", unique: true
   end
 
   create_table "players", force: :cascade do |t|
@@ -204,6 +213,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_06_113618) do
   add_foreign_key "matches", "score_operations", column: "last_score_operation_id"
   add_foreign_key "matchings", "matches"
   add_foreign_key "matchings", "players"
+  add_foreign_key "player_email_credentials", "players"
   add_foreign_key "player_profiles", "players"
   add_foreign_key "question_allocations", "matches"
   add_foreign_key "question_allocations", "questions"
