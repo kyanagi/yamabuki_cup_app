@@ -8,6 +8,8 @@ FactoryBot.define do
   factory :player_email_credential do
     player { nil }
     sequence(:email) { |n| "#{n}@example.com" }
+    password { "password123" }
+    password_confirmation { "password123" }
   end
 
   factory :approximation_question do
