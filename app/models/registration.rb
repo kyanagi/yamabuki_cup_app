@@ -27,6 +27,9 @@ class Registration < ActiveType::Object
       @player = Player.create!
       PlayerEmailCredential.create!(player: @player, email:, password:, password_confirmation: password)
       PlayerProfile.create!(player: @player, family_name:, given_name:, family_name_kana:, given_name_kana:, entry_list_name:)
+
+      attrs = [*1..4].zip(Round::ROUND3.matches).to_h { |i, match| ["choice#{i}_match", match] }
+      Round3CoursePreference.create!(player: @player, **attrs)
     end
   end
 end
