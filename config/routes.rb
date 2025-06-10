@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   resources :registrations, only: [:new, :create]
   resource :session
 
+  get "/home", to: "home#show"
   namespace :home do
     resource :round3_course_preference, only: [:show, :update]
   end

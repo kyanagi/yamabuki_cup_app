@@ -1,0 +1,30 @@
+<div class="container is-max-tablet">
+  <section class="section">
+    <h1 class="title has-text-centered">やまぶき杯マイページ</h1>
+    <div class="buttons is-flex is-flex-direction-column">
+      <%= link_to "#", class: "button is-primary is-fullwidth mb-4" do %>
+        <span class="icon">
+          <i class="fas fa-edit"></i>
+        </span>
+        <span>エントリー内容を変更する</span>
+      <% end %>
+      <%= link_to home_round3_course_preference_path, class: "button is-info is-fullwidth mb-4" do %>
+        <span class="icon">
+          <i class="fas fa-route"></i>
+        </span>
+        <span>3Rコースを変更する</span>
+      <% end %>
+      <%= link_to session_path,
+          data: {
+            turbo_method: :delete,
+            turbo_confirm: "ログアウトしますか？"
+          },
+          class: "button is-fullwidth" do %>
+        <span class="icon">
+          <i class="fas fa-sign-out-alt"></i>
+        </span>
+        <span>ログアウト</span>
+      <% end %>
+    </div>
+  </section>
+</div>

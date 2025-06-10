@@ -9,7 +9,8 @@ class RegistrationsController < PublicController
     @registration = Registration.new(registration_params)
     if @registration.save
       start_new_session_for(@registration.player)
-      redirect_to root_path
+      session[:registration_completed] = true
+      redirect_to home_path
     else
       render :new, status: :unprocessable_entity
     end
