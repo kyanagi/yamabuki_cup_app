@@ -1,5 +1,10 @@
 # Generated from app/models/round3_course_preference.rb with RBS::Inline
 
 class Round3CoursePreference < ApplicationRecord
-  def choices: () -> untyped
+  # @rbs return Array[Match]
+  def choices: () -> Array[Match]
+
+  private
+
+  def validate_unique_choices: () -> void
 end

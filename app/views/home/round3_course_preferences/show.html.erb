@@ -1,0 +1,47 @@
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <h1 class="title is-3">3Rコース選択希望の変更</h1>
+        <%= form_with model: [:home, @preference] do |f| %>
+          <% if notice %>
+            <div class="notification is-success is-light">
+              <%= notice %>
+            </div>
+          <% end %>
+          <% if @preference.errors.any? %>
+            <div class="notification is-danger is-light">
+              <ul>
+                <% @preference.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+          <div class="block">
+            <div class="block">
+              <p>3Rの希望コースを入力してください。第1希望から第4希望まで、重複がないように選択してください。</p>
+            </div>
+            <% (1..4).each do |i| %>
+              <div class="field">
+                <%= f.label "choice#{i}_match_id", "第#{i}希望", class: "label" %>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <%= f.select "choice#{i}_match_id",
+                        options_from_collection_for_select(Round::ROUND3.matches, :id, :name, @preference.send("choice#{i}_match_id")),
+                        { include_blank: false } %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <div class="field is-grouped is-grouped-right">
+            <div class="control">
+              <%= f.submit "更新", class: "button is-primary" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>

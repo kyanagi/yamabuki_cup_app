@@ -12,6 +12,10 @@ Rails.application.routes.draw do
   resources :registrations, only: [:new, :create]
   resource :session
 
+  namespace :home do
+    resource :round3_course_preference, only: [:show, :update]
+  end
+
   namespace :admin do
     get "quiz_reader", to: "quiz_reader#show"
     namespace :quiz_reader do
