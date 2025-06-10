@@ -25,7 +25,7 @@ class Registration < ActiveType::Object
   def create_player_data
     ActiveRecord::Base.transaction do
       @player = Player.create!
-      PlayerEmailCredential.create!(player: @player, email:)
+      PlayerEmailCredential.create!(player: @player, email:, password:, password_confirmation: password)
       PlayerProfile.create!(player: @player, family_name:, given_name:, family_name_kana:, given_name_kana:, entry_list_name:)
     end
   end

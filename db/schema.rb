@@ -52,6 +52,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_084855) do
   create_table "player_email_credentials", force: :cascade do |t|
     t.integer "player_id", null: false
     t.string "email", null: false
+    t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_player_email_credentials_on_email", unique: true
