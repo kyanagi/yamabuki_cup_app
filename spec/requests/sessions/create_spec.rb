@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "POST /sessions", type: :request do
+RSpec.describe "POST /session", type: :request do
   let(:player) { create(:player) }
   let(:credential) { create(:player_email_credential, player:, password: "password123") }
 

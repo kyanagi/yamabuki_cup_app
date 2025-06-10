@@ -1,7 +1,7 @@
 <section class="section">
   <div class="container is-max-tablet">
     <h1 class="title is-2">ログイン</h1>
-    <%= form_with url: sessions_path, data: { turbo: false } do |f| %>
+    <%= form_with url: session_path, data: { turbo: false } do |f| %>
       <% if flash[:alert] %>
         <div class="notification is-danger is-light">
           <%= flash[:alert] %>

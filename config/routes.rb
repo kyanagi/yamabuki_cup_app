@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   get "/scoreboard", to: "scoreboard#show"
 
   resources :registrations, only: [:new, :create]
-  resource :sessions
+  resource :session
 
   namespace :admin do
     get "quiz_reader", to: "quiz_reader#show"
