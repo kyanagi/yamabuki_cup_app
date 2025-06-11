@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_09_084855) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_10_114152) do
   create_table "approximation_questions", force: :cascade do |t|
     t.string "text", default: "", null: false
     t.integer "answer", null: false
@@ -181,6 +181,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_09_084855) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["player_id"], name: "index_sessions_on_player_id"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.json "value", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "yontaku_player_papers", force: :cascade do |t|
