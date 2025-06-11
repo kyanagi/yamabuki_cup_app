@@ -17,7 +17,7 @@ class Setting < ApplicationRecord
 
   class << self
     def round3_course_preference_editable? #: bool
-      value.round3_course_preference_editable
+      !!value.round3_course_preference_editable
     end
 
     def update!(attributes) #: void

@@ -1,0 +1,13 @@
+# Generated from app/controllers/admin/settings_controller.rb with RBS::Inline
+
+module Admin
+  class SettingsController < AdminController
+    def show: () -> untyped
+
+    def update: () -> untyped
+
+    private
+
+    def setting_params: () -> untyped
+  end
+end

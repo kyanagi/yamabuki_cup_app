@@ -18,6 +18,8 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    resource :settings, only: [:show, :update]
+
     get "quiz_reader", to: "quiz_reader#show"
     namespace :quiz_reader do
       put "next_question", to: "next_question#update"
