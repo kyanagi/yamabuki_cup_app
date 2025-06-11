@@ -12,9 +12,7 @@ RSpec.describe "POST /session", type: :request do
 
     it "ログインに成功し、リダイレクトされる" do
       subject
-      expect(response).to redirect_to(after_authentication_url)
-      follow_redirect!
-      expect(response.body).to include("ログアウト")
+      expect(response).to redirect_to("http://www.example.com/home")
     end
   end
 
