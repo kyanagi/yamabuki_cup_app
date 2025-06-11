@@ -13,6 +13,7 @@ module Admin
 
     def setting_params
       {
+        registerable: params[:registerable],
         round3_course_preference_editable: params[:round3_course_preference_editable],
       }
     end

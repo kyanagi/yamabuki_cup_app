@@ -2,10 +2,20 @@ class RegistrationsController < PublicController
   allow_unauthenticated_access
 
   def new
+    if !Setting.registerable
+      render :closed
+      return
+    end
+
     @registration = Registration.new
   end
 
   def create
+    if !Setting.registerable
+      render :closed
+      return
+    end
+
     @registration = Registration.new(registration_params)
     if @registration.save
       start_new_session_for(@registration.player)
