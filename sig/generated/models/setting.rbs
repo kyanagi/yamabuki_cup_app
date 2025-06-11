@@ -2,19 +2,18 @@
 
 # オンラインで変更可能なアプリ設定を格納するクラス
 class Setting < ApplicationRecord
+  # 設定名とデフォルト値のペア
+  ATTRIBUTES: ::Array[untyped]
+
   # 設定値を表現する内部クラス
   class Value < Data
-    attr_reader round3_course_preference_editable(): untyped
+    def self.new: () -> instance
+                | () -> instance
 
-    def self.new: (untyped round3_course_preference_editable) -> instance
-                | (round3_course_preference_editable: untyped) -> instance
+    def self.members: () -> [ ]
 
-    def self.members: () -> [ :round3_course_preference_editable ]
-
-    def members: () -> [ :round3_course_preference_editable ]
+    def members: () -> [ ]
   end
-
-  def self.round3_course_preference_editable?: () -> bool
 
   def self.update!: (untyped attributes) -> void
 

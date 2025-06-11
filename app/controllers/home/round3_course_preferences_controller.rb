@@ -6,7 +6,7 @@ module Home
 
     def update
       @preference = Current.session.player.round3_course_preference
-      if Setting.round3_course_preference_editable? && @preference.update(preference_params)
+      if Setting.round3_course_preference_editable && @preference.update(preference_params)
         flash.notice = "コース選択希望を更新しました。"
         redirect_to home_round3_course_preference_path
       else
