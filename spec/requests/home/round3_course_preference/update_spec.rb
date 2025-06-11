@@ -78,6 +78,23 @@ RSpec.describe "PUT /home/round3_course_preference", type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
+
+    context "コース選択希望が編集不可の場合" do
+      before do
+        Setting.update!(round3_course_preference_editable: false)
+      end
+
+      it "422ステータスが返されること" do
+        subject
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "コース選択希望が更新されないこと" do
+        expect do
+          subject
+        end.not_to(change { round3_course_preference.reload.choices })
+      end
+    end
   end
 
   context "未ログインの場合" do

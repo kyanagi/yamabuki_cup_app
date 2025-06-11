@@ -1,3 +1,4 @@
+<% disabled = !Setting.round3_course_preference_editable? %>
 <section class="section">
   <div class="container">
     <div class="columns is-centered">
@@ -29,7 +30,8 @@
                   <div class="select is-fullwidth">
                     <%= f.select "choice#{i}_match_id",
                         options_from_collection_for_select(Round::ROUND3.matches, :id, :name, @preference.send("choice#{i}_match_id")),
-                        { include_blank: false } %>
+                        { include_blank: false },
+                        disabled: disabled %>
                   </div>
                 </div>
               </div>
@@ -37,7 +39,7 @@
           </div>
           <div class="field is-grouped is-grouped-right">
             <div class="control">
-              <%= f.submit "更新", class: "button is-primary" %>
+              <%= f.submit "更新", class: "button is-primary", disabled: disabled %>
             </div>
           </div>
         <% end %>
