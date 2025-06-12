@@ -1,0 +1,17 @@
+# Generated from app/controllers/admin/round1/timer_controller.rb with RBS::Inline
+
+module Admin
+  module Round1
+    class TimerController < AdminController
+      def show: () -> untyped
+
+      def display: () -> untyped
+
+      def start: () -> untyped
+
+      def stop: () -> untyped
+
+      def update_remaining_time: () -> untyped
+    end
+  end
+end
