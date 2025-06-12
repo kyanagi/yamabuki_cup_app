@@ -34,7 +34,7 @@
   <div class="columns">
     <div class="column is-7">
       <h2 class="title is-4">Next</h2>
-      <div id="next_questions">
+      <div id="next_questions" class="block">
         <% if @next_question %>
           <%= render partial: "admin/quiz_reader/next_question/next_question", locals: { question: @next_question } %>
         <% end %>
@@ -42,7 +42,7 @@
           <%= render partial: "admin/quiz_reader/next_question/next2_question", locals: { question: @next2_question } %>
         <% end %>
       </div>
-      <div class="dropdown is-hoverable">
+      <div class="dropdown is-hoverable block">
         <div class="dropdown-trigger">
           <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
             <span>...</span>
