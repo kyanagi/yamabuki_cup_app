@@ -4,6 +4,7 @@ module Admin
       layout false
 
       def show
+        render :show, layout: "admin"
       end
 
       def display
