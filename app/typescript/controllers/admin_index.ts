@@ -7,3 +7,4 @@ import CheckboxHiddenTogglerController from "./checkbox_hidden_toggler_controlle
 application.register("hello", HelloController);
 application.register("modal", ModalController);
 application.register("checkbox-hidden-toggler", CheckboxHiddenTogglerController);
+application.register("quiz-reader", QuizReaderController);
