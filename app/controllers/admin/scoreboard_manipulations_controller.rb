@@ -11,7 +11,7 @@ module Admin
       when "paper_top_init"
         ActionCable.server.broadcast(
           "scoreboard",
-          turbo_stream.update("scoreboard-root") { render_to_string("scoreboard/paper_top/_init") }
+          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/paper_top/_init") }
         )
       end
 

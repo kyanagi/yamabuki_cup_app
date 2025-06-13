@@ -15,7 +15,13 @@
   </head>
   <body>
     <%= turbo_frame_tag "scoreboard-frame", refresh: :morph do %>
-    <div id="scoreboard-root"><%= yield :scoreboard %></div>
+      <div id="scoreboard-root">
+        <div id="scoreboard-main">
+          <%= yield :scoreboard %>
+        </div>
+        <div id="scoreboard-footer"><%= Date.today.strftime("%Y/%m/%d") %> 第2回 #やまぶき杯</div>
+      </div>
+    </div>
     <% end %>
     <%= turbo_stream_from "scoreboard" %>
     <%= yield %>
