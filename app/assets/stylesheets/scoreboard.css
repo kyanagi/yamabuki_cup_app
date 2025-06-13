@@ -2,6 +2,7 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  background-color: #2f2f2f;
 }
 
 #scoreboard-root {
@@ -9,6 +10,7 @@ body {
   height: 100vh;
   margin: 0;
   padding: 0;
+  background-color: #2f2f2f;
 }
 
 #timer {
@@ -19,4 +21,5 @@ body {
   place-items: center;
   font-size: 40vh;
   font-weight: bold;
+  color: #fff;
 }
