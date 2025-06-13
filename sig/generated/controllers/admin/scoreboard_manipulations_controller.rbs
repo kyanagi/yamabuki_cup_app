@@ -1,0 +1,9 @@
+# Generated from app/controllers/admin/scoreboard_manipulations_controller.rb with RBS::Inline
+
+module Admin
+  class ScoreboardManipulationsController < AdminController
+    def new: () -> untyped
+
+    def create: () -> untyped
+  end
+end

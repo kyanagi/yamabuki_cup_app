@@ -1,3 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -11,6 +17,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #2f2f2f;
+  color: #eee;
 }
 
 #timer {
@@ -21,5 +28,31 @@ body {
   place-items: center;
   font-size: 40vh;
   font-weight: bold;
-  color: #fff;
+}
+
+#paper-top-container {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  place-items: center;
+}
+
+#paper-top {
+  width: fit-content;
+  align-content: center;
+}
+
+.paper-top-rank {
+  font-size: 20vh;
+  width: fit-content;
+  font-style: italic;
+  border-bottom: 10px solid #eee;
+}
+
+.paper-top-name {
+  font-family: "NotoSansCJKjp-Bold", sans-serif;
+  font-size: 20vh;
+  width: fit-content;
+  margin-left: 1em;
 }

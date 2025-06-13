@@ -14,6 +14,10 @@
     <%= vite_typescript_tag "scoreboard" %>
   </head>
   <body>
+    <%= turbo_frame_tag "scoreboard-frame", refresh: :morph do %>
+    <div id="scoreboard-root"><%= yield :scoreboard %></div>
+    <% end %>
+    <%= turbo_stream_from "scoreboard" %>
     <%= yield %>
   </body>
 </html>

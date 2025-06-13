@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   get "/scoreboard", to: "scoreboard#show"
 
+  get "/sbtest", to: "scoreboard#test"
+
   resources :registrations, only: [:new, :create]
   resource :session
 
@@ -25,6 +27,8 @@ Rails.application.routes.draw do
       put "next_question", to: "next_question#update"
       post "question_readings", to: "question_readings#create"
     end
+
+    resources :scoreboard_manipulations, only: [:new, :create]
 
     namespace :round1 do
       get "timer", to: "timer#show"

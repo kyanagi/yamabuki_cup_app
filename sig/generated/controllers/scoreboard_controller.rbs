@@ -2,4 +2,6 @@
 
 class ScoreboardController < ApplicationController
   def show: () -> untyped
+
+  def test: () -> untyped
 end
