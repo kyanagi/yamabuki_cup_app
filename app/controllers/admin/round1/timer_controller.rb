@@ -12,18 +12,16 @@ module Admin
       end
 
       def start
-        ActionCable.server.broadcast("scoreboard", '<turbo-stream action="timer-start"></turbo-stream>')
+        ActionCable.server.broadcast("scoreboard", turbo_stream.timer_start)
       end
 
       def stop
-        ActionCable.server.broadcast("scoreboard", '<turbo-stream action="timer-stop"></turbo-stream>')
+        ActionCable.server.broadcast("scoreboard", turbo_stream.timer_stop)
       end
 
       def update_remaining_time
         remaining_time = ((params[:minutes].to_i * 60) + params[:seconds].to_i) * 1000
-        ActionCable.server.broadcast("scoreboard", <<~TEMPLATE)
-          <turbo-stream action="timer-set-remaining-time" remaining-time="#{remaining_time}"></turbo-stream>
-        TEMPLATE
+        ActionCable.server.broadcast("scoreboard", turbo_stream.timer_set_remaining_time(remaining_time))
       end
     end
   end
