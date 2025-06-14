@@ -8,11 +8,6 @@ module Admin
 
     def create
       case params[:action_name]
-      when "paper_top_init"
-        ActionCable.server.broadcast(
-          "scoreboard",
-          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/paper_top/_init") }
-        )
       when "paper_seed_init"
         ActionCable.server.broadcast(
           "scoreboard",
