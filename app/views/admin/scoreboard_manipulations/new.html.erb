@@ -10,6 +10,21 @@
               class: "button is-primary" %>
       </div>
     </div>
+    <div class="box">
+      <h2 class="title is-4">シード発表</h2>
+      <div class="buttons">
+        <%= button_to "init",
+              admin_scoreboard_manipulations_path(action_name: "paper_seed_init"),
+              method: :post,
+              class: "button is-primary" %>
+        <% 1.upto(7) do |rank| %>
+          <%= button_to "#{rank}位",
+                admin_scoreboard_manipulations_path(action_name: "paper_seed_display_player", rank: rank),
+                method: :post,
+                class: "button is-primary" %>
+        <% end %>
+      </div>
+    </div>
     <div class="mt-5">
       <%= link_to "戻る", "/", class: "button is-light" %>
     </div>

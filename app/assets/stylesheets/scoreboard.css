@@ -73,3 +73,65 @@ body {
   width: fit-content;
   margin-left: 1em;
 }
+
+/* シード発表 */
+.paper-seed-container {
+  display: grid;
+  height: 100%;
+  padding-top: 10vh;
+}
+
+@keyframes flipInX {
+  from {
+    transform: perspective(400px) rotateX(90deg);
+    opacity: 0;
+  }
+  40% {
+    transform: perspective(400px) rotateX(-5deg);
+    opacity: 1;
+  }
+  70% {
+    transform: perspective(400px) rotateX(5deg);
+  }
+  to {
+    transform: perspective(400px) rotateX(0);
+    opacity: 1;
+  }
+}
+
+.paper-seed-player {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  width: 80vw;
+  gap: 3em;
+  background-color: #0d8794;
+  align-items: center;
+  height: 10vh;
+  margin: 0 auto;
+}
+
+.paper-seed-player-animation {
+  animation: flipInX 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+  backface-visibility: visible;
+}
+
+.paper-seed-rank {
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 15vh;
+  font-style: italic;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+}
+
+.paper-seed-name {
+  font-family: "NotoSansCJKjp-Bold", sans-serif;
+  font-weight: bold;
+  font-size: 6.5vh;
+}

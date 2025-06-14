@@ -13,6 +13,16 @@ module Admin
           "scoreboard",
           turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/paper_top/_init") }
         )
+      when "paper_seed_init"
+        ActionCable.server.broadcast(
+          "scoreboard",
+          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/paper_seed/_init") }
+        )
+      when "paper_seed_display_player"
+        ActionCable.server.broadcast(
+          "scoreboard",
+          render_to_string("scoreboard/paper_seed/_display_player", locals: { rank: params[:rank].to_i })
+        )
       end
 
       head :no_content
