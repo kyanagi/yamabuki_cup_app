@@ -63,7 +63,8 @@ body {
   font-size: 20vh;
   width: fit-content;
   font-style: italic;
-  border-bottom: 10px solid #eee;
+  color: #e56969;
+  border-bottom: 10px solid #e56969;
 }
 
 .paper-top-name {
