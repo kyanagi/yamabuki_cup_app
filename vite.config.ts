@@ -6,7 +6,7 @@ import ReactPlugin from "@vitejs/plugin-react-swc";
 export default defineConfig({
   plugins: [
     RubyPlugin(),
-    FullReload(['config/routes.rb', 'app/views/**/*']),
+    FullReload(['config/routes.rb', 'app/views/**/*', 'app/assets/stylesheets/**/*']),
     ReactPlugin(),
   ],
 })
