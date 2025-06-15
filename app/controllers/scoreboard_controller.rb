@@ -5,6 +5,6 @@ class ScoreboardController < ApplicationController
   end
 
   def test
-    render inline: "<%= content_for(:scoreboard) { render partial: 'scoreboard/paper_seed/init' } %>", layout: "scoreboard"
+    render inline: "<%= content_for(:scoreboard) { render partial: 'scoreboard/round2/init' } %>", layout: "scoreboard"
   end
 end

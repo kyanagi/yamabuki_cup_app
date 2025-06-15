@@ -116,3 +116,58 @@ body {
   font-weight: bold;
   font-size: 6.5vh;
 }
+
+/* 2R */
+.round2-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(7, 10vh);
+  grid-auto-flow: column;
+  width: 100%;
+  height: 100%;
+  padding-top: 10vh;
+  gap: 8px;
+}
+
+.round2-player {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  width: 90%;
+  background-color: #0d8794;
+  justify-self: center;
+  gap: 40px;
+}
+
+.round2-player-animation {
+  animation: flipInX 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+  backface-visibility: visible;
+}
+
+.round2-player-adv {
+  background-color: #4d5fc4;
+}
+
+.round2-player-wait {
+  background-color: #4a4a4a;
+}
+
+.round2-rank {
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 15vh;
+  font-style: italic;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+}
+
+.round2-name {
+  font-family: "NotoSansCJKjp-Bold", sans-serif;
+  font-weight: bold;
+  font-size: 6.5vh;
+}

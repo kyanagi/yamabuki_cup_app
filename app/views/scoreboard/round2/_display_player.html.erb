@@ -1,0 +1,12 @@
+<% rank = id %>
+<%= turbo_stream.replace("round2-player-#{id}") do %>
+    <div class="round2-player
+        <%= "round2-player-adv" if round2_advantage?(rank) %>
+        <%= "round2-player-wait" if round2_waiting?(rank) %>
+        round2-player-animation
+        "
+        id="round2-player-<%= rank %>">
+      <div class="round2-rank"><%= rank %></div>
+      <div class="round2-name"><%= ['伊藤　博文', '西園寺公望'].sample %></div>
+    </div>
+<% end %>
