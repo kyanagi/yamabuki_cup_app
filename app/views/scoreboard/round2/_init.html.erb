@@ -1,5 +1,6 @@
+<%# locals: (ranks:) %>
 <div class="round2-container">
-  <% 8.step(by: 5).take(14).each do |rank| %>
+  <% ranks.each do |rank| %>
     <div class="round2-player
         <%= "round2-player-adv" if round2_advantage?(rank) %>
         <%= "round2-player-wait" if round2_waiting?(rank) %>

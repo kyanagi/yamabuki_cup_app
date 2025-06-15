@@ -19,15 +19,18 @@ module Admin
           render_to_string("scoreboard/paper_seed/_display_player", locals: { rank: params[:rank].to_i })
         )
       when "round2_init"
+        ranks = Match.find(params[:match_id]).matchings.order(:seat).map { it.player.yontaku_player_result.rank }
         ActionCable.server.broadcast(
           "scoreboard",
-          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/round2/_init") }
+          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/round2/_init", locals: { ranks: }) }
         )
       when "round2_display_player"
-        player_id = params[:rank].to_i # TODO
+        matching = Matching.find(params[:matching_id])
+        player = matching.player
+        rank = player.yontaku_player_result.rank
         ActionCable.server.broadcast(
           "scoreboard",
-          render_to_string("scoreboard/round2/_display_player", locals: { id: player_id })
+          render_to_string("scoreboard/round2/_display_player", locals: { rank:, player: })
         )
       end
 

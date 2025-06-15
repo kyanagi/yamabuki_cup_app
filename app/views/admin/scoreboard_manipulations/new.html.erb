@@ -18,18 +18,23 @@
     </div>
     <div class="box">
       <h2 class="title is-4">2R発表</h2>
-      <div class="buttons">
-        <%= button_to "init",
-              admin_scoreboard_manipulations_path(action_name: "round2_init"),
+      <% Round::ROUND2.matches.each do |match| %>
+      <div class="block">
+        <h3 class="subtitle"><%= match.name %></h3>
+        <div class="buttons">
+          <%= button_to "init",
+              admin_scoreboard_manipulations_path(action_name: "round2_init", match_id: match.id),
               method: :post,
               class: "button is-primary" %>
-        <% 8.step(by: 5).take(14).each do |rank| %>
-          <%= button_to "#{rank}位",
-                admin_scoreboard_manipulations_path(action_name: "round2_display_player", rank: rank),
+          <% match.matchings.order(:seat).each do |matching| %>
+            <%= button_to "席#{matching.seat}",
+                admin_scoreboard_manipulations_path(action_name: "round2_display_player", matching_id: matching.id),
                 method: :post,
                 class: "button is-primary" %>
-        <% end %>
+          <% end %>
+        </div>
       </div>
+      <% end %>
     </div>
     <div class="mt-5">
       <%= link_to "戻る", "/", class: "button is-light" %>
