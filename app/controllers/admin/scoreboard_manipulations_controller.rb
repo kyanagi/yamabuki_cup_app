@@ -22,7 +22,7 @@ module Admin
         ranks = Match.find(params[:match_id]).matchings.order(:seat).map { it.player.yontaku_player_result.rank }
         ActionCable.server.broadcast(
           "scoreboard",
-          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/round2/_init", locals: { ranks: }) }
+          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/round2_announcement/_init", locals: { ranks: }) }
         )
       when "round2_display_player"
         matching = Matching.find(params[:matching_id])
@@ -30,7 +30,7 @@ module Admin
         rank = player.yontaku_player_result.rank
         ActionCable.server.broadcast(
           "scoreboard",
-          render_to_string("scoreboard/round2/_display_player", locals: { rank:, player: })
+          render_to_string("scoreboard/round2_announcement/_display_player", locals: { rank:, player: })
         )
       end
 
