@@ -23,10 +23,15 @@ module Admin
           )
         )
       when "round2_init"
-        ranks = Match.find(params[:match_id]).matchings.order(:seat).map { it.player.yontaku_player_result.rank }
+        match = Match.find(params[:match_id])
+        ranks = match.matchings.order(:seat).map { it.player.yontaku_player_result.rank }
         ActionCable.server.broadcast(
           "scoreboard",
-          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/round2_announcement/_init", locals: { ranks: }) }
+          turbo_stream.update("scoreboard-main") do
+            render_to_string("scoreboard/round2_announcement/_init", locals: { ranks: })
+          end + turbo_stream.update("scoreboard-footer-left") do
+            "#{match.round.name} #{match.name}"
+          end
         )
       when "round2_display_player"
         matching = Matching.find(params[:matching_id])
