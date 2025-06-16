@@ -259,7 +259,7 @@ body {
 /* 早押し */
 .hayaoshi-player {
   display: grid;
-  grid-template: ". rank . name points misses ." 1fr / 1% 15% 1% 30% 25% 1fr 2.5%;
+  grid-template: ". rank . name points misses previous-result" 1fr / 1% 15% 1% 40% 19% 1fr 2.5%;
   width: 90%;
   background-color: #0d8794;
   align-items: center;
@@ -291,6 +291,7 @@ body {
   align-items: center;
   height: 100%;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .hayaoshi-player-points {
@@ -317,6 +318,20 @@ body {
   text-align: left;
 }
 
+.hayaoshi-player-previous-result {
+  grid-area: previous-result;
+  width: 100%;
+  height: 100%;
+}
+
+.hayaoshi-player-previous-result--correct {
+  background-color: #0057c0;
+}
+
+.hayaoshi-player-previous-result--wrong {
+  background-color: #c43147;
+}
+
 .hayaoshi-player-win {
   background-color: #a86154;
 }
@@ -333,7 +348,7 @@ body {
 /* 早押しボード */
 .hayabo-player {
   display: grid;
-  grid-template: ".  rank .  name points misses previous-situation previous-result" 1fr / 1% 15% 1% 30% 25% 1fr 2.5% 2.5%;
+  grid-template: ".  rank .  name points misses previous-situation previous-result" 1fr / 1% 15% 1% 40% 25% 1fr 2.5% 2.5%;
   width: 90%;
   background-color: #0d8794;
   align-items: center;
@@ -389,6 +404,19 @@ body {
   align-items: center;
   height: 100%;
   line-height: 1;
+  white-space: nowrap;
+}
+
+.hayabo-player-name--length-5,
+.hayaoshi-player-name--length-5 {
+  transform: scaleX(calc(4/5));
+  transform-origin: left top;
+}
+
+.hayabo-player-name--length-6,
+.hayaoshi-player-name--length-6 {
+  transform: scaleX(calc(4/6));
+  transform-origin: left top;
 }
 
 .hayabo-player-points {
