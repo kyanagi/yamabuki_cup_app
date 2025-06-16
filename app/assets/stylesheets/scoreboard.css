@@ -23,7 +23,7 @@ body {
   display: grid;
   grid-template:
     "main" 1fr
-    "footer" 60px;
+    "footer" 5.5vh;
 }
 
 #scoreboard-main {
@@ -40,10 +40,21 @@ body {
 
 #scoreboard-footer {
   grid-area: footer;
-  text-align: right;
-  font-size: 40px;
-  padding-right: 30px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   color: #e7dbc0;
+}
+
+.scoreboard-footer-left {
+  text-align: left;
+  font-size: 4vh;
+  padding-left: 2.3vw;
+}
+
+.scoreboard-footer-right {
+  text-align: right;
+  font-size: 4vh;
+  padding-right: 2vw;
 }
 
 #timer {
@@ -259,7 +270,7 @@ body {
 /* 早押し */
 .hayaoshi-player {
   display: grid;
-  grid-template: ". rank . name points misses previous-result" 1fr / 1% 15% 1% 40% 19% 1fr 2.5%;
+  grid-template: ". rank . name points misses previous-result" 1fr / 1% 15% 1% 38% 19% 1fr 2.5%;
   width: 90%;
   background-color: #0d8794;
   align-items: center;
@@ -343,6 +354,10 @@ body {
     color: #999999;
     -webkit-text-stroke-color: #999999;
   }
+}
+
+.hayaoshi-player-waiting {
+  background-color: #4a4a4a;
 }
 
 /* 早押しボード */

@@ -5,7 +5,7 @@
         id="hayaoshi-player-<%= score.matching_id %>">
     <div class="hayaoshi-player-rank"><%= score.rank %></div>
     <div class="hayaoshi-player-name"><div class="hayaoshi-player-name--length-<%= name.size %>"><%= name %></div></div>
-    <div class="hayaoshi-player-points"><%= score.points %></div>
+    <div class="hayaoshi-player-points"><%= score.points.to_s.gsub('-', "\u2212") %></div>
     <div class="hayaoshi-player-misses">
       <% score.misses.times do %><span class="hayaoshi-player-misses-cross">×</span><% end %>
     </div>

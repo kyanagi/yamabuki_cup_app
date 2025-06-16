@@ -43,7 +43,7 @@ module Admin
               "scoreboard/#{match.rule_class::ADMIN_VIEW_TEMPLATE}/_init",
               locals: { scores:, score_operation: }
             )
-          end
+          end + turbo_stream.update("scoreboard-footer-left") { "#{match.round.name} #{match.name}" }
         )
       end
 

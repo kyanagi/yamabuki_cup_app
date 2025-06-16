@@ -21,11 +21,14 @@
         <div id="scoreboard-main">
           <%= yield :scoreboard %>
         </div>
-        <div id="scoreboard-footer"><%= Date.today.strftime("%Y/%m/%d") %> 第2回 #やまぶき杯</div>
+        <div id="scoreboard-footer">
+          <div id="scoreboard-footer-left" class="scoreboard-footer-left"></div>
+          <div id="scoreboard-footer-right" class="scoreboard-footer-right"><%= Date.today.strftime("%Y/%m/%d") %> 第2回 #やまぶき杯</div>
+        </div>
       </div>
     </div>
-    <% end %>
-    <%= turbo_stream_from "scoreboard" %>
-    <%= yield %>
-  </body>
+  <% end %>
+  <%= turbo_stream_from "scoreboard" %>
+  <%= yield %>
+</body>
 </html>
