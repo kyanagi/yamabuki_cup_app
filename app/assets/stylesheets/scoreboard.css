@@ -333,11 +333,35 @@ body {
 /* 早押しボード */
 .hayabo-player {
   display: grid;
-  grid-template: ". rank . name points misses ." 1fr / 1% 15% 1% 30% 25% 1fr 2.5%;
+  grid-template: ".  rank .  name points misses previous-situation previous-result" 1fr / 1% 15% 1% 30% 25% 1fr 2.5% 2.5%;
   width: 90%;
   background-color: #0d8794;
   align-items: center;
   justify-self: center;
+}
+
+.hayabo-player-previous-situation {
+  grid-area: previous-situation;
+  width: 100%;
+  height: 100%;
+}
+
+.hayabo-player-previous-result {
+  grid-area: previous-result;
+  width: 100%;
+  height: 100%;
+}
+
+.hayabo-player-previous-situation--pushed {
+  background-color: #c69931;
+}
+
+.hayabo-player-previous-result--correct {
+  background-color: #0057c0;
+}
+
+.hayabo-player-previous-result--wrong {
+  background-color: #c43147;
 }
 
 .hayabo-player-rank {

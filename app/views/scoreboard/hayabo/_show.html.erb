@@ -1,4 +1,4 @@
-<%# locals: (scores:) %>
+<%# locals: (scores:, score_operation:) %>
 <% scores.each do |score| %>
   <div class="hayabo-player hayabo-player-<%= score.status %>"
         id="hayabo-player-<%= score.matching_id %>">
@@ -8,5 +8,7 @@
     <div class="hayabo-player-misses">
       <% score.misses.times do %><span class="hayabo-player-misses-cross">×</span><% end %>
     </div>
+    <div class="hayabo-player-previous-situation <%= scoreboard_hayabo_player_previous_situation_class(score_operation, score.matching.player_id) %>"></div>
+    <div class="hayabo-player-previous-result <%= scoreboard_hayabo_player_previous_result_class(score_operation, score.matching.player_id) %>"></div>
   </div>
 <% end %>

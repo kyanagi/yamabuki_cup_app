@@ -1,7 +1,7 @@
-<%# locals: (scores:) %>
+<%# locals: (scores:, score_operation:) %>
 <div class="columns-2">
   <div id="match-scorelist" class="match-scorelist-column1">
-    <%= render partial: "scoreboard/hayabo/show", locals: { scores: } %>
+    <%= render partial: "scoreboard/hayabo/show", locals: { scores:, score_operation: } %>
   </div>
   <div id="question"></div>
 </div>

@@ -7,8 +7,9 @@ class ScoreboardController < ApplicationController
   def test
     match = Round::ROUND3.matches[2]
     @scores = match.current_scores.sort_by { it.matching.seat }
+    @score_operation = match.last_score_operation
     render(
-      inline: "<%= content_for(:scoreboard) { render partial: 'scoreboard/hayabo/init', locals: { scores: @scores } } %>",
+      inline: "<%= content_for(:scoreboard) { render partial: 'scoreboard/hayabo/init', locals: { scores: @scores, score_operation: @score_operation } } %>",
       layout: "scoreboard"
     )
   end

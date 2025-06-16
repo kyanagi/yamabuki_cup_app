@@ -34,10 +34,15 @@ module Admin
         )
       when "match_display"
         match = Match.find(params[:match_id])
+        scores = match.current_scores.sort_by { it.matching.seat }
+        score_operation = match.last_score_operation
         ActionCable.server.broadcast(
           "scoreboard",
           turbo_stream.update("scoreboard-main") do
-            render_to_string("scoreboard/#{match.rule_class::ADMIN_VIEW_TEMPLATE}/_init", locals: { scores: match.current_scores })
+            render_to_string(
+              "scoreboard/#{match.rule_class::ADMIN_VIEW_TEMPLATE}/_init",
+              locals: { scores:, score_operation: }
+            )
           end
         )
       end
