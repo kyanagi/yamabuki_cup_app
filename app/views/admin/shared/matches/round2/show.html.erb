@@ -1,43 +1,45 @@
 <div class="container">
   <%= turbo_frame_tag 'match' do %>
-    <div class="is-flex is-justify-content-space-between is-align-items-flex-end">
-      <h1 class="title mb-0"><%= @match.full_name %></h1>
-      <p><%= @match.progress_summary %></p>
-    </div>
-    <div class="columns">
-      <% @scores.in_groups(2, false) do |scores| %>
-        <div class="column">
-          <table class="table is-fullwidth is-striped is-hoverable">
-            <thead>
-              <tr>
-                <th class="has-text-centered">ステータス</th>
-                <th style="width: 8em">氏名</th>
-                <th class="has-text-centered">得点</th>
-                <th class="has-text-centered">誤答数</th>
-              </tr>
-            </thead>
-            <tbody>
-              <%= render partial: "admin/shared/matches/round2/score", collection: scores %>
-            </tbody>
-          </table>
-        </div>
-      <% end %>
-    </div>
-    <div class="buttons is-justify-content-space-between mt-4">
-      <%= form_with url: "/admin/matches/#{@match.id}/question_closings",
+    <section class="section">
+      <div class="is-flex is-justify-content-space-between is-align-items-flex-end">
+        <h1 class="title mb-0"><%= @match.full_name %></h1>
+        <p><%= @match.progress_summary %></p>
+      </div>
+      <div class="columns">
+        <% @scores.in_groups(2, false) do |scores| %>
+          <div class="column">
+            <table class="table is-fullwidth is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th class="has-text-centered">ステータス</th>
+                  <th style="width: 8em">氏名</th>
+                  <th class="has-text-centered">得点</th>
+                  <th class="has-text-centered">誤答数</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "admin/shared/matches/round2/score", collection: scores %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+      <div class="buttons is-justify-content-space-between mt-4">
+        <%= form_with url: "/admin/matches/#{@match.id}/question_closings",
                          method: :post,
                          style: 'display: inline-block;',
                          data: { turbo_confirm: "この問題をスルーにします。" } do |f| %>
-        <%= f.submit 'スルー', class: 'button is-warning' %>
-      <% end %>
-      <%= form_with url: "/admin/matches/#{@match.id}/match_closings",
+          <%= f.submit 'スルー', class: 'button is-warning' %>
+        <% end %>
+        <%= form_with url: "/admin/matches/#{@match.id}/match_closings",
                          method: :post,
                          style: 'display: inline-block;',
                          data: { turbo_confirm: "限定問題終了処理を行います。" } do |f| %>
-        <%= f.submit '限定問題終了', class: 'button is-danger' %>
-      <% end %>
-    </div>
-    <div class="mt-6">
+          <%= f.submit '限定問題終了', class: 'button is-danger' %>
+        <% end %>
+      </div>
+    </section>
+    <section class="section">
       <h2 class="title is-4">操作履歴</h2>
       <div class="block">
         <%= form_with url: "/admin/matches/#{@match.id}/undos",
@@ -54,6 +56,10 @@
           </div>
         <% end %>
       </div>
-    </div>
+    </section>
+    <section class="section">
+      <h2 class="title is-4">画面表示</h2>
+      <%= button_to "得点表示を表示する", admin_scoreboard_manipulations_path(action_name: "round2_match_init", match_id: @match.id), method: :post, class: "button is-primary" %>
+    </section>
   <% end %>
 </div>

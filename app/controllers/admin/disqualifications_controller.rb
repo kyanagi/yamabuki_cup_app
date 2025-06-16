@@ -11,6 +11,7 @@ module Admin
         Disqualification.create!(match:, player_id: params[:player_id])
       end
 
+      broadcast_scoreboard(match)
       setup_instance_variables(match)
       render "admin/shared/matches/#{@match.rule_class::ADMIN_VIEW_TEMPLATE}/show"
     end

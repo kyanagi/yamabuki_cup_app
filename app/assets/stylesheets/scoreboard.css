@@ -117,7 +117,7 @@ body {
   font-size: 6.5vh;
 }
 
-/* 2R */
+/* 2R 発表 */
 .round2-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -170,4 +170,82 @@ body {
   font-family: "NotoSansCJKjp-Bold", sans-serif;
   font-weight: bold;
   font-size: 6.5vh;
+}
+
+/* 2R 試合中 */
+.round2-match-scorelist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(7, 10vh);
+  grid-auto-flow: column;
+  width: 100%;
+  height: 100%;
+  padding-top: 10vh;
+  gap: 8px;
+}
+
+.round2-match-player {
+  display: grid;
+  /* grid-template-columns: 55% 100px 1fr; */
+  grid-template: ". name points misses ." 1fr / 5% 55% 25% 1fr 2.5%;
+  width: 90%;
+  background-color: #0d8794;
+  align-items: center;
+  justify-self: center;
+}
+
+.round2-match-player-win {
+  background-color: #a86154;
+}
+
+.round2-match-player-lose {
+  background-color: #4a4a4a;
+
+  * {
+    color: #999999;
+  }
+}
+
+.round2-match-player-waiting {
+  background-color: #4a4a4a;
+}
+
+.round2-match-name {
+  grid-area: name;
+  font-family: "GenShinGothic-Bold", sans-serif;
+  font-weight: bold;
+  font-size: 7vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  line-height: 1;
+}
+
+.round2-match-points {
+  grid-area: points;
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 11vh;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+}
+
+.round2-match-misses {
+  grid-area: misses;
+  font-size: 4vh;
+  text-align: center;
+}
+
+/* 問題表示 */
+#question {
+  font-family: "BIZUDPGothic-Regular", sans-serif;
+  font-size: 3.5vh;
+  line-height: 1.5;
+  padding: 1em;
 }

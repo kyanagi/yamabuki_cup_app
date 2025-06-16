@@ -11,6 +11,7 @@ module Admin
         QuestionClosing.create!(match:, question_player_results_attributes: create_params)
       end
 
+      broadcast_scoreboard(match)
       setup_instance_variables(match)
       render "admin/shared/matches/#{@match.rule_class::ADMIN_VIEW_TEMPLATE}/show"
     end

@@ -32,6 +32,12 @@ module Admin
           "scoreboard",
           render_to_string("scoreboard/round2_announcement/_display_player", locals: { rank:, player: })
         )
+      when "round2_match_init"
+        match = Match.find(params[:match_id])
+        ActionCable.server.broadcast(
+          "scoreboard",
+          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/round2/_init", locals: { scores: match.current_scores }) }
+        )
       end
 
       head 204

@@ -5,9 +5,10 @@ class ScoreboardController < ApplicationController
   end
 
   def test
-    @ranks = Round::ROUND2.matches[0].matchings.order(:seat).map { it.player.yontaku_player_result.rank }
+    match = Round::ROUND2.matches[0]
+    @scores = match.current_scores.sort_by { it.matching.seat }
     render(
-      inline: "<%= content_for(:scoreboard) { render partial: 'scoreboard/round2_announcement/init', locals: { ranks: @ranks } } %>",
+      inline: "<%= content_for(:scoreboard) { render partial: 'scoreboard/round2/init', locals: { scores: @scores } } %>",
       layout: "scoreboard"
     )
   end
