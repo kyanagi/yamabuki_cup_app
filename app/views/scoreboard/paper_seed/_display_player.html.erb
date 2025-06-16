@@ -1,6 +1,8 @@
+<% name = yontaku_player_result.player.player_profile.scoreboard_full_name %>
+<% rank = yontaku_player_result.rank %>
 <%= turbo_stream.replace("paper-seed-player-#{rank}") do %>
   <div class="paper-seed-player paper-seed-player-animation" id="paper-seed-player-<%= rank %>">
     <div class="paper-seed-rank"><%= rank %></div>
-    <div class="paper-seed-name"><%= ['伊藤　博文', '西園寺公望'].sample %></div>
+    <div class="paper-seed-name"><div class="paper-seed-name--length-<%= name.size %>"><%= name %></div></div>
   </div>
 <% end %>

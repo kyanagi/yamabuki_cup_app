@@ -14,9 +14,13 @@ module Admin
           turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/paper_seed/_init") }
         )
       when "paper_seed_display_player"
+        yontaku_player_result = YontakuPlayerResult.find_by(rank: params[:rank])
         ActionCable.server.broadcast(
           "scoreboard",
-          render_to_string("scoreboard/paper_seed/_display_player", locals: { rank: params[:rank].to_i })
+          render_to_string(
+            "scoreboard/paper_seed/_display_player",
+            locals: { yontaku_player_result: }
+          )
         )
       when "round2_init"
         ranks = Match.find(params[:match_id]).matchings.order(:seat).map { it.player.yontaku_player_result.rank }

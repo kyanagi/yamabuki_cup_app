@@ -2,6 +2,7 @@
 <% scores.each do |score| %>
   <div class="round2-match-player round2-match-player-<%= score.status %>"
         id="round2-match-player-<%= score.matching_id %>">
+    <div class="round2-match-player-rank"><%= score.rank %></div>
     <div class="round2-match-name"><%= score.matching.player.player_profile.family_name %></div>
     <div class="round2-match-points"><%= score.points %></div>
     <div class="round2-match-misses">

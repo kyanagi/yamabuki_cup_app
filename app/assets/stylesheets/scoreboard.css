@@ -99,7 +99,7 @@ body {
   grid-template-columns: 300px 1fr;
   width: 80%;
   gap: 3em;
-  background-color: #0d8794;
+  background-color: #a86154;
   align-items: center;
   margin: 0 auto;
 }
@@ -122,12 +122,13 @@ body {
   justify-content: center;
   height: 100%;
   line-height: 1;
+  opacity: 0.5;
 }
 
 .paper-seed-name {
-  font-family: "NotoSansCJKjp-Bold", sans-serif;
-  font-weight: bold;
-  font-size: 6.5vh;
+  font-family: "GenShinGothic-Medium", sans-serif;
+  font-size: 7vh;
+  overflow: hidden;
 }
 
 /* 2R 発表 */
@@ -177,12 +178,13 @@ body {
   justify-content: center;
   height: 100%;
   line-height: 1;
+  opacity: 0.5;
 }
 
 .round2-name {
-  font-family: "NotoSansCJKjp-Bold", sans-serif;
-  font-weight: bold;
-  font-size: 6.5vh;
+  font-family: "GenShinGothic-Bold", sans-serif;
+  font-size: 7vh;
+  overflow: hidden;
 }
 
 /* 2R 試合中 */
@@ -205,10 +207,14 @@ body {
   background-color: #0d8794;
   align-items: center;
   justify-self: center;
+  position: relative;
 }
 
 .round2-match-player-win {
   background-color: #a86154;
+  .round2-match-name {
+    color: #ffc5bb;
+  }
 }
 
 .round2-match-player-lose {
@@ -223,7 +229,29 @@ body {
   background-color: #4a4a4a;
 }
 
+.round2-match-player-rank {
+  position: relative;
+  grid-column: 1 / 3;
+  grid-row: 1;
+  z-index: 20;
+  opacity: 0.4;
+  padding-right: 4vw;
+
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 15vh;
+  font-style: italic;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+}
+
 .round2-match-name {
+  position: relative;
   grid-area: name;
   font-family: "GenShinGothic-Bold", sans-serif;
   font-weight: bold;
@@ -233,6 +261,7 @@ body {
   align-items: center;
   height: 100%;
   line-height: 1;
+  z-index: 1;
 }
 
 .round2-match-points {
@@ -290,6 +319,8 @@ body {
   justify-content: center;
   height: 100%;
   line-height: 1;
+
+  opacity: 0.5;
 }
 
 .hayaoshi-player-name {
@@ -345,6 +376,9 @@ body {
 
 .hayaoshi-player-win {
   background-color: #a86154;
+  .hayaoshi-player-name {
+    color: #ffc5bb;
+  }
 }
 
 .hayaoshi-player-lose {
@@ -407,6 +441,7 @@ body {
   justify-content: center;
   height: 100%;
   line-height: 1;
+  opacity: 0.5;
 }
 
 .hayabo-player-name {
@@ -424,13 +459,13 @@ body {
 
 .hayabo-player-name--length-5,
 .hayaoshi-player-name--length-5 {
-  transform: scaleX(calc(4/5));
+  transform: scaleX(calc(4 / 5));
   transform-origin: left top;
 }
 
 .hayabo-player-name--length-6,
 .hayaoshi-player-name--length-6 {
-  transform: scaleX(calc(4/6));
+  transform: scaleX(calc(4 / 6));
   transform-origin: left top;
 }
 
@@ -460,6 +495,9 @@ body {
 
 .hayabo-player-win {
   background-color: #a86154;
+  .hayabo-player-name {
+    color: #ffc5bb;
+  }
 }
 
 .hayabo-player-lose {
