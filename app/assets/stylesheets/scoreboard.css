@@ -474,7 +474,20 @@ body {
 /* 問題表示 */
 #question {
   font-family: "BIZUDPGothic-Regular", sans-serif;
-  font-size: 3.5vh;
+  padding-top: 5vh;
+  padding-right: 2vw;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 3vh;
+}
+
+.question-text {
+  font-size: 4vh;
   line-height: 1.5;
-  padding: 1em;
+}
+
+.question-answer {
+  font-size: 6vh;
+  font-weight: bold;
+  color: #dbd84e;
 }
