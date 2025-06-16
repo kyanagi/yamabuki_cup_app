@@ -4,9 +4,6 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/rails__actioncable": "6.1.11",
-    "@types/react": "19.0.2",
-    "@types/react-dom": "19.0.2",
-    "@vitejs/plugin-react-swc": "3.7.2",
     "typescript": "5.7.2",
     "vite": "^6.3.5",
     "vite-plugin-full-reload": "1.2.0",
@@ -17,8 +14,6 @@
     "@hotwired/turbo-rails": "8.0.12",
     "@rails/actioncable": "8.0.100",
     "idb": "8.0.3",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
     "the-new-css-reset": "1.11.3",
     "valibot": "1.1.0"
   }
