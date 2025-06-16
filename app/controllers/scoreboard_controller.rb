@@ -5,10 +5,10 @@ class ScoreboardController < ApplicationController
   end
 
   def test
-    match = Round::ROUND2.matches[0]
+    match = Round::ROUND3.matches[0]
     @scores = match.current_scores.sort_by { it.matching.seat }
     render(
-      inline: "<%= content_for(:scoreboard) { render partial: 'scoreboard/round2/init', locals: { scores: @scores } } %>",
+      inline: "<%= content_for(:scoreboard) { render partial: 'scoreboard/hayaoshi/init', locals: { scores: @scores } } %>",
       layout: "scoreboard"
     )
   end

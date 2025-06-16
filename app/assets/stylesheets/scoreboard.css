@@ -27,6 +27,7 @@ body {
 }
 
 #scoreboard-main {
+  grid-area: main;
 }
 
 .columns-2 {
@@ -38,6 +39,7 @@ body {
 }
 
 #scoreboard-footer {
+  grid-area: footer;
   text-align: right;
   font-size: 40px;
   padding-right: 30px;
@@ -173,7 +175,7 @@ body {
 }
 
 /* 2R 試合中 */
-.round2-match-scorelist {
+.match-scorelist-column2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: repeat(7, 10vh);
@@ -240,6 +242,92 @@ body {
   grid-area: misses;
   font-size: 4vh;
   text-align: center;
+}
+
+/* 3R 以降の試合中 */
+.match-scorelist-column1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(8, 10vh);
+  grid-auto-flow: column;
+  width: 100%;
+  height: 100%;
+  padding-top: 5vh;
+  gap: 8px;
+}
+
+/* 早押し */
+.hayaoshi-player {
+  display: grid;
+  grid-template: ". rank . name points misses ." 1fr / 1% 15% 1% 30% 25% 1fr 2.5%;
+  width: 90%;
+  background-color: #0d8794;
+  align-items: center;
+  justify-self: center;
+}
+
+.hayaoshi-player-rank {
+  grid-area: rank;
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 15vh;
+  font-style: italic;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+}
+
+.hayaoshi-player-name {
+  grid-area: name;
+  font-family: "GenShinGothic-Bold", sans-serif;
+  font-weight: bold;
+  font-size: 7vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  line-height: 1;
+}
+
+.hayaoshi-player-points {
+  grid-area: points;
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 11vh;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+}
+
+.hayaoshi-player-misses {
+  --crosss-color: #bbb;
+  grid-area: misses;
+  font-family: "BIZUDPGothic-Regular", sans-serif;
+  font-size: 7vh;
+  -webkit-text-stroke: 6px var(--crosss-color);
+  color: var(--crosss-color);
+  text-align: left;
+}
+
+.hayaoshi-player-win {
+  background-color: #a86154;
+}
+
+.hayaoshi-player-lose {
+  background-color: #4a4a4a;
+
+  * {
+    color: #999999;
+    -webkit-text-stroke-color: #999999;
+  }
 }
 
 /* 問題表示 */

@@ -1,0 +1,12 @@
+<%# locals: (scores:) %>
+<% scores.each do |score| %>
+  <div class="hayaoshi-player hayaoshi-player-<%= score.status %>"
+        id="hayaoshi-player-<%= score.matching_id %>">
+    <div class="hayaoshi-player-rank"><%= score.rank %></div>
+    <div class="hayaoshi-player-name"><%= score.matching.player.player_profile.family_name %></div>
+    <div class="hayaoshi-player-points"><%= score.points %></div>
+    <div class="hayaoshi-player-misses">
+      <% score.misses.times do %><span class="hayaoshi-player-misses-cross">×</span><% end %>
+    </div>
+  </div>
+<% end %>

@@ -24,7 +24,7 @@ module Admin
     end
 
     def broadcast_scoreboard(match) #: void
-      template = turbo_stream.update("round2-match-scorelist") do
+      template = turbo_stream.update("match-scorelist") do
         render_to_string("scoreboard/#{match.rule_class::ADMIN_VIEW_TEMPLATE}/_show", layout: false, locals: { scores: match.current_scores })
       end
       ActionCable.server.broadcast("scoreboard", template)
