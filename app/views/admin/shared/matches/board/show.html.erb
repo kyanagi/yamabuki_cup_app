@@ -21,7 +21,9 @@
                 </tr>
               </thead>
               <tbody>
-                <%= render partial: "admin/shared/matches/board/score", collection: @scores %>
+                <% playing_scores = @scores.select(&:status_playing?) %>
+                <% min_points = playing_scores.empty? ? nil : playing_scores.minimum(:points) %>
+                <%= render partial: "admin/shared/matches/board/score", collection: @scores, locals: { playing_scores:, min_points: } %>
               </tbody>
             </table>
             <div class="is-flex is-justify-content-flex-end">

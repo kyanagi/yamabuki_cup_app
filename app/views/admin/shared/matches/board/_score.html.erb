@@ -1,4 +1,4 @@
-<%# locals: (score:) %>
+<%# locals: (score:, playing_scores:, min_points:) %>
 <tr data-controller="modal">
   <td class="has-text-centered is-vcentered">
     <span class="tag <%= player_status_color(score.status) %>">
@@ -24,7 +24,7 @@
       </label>
     </div>
   </td>
-  <td class="has-text-centered is-vcentered <%= "has-text-grey-lighter" if score.status_lose? %>"><%= score.points %></td>
+  <td class="has-text-centered is-vcentered <%= "has-text-grey-lighter" if score.status_lose? %> <%= "has-background-warning-light" if score.status_playing? && min_points && score.points == min_points %>"><%= score.points %></td>
   <td class="has-text-centered is-vcentered">
     <%= button_tag "敗退",
       class: "button is-danger",
