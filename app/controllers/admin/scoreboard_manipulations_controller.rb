@@ -11,7 +11,8 @@ module Admin
       when "paper_seed_init"
         ActionCable.server.broadcast(
           "scoreboard",
-          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/paper_seed/_init") }
+          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/paper_seed/_init") } +
+          turbo_stream.update("scoreboard-footer-left") { Round::ROUND1.name }
         )
       when "paper_seed_display_player"
         yontaku_player_result = YontakuPlayerResult.find_by(rank: params[:rank])
