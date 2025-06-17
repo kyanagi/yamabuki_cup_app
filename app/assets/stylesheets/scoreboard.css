@@ -458,13 +458,15 @@ body {
 }
 
 .hayabo-player-name--length-5,
-.hayaoshi-player-name--length-5 {
+.hayaoshi-player-name--length-5,
+.board-player-name--length-5 {
   transform: scaleX(calc(4 / 5));
   transform-origin: left top;
 }
 
 .hayabo-player-name--length-6,
-.hayaoshi-player-name--length-6 {
+.hayaoshi-player-name--length-6,
+.board-player-name--length-6 {
   transform: scaleX(calc(4 / 6));
   transform-origin: left top;
 }
@@ -501,6 +503,79 @@ body {
 }
 
 .hayabo-player-lose {
+  background-color: #4a4a4a;
+
+  * {
+    color: #999999;
+    -webkit-text-stroke-color: #999999;
+  }
+}
+
+/* ボード */
+.board-player {
+  display: grid;
+  grid-template: ".  rank .  name points" 1fr / 1% 15% 1% 40% 25%;
+  width: 90%;
+  background-color: #0d8794;
+  align-items: center;
+  justify-self: center;
+}
+
+.board-player-rank {
+  grid-area: rank;
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 15vh;
+  font-style: italic;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+.board-player-name {
+  grid-area: name;
+  font-family: "GenShinGothic-Bold", sans-serif;
+  font-weight: bold;
+  font-size: 7vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.board-player-points {
+  grid-area: points;
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 11vh;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+}
+
+.match-scorelist--hidden-scores .board-player-points {
+  opacity: 0;
+}
+
+.board-player-win {
+  background-color: #a86154;
+  .board-player-name {
+    color: #ffc5bb;
+  }
+}
+
+.board-player-lose {
   background-color: #4a4a4a;
 
   * {

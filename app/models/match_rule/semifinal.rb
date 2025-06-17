@@ -1,4 +1,8 @@
 module MatchRule
+  # 準決勝
+  #
+  # implementation notes:
+  # そのセットに参加しない人（既に負けた人）は、scores.points の値が負になっている。
   class Semifinal < Base
     NUM_SEATS = 8
     NUM_BUTTONS = 8
@@ -30,7 +34,12 @@ module MatchRule
     def process_set_transition(score_operation)
       prepare_new_scores(score_operation)
       @scores.each do |score|
-        score.points = 0
+        if score.status_playing?
+          score.points = 0
+        else
+          # 新しいセットに参加しない人（既に負けた人）は、区別がつくように points を -10000 にする
+          score.points = -10000
+        end
       end
     end
 

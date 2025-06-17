@@ -1,59 +1,61 @@
 <div class="container">
   <%= turbo_frame_tag 'match' do %>
-    <div class="is-flex is-justify-content-space-between is-align-items-flex-end">
-      <h1 class="title mb-0"><%= @match.full_name %></h1>
-      <p><%= @match.progress_summary %></p>
-    </div>
-    <div class="columns">
-      <div class="column">
-        <%= form_with url: "/admin/matches/#{@match.id}/question_closings",
+    <section class="section">
+      <div class="is-flex is-justify-content-space-between is-align-items-flex-end">
+        <h1 class="title mb-0"><%= @match.full_name %></h1>
+        <p><%= @match.progress_summary %></p>
+      </div>
+      <div class="columns">
+        <div class="column">
+          <%= form_with url: "/admin/matches/#{@match.id}/question_closings",
                          method: :post,
                          style: 'display: inline-block;' do |f| %>
-          <table class="table is-fullwidth is-striped is-hoverable">
-            <thead>
-              <tr>
-                <th class="has-text-centered">ステータス</th>
-                <th style="width: 8em">氏名</th>
-                <th class="has-text-centered">正解</th>
-                <th class="has-text-centered">得点</th>
-                <th class="has-text-centered">敗退</th>
-              </tr>
-            </thead>
-            <tbody>
-              <%= render partial: "admin/shared/matches/board/score", collection: @scores %>
-            </tbody>
-          </table>
-          <div class="is-flex is-justify-content-flex-end">
-            <%= f.submit '正解者送信', class: 'button is-success', data: { turbo_confirm: "正誤判定の結果を送信します。" }  %>
-          </div>
-        <% end %>
-        <% @scores.each do |score| %>
-          <%= form_with url: "/admin/matches/#{@match.id}/disqualifications",
+            <table class="table is-fullwidth is-striped is-hoverable">
+              <thead>
+                <tr>
+                  <th class="has-text-centered">ステータス</th>
+                  <th style="width: 8em">氏名</th>
+                  <th class="has-text-centered">正解</th>
+                  <th class="has-text-centered">得点</th>
+                  <th class="has-text-centered">敗退</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: "admin/shared/matches/board/score", collection: @scores %>
+              </tbody>
+            </table>
+            <div class="is-flex is-justify-content-flex-end">
+              <%= f.submit '正解者送信', class: 'button is-success', data: { turbo_confirm: "正誤判定の結果を送信します。" }  %>
+            </div>
+          <% end %>
+          <% @scores.each do |score| %>
+            <%= form_with url: "/admin/matches/#{@match.id}/disqualifications",
                          method: :post,
                          style: 'display: inline-block;',
                          id: "form-disqualification-#{score.id}" do |f| %>
-            <%= f.hidden_field :player_id, value: score.matching.player_id %>
+              <%= f.hidden_field :player_id, value: score.matching.player_id %>
+            <% end %>
           <% end %>
-        <% end %>
-      </div>
-      <div class="column">
-        <div class="buttons is-justify-content-space-between mt-4">
-          <%= form_with url: "/admin/matches/#{@match.id}/set_transitions",
+        </div>
+        <div class="column">
+          <div class="buttons is-justify-content-space-between mt-4">
+            <%= form_with url: "/admin/matches/#{@match.id}/set_transitions",
                          method: :post,
                          style: 'display: inline-block;',
                          data: { turbo_confirm: "新しいセットに移行します。" } do |f| %>
-            <%= f.submit '新セット開始', class: 'button is-warning' %>
-          <% end %>
-          <%= form_with url: "/admin/matches/#{@match.id}/match_closings",
+              <%= f.submit '新セット開始', class: 'button is-warning' %>
+            <% end %>
+            <%= form_with url: "/admin/matches/#{@match.id}/match_closings",
                          method: :post,
                          style: 'display: inline-block;',
                          data: { turbo_confirm: "現在の生存者を勝抜け者として確定します。" } do |f| %>
-            <%= f.submit '勝抜け者確定', class: 'button is-danger' %>
-          <% end %>
+              <%= f.submit '勝抜け者確定', class: 'button is-danger' %>
+            <% end %>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="mt-6">
+    </section>
+    <section class="section">
       <h2 class="title is-4">操作履歴</h2>
       <div class="block">
         <%= form_with url: "/admin/matches/#{@match.id}/undos",
@@ -70,6 +72,12 @@
           </div>
         <% end %>
       </div>
-    </div>
+    </section>
+    <section class="section">
+      <h2 class="title is-4">画面表示</h2>
+      <%= button_to "得点表示を表示する", admin_scoreboard_manipulations_path(action_name: "match_display", match_id: @match.id), method: :post, class: "button is-primary" %>
+      <%= button_to "得点を隠す", admin_scoreboard_manipulations_path(action_name: "hide_scores"), method: :post, class: "button is-primary" %>
+      <%= button_to "得点を表示する", admin_scoreboard_manipulations_path(action_name: "show_scores"), method: :post, class: "button is-primary" %>
+    </section>
   <% end %>
 </div>

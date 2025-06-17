@@ -1,10 +1,12 @@
 import "@hotwired/turbo-rails";
 import { createConsumer } from "@rails/actioncable";
 
+import { application } from "../controllers/application";
 // Stimulus controllers
 import Round1TimerController from "../controllers/round1_timer_controller";
-import { application } from "../controllers/application";
+import ScoreVisibilityTogglerController from "../controllers/score_visibility_toggler_controller";
 application.register("round1-timer", Round1TimerController);
+application.register("score-visibility-toggler", ScoreVisibilityTogglerController);
 
 const cable = createConsumer();
 

@@ -55,6 +55,16 @@ module Admin
             )
           end + turbo_stream.update("scoreboard-footer-left") { "#{match.round.name} #{match.name}" }
         )
+      when "show_scores"
+        ActionCable.server.broadcast(
+          "scoreboard",
+          "<turbo-stream action='show-scores'></turbo-stream>"
+        )
+      when "hide_scores"
+        ActionCable.server.broadcast(
+          "scoreboard",
+          "<turbo-stream action='hide-scores'></turbo-stream>"
+        )
       end
 
       head 204
