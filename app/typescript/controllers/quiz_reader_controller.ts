@@ -442,7 +442,7 @@ export default class extends Controller {
       questionId: this.readingContext.questionId,
       readDuration: this.readingContext.readDuration,
       timestamp: new Date().toISOString(),
-    }
+    };
 
     try {
       const db = await this.idbPromise;
