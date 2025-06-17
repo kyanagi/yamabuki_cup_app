@@ -11,11 +11,14 @@ import "@hotwired/turbo-rails";
  * - hide-scores: 得点を隠す
  */
 export default class extends Controller {
-  static targets = ["scorelist"];
-  static classes = ["hidden"];
+  static targets = ["scorelist", "points"];
+  static classes = ["hiddenScorelist", "animation", "scoreHidden"];
 
   declare scorelistTarget: HTMLElement;
-  declare hiddenClass: string;
+  declare pointsTargets: HTMLElement[];
+  declare hiddenScorelistClass: string;
+  declare animationClass: string;
+  declare scoreHiddenClass: string;
 
   connect() {
     document.addEventListener("turbo:before-stream-render", this.#beforeStreamRenderHandler);
@@ -42,11 +45,34 @@ export default class extends Controller {
     };
   };
 
-  #showScores() {
-    this.scorelistTarget.classList.remove(this.hiddenClass);
+  #hideScores() {
+    this.scorelistTarget.classList.add(this.hiddenScorelistClass);
+    for (const element of this.pointsTargets) {
+      element.parentElement?.classList.remove(this.animationClass);
+    }
   }
 
-  #hideScores() {
-    this.scorelistTarget.classList.add(this.hiddenClass);
+  #showScores() {
+    const pointsElements = this.pointsTargets
+      .map((element) => {
+        const points = Number.parseInt(element.getAttribute("data-points") || "-10000", 10);
+        return { element, points };
+      })
+      .filter(({ points }) => points >= 0);
+
+    pointsElements.sort((a, b) => b.points - a.points);
+
+    for (const { element } of pointsElements) {
+      element.classList.add(this.scoreHiddenClass);
+    }
+
+    this.scorelistTarget.classList.remove(this.hiddenScorelistClass);
+
+    for (const [index, { element }] of pointsElements.entries()) {
+      setTimeout(() => {
+        element.classList.remove(this.scoreHiddenClass);
+        element.parentElement?.classList.add(this.animationClass);
+      }, index * 800);
+    }
   }
 }

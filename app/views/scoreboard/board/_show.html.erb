@@ -5,6 +5,10 @@
         id="board-player-<%= score.matching_id %>">
     <div class="board-player-rank"><%= score.rank %></div>
     <div class="board-player-name"><div class="board-player-name--length-<%= name.size %>"><%= name %></div></div>
-    <div class="board-player-points"><%= score.points.to_s.gsub('-', "\u2212") if score.points >= 0 %></div>
+    <% if score.points >= 0 %>
+      <div class="board-player-points" data-score-visibility-toggler-target="points" data-points="<%= score.points %>"><%= score.points.to_s.gsub('-', "\u2212") %></div>
+    <% else %>
+      <div class="board-player-points"></div>
+    <% end %>
   </div>
 <% end %>

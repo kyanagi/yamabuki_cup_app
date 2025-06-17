@@ -562,6 +562,8 @@ body {
   justify-content: center;
   height: 100%;
   line-height: 1;
+
+  /* transition: opacity 0.3s ease-in-out; */
 }
 
 .match-scorelist--hidden-scores .board-player-points {
@@ -582,6 +584,16 @@ body {
     color: #999999;
     -webkit-text-stroke-color: #999999;
   }
+}
+
+/* Sequential score reveal animation classes */
+.hidden {
+  opacity: 0;
+}
+
+.animation-flip-in-x {
+  animation: flipInX 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
 }
 
 /* 問題表示 */

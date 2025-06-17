@@ -2,7 +2,9 @@
 <div class="columns-2">
   <div id="match-scorelist" class="match-scorelist-column1"
       data-controller="score-visibility-toggler"
-      data-score-visibility-toggler-hidden-class="match-scorelist--hidden-scores"
+      data-score-visibility-toggler-hidden-scorelist-class="match-scorelist--hidden-scores"
+      data-score-visibility-toggler-score-hidden-class="hidden"
+      data-score-visibility-toggler-animation-class="animation-flip-in-x"
       data-score-visibility-toggler-target="scorelist">
     <%= render partial: "scoreboard/board/show", locals: { scores:, score_operation: } %>
   </div>
