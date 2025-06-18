@@ -29,7 +29,7 @@ RSpec.describe Match, type: :model do
     let(:match) { create(:match, round_id: Round::ROUND2.id, name: "第1組") }
 
     it "full_name が取得できること" do
-      expect(match.full_name).to eq("2R 第1組")
+      expect(match.full_name).to eq("2R アドバンテージ付き3◯2× 第1組")
     end
   end
 end
