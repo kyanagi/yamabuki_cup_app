@@ -8,8 +8,6 @@ module Home
 
     private
 
-    def current_player: () -> untyped
-
     def player_profile_edit_params: () -> untyped
   end
 end

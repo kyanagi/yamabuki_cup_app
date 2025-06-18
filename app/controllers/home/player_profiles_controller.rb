@@ -1,11 +1,11 @@
 module Home
   class PlayerProfilesController < PublicController
     def edit
-      @player_profile_edit = PlayerProfileEdit.new(player_id: current_player.id)
+      @player_profile_edit = PlayerProfileEdit.new(player_id: Current.player.id)
     end
 
     def update
-      @player_profile_edit = PlayerProfileEdit.new(player_profile_edit_params.merge(player_id: current_player.id))
+      @player_profile_edit = PlayerProfileEdit.new(player_profile_edit_params.merge(player_id: Current.player.id))
 
       if @player_profile_edit.save
         flash.notice = "エントリー内容を更新しました"
@@ -16,10 +16,6 @@ module Home
     end
 
     private
-
-    def current_player
-      Current.session.player
-    end
 
     def player_profile_edit_params
       params.require(:player_profile_edit).permit(
