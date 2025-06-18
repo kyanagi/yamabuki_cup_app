@@ -598,7 +598,7 @@ body {
 }
 
 /* 問題表示 */
-#question {
+.question {
   font-family: "BIZUDPGothic-Regular", sans-serif;
   padding-top: 5vh;
   padding-right: 2vw;

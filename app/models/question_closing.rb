@@ -4,12 +4,17 @@ class QuestionClosing < ScoreOperation
   attribute :question_player_results_attributes
 
   before_validation :transfer_attributes
+
+  validate :validate_question_player_results_attributes
+
   before_create :save_records
   before_create :update_scores
   before_create :set_path
   after_create :update_match_last_score_operation
 
-  validate :validate_question_player_results_attributes
+  attr_reader :question
+
+  # @rbs @question Question?
 
   private
 
@@ -57,6 +62,8 @@ class QuestionClosing < ScoreOperation
     question_player_results_attributes.map do |attr|
       @question_result.question_player_results.build(attr)
     end
+
+    @question = @question_result.question_allocation.question
   end
 
   def save_records #: void

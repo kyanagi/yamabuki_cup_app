@@ -4,14 +4,17 @@ module Admin
 
     def create
       match = nil
+      question = nil
       ActiveRecord::Base.transaction do
         match = Match
           .preload(last_score_operation: { scores: :matching })
           .find(params[:match_id])
-        QuestionClosing.create!(match:, question_player_results_attributes: create_params)
+        qc = QuestionClosing.create!(match:, question_player_results_attributes: create_params)
+        question = qc.question
       end
 
       broadcast_scoreboard(match)
+      broadcast_question_board(question)
       setup_instance_variables(match)
       render "admin/shared/matches/#{@match.rule_class::ADMIN_VIEW_TEMPLATE}/show"
     end
@@ -24,6 +27,13 @@ module Admin
       else
         []
       end
+    end
+
+    def broadcast_question_board(question)
+      ActionCable.server.broadcast(
+        "scoreboard",
+        turbo_stream.update("question") { render_to_string(partial: "scoreboard/question/question", locals: { question: }) }
+      )
     end
   end
 end
