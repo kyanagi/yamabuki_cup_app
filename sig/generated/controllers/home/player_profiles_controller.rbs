@@ -1,0 +1,15 @@
+# Generated from app/controllers/home/player_profiles_controller.rb with RBS::Inline
+
+module Home
+  class PlayerProfilesController < PublicController
+    def edit: () -> untyped
+
+    def update: () -> untyped
+
+    private
+
+    def current_player: () -> untyped
+
+    def player_profile_edit_params: () -> untyped
+  end
+end

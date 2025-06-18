@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   get "/home", to: "home#show"
   namespace :home do
     resource :round3_course_preference, only: [:show, :update]
+    resource :player_profile, only: [:edit, :update]
   end
 
   namespace :admin do

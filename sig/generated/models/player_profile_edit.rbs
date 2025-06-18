@@ -1,0 +1,9 @@
+# Generated from app/models/player_profile_edit.rb with RBS::Inline
+
+class PlayerProfileEdit < ActiveType::Object
+  def initialize: (?untyped attributes) -> untyped
+
+  private
+
+  def update_player_data: () -> untyped
+end

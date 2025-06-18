@@ -10,6 +10,7 @@ const GivenNameKanaSchema = v.pipe(v.string(), v.nonEmpty("名のふりがなを
 const EntryListNameSchema = v.pipe(v.string(), v.nonEmpty("エントリーリストの名前を入力してください"));
 
 export default class extends Controller {
+  static values = { editMode: Boolean };
   static targets = [
     "formElement",
     "email",
@@ -27,6 +28,7 @@ export default class extends Controller {
     "confirmationGivenNameKana",
     "confirmationEntryListName",
     "confirmationNotes",
+    "confirmationPassword",
     "errorElement",
     "emailError",
     "passwordError",
@@ -53,6 +55,7 @@ export default class extends Controller {
   declare confirmationGivenNameKanaTarget: HTMLElement;
   declare confirmationEntryListNameTarget: HTMLElement;
   declare confirmationNotesTarget: HTMLElement;
+  declare confirmationPasswordTarget: HTMLElement;
   declare errorElementTargets: HTMLElement[];
   declare emailErrorTarget: HTMLElement;
   declare passwordErrorTarget: HTMLElement;
@@ -61,6 +64,9 @@ export default class extends Controller {
   declare familyNameKanaErrorTarget: HTMLElement;
   declare givenNameKanaErrorTarget: HTMLElement;
   declare entryListNameErrorTarget: HTMLElement;
+  declare editModeValue: boolean;
+  declare hasNotesTarget: boolean;
+  declare hasConfirmationPasswordTarget: boolean;
 
   validate(event: Event) {
     for (const element of this.formElementTargets) {
@@ -73,7 +79,11 @@ export default class extends Controller {
 
     let isValid = true;
     isValid = this.validateField(EmailSchema, this.emailTarget, this.emailErrorTarget) && isValid;
-    isValid = this.validateField(PasswordSchema, this.passwordTarget, this.passwordErrorTarget) && isValid;
+
+    // Skip password validation in edit mode
+    if (!this.editModeValue) {
+      isValid = this.validateField(PasswordSchema, this.passwordTarget, this.passwordErrorTarget) && isValid;
+    }
     isValid = this.validateField(FamilyNameSchema, this.familyNameTarget, this.familyNameErrorTarget) && isValid;
     isValid = this.validateField(GivenNameSchema, this.givenNameTarget, this.givenNameErrorTarget) && isValid;
     isValid =
@@ -109,6 +119,16 @@ export default class extends Controller {
     this.confirmationFamilyNameKanaTarget.textContent = this.familyNameKanaTarget.value;
     this.confirmationGivenNameKanaTarget.textContent = this.givenNameKanaTarget.value;
     this.confirmationEntryListNameTarget.textContent = this.entryListNameTarget.value;
-    this.confirmationNotesTarget.textContent = this.notesTarget.value;
+
+    // Only update notes if it exists (registration form)
+    if (this.hasNotesTarget) {
+      this.confirmationNotesTarget.textContent = this.notesTarget.value;
+    }
+
+    // Only update password confirmation if it exists (edit form)
+    if (this.hasConfirmationPasswordTarget) {
+      const passwordValue = this.passwordTarget.value;
+      this.confirmationPasswordTarget.textContent = passwordValue ? "変更あり" : "変更なし";
+    }
   }
 }
