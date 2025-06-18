@@ -8,5 +8,7 @@ module Admin
     private
 
     def setup_instance_variables: (untyped match) -> void
+
+    def broadcast_scoreboard: (untyped match) -> void
   end
 end

@@ -1,6 +1,6 @@
 # Generated from app/models/disqualification.rb with RBS::Inline
 
-# 新しいセットに移行するクラス。
+# 敗退者を決定するクラス
 class Disqualification < ScoreOperation
   private
 
