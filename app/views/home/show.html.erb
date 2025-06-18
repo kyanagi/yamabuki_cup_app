@@ -1,6 +1,11 @@
 <div class="container is-max-tablet">
   <section class="section">
     <h1 class="title has-text-centered">やまぶき杯マイページ</h1>
+    <div class="block has-text-centered">
+      <p class="is-size-5">
+        <%= Current.player.player_profile.full_name %>さん
+      </p>
+    </div>
     <div class="buttons is-flex is-flex-direction-column">
       <%= link_to edit_home_player_profile_path, class: "button is-primary is-fullwidth mb-4" do %>
         <span class="icon">
