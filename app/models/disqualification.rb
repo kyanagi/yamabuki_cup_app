@@ -1,4 +1,4 @@
-# 新しいセットに移行するクラス。
+# 敗退者を決定するクラス
 class Disqualification < ScoreOperation
   before_create :update_scores
   before_create :set_path
