@@ -10,6 +10,7 @@ body {
   overflow: hidden;
   background-color: #2f2f2f;
   font-family: "BIZUDPGothic-Regular", sans-serif;
+  user-select: none;
 }
 
 #scoreboard-root {
