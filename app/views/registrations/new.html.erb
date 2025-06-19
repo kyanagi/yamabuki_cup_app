@@ -1,6 +1,9 @@
 <section class="section">
   <div class="container is-max-tablet" data-controller="entry-form modal">
     <h1 class="title is-2">新規エントリー</h1>
+    <p class="block has-text-grey-dark">
+      エントリー済みの方は<%= link_to "こちらからログイン", new_session_path %>してください。
+    </p>
     <%= form_with model: @registration do |f| %>
       <% if @registration.errors.any? %>
         <div class="notification is-danger">
