@@ -5,10 +5,18 @@ class ScoreUndo < ActiveType::Object
 
   before_save :undo_operation
 
-  def undo_operation
-    previous_score_operation = match.last_score_operation&.previous_score_operation
-    if previous_score_operation
-      match.update!(last_score_operation: previous_score_operation)
-    end
+  private
+
+  def undo_operation #: void
+    undoing_operation = match.last_score_operation
+
+    return if undoing_operation.nil?
+
+    match.update!(last_score_operation: undoing_operation.previous_score_operation)
+
+    question_allocation = undoing_operation.question_result&.question_allocation
+
+    undoing_operation.destroy!
+    question_allocation&.destroy!
   end
 end

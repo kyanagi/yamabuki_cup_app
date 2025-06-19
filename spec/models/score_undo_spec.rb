@@ -25,4 +25,18 @@ RSpec.describe ScoreUndo, type: :model do
   it "Match#last_score_operationが、1つ前のScoreOperationに更新されること" do
     expect { ScoreUndo.create!(match:) }.to change { match.reload.last_score_operation }.to(score_operations[-2])
   end
+
+  it "undoしたScoreOperationが削除されること" do
+    undoing_operation = score_operations.last
+    expect { ScoreUndo.create!(match:) }.to change { ScoreOperation.exists?(undoing_operation.id) }.from(true).to(false)
+  end
+
+  it "undoしたScoreOperationに関連するQuestionAllocationが削除されること" do
+    question_result = create(:question_result, match:)
+    question_allocation = create(:question_allocation, question_result:)
+    undoing_operation = create(:score_operation, match:, question_result:)
+    match.update!(last_score_operation: undoing_operation)
+
+    expect { ScoreUndo.create!(match:) }.to change { QuestionAllocation.exists?(question_allocation.id) }.from(true).to(false)
+  end
 end
