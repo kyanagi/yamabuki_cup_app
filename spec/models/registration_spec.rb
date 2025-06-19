@@ -22,13 +22,13 @@ RSpec.describe Registration, type: :model do
     it "必須項目が未入力の場合は無効" do
       registration = Registration.new
       expect(registration).not_to be_valid
-      expect(registration.errors[:email]).to include("can't be blank")
-      expect(registration.errors[:password]).to include("can't be blank")
-      expect(registration.errors[:family_name]).to include("can't be blank")
-      expect(registration.errors[:given_name]).to include("can't be blank")
-      expect(registration.errors[:family_name_kana]).to include("can't be blank")
-      expect(registration.errors[:given_name_kana]).to include("can't be blank")
-      expect(registration.errors[:entry_list_name]).to include("can't be blank")
+      expect(registration.errors[:email]).to include("を入力してください")
+      expect(registration.errors[:password]).to include("を入力してください")
+      expect(registration.errors[:family_name]).to include("を入力してください")
+      expect(registration.errors[:given_name]).to include("を入力してください")
+      expect(registration.errors[:family_name_kana]).to include("を入力してください")
+      expect(registration.errors[:given_name_kana]).to include("を入力してください")
+      expect(registration.errors[:entry_list_name]).to include("を入力してください")
     end
 
     it "無効なメールアドレス形式の場合は無効" do
@@ -42,7 +42,7 @@ RSpec.describe Registration, type: :model do
         entry_list_name: "総理"
       )
       expect(registration).not_to be_valid
-      expect(registration.errors[:email]).to include("is invalid")
+      expect(registration.errors[:email]).to include("は不正な値です")
     end
 
     it "既に登録されているメールアドレスの場合は無効" do

@@ -20,7 +20,7 @@ RSpec.describe YontakuResultUpload, type: :model do
     it "CSVデータが必須であること" do
       upload = described_class.new
       expect(upload).not_to be_valid
-      expect(upload.errors[:csv_data]).to include("can't be blank")
+      expect(upload.errors[:csv_data]).to include("を入力してください")
     end
 
     it "正しい形式のCSVデータは有効であること" do

@@ -65,7 +65,7 @@ RSpec.describe "Registrations", type: :request do
         end.not_to change(Player, :count)
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include("is invalid")
+        expect(response.body).to include("は不正な値です")
       end
     end
 
@@ -90,7 +90,7 @@ RSpec.describe "Registrations", type: :request do
         end.not_to change(Player, :count)
 
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.body).to include("Email can&#39;t be blank")
+        expect(response.body).to include("を入力してください")
       end
     end
   end

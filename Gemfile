@@ -84,4 +84,5 @@ gem "active_hash"
 gem "active_type"
 gem "csv"
 gem "jabara_group"
+gem 'rails-i18n', '~> 8.0.0' # for Rails 8.0.x
 gem "vite_rails"

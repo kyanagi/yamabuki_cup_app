@@ -35,12 +35,12 @@ RSpec.describe PlayerProfileEdit, type: :model do
       player_profile_edit.entry_list_name = nil
 
       expect(player_profile_edit).not_to be_valid
-      expect(player_profile_edit.errors[:email]).to include("can't be blank")
-      expect(player_profile_edit.errors[:family_name]).to include("can't be blank")
-      expect(player_profile_edit.errors[:given_name]).to include("can't be blank")
-      expect(player_profile_edit.errors[:family_name_kana]).to include("can't be blank")
-      expect(player_profile_edit.errors[:given_name_kana]).to include("can't be blank")
-      expect(player_profile_edit.errors[:entry_list_name]).to include("can't be blank")
+      expect(player_profile_edit.errors[:email]).to include("を入力してください")
+      expect(player_profile_edit.errors[:family_name]).to include("を入力してください")
+      expect(player_profile_edit.errors[:given_name]).to include("を入力してください")
+      expect(player_profile_edit.errors[:family_name_kana]).to include("を入力してください")
+      expect(player_profile_edit.errors[:given_name_kana]).to include("を入力してください")
+      expect(player_profile_edit.errors[:entry_list_name]).to include("を入力してください")
     end
 
     it "パスワードは省略可能" do
