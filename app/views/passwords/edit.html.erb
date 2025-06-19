@@ -1,0 +1,41 @@
+<section class="section">
+  <div class="container is-max-tablet">
+    <h1 class="title is-2">新しいパスワードの設定</h1>
+    <% if flash[:alert] %>
+      <div class="notification is-danger is-light">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+    <% if flash[:notice] %>
+      <div class="notification is-success is-light">
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+    <%= form_with url: password_path(params[:token]), method: :put, local: true do |form| %>
+      <div class="field">
+        <%= form.label :password, "新しいパスワード", class: "label" %>
+        <div class="control has-icons-left">
+          <%= form.password_field :password, required: true, autocomplete: "new-password", placeholder: "新しいパスワードを入力", maxlength: 72, class: "input" %>
+          <span class="icon is-small is-left">
+            <i class="fas fa-lock"></i>
+          </span>
+        </div>
+      </div>
+      <div class="field">
+        <%= form.label :password_confirmation, "パスワード確認", class: "label" %>
+        <div class="control has-icons-left">
+          <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "パスワードを再入力", maxlength: 72, class: "input" %>
+          <span class="icon is-small is-left">
+            <i class="fas fa-lock"></i>
+          </span>
+        </div>
+        <p class="help">確認のため、同じパスワードを再度入力してください。</p>
+      </div>
+      <div class="field is-grouped is-grouped-right">
+        <div class="control">
+          <%= form.submit "パスワードを更新", class: "button is-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>

@@ -1,35 +1,47 @@
 <section class="section">
   <div class="container is-max-tablet">
     <h1 class="title is-2">ログイン</h1>
-    <%= form_with url: session_path, data: { turbo: false } do |f| %>
-      <% if flash[:alert] %>
-        <div class="notification is-danger is-light">
-          <%= flash[:alert] %>
+    <div class="block">
+      <%= form_with url: session_path, data: { turbo: false } do |f| %>
+        <% if notice %>
+          <div class="notification is-success is-light">
+            <%= notice %>
+          </div>
+        <% end %>
+        <% if flash[:alert] %>
+          <div class="notification is-danger is-light">
+            <%= flash[:alert] %>
+          </div>
+        <% end %>
+        <div class="field">
+          <%= f.label :email, "メールアドレス", class: "label" %>
+          <div class="control has-icons-left">
+            <%= f.email_field :email, class: "input", autocomplete: "email", placeholder: "yamabuki@example.com" %>
+            <span class="icon is-small is-left">
+              <i class="fas fa-envelope"></i>
+            </span>
+          </div>
+        </div>
+        <div class="field">
+          <%= f.label :password, "パスワード", class: "label" %>
+          <div class="control has-icons-left">
+            <%= f.password_field :password, class: "input", autocomplete: "current-password" %>
+            <span class="icon is-small is-left">
+              <i class="fas fa-lock"></i>
+            </span>
+          </div>
+        </div>
+        <div class="field is-grouped is-grouped-right">
+          <div class="control">
+            <%= f.submit "ログイン", class: "button is-primary" %>
+          </div>
         </div>
       <% end %>
-      <div class="field">
-        <%= f.label :email, "メールアドレス", class: "label" %>
-        <div class="control has-icons-left">
-          <%= f.email_field :email, class: "input", autocomplete: "email", placeholder: "yamabuki@example.com" %>
-          <span class="icon is-small is-left">
-            <i class="fas fa-envelope"></i>
-          </span>
-        </div>
-      </div>
-      <div class="field">
-        <%= f.label :password, "パスワード", class: "label" %>
-        <div class="control has-icons-left">
-          <%= f.password_field :password, class: "input", autocomplete: "current-password" %>
-          <span class="icon is-small is-left">
-            <i class="fas fa-lock"></i>
-          </span>
-        </div>
-      </div>
-      <div class="field is-grouped is-grouped-right">
-        <div class="control">
-          <%= f.submit "ログイン", class: "button is-primary" %>
-        </div>
-      </div>
-    <% end %>
+    </div>
+    <div class="block has-text-right">
+      <p class="has-text-grey-dark">
+        <%= link_to "パスワードを忘れた方", new_password_path %>
+      </p>
+    </div>
   </div>
 </section>

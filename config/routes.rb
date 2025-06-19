@@ -13,6 +13,9 @@ Rails.application.routes.draw do
 
   resources :registrations, only: [:new, :create]
   resource :session
+  resources :passwords, param: :token do
+    get :created, on: :collection
+  end
 
   get "/home", to: "home#show"
   namespace :home do

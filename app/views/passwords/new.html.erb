@@ -1,0 +1,40 @@
+<section class="section">
+  <div class="container is-max-tablet">
+    <h1 class="title is-2">パスワード再設定</h1>
+    <% if flash[:alert] %>
+      <div class="notification is-danger is-light">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+    <% if flash[:notice] %>
+      <div class="notification is-success is-light">
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+    <div class="block">
+      <p>登録されたメールアドレスにパスワード再設定メールを送信します。</p>
+    </div>
+    <div class="block">
+      <%= form_with url: passwords_path, local: true do |form| %>
+        <div class="field">
+          <%= form.label :email, "メールアドレス", class: "label" %>
+          <div class="control has-icons-left">
+            <%= form.email_field :email, required: true, autofocus: true, autocomplete: "username", placeholder: "yamabuki@example.com", value: params[:email], class: "input" %>
+            <span class="icon is-small is-left">
+              <i class="fas fa-envelope"></i>
+            </span>
+          </div>
+          <p class="help">登録時に使用したメールアドレスを入力してください。</p>
+        </div>
+        <div class="field">
+          <div class="control has-text-right">
+            <%= form.submit "再設定メールを送信", class: "button is-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="block has-text-right">
+      <p><%= link_to "ログインに戻る", new_session_path %></p>
+    </div>
+  </div>
+</section>
