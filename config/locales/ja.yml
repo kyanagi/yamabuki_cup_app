@@ -1,0 +1,12 @@
+ja:
+  activerecord:
+    attributes:
+      registration:
+        email: メールアドレス
+        password: パスワード
+        family_name: 姓
+        given_name: 名
+        family_name_kana: 姓（ふりがな）
+        given_name_kana: 名（ふりがな）
+        entry_list_name: エントリーリストの名前
+        notes: その他
