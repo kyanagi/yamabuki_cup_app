@@ -3,11 +3,13 @@
 # 問題1問ごとの締めの処理を行うクラス。
 # 問題の正誤を記録し、勝ち抜けや失格の処理を行う。
 class QuestionClosing < ScoreOperation
+  attr_reader question: untyped
+
+  @question: Question?
+
   private
 
   def validate_question_player_results_attributes: () -> void
-
-  def last_question_reading: () -> QuestionReading?
 
   def transfer_attributes: () -> void
 

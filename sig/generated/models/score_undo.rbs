@@ -1,5 +1,7 @@
 # Generated from app/models/score_undo.rb with RBS::Inline
 
 class ScoreUndo < ActiveType::Object
-  def undo_operation: () -> untyped
+  private
+
+  def undo_operation: () -> void
 end

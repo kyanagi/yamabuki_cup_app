@@ -9,5 +9,7 @@ module Admin
     private
 
     def create_params: () -> untyped
+
+    def broadcast_question_board: (untyped question) -> untyped
   end
 end
