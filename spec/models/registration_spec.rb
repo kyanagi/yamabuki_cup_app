@@ -30,6 +30,38 @@ RSpec.describe Registration, type: :model do
       expect(registration.errors[:given_name_kana]).to include("can't be blank")
       expect(registration.errors[:entry_list_name]).to include("can't be blank")
     end
+
+    it "無効なメールアドレス形式の場合は無効" do
+      registration = Registration.new(
+        email: "invalid-email",
+        password: "password123",
+        family_name: "伊藤",
+        given_name: "博文",
+        family_name_kana: "イトウ",
+        given_name_kana: "ヒロブミ",
+        entry_list_name: "総理"
+      )
+      expect(registration).not_to be_valid
+      expect(registration.errors[:email]).to include("is invalid")
+    end
+
+    it "既に登録されているメールアドレスの場合は無効" do
+      # 既存のユーザーを作成
+      player = create(:player)
+      create(:player_email_credential, player: player, email: "existing@example.com")
+
+      registration = Registration.new(
+        email: "existing@example.com",
+        password: "password123",
+        family_name: "伊藤",
+        given_name: "博文",
+        family_name_kana: "イトウ",
+        given_name_kana: "ヒロブミ",
+        entry_list_name: "総理"
+      )
+      expect(registration).not_to be_valid
+      expect(registration.errors[:email]).to include("は既に登録されています。ログインページからログインしてください。")
+    end
   end
 
   describe "#create_player_data" do

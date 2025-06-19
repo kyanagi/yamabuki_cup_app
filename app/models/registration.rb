@@ -8,7 +8,7 @@ class Registration < ActiveType::Object
   attribute :entry_list_name, :string
   attribute :notes, :text
 
-  validates :email, presence: true
+  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true
   validates :family_name, presence: true
   validates :given_name, presence: true
@@ -16,11 +16,21 @@ class Registration < ActiveType::Object
   validates :given_name_kana, presence: true
   validates :entry_list_name, presence: true
 
+  validate :email_uniqueness
+
   before_save :create_player_data
 
   attr_reader :player
 
   private
+
+  def email_uniqueness
+    return if email.blank?
+
+    if PlayerEmailCredential.exists?(email: email)
+      errors.add(:email, "は既に登録されています。ログインページからログインしてください。")
+    end
+  end
 
   def create_player_data
     ActiveRecord::Base.transaction do

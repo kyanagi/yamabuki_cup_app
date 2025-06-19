@@ -6,10 +6,7 @@
     </p>
     <%= form_with model: @registration do |f| %>
       <% if @registration.errors.any? %>
-        <div class="notification is-danger">
-          <h2 class="subtitle">
-            <%= pluralize(@registration.errors.count, "error") %> が発生しました：
-          </h2>
+        <div class="notification is-danger is-light">
           <ul>
             <% @registration.errors.full_messages.each do |message| %>
               <li><%= message %></li>

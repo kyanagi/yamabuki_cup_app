@@ -5,5 +5,7 @@ class Registration < ActiveType::Object
 
   private
 
+  def email_uniqueness: () -> untyped
+
   def create_player_data: () -> untyped
 end
