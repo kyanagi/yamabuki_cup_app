@@ -40,23 +40,14 @@ class QuestionClosing < ScoreOperation
     end
   end
 
-  def last_question_reading #: QuestionReading?
-    last_question_reading = QuestionReading.order(:created_at).last
-
-    if last_question_reading && QuestionAllocation.exists?(question_id: last_question_reading.question_id)
-      return nil
-    end
-
-    last_question_reading
-  end
-
   def transfer_attributes #: void
     question_order = (QuestionAllocation.maximum(:order) || 0) + 1
+    question_reading = QuestionReading.oldest_without_allocation
 
     @question_result = QuestionResult.new
     @question_result.question_allocation = QuestionAllocation.new(
       match:,
-      question_id: last_question_reading&.question_id,
+      question_id: question_reading&.question_id,
       order: question_order
     )
     question_player_results_attributes.map do |attr|
