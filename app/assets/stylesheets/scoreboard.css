@@ -587,6 +587,126 @@ body {
   }
 }
 
+/* 決勝 */
+.final-player {
+  display: grid;
+  grid-template: ". rank . name points misses previous-result" 1fr / 1% 15% 1% 38% 19% 1fr 2.5%;
+  width: 90%;
+  background-color: #0d8794;
+  align-items: center;
+  justify-self: center;
+}
+
+.final-player-rank {
+  grid-area: rank;
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 15vh;
+  font-style: italic;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+.final-player-name {
+  grid-area: name;
+  font-family: "GenShinGothic-Bold", sans-serif;
+  font-weight: bold;
+  font-size: 7vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.final-player-name--length-5 {
+  transform: scaleX(calc(4 / 5));
+  transform-origin: left top;
+}
+
+.final-player-name--length-6 {
+  transform: scaleX(calc(4 / 6));
+  transform-origin: left top;
+}
+
+.final-player-points {
+  grid-area: points;
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 11vh;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+}
+
+.final-player-misses {
+  --crosss-color: #bbb;
+  grid-area: misses;
+  font-family: "BIZUDPGothic-Regular", sans-serif;
+  font-size: 7vh;
+  -webkit-text-stroke: 6px var(--crosss-color);
+  color: var(--crosss-color);
+  text-align: left;
+}
+
+.final-player-stars {
+  font-family: "BIZUDPGothic-Regular", sans-serif;
+  font-size: 6vh;
+  color: #b8a602;
+  text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: top;
+  line-height: 1;
+  justify-content: flex-end;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.final-player-previous-result {
+  grid-area: previous-result;
+  grid-row: 1 / 3;
+  width: 100%;
+  height: 100%;
+}
+
+.final-player-previous-result--correct {
+  background-color: #0057c0;
+}
+
+.final-player-previous-result--wrong {
+  background-color: #c43147;
+}
+
+.final-player-set_win {
+  background-color: #976f2f;
+  .final-player-name {
+    opacity: 0.5;
+  }
+}
+
+.final-player-win {
+  background-color: #a86154;
+  .final-player-name {
+    color: #ffc5bb;
+  }
+}
+
+.final-player-waiting {
+  background-color: #4a4a4a;
+}
+
 /* Sequential score reveal animation classes */
 .hidden {
   opacity: 0;

@@ -1,0 +1,19 @@
+<%# locals: (scores:, score_operation:) %>
+<% scores.each do |score| %>
+  <% name = score.matching.player.player_profile.scoreboard_full_name %>
+  <div class="final-player final-player-<%= score.status %>"
+        id="final-player-<%= score.matching_id %>">
+    <div class="final-player-rank"><%= score.rank %></div>
+    <div class="final-player-name">
+      <div class="final-player-name--length-<%= name.size %>"><%= name %></div>
+    </div>
+    <div class="final-player-points"><%= score.points.to_s.gsub('-', "\u2212") %></div>
+    <div class="final-player-misses">
+      <% score.misses.times do %><span class="final-player-misses-cross">×</span><% end %>
+    </div>
+    <div class="final-player-previous-result <%= scoreboard_hayaoshi_player_previous_result_class(score_operation, score.matching.player_id) %>"></div>
+  </div>
+  <div class="final-player-stars">
+    <% score.stars.times do %><span class="final-player-star">★</span><% end %>
+  </div>
+<% end %>
