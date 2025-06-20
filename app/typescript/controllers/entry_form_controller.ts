@@ -5,8 +5,8 @@ const EmailSchema = v.pipe(v.string(), v.email("有効なメールアドレス�
 const PasswordSchema = v.pipe(v.string(), v.nonEmpty("パスワードを入力してください"));
 const FamilyNameSchema = v.pipe(v.string(), v.nonEmpty("姓を入力してください"));
 const GivenNameSchema = v.pipe(v.string(), v.nonEmpty("名を入力してください"));
-const FamilyNameKanaSchema = v.pipe(v.string(), v.nonEmpty("姓のふりがなを入力してください"));
-const GivenNameKanaSchema = v.pipe(v.string(), v.nonEmpty("名のふりがなを入力してください"));
+const FamilyNameKanaSchema = v.pipe(v.string(), v.nonEmpty("姓（ふりがな）を入力してください"));
+const GivenNameKanaSchema = v.pipe(v.string(), v.nonEmpty("名（ふりがな）を入力してください"));
 const EntryListNameSchema = v.pipe(v.string(), v.nonEmpty("エントリーリストの名前を入力してください"));
 
 export default class extends Controller {
