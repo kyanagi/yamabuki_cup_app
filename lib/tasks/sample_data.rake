@@ -72,4 +72,50 @@ namespace :sample_data do
       ApproximationQuizAnswer.create!(player:, answer1: rand(10000), answer2: rand(10000))
     end
   end
+
+  desc "ペーパーの採点を行う"
+  task paper_quiz_grading: :environment do
+    PaperQuizGrading.create!
+  end
+
+  desc "2Rの組分けを行う"
+  task matchmake_round2: :environment do
+    Matchmaking::Round2.create!
+  end
+
+  desc "2Rの試合を全て終了させる"
+  task finish_round2: :environment do
+    Round::ROUND2.matches.each do |match|
+      MatchClosing.create!(match:)
+    end
+  end
+
+  desc "3Rの組分けを行う"
+  task matchmake_round3: :environment do
+    Matchmaking::Round3.create!
+  end
+
+  desc "3Rの試合を全て終了させる"
+  task finish_round3: :environment do
+    Round::ROUND3.matches.each do |match|
+      MatchClosing.create!(match:)
+    end
+  end
+
+  desc "準々決勝の組分けを行う"
+  task matchmake_quarterfinal: :environment do
+    Matchmaking::Quarterfinal.create!
+  end
+
+  desc "準々決勝の試合を全て終了させる"
+  task finish_quarterfinal: :environment do
+    Round::QUARTERFINAL.matches.each do |match|
+      MatchClosing.create!(match:)
+    end
+  end
+
+  desc "準決勝の組分けを行う"
+  task matchmake_semifinal: :environment do
+    Matchmaking::Semifinal.create!
+  end
 end
