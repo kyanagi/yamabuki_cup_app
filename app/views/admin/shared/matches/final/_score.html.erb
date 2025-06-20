@@ -7,7 +7,7 @@
     </span>
     <% if score.rank %>
       <span>
-        <%= score.rank.ordinalize %>
+        <%= I18n.with_locale(:en) { score.rank.ordinalize } %>
       </span>
     <% end %>
   </td>
