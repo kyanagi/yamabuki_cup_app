@@ -14,7 +14,7 @@ module Admin
       end
 
       broadcast_scoreboard(match)
-      broadcast_question_board(question)
+      broadcast_question_board(question) if question
       setup_instance_variables(match)
       render "admin/shared/matches/#{@match.rule_class::ADMIN_VIEW_TEMPLATE}/show"
     end
