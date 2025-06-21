@@ -19,4 +19,12 @@ class Score < ApplicationRecord
     occupied_ranks = scores.filter_map(&:rank).to_set
     scores.size.downto(1).find { |rank| !occupied_ranks.include?(rank) }
   end
+
+  def score_changed?
+    !!@score_changed
+  end
+
+  def mark_as_score_changed
+    @score_changed = true
+  end
 end

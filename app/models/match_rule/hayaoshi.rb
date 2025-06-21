@@ -24,6 +24,7 @@ module MatchRule
         elsif question_player_result.result_wrong?
           process_wrong(s)
         end
+        s.mark_as_score_changed
       end
     end
 
@@ -56,6 +57,7 @@ module MatchRule
       sort_players_by_ranking_criteria!(judgment_targets)
       judgment_targets.first(num_left_winners).each do |score|
         mark_as_winner(score)
+        score.mark_as_score_changed
       end
     end
 

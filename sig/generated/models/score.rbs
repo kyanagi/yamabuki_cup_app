@@ -10,4 +10,8 @@ class Score < ApplicationRecord
   # @rbs scores: Array[Score]
   # @rbs return: Integer
   def self.lowest_vacant_rank: (Array[Score] scores) -> Integer
+
+  def score_changed?: () -> untyped
+
+  def mark_as_score_changed: () -> untyped
 end

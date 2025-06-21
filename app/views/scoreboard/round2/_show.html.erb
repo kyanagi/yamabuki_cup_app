@@ -1,6 +1,6 @@
 <%# locals: (scores:, score_operation:) %>
 <% scores.each do |score| %>
-  <div class="round2-match-player round2-match-player-<%= score.status %>"
+  <div class="round2-match-player round2-match-player-<%= score.status %> <%= "animation-flip-in-x" if score.score_changed? %>"
         id="round2-match-player-<%= score.matching_id %>">
     <div class="round2-match-player-rank"><%= score.rank %></div>
     <div class="round2-match-name"><%= score.matching.player.player_profile.family_name %></div>

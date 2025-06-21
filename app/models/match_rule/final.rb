@@ -40,6 +40,7 @@ module MatchRule
       prepare_new_scores(score_operation)
       @scores.each do |s|
         s.attributes = { points: 0, misses: 0, status: "playing" }
+        s.mark_as_score_changed
       end
     end
 
@@ -75,6 +76,7 @@ module MatchRule
       if score.points >= self.class::POINTS_TO_SET_WIN
         mark_as_set_winner(score)
       end
+      score.mark_as_score_changed
     end
 
     # @rbs score: Score
@@ -90,6 +92,7 @@ module MatchRule
         survivor = @scores.find(&:status_playing?)
         mark_as_set_winner(survivor)
       end
+      score.mark_as_score_changed
     end
 
     # @rbs score: Score
@@ -99,18 +102,21 @@ module MatchRule
       if score.stars >= STARS_TO_WIN
         mark_as_winner(score)
       end
+      score.mark_as_score_changed
     end
 
     # @rbs score: Score
     # @rbs return: void
     def mark_as_set_winner(score)
       score.status = "set_win"
+      score.mark_as_score_changed
     end
 
     # @rbs score: Score
     # @rbs return: void
     def mark_as_set_loser(score)
       score.status = "waiting"
+      score.mark_as_score_changed
     end
 
     # @rbs score: Score
@@ -118,6 +124,7 @@ module MatchRule
     def mark_as_winner(score)
       score.status = "win"
       score.rank = Score.highest_vacant_rank(@scores)
+      score.mark_as_score_changed
     end
 
     # @rbs return: bool
@@ -134,6 +141,7 @@ module MatchRule
       judgment_targets.each do |score|
         score.rank = Score.highest_vacant_rank(@scores)
         score.status = "win" if score.rank <= self.class::NUM_WINNERS
+        score.mark_as_score_changed
       end
     end
 

@@ -28,10 +28,13 @@ module MatchRule
         case [question_player_result.situation_pushed?, question_player_result.result_correct?]
         when [true, true]
           process_pushed_correct(s, is_sole_correct)
+          s.mark_as_score_changed
         when [true, false]
           process_pushed_wrong(s)
+          s.mark_as_score_changed
         when [false, true]
           process_unpushed_correct(s, is_sole_correct)
+          s.mark_as_score_changed
         when [false, false]
           process_unpushed_wrong(s)
         end
@@ -84,6 +87,7 @@ module MatchRule
       sort_players_by_ranking_criteria!(judgment_targets)
       judgment_targets.first(num_left_winners).each do |score|
         mark_as_winner(score)
+        score.mark_as_score_changed
       end
     end
 

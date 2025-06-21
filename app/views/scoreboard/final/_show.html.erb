@@ -1,7 +1,7 @@
 <%# locals: (scores:, score_operation:) %>
 <% scores.each do |score| %>
   <% name = score.matching.player.player_profile.scoreboard_full_name %>
-  <div class="final-player final-player-<%= score.status %>"
+  <div class="final-player final-player-<%= score.status %> <%= "animation-flip-in-x" if score.score_changed? %>"
         id="final-player-<%= score.matching_id %>">
     <div class="final-player-rank"><%= score.rank %></div>
     <div class="final-player-name">
