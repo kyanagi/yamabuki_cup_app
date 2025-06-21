@@ -69,8 +69,8 @@ module MatchRule
     # @rbs return: void
     def prepare_new_scores(score_operation)
       previous_scores = @match.current_scores.map do |score|
-        # dup だけだと preload していても N+1 問題が発生するため、
-        # 明示的に matching をコピーする。
+        # dup によって、id が nil の新しいオブジェクトが作成される。
+        # dup だけだと preload していても N+1 問題が発生するため、matching は明示的にコピーする。
         score.dup.tap do |s|
           s.matching = score.matching
         end
