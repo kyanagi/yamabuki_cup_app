@@ -97,7 +97,7 @@ module MatchRule
     def process_special_correct(score)
       score.stars += 1
       if score.stars >= STARS_TO_WIN
-        score.status = "win"
+        mark_as_winner(score)
       end
     end
 
@@ -113,9 +113,34 @@ module MatchRule
       score.status = "waiting"
     end
 
+    # @rbs score: Score
+    # @rbs return: void
+    def mark_as_winner(score)
+      score.status = "win"
+      score.rank = Score.highest_vacant_rank(@scores)
+    end
+
     # @rbs return: bool
     def only_one_player_is_playing?
       @scores.one?(&:status_playing?)
+    end
+
+    # @rbs override
+    # @rbs return: void
+    def judge_on_quiz_completed
+      judgment_targets = @scores.reject(&:status_win?)
+      sort_players_by_ranking_criteria!(judgment_targets)
+
+      judgment_targets.each do |score|
+        score.rank = Score.highest_vacant_rank(@scores)
+        score.status = "win" if score.rank <= self.class::NUM_WINNERS
+      end
+    end
+
+    # @rbs scores: Array[Score]
+    # @rbs return: void
+    def sort_players_by_ranking_criteria!(scores)
+      scores.sort_by! { [-it.stars, it.matching.seat] }
     end
   end
 end

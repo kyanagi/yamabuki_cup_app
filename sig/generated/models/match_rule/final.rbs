@@ -57,7 +57,19 @@ module MatchRule
     # @rbs return: void
     def mark_as_set_loser: (Score score) -> void
 
+    # @rbs score: Score
+    # @rbs return: void
+    def mark_as_winner: (Score score) -> void
+
     # @rbs return: bool
     def only_one_player_is_playing?: () -> bool
+
+    # @rbs override
+    # @rbs return: void
+    def judge_on_quiz_completed: ...
+
+    # @rbs scores: Array[Score]
+    # @rbs return: void
+    def sort_players_by_ranking_criteria!: (Array[Score] scores) -> void
   end
 end

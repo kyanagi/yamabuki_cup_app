@@ -131,7 +131,7 @@ RSpec.describe MatchRule::Final do
           scores = match_rule.instance_variable_get(:@scores)
           expect(scores[0].stars).to eq 7
           expect(scores[0].status).to eq "win"
-          expect(scores[0].rank).to be_nil
+          expect(scores[0].rank).to eq 1
         end
       end
 
@@ -145,6 +145,73 @@ RSpec.describe MatchRule::Final do
           expect(scores[0].status).to eq "set_win"
           expect(scores[0].rank).to be_nil
         end
+      end
+    end
+  end
+
+  describe "#process_match_closing" do
+    let(:match_closing) { build(:match_closing, match:) }
+
+    context "★の数に差がある場合" do
+      let!(:initial_scores) do
+        [
+          create(:score, score_operation: match_opening, matching: matchings[0], status: "playing", stars: 3),
+          create(:score, score_operation: match_opening, matching: matchings[1], status: "playing", stars: 1),
+          create(:score, score_operation: match_opening, matching: matchings[2], status: "playing", stars: 2),
+          create(:score, score_operation: match_opening, matching: matchings[3], status: "playing", stars: 0),
+        ]
+      end
+
+      it "★の数が多い順に順位が決定されること" do
+        match_rule.process_match_closing(match_closing)
+        scores = match_rule.instance_variable_get(:@scores)
+        expect(scores.map(&:rank)).to eq [1, 3, 2, 4]
+        expect(scores[0].status).to eq "win"
+        expect(scores[1].status).to eq "playing"
+        expect(scores[2].status).to eq "playing"
+        expect(scores[3].status).to eq "playing"
+      end
+    end
+
+    context "★の数が同じ場合" do
+      let!(:initial_scores) do
+        [
+          create(:score, score_operation: match_opening, matching: matchings[0], status: "playing", stars: 2),
+          create(:score, score_operation: match_opening, matching: matchings[1], status: "playing", stars: 2),
+          create(:score, score_operation: match_opening, matching: matchings[2], status: "playing", stars: 1),
+          create(:score, score_operation: match_opening, matching: matchings[3], status: "playing", stars: 1),
+        ]
+      end
+
+      it "座席番号順（ペーパークイズ順位順）に順位が決定されること" do
+        match_rule.process_match_closing(match_closing)
+        scores = match_rule.instance_variable_get(:@scores)
+        expect(scores.map(&:rank)).to eq [1, 2, 3, 4]
+        expect(scores[0].status).to eq "win"
+        expect(scores[1].status).to eq "playing"
+        expect(scores[2].status).to eq "playing"
+        expect(scores[3].status).to eq "playing"
+      end
+    end
+
+    context "既に勝ち抜けている選手がいる場合" do
+      let!(:initial_scores) do
+        [
+          create(:score, score_operation: match_opening, matching: matchings[0], status: "win", stars: 7, rank: 1),
+          create(:score, score_operation: match_opening, matching: matchings[1], status: "playing", stars: 2),
+          create(:score, score_operation: match_opening, matching: matchings[2], status: "playing", stars: 3),
+          create(:score, score_operation: match_opening, matching: matchings[3], status: "playing", stars: 1),
+        ]
+      end
+
+      it "勝ち抜け済み選手の順位は変更せず、残りの選手の順位を決定すること" do
+        match_rule.process_match_closing(match_closing)
+        scores = match_rule.instance_variable_get(:@scores)
+        expect(scores.map(&:rank)).to eq [1, 3, 2, 4]
+        expect(scores[0].status).to eq "win"
+        expect(scores[1].status).to eq "playing"
+        expect(scores[2].status).to eq "playing"
+        expect(scores[3].status).to eq "playing"
       end
     end
   end
