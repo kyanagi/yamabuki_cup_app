@@ -37,7 +37,7 @@ module MatchRule
 
     # 新たに勝ち抜けポイントを超えた選手を勝者として記録する。
     # @rbs return: void
-    def promote_and_save_new_winners: () -> void
+    def promote_new_winners: () -> void
 
     # @rbs score: Score
     # @rbs return: void

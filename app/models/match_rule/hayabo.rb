@@ -37,7 +37,7 @@ module MatchRule
         end
       end
 
-      promote_and_save_new_winners
+      promote_new_winners
     end
 
     # @rbs override
@@ -115,7 +115,7 @@ module MatchRule
 
     # 新たに勝ち抜けポイントを超えた選手を勝者として記録する。
     # @rbs return: void
-    def promote_and_save_new_winners
+    def promote_new_winners
       num_left_winners = self.class::NUM_WINNERS - @scores.count(&:status_win?)
       return if num_left_winners <= 0
 
