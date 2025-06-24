@@ -35,11 +35,6 @@ Rails.application.routes.draw do
     resources :scoreboard_manipulations, only: [:new, :create]
 
     namespace :round1 do
-      get "timer", to: "timer#show"
-      post "timer/display", to: "timer#display"
-      post "timer/start", to: "timer#start"
-      post "timer/stop", to: "timer#stop"
-      patch "timer/remaining_time", to: "timer#update_remaining_time"
       resources :results, only: [:index]
       resources :yontaku_player_papers, only: [:create, :index] do
         collection do

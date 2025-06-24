@@ -8,6 +8,15 @@ module Admin
 
     def create
       case params[:action_name]
+      when "round1_timer_init"
+        ActionCable.server.broadcast("scoreboard", render_to_string("scoreboard/timer"))
+      when "round1_timer_update_remaining_time"
+        remaining_time = ((params[:minutes].to_i * 60) + params[:seconds].to_i) * 1000
+        ActionCable.server.broadcast("scoreboard", turbo_stream.timer_set_remaining_time(remaining_time))
+      when "round1_timer_start"
+        ActionCable.server.broadcast("scoreboard", turbo_stream.timer_start)
+      when "round1_timer_stop"
+        ActionCable.server.broadcast("scoreboard", turbo_stream.timer_stop)
       when "paper_seed_init"
         ActionCable.server.broadcast(
           "scoreboard",
