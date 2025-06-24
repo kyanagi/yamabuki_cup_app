@@ -64,6 +64,7 @@ body {
   display: flex;
   place-content: center;
   place-items: center;
+  font-family: "FORMUDPGothic-Bold", sans-serif;
   font-size: 40vh;
   font-weight: bold;
 }
