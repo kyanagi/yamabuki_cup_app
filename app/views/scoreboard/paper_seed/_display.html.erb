@@ -1,0 +1,16 @@
+<div class="columns-2">
+  <div class="paper-seed-container">
+    <% 1.upto(7) do |rank|%>
+      <% result = YontakuPlayerResult.find_by(rank:) %>
+      <% name = result.player.player_profile.scoreboard_full_name %>
+      <div class="paper-seed-player" id="paper-seed-player-<%= rank %>">
+        <div class="paper-seed-rank"><%= rank %></div>
+        <div class="paper-seed-name">
+          <div class="paper-seed-name--length-<%= name.size %>"><%= name %></div>
+        </div>
+        <div class="paper-seed-score"><%= result.score %></div>
+      </div>
+    <% end %>
+  </div>
+  <div id="question"></div>
+</div>

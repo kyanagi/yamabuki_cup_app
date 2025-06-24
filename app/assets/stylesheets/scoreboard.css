@@ -98,9 +98,8 @@ body {
 
 .paper-seed-player {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  width: 80%;
-  gap: 3em;
+  grid-template: ". rank . name . score ." 1fr / 1% 15% 1% 1fr 1% auto 3%;
+  width: 90%;
   background-color: #a86154;
   align-items: center;
   margin: 0 auto;
@@ -113,6 +112,7 @@ body {
 }
 
 .paper-seed-rank {
+  grid-area: rank;
   font-family: "Jost", sans-serif;
   font-optical-sizing: auto;
   font-size: 15vh;
@@ -128,9 +128,18 @@ body {
 }
 
 .paper-seed-name {
+  grid-area: name;
   font-family: "GenShinGothic-Medium", sans-serif;
   font-size: 7vh;
   overflow: hidden;
+}
+
+.paper-seed-score {
+  grid-area: score;
+  font-family: "Jost", sans-serif;
+  font-family: "FORMUDPGothic-Bold", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 4.5vh;
 }
 
 /* 2R 発表 */
