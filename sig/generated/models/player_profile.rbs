@@ -3,5 +3,7 @@
 class PlayerProfile < ApplicationRecord
   def full_name: (?untyped spacer) -> untyped
 
+  def full_name_kana: (?untyped spacer) -> untyped
+
   def scoreboard_full_name: () -> untyped
 end
