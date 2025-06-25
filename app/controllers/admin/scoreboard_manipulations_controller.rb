@@ -13,6 +13,7 @@ module Admin
 
     def seed_announcement
       @section = "seed_announcement"
+      @yontaku_results = YontakuPlayerResult.includes(player: :player_profile).order(:rank)
       render :show, layout: "admin"
     end
 

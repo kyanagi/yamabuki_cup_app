@@ -57,21 +57,39 @@
         <% end %>
       </div>
     <% when "seed_announcement" %>
-      <div class="box">
-        <h2 class="title is-4">シード発表</h2>
-        <div class="buttons">
-          <%= button_to "init",
+      <h2 class="title is-4">シード発表</h2>
+      <div class="mb-4">
+        <%= button_to "初期表示",
                 admin_scoreboard_manipulations_path(action_name: "paper_seed_init"),
                 method: :post,
-                class: "button is-primary" %>
-          <% 1.upto(7) do |rank| %>
-            <%= button_to "#{rank}位",
-                  admin_scoreboard_manipulations_path(action_name: "paper_seed_display_player", rank: rank),
-                  method: :post,
-                  class: "button is-primary" %>
-          <% end %>
-        </div>
+                class: "button is-link" %>
       </div>
+      <table class="table">
+        <% 1.upto(7) do |rank| %>
+          <% result = @yontaku_results.find { |r| r.rank == rank } %>
+          <% next unless result %>
+          <tr class="is-size-5">
+            <td>
+              <%= button_to "表示",
+                    admin_scoreboard_manipulations_path(action_name: "paper_seed_display_player", rank: rank),
+                    method: :post,
+                    class: "button is-primary" %>
+            </td>
+            <td>
+              <%= rank %>位
+            </td>
+            <td>
+              <%= result.player.player_profile.full_name %>
+            </td>
+            <td>
+              <%= result.player.player_profile.full_name_kana %>
+            </td>
+            <td>
+              <%= result.score %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
     <% when "round2_match1", "round2_match2", "round2_match3", "round2_match4", "round2_match5" %>
       <div class="box">
         <h2 class="title is-4">2R発表 - <%= @match.name %></h2>
