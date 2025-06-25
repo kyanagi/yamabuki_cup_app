@@ -34,7 +34,17 @@ Rails.application.routes.draw do
       post "question_readings", to: "question_readings#create"
     end
 
-    resources :scoreboard_manipulations, only: [:new, :create]
+    resources :scoreboard_manipulations, only: [:new, :create] do
+      collection do
+        get :round1_timer
+        get :seed_announcement
+        get :round2_match1
+        get :round2_match2
+        get :round2_match3
+        get :round2_match4
+        get :round2_match5
+      end
+    end
 
     get "round1", to: "round1#show"
 

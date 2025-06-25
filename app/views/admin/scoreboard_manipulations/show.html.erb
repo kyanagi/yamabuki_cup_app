@@ -1,0 +1,96 @@
+<div class="container">
+  <section class="section">
+    <h1 class="title is-2">画面表示</h1>
+    <div class="field">
+      <label class="label">表示項目</label>
+      <div class="control">
+        <div class="select">
+          <%= select_tag :section,
+                options_for_select([
+                  ["1Rタイマー", round1_timer_admin_scoreboard_manipulations_path],
+                  ["シード発表", seed_announcement_admin_scoreboard_manipulations_path],
+                  ["2R発表 第1組", round2_match1_admin_scoreboard_manipulations_path],
+                  ["2R発表 第2組", round2_match2_admin_scoreboard_manipulations_path],
+                  ["2R発表 第3組", round2_match3_admin_scoreboard_manipulations_path],
+                  ["2R発表 第4組", round2_match4_admin_scoreboard_manipulations_path],
+                  ["2R発表 第5組", round2_match5_admin_scoreboard_manipulations_path]
+                ], request.path),
+                { onchange: "window.location.href=this.value" } %>
+        </div>
+      </div>
+    </div>
+    <% case @section %>
+    <% when "round1_timer" %>
+      <div class="box">
+        <h2 class="title is-4">1Rタイマー</h2>
+        <div class="buttons">
+          <%= button_to "表示", admin_scoreboard_manipulations_path(action_name: "round1_timer_init"), method: :post, class: "button is-primary", data: { turbo_confirm: "タイマーを表示します。残り時間はリセットされます。" } %>
+          <%= button_to "開始", admin_scoreboard_manipulations_path(action_name: "round1_timer_start"), method: :post, class: "button is-success" %>
+          <%= button_to "停止", admin_scoreboard_manipulations_path(action_name: "round1_timer_stop"), method: :post, class: "button is-danger" %>
+        </div>
+        <%= form_with url: admin_scoreboard_manipulations_path(action_name: "round1_timer_update_remaining_time"),
+                        method: :post,
+                        data: { turbo_stream: true } do |f| %>
+          <div class="field is-grouped">
+            <div class="control">
+              <%= f.number_field :minutes,
+                    min: 0,
+                    max: 99,
+                    value: 1,
+                    class: "input" %>
+            </div>
+            <label class="label">分</label>
+            <div class="control">
+              <%= f.number_field :seconds,
+                    min: 0,
+                    max: 59,
+                    value: 0,
+                    class: "input" %>
+            </div>
+            <label class="label">秒</label>
+            <div class="control" style="align-self: flex-end;">
+              <%= f.submit "設定",
+                  class: "button is-danger",
+                  data: { turbo_confirm: "残り時間を変更します。" } %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% when "seed_announcement" %>
+      <div class="box">
+        <h2 class="title is-4">シード発表</h2>
+        <div class="buttons">
+          <%= button_to "init",
+                admin_scoreboard_manipulations_path(action_name: "paper_seed_init"),
+                method: :post,
+                class: "button is-primary" %>
+          <% 1.upto(7) do |rank| %>
+            <%= button_to "#{rank}位",
+                  admin_scoreboard_manipulations_path(action_name: "paper_seed_display_player", rank: rank),
+                  method: :post,
+                  class: "button is-primary" %>
+          <% end %>
+        </div>
+      </div>
+    <% when "round2_match1", "round2_match2", "round2_match3", "round2_match4", "round2_match5" %>
+      <div class="box">
+        <h2 class="title is-4">2R発表 - <%= @match.name %></h2>
+        <div class="buttons">
+          <%= button_to "init",
+            admin_scoreboard_manipulations_path(action_name: "round2_init", match_id: @match.id),
+            method: :post,
+            class: "button is-primary" %>
+          <% @match.matchings.order(:seat).each do |matching| %>
+            <%= button_to "席#{matching.seat}",
+              admin_scoreboard_manipulations_path(action_name: "round2_display_player", matching_id: matching.id),
+              method: :post,
+              class: "button is-primary" %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    <div class="mt-5">
+      <%= link_to "戻る", admin_root_path, class: "button is-light" %>
+    </div>
+  </section>
+</div>

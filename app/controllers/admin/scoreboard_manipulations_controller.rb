@@ -3,7 +3,47 @@ module Admin
     layout false
 
     def new
-      render :new, layout: "admin"
+      redirect_to round1_timer_admin_scoreboard_manipulations_path
+    end
+
+    def round1_timer
+      @section = "round1_timer"
+      render :show, layout: "admin"
+    end
+
+    def seed_announcement
+      @section = "seed_announcement"
+      render :show, layout: "admin"
+    end
+
+    def round2_match1
+      @section = "round2_match1"
+      @match = Round::ROUND2.matches[0]
+      render :show, layout: "admin"
+    end
+
+    def round2_match2
+      @section = "round2_match2"
+      @match = Round::ROUND2.matches[1]
+      render :show, layout: "admin"
+    end
+
+    def round2_match3
+      @section = "round2_match3"
+      @match = Round::ROUND2.matches[2]
+      render :show, layout: "admin"
+    end
+
+    def round2_match4
+      @section = "round2_match4"
+      @match = Round::ROUND2.matches[3]
+      render :show, layout: "admin"
+    end
+
+    def round2_match5
+      @section = "round2_match5"
+      @match = Round::ROUND2.matches[4]
+      render :show, layout: "admin"
     end
 
     def create
