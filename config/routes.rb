@@ -24,6 +24,8 @@ Rails.application.routes.draw do
   end
 
   namespace :admin do
+    root "dashboard#show"
+
     resource :settings, only: [:show, :update]
 
     get "quiz_reader", to: "quiz_reader#show"
@@ -33,6 +35,8 @@ Rails.application.routes.draw do
     end
 
     resources :scoreboard_manipulations, only: [:new, :create]
+
+    get "round1", to: "round1#show"
 
     namespace :round1 do
       resources :results, only: [:index]

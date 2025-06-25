@@ -1,0 +1,63 @@
+<div class="container">
+  <section class="section">
+    <h1 class="title is-2">管理画面</h1>
+    <div class="columns">
+      <div class="column is-3">
+        <div class="card">
+          <div class="card-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="title is-4">ペーパー採点</p>
+              </div>
+            </div>
+          </div>
+          <footer class="card-footer">
+            <%= link_to "開く", "/admin/round1", class: "card-footer-item" %>
+          </footer>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="card">
+          <div class="card-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="title is-4">画面表示</p>
+              </div>
+            </div>
+          </div>
+          <footer class="card-footer">
+            <%= link_to "開く", new_admin_scoreboard_manipulation_path, class: "card-footer-item" %>
+          </footer>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="card">
+          <div class="card-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="title is-4">試合一覧</p>
+              </div>
+            </div>
+          </div>
+          <footer class="card-footer">
+            <%= link_to "開く", admin_matches_path, class: "card-footer-item" %>
+          </footer>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="card">
+          <div class="card-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="title is-4">システム設定</p>
+              </div>
+            </div>
+          </div>
+          <footer class="card-footer">
+            <%= link_to "開く", admin_settings_path, class: "card-footer-item" %>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

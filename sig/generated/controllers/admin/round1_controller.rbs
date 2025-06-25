@@ -1,0 +1,5 @@
+# Generated from app/controllers/admin/round1_controller.rb with RBS::Inline
+
+class Admin::Round1Controller < AdminController
+  def show: () -> untyped
+end
