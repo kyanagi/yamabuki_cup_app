@@ -42,8 +42,10 @@ export default class extends Controller {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
-    const seconds = now.getSeconds().toString().padStart(2, "0");
 
-    this.clockTarget.textContent = `${hours}:${minutes}:${seconds}`;
+    // コロンの透明度で点滅を実現
+    const colonOpacity = now.getSeconds() % 2 === 0 ? "1" : "0";
+
+    this.clockTarget.innerHTML = `${hours}<span style="opacity: ${colonOpacity}">:</span>${minutes}`;
   }
 }
