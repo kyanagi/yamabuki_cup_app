@@ -156,11 +156,10 @@ body {
 
 .round2-player {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template: ". rank . name" 1fr / 1% 30% 3% 1fr;
   width: 90%;
   background-color: #0d8794;
   justify-self: center;
-  gap: 40px;
 }
 
 .round2-player-animation {
@@ -178,6 +177,7 @@ body {
 }
 
 .round2-rank {
+  grid-area: rank;
   font-family: "Jost", sans-serif;
   font-optical-sizing: auto;
   font-size: 15vh;
@@ -193,6 +193,7 @@ body {
 }
 
 .round2-name {
+  grid-area: name;
   font-family: "GenShinGothic-Bold", sans-serif;
   font-size: 7vh;
   overflow: hidden;
