@@ -21,107 +21,11 @@
     </div>
     <% case @section %>
     <% when "round1_timer" %>
-      <div class="box">
-        <h2 class="title is-4">1Rタイマー</h2>
-        <div class="buttons">
-          <%= button_to "表示", admin_scoreboard_manipulations_path(action_name: "round1_timer_init"), method: :post, class: "button is-primary", data: { turbo_confirm: "タイマーを表示します。残り時間はリセットされます。" } %>
-          <%= button_to "開始", admin_scoreboard_manipulations_path(action_name: "round1_timer_start"), method: :post, class: "button is-success" %>
-          <%= button_to "停止", admin_scoreboard_manipulations_path(action_name: "round1_timer_stop"), method: :post, class: "button is-danger" %>
-        </div>
-        <%= form_with url: admin_scoreboard_manipulations_path(action_name: "round1_timer_update_remaining_time"),
-                        method: :post,
-                        data: { turbo_stream: true } do |f| %>
-          <div class="field is-grouped">
-            <div class="control">
-              <%= f.number_field :minutes,
-                    min: 0,
-                    max: 99,
-                    value: 1,
-                    class: "input" %>
-            </div>
-            <label class="label">分</label>
-            <div class="control">
-              <%= f.number_field :seconds,
-                    min: 0,
-                    max: 59,
-                    value: 0,
-                    class: "input" %>
-            </div>
-            <label class="label">秒</label>
-            <div class="control" style="align-self: flex-end;">
-              <%= f.submit "設定",
-                  class: "button is-danger",
-                  data: { turbo_confirm: "残り時間を変更します。" } %>
-            </div>
-          </div>
-        <% end %>
-      </div>
+      <%= render "round1_timer" %>
     <% when "seed_announcement" %>
-      <h2 class="title is-4">シード発表</h2>
-      <div class="block">
-        <%= button_to "初期表示",
-                admin_scoreboard_manipulations_path(action_name: "paper_seed_init"),
-                method: :post,
-                class: "button is-link" %>
-      </div>
-      <table class="table">
-        <% 1.upto(7) do |rank| %>
-          <% result = @yontaku_results.find { |r| r.rank == rank } %>
-          <% next unless result %>
-          <tr class="is-size-5">
-            <td>
-              <%= button_to "表示",
-                    admin_scoreboard_manipulations_path(action_name: "paper_seed_display_player", rank: rank),
-                    method: :post,
-                    class: "button is-primary" %>
-            </td>
-            <td class="is-vcentered">
-              <%= I18n.with_locale(:en) { rank.ordinalize } %>
-            </td>
-            <td class="is-vcentered">
-              <%= result.player.player_profile.full_name %>
-            </td>
-            <td class="is-vcentered">
-              <%= result.player.player_profile.full_name_kana %>
-            </td>
-            <td class="is-vcentered has-text-right">
-              <%= result.score %>点
-            </td>
-          </tr>
-        <% end %>
-      </table>
+      <%= render "seed_announcement" %>
     <% when "round2_match1", "round2_match2", "round2_match3", "round2_match4", "round2_match5" %>
-      <h2 class="title is-4">2R発表 - <%= @match.name %></h2>
-      <div class="block">
-        <%= button_to "初期表示",
-              admin_scoreboard_manipulations_path(action_name: "round2_init", match_id: @match.id),
-              method: :post,
-              class: "button is-link" %>
-      </div>
-      <table class="table">
-        <% @match.matchings.order(:seat).each do |matching| %>
-          <tr class="is-size-5">
-            <td>
-              <%= button_to "表示",
-                admin_scoreboard_manipulations_path(action_name: "round2_display_player", matching_id: matching.id),
-                method: :post,
-                class: "button is-primary" %>
-            </td>
-            <td class="is-vcentered">
-              席<%= matching.seat + 1 %>
-            </td>
-            <td class="is-vcentered">
-              <%= I18n.with_locale(:en) { matching.player.yontaku_player_result&.rank&.ordinalize } %>
-            </td>
-            <td class="is-vcentered">
-              <%= matching.player.player_profile.full_name %>
-            </td>
-            <td class="is-vcentered">
-              <%= matching.player.player_profile.full_name_kana %>
-            </td>
-          </tr>
-        <% end %>
-      </table>
+      <%= render "round2_match", match: @match %>
     <% end %>
     <div class="mt-5">
       <%= link_to "戻る", admin_root_path, class: "button is-light" %>

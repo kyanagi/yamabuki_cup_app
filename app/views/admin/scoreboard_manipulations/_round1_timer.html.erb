@@ -1,0 +1,35 @@
+<div class="box">
+  <h2 class="title is-4">1Rタイマー</h2>
+  <div class="buttons">
+    <%= button_to "表示", admin_scoreboard_manipulations_path(action_name: "round1_timer_init"), method: :post, class: "button is-primary", data: { turbo_confirm: "タイマーを表示します。残り時間はリセットされます。" } %>
+    <%= button_to "開始", admin_scoreboard_manipulations_path(action_name: "round1_timer_start"), method: :post, class: "button is-success" %>
+    <%= button_to "停止", admin_scoreboard_manipulations_path(action_name: "round1_timer_stop"), method: :post, class: "button is-danger" %>
+  </div>
+  <%= form_with url: admin_scoreboard_manipulations_path(action_name: "round1_timer_update_remaining_time"),
+                  method: :post,
+                  data: { turbo_stream: true } do |f| %>
+    <div class="field is-grouped">
+      <div class="control">
+        <%= f.number_field :minutes,
+              min: 0,
+              max: 99,
+              value: 1,
+              class: "input" %>
+      </div>
+      <label class="label">分</label>
+      <div class="control">
+        <%= f.number_field :seconds,
+              min: 0,
+              max: 59,
+              value: 0,
+              class: "input" %>
+      </div>
+      <label class="label">秒</label>
+      <div class="control" style="align-self: flex-end;">
+        <%= f.submit "設定",
+            class: "button is-danger",
+            data: { turbo_confirm: "残り時間を変更します。" } %>
+      </div>
+    </div>
+  <% end %>
+</div>
