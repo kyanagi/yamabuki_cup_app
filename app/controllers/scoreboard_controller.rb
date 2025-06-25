@@ -11,7 +11,7 @@ class ScoreboardController < ApplicationController
     @scores = match.current_scores.sort_by { it.matching.seat }
     @score_operation = match.last_score_operation
     render(
-      inline: "<%= content_for(:scoreboard) { render partial: 'scoreboard/round2_announcement/display', locals: { ranks: @ranks } } %>",
+      inline: "<%= content_for(:scoreboard) { render partial: 'scoreboard/announcement/display', locals: { text: 'あいうえおかきくけこさしすせそたちつてとなにぬねのほげほげ' } } %>",
       layout: "scoreboard"
     )
   end

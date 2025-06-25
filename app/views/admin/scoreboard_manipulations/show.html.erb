@@ -13,7 +13,8 @@
                   ["2R発表 第2組", round2_match2_admin_scoreboard_manipulations_path],
                   ["2R発表 第3組", round2_match3_admin_scoreboard_manipulations_path],
                   ["2R発表 第4組", round2_match4_admin_scoreboard_manipulations_path],
-                  ["2R発表 第5組", round2_match5_admin_scoreboard_manipulations_path]
+                  ["2R発表 第5組", round2_match5_admin_scoreboard_manipulations_path],
+                  ["告知", announcement_admin_scoreboard_manipulations_path]
                 ], request.path),
                 { onchange: "window.location.href=this.value" } %>
         </div>
@@ -26,6 +27,8 @@
       <%= render "seed_announcement" %>
     <% when "round2_match1", "round2_match2", "round2_match3", "round2_match4", "round2_match5" %>
       <%= render "round2_match", match: @match %>
+    <% when "announcement" %>
+      <%= render "announcement" %>
     <% end %>
     <div class="mt-5">
       <%= link_to "戻る", admin_root_path, class: "button is-light" %>

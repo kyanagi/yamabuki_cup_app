@@ -43,6 +43,7 @@ Rails.application.routes.draw do
         get :round2_match3
         get :round2_match4
         get :round2_match5
+        get :announcement
       end
     end
 

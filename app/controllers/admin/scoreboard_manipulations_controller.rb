@@ -47,6 +47,11 @@ module Admin
       render :show, layout: "admin"
     end
 
+    def announcement
+      @section = "announcement"
+      render :show, layout: "admin"
+    end
+
     def create
       case params[:action_name]
       when "round1_timer_init"
@@ -114,6 +119,13 @@ module Admin
         ActionCable.server.broadcast(
           "scoreboard",
           "<turbo-stream action='hide-scores'></turbo-stream>"
+        )
+      when "announcement_display"
+        ActionCable.server.broadcast(
+          "scoreboard",
+          turbo_stream.update("scoreboard-main") do
+            render_to_string("scoreboard/announcement/_display", locals: { text: params[:announcement_text] })
+          end + turbo_stream.update("scoreboard-footer-left") { "" }
         )
       end
 

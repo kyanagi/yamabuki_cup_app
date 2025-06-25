@@ -18,6 +18,8 @@ module Admin
 
     def round2_match5: () -> untyped
 
+    def announcement: () -> untyped
+
     def create: () -> untyped
   end
 end

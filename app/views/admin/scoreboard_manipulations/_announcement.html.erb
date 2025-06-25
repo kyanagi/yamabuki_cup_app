@@ -1,0 +1,20 @@
+<h2 class="title is-4">告知</h2>
+<%= form_with url: admin_scoreboard_manipulations_path(action_name: "announcement_display"),
+              method: :post,
+              data: { turbo_stream: true } do |f| %>
+  <div class="field">
+    <label class="label">告知内容</label>
+    <div class="control">
+      <%= f.text_area :announcement_text,
+            class: "textarea",
+            rows: 10,
+            placeholder: "告知内容を入力してください..." %>
+    </div>
+  </div>
+  
+  <div class="field">
+    <div class="control">
+      <%= f.submit "表示", class: "button is-primary" %>
+    </div>
+  </div>
+<% end %>

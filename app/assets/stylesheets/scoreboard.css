@@ -58,6 +58,30 @@ body {
   padding-right: 2vw;
 }
 
+/* 告知 */
+.announcement-container {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  width: 90%;
+  margin: 5vh auto 0 auto;
+  gap: 5vh;
+}
+
+.announcement-clock {
+  font-family: "FORMUDPGothic-Bold", sans-serif;
+  font-size: 12vh;
+  font-weight: bold;
+  color: #e7dbc0;
+}
+
+.announcement-text {
+  font-family: "FORMUDPGothic-Regular", sans-serif;
+  font-size: 10vh;
+  line-height: 1.3;
+}
+
+/* ペーパータイマー */
+
 #timer {
   width: 100%;
   height: 100%;
