@@ -292,8 +292,12 @@ body {
 }
 
 .round2-match-misses {
+  --crosss-color: #bbb;
   grid-area: misses;
+  font-family: "BIZUDPGothic-Regular", sans-serif;
   font-size: 4vh;
+  -webkit-text-stroke: 6px var(--crosss-color);
+  color: var(--crosss-color);
   text-align: center;
 }
 

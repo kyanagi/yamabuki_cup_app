@@ -7,6 +7,9 @@
     <div class="round2-match-name"><div class="round2-match-name--length-<%= name.size %>"><%= name %></div></div>
     <div class="round2-match-points"><%= score.points %></div>
     <div class="round2-match-misses">
+      <% (2-score.misses).times do %>
+        <div class="round2-match-misses-cross" style="visibility: hidden;">×</div>
+      <% end %>
       <% score.misses.times do %>
         <div class="round2-match-misses-cross">×</div>
       <% end %>
