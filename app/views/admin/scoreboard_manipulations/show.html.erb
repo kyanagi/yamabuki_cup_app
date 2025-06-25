@@ -58,7 +58,7 @@
       </div>
     <% when "seed_announcement" %>
       <h2 class="title is-4">シード発表</h2>
-      <div class="mb-4">
+      <div class="block">
         <%= button_to "初期表示",
                 admin_scoreboard_manipulations_path(action_name: "paper_seed_init"),
                 method: :post,
@@ -75,37 +75,53 @@
                     method: :post,
                     class: "button is-primary" %>
             </td>
-            <td>
-              <%= rank %>位
+            <td class="is-vcentered">
+              <%= I18n.with_locale(:en) { rank.ordinalize } %>
             </td>
-            <td>
+            <td class="is-vcentered">
               <%= result.player.player_profile.full_name %>
             </td>
-            <td>
+            <td class="is-vcentered">
               <%= result.player.player_profile.full_name_kana %>
             </td>
-            <td>
-              <%= result.score %>
+            <td class="is-vcentered has-text-right">
+              <%= result.score %>点
             </td>
           </tr>
         <% end %>
       </table>
     <% when "round2_match1", "round2_match2", "round2_match3", "round2_match4", "round2_match5" %>
-      <div class="box">
-        <h2 class="title is-4">2R発表 - <%= @match.name %></h2>
-        <div class="buttons">
-          <%= button_to "init",
-            admin_scoreboard_manipulations_path(action_name: "round2_init", match_id: @match.id),
-            method: :post,
-            class: "button is-primary" %>
-          <% @match.matchings.order(:seat).each do |matching| %>
-            <%= button_to "席#{matching.seat}",
-              admin_scoreboard_manipulations_path(action_name: "round2_display_player", matching_id: matching.id),
+      <h2 class="title is-4">2R発表 - <%= @match.name %></h2>
+      <div class="block">
+        <%= button_to "初期表示",
+              admin_scoreboard_manipulations_path(action_name: "round2_init", match_id: @match.id),
               method: :post,
-              class: "button is-primary" %>
-          <% end %>
-        </div>
+              class: "button is-link" %>
       </div>
+      <table class="table">
+        <% @match.matchings.order(:seat).each do |matching| %>
+          <tr class="is-size-5">
+            <td>
+              <%= button_to "表示",
+                admin_scoreboard_manipulations_path(action_name: "round2_display_player", matching_id: matching.id),
+                method: :post,
+                class: "button is-primary" %>
+            </td>
+            <td class="is-vcentered">
+              席<%= matching.seat + 1 %>
+            </td>
+            <td class="is-vcentered">
+              <%= I18n.with_locale(:en) { matching.player.yontaku_player_result&.rank&.ordinalize } %>
+            </td>
+            <td class="is-vcentered">
+              <%= matching.player.player_profile.full_name %>
+            </td>
+            <td class="is-vcentered">
+              <%= matching.player.player_profile.full_name_kana %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
     <% end %>
     <div class="mt-5">
       <%= link_to "戻る", admin_root_path, class: "button is-light" %>
