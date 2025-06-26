@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": []
+    "ignore": ["public/vite", "public/vite-dev", "public/vite-test", "tmp", "node_modules"]
   },
   "formatter": {
     "enabled": true,
