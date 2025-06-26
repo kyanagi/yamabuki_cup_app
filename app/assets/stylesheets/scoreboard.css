@@ -4,6 +4,17 @@
   box-sizing: border-box;
 }
 
+:root {
+  --normal-plate-color: #0d8794;
+  --win-plate-color: #a86154;
+  --win-name-color: #ffc5bb;
+  --lose-plate-color: #4a4a4a;
+  --wrong-cross-color: #bbb;
+  --waiting-plate-color: #4a4a4a;
+  --correct-mark-color: #0057c0;
+  --wrong-mark-color: #c43147;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -182,7 +193,7 @@ body {
   display: grid;
   grid-template: ". rank . name" 1fr / 1% 30% 3% 1fr;
   width: 90%;
-  background-color: #0d8794;
+  background-color: var(--normal-plate-color);
   justify-self: center;
 }
 
@@ -240,21 +251,21 @@ body {
   /* grid-template-columns: 55% 100px 1fr; */
   grid-template: ". name points misses ." 1fr / 5% 55% 25% 1fr 2.5%;
   width: 90%;
-  background-color: #0d8794;
+  background-color: var(--normal-plate-color);
   align-items: center;
   justify-self: center;
   position: relative;
 }
 
 .round2-match-player-win {
-  background-color: #a86154;
+  background-color: var(--win-plate-color);
   .round2-match-name {
-    color: #ffc5bb;
+    color: var(--win-name-color);
   }
 }
 
 .round2-match-player-lose {
-  background-color: #4a4a4a;
+  background-color: var(--lose-plate-color);
 
   * {
     color: #999999;
@@ -262,7 +273,7 @@ body {
 }
 
 .round2-match-player-waiting {
-  background-color: #4a4a4a;
+  background-color: var(--waiting-plate-color);
 }
 
 .round2-match-player-rank {
@@ -316,12 +327,11 @@ body {
 }
 
 .round2-match-misses {
-  --crosss-color: #bbb;
   grid-area: misses;
   font-family: "BIZUDPGothic-Regular", sans-serif;
   font-size: 4vh;
-  -webkit-text-stroke: 6px var(--crosss-color);
-  color: var(--crosss-color);
+  -webkit-text-stroke: 6px var(--wrong-cross-color);
+  color: var(--wrong-cross-color);
   text-align: center;
 }
 
@@ -347,7 +357,7 @@ body {
   display: grid;
   grid-template: ". rank . name points misses previous-result" 1fr / 1% 15% 1% 38% 19% 1fr 2.5%;
   width: 90%;
-  background-color: #0d8794;
+  background-color: var(--normal-plate-color);
   align-items: center;
   justify-self: center;
 }
@@ -397,12 +407,11 @@ body {
 }
 
 .hayaoshi-player-misses {
-  --crosss-color: #bbb;
   grid-area: misses;
   font-family: "BIZUDPGothic-Regular", sans-serif;
   font-size: 7vh;
-  -webkit-text-stroke: 6px var(--crosss-color);
-  color: var(--crosss-color);
+  -webkit-text-stroke: 6px var(--wrong-cross-color);
+  color: var(--wrong-cross-color);
   text-align: left;
 }
 
@@ -413,22 +422,22 @@ body {
 }
 
 .hayaoshi-player-previous-result--correct {
-  background-color: #0057c0;
+  background-color: var(--correct-mark-color);
 }
 
 .hayaoshi-player-previous-result--wrong {
-  background-color: #c43147;
+  background-color: var(--wrong-mark-color);
 }
 
 .hayaoshi-player-win {
-  background-color: #a86154;
+  background-color: var(--win-plate-color);
   .hayaoshi-player-name {
-    color: #ffc5bb;
+    color: var(--win-name-color);
   }
 }
 
 .hayaoshi-player-lose {
-  background-color: #4a4a4a;
+  background-color: var(--lose-plate-color);
 
   * {
     color: #999999;
@@ -437,7 +446,7 @@ body {
 }
 
 .hayaoshi-player-waiting {
-  background-color: #4a4a4a;
+  background-color: var(--waiting-plate-color);
 }
 
 /* 早押しボード */
@@ -445,7 +454,7 @@ body {
   display: grid;
   grid-template: ".  rank .  name points misses previous-situation previous-result" 1fr / 1% 15% 1% 40% 25% 1fr 2.5% 2.5%;
   width: 90%;
-  background-color: #0d8794;
+  background-color: var(--normal-plate-color);
   align-items: center;
   justify-self: center;
 }
@@ -467,11 +476,11 @@ body {
 }
 
 .hayabo-player-previous-result--correct {
-  background-color: #0057c0;
+  background-color: var(--correct-mark-color);
 }
 
 .hayabo-player-previous-result--wrong {
-  background-color: #c43147;
+  background-color: var(--wrong-mark-color);
 }
 
 .hayabo-player-rank {
@@ -532,24 +541,23 @@ body {
 }
 
 .hayabo-player-misses {
-  --crosss-color: #bbb;
   grid-area: misses;
   font-family: "BIZUDPGothic-Regular", sans-serif;
   font-size: 7vh;
-  -webkit-text-stroke: 6px var(--crosss-color);
-  color: var(--crosss-color);
+  -webkit-text-stroke: 6px var(--wrong-cross-color);
+  color: var(--wrong-cross-color);
   text-align: left;
 }
 
 .hayabo-player-win {
-  background-color: #a86154;
+  background-color: var(--win-plate-color);
   .hayabo-player-name {
-    color: #ffc5bb;
+    color: var(--win-name-color);
   }
 }
 
 .hayabo-player-lose {
-  background-color: #4a4a4a;
+  background-color: var(--lose-plate-color);
 
   * {
     color: #999999;
@@ -562,7 +570,7 @@ body {
   display: grid;
   grid-template: ".  rank .  name points" 1fr / 1% 15% 1% 40% 25%;
   width: 90%;
-  background-color: #0d8794;
+  background-color: var(--normal-plate-color);
   align-items: center;
   justify-self: center;
 }
@@ -617,14 +625,14 @@ body {
 }
 
 .board-player-win {
-  background-color: #a86154;
+  background-color: var(--win-plate-color);
   .board-player-name {
-    color: #ffc5bb;
+    color: var(--win-name-color);
   }
 }
 
 .board-player-lose {
-  background-color: #4a4a4a;
+  background-color: var(--lose-plate-color);
 
   * {
     color: #999999;
@@ -637,7 +645,7 @@ body {
   display: grid;
   grid-template: ". rank . name points misses previous-result" 1fr / 1% 15% 1% 38% 19% 1fr 2.5%;
   width: 90%;
-  background-color: #0d8794;
+  background-color: var(--normal-plate-color);
   align-items: center;
   justify-self: center;
 }
@@ -696,12 +704,11 @@ body {
 }
 
 .final-player-misses {
-  --crosss-color: #bbb;
   grid-area: misses;
   font-family: "BIZUDPGothic-Regular", sans-serif;
   font-size: 7vh;
-  -webkit-text-stroke: 6px var(--crosss-color);
-  color: var(--crosss-color);
+  -webkit-text-stroke: 6px var(--wrong-cross-color);
+  color: var(--wrong-cross-color);
   text-align: left;
 }
 
@@ -727,11 +734,11 @@ body {
 }
 
 .final-player-previous-result--correct {
-  background-color: #0057c0;
+  background-color: var(--correct-mark-color);
 }
 
 .final-player-previous-result--wrong {
-  background-color: #c43147;
+  background-color: var(--wrong-mark-color);
 }
 
 .final-player-set_win {
@@ -742,14 +749,14 @@ body {
 }
 
 .final-player-win {
-  background-color: #a86154;
+  background-color: var(--win-plate-color);
   .final-player-name {
-    color: #ffc5bb;
+    color: var(--win-name-color);
   }
 }
 
 .final-player-waiting {
-  background-color: #4a4a4a;
+  background-color: var(--waiting-plate-color);
 }
 
 /* Sequential score reveal animation classes */
