@@ -1,19 +1,19 @@
 <%# locals: (scores:, score_operation:) %>
 <% scores.each do |score| %>
   <% name = score.matching.player.player_profile.family_name %>
-  <div class="round2-match-player round2-match-player-<%= score.status %> <%= "animation-flip-in-x" if score.score_changed? %>"
+  <div class="round2-match-player player--<%= score.status %> <%= "animation-flip-in-x" if score.score_changed? %>"
         id="round2-match-player-<%= score.matching_id %>">
-    <div class="round2-match-player-rank"><%= score.rank %></div>
-    <div class="round2-match-name"><div class="round2-match-name--length-<%= name.size %>"><%= name %></div></div>
-    <div class="round2-match-points"><%= score.points %></div>
-    <div class="round2-match-misses">
+    <div class="player__rank round2-match-player__rank"><%= score.rank %></div>
+    <div class="player__name"><div class="round2-match-name--length-<%= name.size %>"><%= name %></div></div>
+    <div class="player__points"><%= score.points %></div>
+    <div class="round2-player__misses">
       <% (2-score.misses).times do %>
-        <div class="round2-match-misses-cross" style="visibility: hidden;">×</div>
+        <div style="visibility: hidden;">×</div>
       <% end %>
       <% score.misses.times do %>
-        <div class="round2-match-misses-cross">×</div>
+        <div>×</div>
       <% end %>
     </div>
-    <div class="round2-match-previous-result <%= scoreboard_hayaoshi_player_previous_result_class(score_operation, score.matching.player_id) %>"></div>
+    <div class="player__previous-result <%= scoreboard_hayaoshi_player_previous_result_class(score_operation, score.matching.player_id) %>"></div>
   </div>
 <% end %>

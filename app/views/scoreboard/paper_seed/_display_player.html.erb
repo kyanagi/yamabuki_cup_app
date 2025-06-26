@@ -1,9 +1,9 @@
 <% name = yontaku_player_result.player.player_profile.scoreboard_full_name %>
 <% rank = yontaku_player_result.rank %>
 <%= turbo_stream.replace("paper-seed-player-#{rank}") do %>
-  <div class="paper-seed-player paper-seed-player-animation" id="paper-seed-player-<%= rank %>">
-    <div class="paper-seed-rank"><%= rank %></div>
-    <div class="paper-seed-name"><div class="paper-seed-name--length-<%= name.size %>"><%= name %></div></div>
-    <div class="paper-seed-score"><%= yontaku_player_result.score %></div>
+  <div class="paper-seed-player animation-flip-in-x" id="paper-seed-player-<%= rank %>">
+    <div class="player__rank"><%= rank %></div>
+    <div class="player__name"><div class="paper-seed-player__name--length-<%= name.size %>"><%= name %></div></div>
+    <div class="paper-seed-player__score"><%= yontaku_player_result.score %></div>
   </div>
 <% end %>

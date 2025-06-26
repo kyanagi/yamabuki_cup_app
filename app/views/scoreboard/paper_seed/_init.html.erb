@@ -1,10 +1,10 @@
 <div class="columns-2">
-  <div class="paper-seed-container">
+  <div class="match-scorelist-column1">
     <% 1.upto(7) do |rank|%>
       <div class="paper-seed-player" id="paper-seed-player-<%= rank %>">
-        <div class="paper-seed-rank"><%= rank %></div>
-        <div class="paper-seed-name"></div>
-        <div class="paper-seed-score"></div>
+        <div class="player__rank"><%= rank %></div>
+        <div class="player__name"></div>
+        <div class="paper-seed-player__score"></div>
       </div>
     <% end %>
   </div>

@@ -69,6 +69,146 @@ body {
   padding-right: 2vw;
 }
 
+/*******************************
+ * 各ラウンドで共通のコンポーネント
+ *******************************/
+
+/* プレイヤーを並べるカラム (1列) */
+.match-scorelist-column1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(8, 10vh);
+  grid-auto-flow: column;
+  width: 100%;
+  height: 100%;
+  padding-top: 5vh;
+  gap: 8px;
+}
+
+/* プレイヤーを並べるカラム (2列) */
+.match-scorelist-column2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(7, 10vh);
+  grid-auto-flow: column;
+  width: 100%;
+  height: 100%;
+  padding-top: 10vh;
+  gap: 8px;
+}
+
+/* プレイヤーの状態に応じた背景 */
+.player--playing {
+  background-color: var(--normal-plate-color);
+}
+
+.player--win {
+  background-color: var(--win-plate-color);
+  .player__name {
+    color: var(--win-name-color);
+  }
+}
+
+.player--lose {
+  background-color: var(--lose-plate-color);
+  * {
+    color: #999999;
+    -webkit-text-stroke-color: #999999;
+  }
+}
+
+.player--waiting {
+  background-color: var(--waiting-plate-color);
+}
+
+.player--set_win {
+  background-color: #976f2f;
+  .final-player-name {
+    opacity: 0.5;
+  }
+}
+
+/* 順位 */
+.player__rank {
+  grid-area: rank;
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 15vh;
+  font-style: italic;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+/* 氏名 */
+.player__name {
+  grid-area: name;
+  font-family: "GenShinGothic-Bold", sans-serif;
+  font-size: 7vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* 得点 */
+.player__points {
+  grid-area: points;
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 11vh;
+  font-weight: 500;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+}
+
+/* 誤答数 */
+.player__misses,
+.round2-player__misses {
+  grid-area: misses;
+  font-family: "BIZUDPGothic-Regular", sans-serif;
+  -webkit-text-stroke: 6px var(--wrong-cross-color);
+  color: var(--wrong-cross-color);
+
+  font-size: 7vh;
+  text-align: left;
+}
+
+.round2-player__misses {
+  font-size: 4vh;
+  text-align: center;
+}
+
+/* 直前の問題の結果 */
+.player__previous-result {
+  grid-area: previous-result;
+  width: 100%;
+  height: 100%;
+}
+
+.player__previous-result--correct {
+  background-color: var(--correct-mark-color);
+}
+
+.player__previous-result--wrong {
+  background-color: var(--wrong-mark-color);
+}
+
+/*******************************
+ * 各ラウンドごとの表示設定
+ *******************************/
+
 /* 告知 */
 .announcement-container {
   display: grid;
@@ -92,7 +232,6 @@ body {
 }
 
 /* ペーパータイマー */
-
 #timer {
   width: 100%;
   height: 100%;
@@ -105,14 +244,157 @@ body {
 }
 
 /* シード発表 */
-.paper-seed-container {
+.paper-seed-player {
   display: grid;
-  grid-auto-rows: 10vh;
+  grid-template: ". rank . name . score ." 1fr / 1% 15% 1% 1fr 1% auto 3%;
+  width: 90%;
+  background-color: #a86154;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.paper-seed-player__score {
+  grid-area: score;
+  font-family: "FORMUDPGothic-Bold", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 4.5vh;
+}
+
+/* 2R 発表 */
+.round2-announcement-scorelist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(7, 10vh);
+  grid-auto-flow: column;
+  width: 100%;
   height: 100%;
   padding-top: 10vh;
   gap: 8px;
 }
 
+.round2-announcement-player {
+  display: grid;
+  grid-template: ". rank . name" 1fr / 1% 30% 3% 1fr;
+  width: 90%;
+  background-color: var(--normal-plate-color);
+  justify-self: center;
+}
+
+.round2-announcement-player--adv {
+  background-color: #4d5fc4;
+}
+
+.round2-announcement-player--wait {
+  background-color: var(--waiting-plate-color);
+}
+
+/* 2R 試合中 */
+.round2-match-player {
+  display: grid;
+  grid-template: ". name points misses previous-result" 1fr / 5% 52.5% 25% 1fr 5%;
+  width: 90%;
+  align-items: center;
+  justify-self: center;
+  position: relative;
+}
+
+.round2-match-player__rank {
+  position: relative;
+  grid-column: 1 / 3;
+  grid-row: 1;
+  z-index: 20;
+  opacity: 0.4;
+  padding-right: 4vw;
+}
+
+/* 3R 以降の試合中 */
+
+/* 早押し */
+.hayaoshi-player {
+  display: grid;
+  grid-template: ". rank . name points misses previous-result" 1fr / 1% 15% 1% 38% 19% 1fr 2.5%;
+  width: 90%;
+  align-items: center;
+  justify-self: center;
+}
+
+/* 早押しボード */
+.hayabo-player {
+  display: grid;
+  grid-template: ".  rank .  name points misses previous-situation previous-result" 1fr / 1% 15% 1% 40% 25% 1fr 2.5% 2.5%;
+  width: 90%;
+  align-items: center;
+  justify-self: center;
+}
+
+.hayabo-player__previous-situation {
+  grid-area: previous-situation;
+  width: 100%;
+  height: 100%;
+}
+
+.hayabo-player__previous-situation--pushed {
+  background-color: #c69931;
+}
+
+/* ボード */
+.board-player {
+  display: grid;
+  grid-template: ".  rank .  name points" 1fr / 1% 15% 1% 40% 25%;
+  width: 90%;
+  align-items: center;
+  justify-self: center;
+}
+
+.match-scorelist--hidden-scores .player__points {
+  opacity: 0;
+}
+
+/* 決勝 */
+.final-player {
+  display: grid;
+  grid-template: ". rank . name points misses previous-result" 1fr / 1% 15% 1% 38% 19% 1fr 2.5%;
+  width: 90%;
+  align-items: center;
+  justify-self: center;
+}
+
+.final-player__stars {
+  font-family: "BIZUDPGothic-Regular", sans-serif;
+  font-size: 6vh;
+  color: #b8a602;
+  text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: top;
+  line-height: 1;
+  justify-content: flex-end;
+  width: 90%;
+  margin: 0 auto;
+}
+
+/* 名前の圧縮 */
+.hayabo-player-name--length-5,
+.hayaoshi-player-name--length-5,
+.board-player-name--length-5,
+.final-player-name--length-5 {
+  transform: scaleX(calc(4 / 5));
+  transform-origin: left top;
+}
+
+.hayabo-player-name--length-6,
+.hayaoshi-player-name--length-6,
+.board-player-name--length-6,
+.final-player-name--length-6 {
+  transform: scaleX(calc(4 / 6));
+  transform-origin: left top;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+/* アニメーション */
 @keyframes flipInX {
   from {
     transform: perspective(400px) rotateX(90deg);
@@ -129,638 +411,6 @@ body {
     transform: perspective(400px) rotateX(0);
     opacity: 1;
   }
-}
-
-.paper-seed-player {
-  display: grid;
-  grid-template: ". rank . name . score ." 1fr / 1% 15% 1% 1fr 1% auto 3%;
-  width: 90%;
-  background-color: #a86154;
-  align-items: center;
-  margin: 0 auto;
-}
-
-.paper-seed-player-animation {
-  animation: flipInX 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-origin: center center;
-  backface-visibility: visible;
-}
-
-.paper-seed-rank {
-  grid-area: rank;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 15vh;
-  font-style: italic;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-  opacity: 0.5;
-}
-
-.paper-seed-name {
-  grid-area: name;
-  font-family: "GenShinGothic-Medium", sans-serif;
-  font-size: 7vh;
-  overflow: hidden;
-}
-
-.paper-seed-score {
-  grid-area: score;
-  font-family: "FORMUDPGothic-Bold", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 4.5vh;
-}
-
-/* 2R 発表 */
-.round2-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(7, 10vh);
-  grid-auto-flow: column;
-  width: 100%;
-  height: 100%;
-  padding-top: 10vh;
-  gap: 8px;
-}
-
-.round2-player {
-  display: grid;
-  grid-template: ". rank . name" 1fr / 1% 30% 3% 1fr;
-  width: 90%;
-  background-color: var(--normal-plate-color);
-  justify-self: center;
-}
-
-.round2-player-animation {
-  animation: flipInX 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-origin: center center;
-  backface-visibility: visible;
-}
-
-.round2-player-adv {
-  background-color: #4d5fc4;
-}
-
-.round2-player-wait {
-  background-color: #4a4a4a;
-}
-
-.round2-rank {
-  grid-area: rank;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 15vh;
-  font-style: italic;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-  opacity: 0.5;
-}
-
-.round2-name {
-  grid-area: name;
-  font-family: "GenShinGothic-Bold", sans-serif;
-  font-size: 7vh;
-  overflow: hidden;
-}
-
-/* 2R 試合中 */
-.match-scorelist-column2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(7, 10vh);
-  grid-auto-flow: column;
-  width: 100%;
-  height: 100%;
-  padding-top: 10vh;
-  gap: 8px;
-}
-
-.round2-match-player {
-  display: grid;
-  grid-template: ". name points misses previous-result" 1fr / 5% 52.5% 25% 1fr 5%;
-  width: 90%;
-  background-color: var(--normal-plate-color);
-  align-items: center;
-  justify-self: center;
-  position: relative;
-}
-
-.round2-match-player-win {
-  background-color: var(--win-plate-color);
-  .round2-match-name {
-    color: var(--win-name-color);
-  }
-}
-
-.round2-match-player-lose {
-  background-color: var(--lose-plate-color);
-
-  * {
-    color: #999999;
-  }
-}
-
-.round2-match-player-waiting {
-  background-color: var(--waiting-plate-color);
-}
-
-.round2-match-player-rank {
-  position: relative;
-  grid-column: 1 / 3;
-  grid-row: 1;
-  z-index: 20;
-  opacity: 0.4;
-  padding-right: 4vw;
-
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 15vh;
-  font-style: italic;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-}
-
-.round2-match-name {
-  position: relative;
-  grid-area: name;
-  font-family: "GenShinGothic-Bold", sans-serif;
-  font-weight: bold;
-  font-size: 7vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  height: 100%;
-  line-height: 1;
-  white-space: nowrap;
-  z-index: 1;
-}
-
-.round2-match-points {
-  grid-area: points;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 11vh;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-}
-
-.round2-match-misses {
-  grid-area: misses;
-  font-family: "BIZUDPGothic-Regular", sans-serif;
-  font-size: 4vh;
-  -webkit-text-stroke: 6px var(--wrong-cross-color);
-  color: var(--wrong-cross-color);
-  text-align: center;
-}
-
-.round2-match-previous-result {
-  grid-area: previous-result;
-  width: 100%;
-  height: 100%;
-}
-
-/* 3R 以降の試合中 */
-.match-scorelist-column1 {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: repeat(8, 10vh);
-  grid-auto-flow: column;
-  width: 100%;
-  height: 100%;
-  padding-top: 5vh;
-  gap: 8px;
-}
-
-/* 早押し */
-.hayaoshi-player {
-  display: grid;
-  grid-template: ". rank . name points misses previous-result" 1fr / 1% 15% 1% 38% 19% 1fr 2.5%;
-  width: 90%;
-  background-color: var(--normal-plate-color);
-  align-items: center;
-  justify-self: center;
-}
-
-.hayaoshi-player-rank {
-  grid-area: rank;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 15vh;
-  font-style: italic;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-
-  opacity: 0.5;
-}
-
-.hayaoshi-player-name {
-  grid-area: name;
-  font-family: "GenShinGothic-Bold", sans-serif;
-  font-weight: bold;
-  font-size: 7vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  height: 100%;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.hayaoshi-player-points {
-  grid-area: points;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 11vh;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-}
-
-.hayaoshi-player-misses {
-  grid-area: misses;
-  font-family: "BIZUDPGothic-Regular", sans-serif;
-  font-size: 7vh;
-  -webkit-text-stroke: 6px var(--wrong-cross-color);
-  color: var(--wrong-cross-color);
-  text-align: left;
-}
-
-.hayaoshi-player-previous-result {
-  grid-area: previous-result;
-  width: 100%;
-  height: 100%;
-}
-
-.hayaoshi-player-previous-result--correct {
-  background-color: var(--correct-mark-color);
-}
-
-.hayaoshi-player-previous-result--wrong {
-  background-color: var(--wrong-mark-color);
-}
-
-.hayaoshi-player-win {
-  background-color: var(--win-plate-color);
-  .hayaoshi-player-name {
-    color: var(--win-name-color);
-  }
-}
-
-.hayaoshi-player-lose {
-  background-color: var(--lose-plate-color);
-
-  * {
-    color: #999999;
-    -webkit-text-stroke-color: #999999;
-  }
-}
-
-.hayaoshi-player-waiting {
-  background-color: var(--waiting-plate-color);
-}
-
-/* 早押しボード */
-.hayabo-player {
-  display: grid;
-  grid-template: ".  rank .  name points misses previous-situation previous-result" 1fr / 1% 15% 1% 40% 25% 1fr 2.5% 2.5%;
-  width: 90%;
-  background-color: var(--normal-plate-color);
-  align-items: center;
-  justify-self: center;
-}
-
-.hayabo-player-previous-situation {
-  grid-area: previous-situation;
-  width: 100%;
-  height: 100%;
-}
-
-.hayabo-player-previous-result {
-  grid-area: previous-result;
-  width: 100%;
-  height: 100%;
-}
-
-.hayabo-player-previous-situation--pushed {
-  background-color: #c69931;
-}
-
-.hayabo-player-previous-result--correct {
-  background-color: var(--correct-mark-color);
-}
-
-.hayabo-player-previous-result--wrong {
-  background-color: var(--wrong-mark-color);
-}
-
-.hayabo-player-rank {
-  grid-area: rank;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 15vh;
-  font-style: italic;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-  opacity: 0.5;
-}
-
-.hayabo-player-name {
-  grid-area: name;
-  font-family: "GenShinGothic-Bold", sans-serif;
-  font-weight: bold;
-  font-size: 7vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  height: 100%;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.hayabo-player-name--length-5,
-.hayaoshi-player-name--length-5,
-.board-player-name--length-5 {
-  transform: scaleX(calc(4 / 5));
-  transform-origin: left top;
-}
-
-.hayabo-player-name--length-6,
-.hayaoshi-player-name--length-6,
-.board-player-name--length-6 {
-  transform: scaleX(calc(4 / 6));
-  transform-origin: left top;
-}
-
-.hayabo-player-points {
-  grid-area: points;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 11vh;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-}
-
-.hayabo-player-misses {
-  grid-area: misses;
-  font-family: "BIZUDPGothic-Regular", sans-serif;
-  font-size: 7vh;
-  -webkit-text-stroke: 6px var(--wrong-cross-color);
-  color: var(--wrong-cross-color);
-  text-align: left;
-}
-
-.hayabo-player-win {
-  background-color: var(--win-plate-color);
-  .hayabo-player-name {
-    color: var(--win-name-color);
-  }
-}
-
-.hayabo-player-lose {
-  background-color: var(--lose-plate-color);
-
-  * {
-    color: #999999;
-    -webkit-text-stroke-color: #999999;
-  }
-}
-
-/* ボード */
-.board-player {
-  display: grid;
-  grid-template: ".  rank .  name points" 1fr / 1% 15% 1% 40% 25%;
-  width: 90%;
-  background-color: var(--normal-plate-color);
-  align-items: center;
-  justify-self: center;
-}
-
-.board-player-rank {
-  grid-area: rank;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 15vh;
-  font-style: italic;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-  opacity: 0.5;
-}
-
-.board-player-name {
-  grid-area: name;
-  font-family: "GenShinGothic-Bold", sans-serif;
-  font-weight: bold;
-  font-size: 7vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  height: 100%;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.board-player-points {
-  grid-area: points;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 11vh;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-
-  /* transition: opacity 0.3s ease-in-out; */
-}
-
-.match-scorelist--hidden-scores .board-player-points {
-  opacity: 0;
-}
-
-.board-player-win {
-  background-color: var(--win-plate-color);
-  .board-player-name {
-    color: var(--win-name-color);
-  }
-}
-
-.board-player-lose {
-  background-color: var(--lose-plate-color);
-
-  * {
-    color: #999999;
-    -webkit-text-stroke-color: #999999;
-  }
-}
-
-/* 決勝 */
-.final-player {
-  display: grid;
-  grid-template: ". rank . name points misses previous-result" 1fr / 1% 15% 1% 38% 19% 1fr 2.5%;
-  width: 90%;
-  background-color: var(--normal-plate-color);
-  align-items: center;
-  justify-self: center;
-}
-
-.final-player-rank {
-  grid-area: rank;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 15vh;
-  font-style: italic;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-  opacity: 0.5;
-}
-
-.final-player-name {
-  grid-area: name;
-  font-family: "GenShinGothic-Bold", sans-serif;
-  font-weight: bold;
-  font-size: 7vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  height: 100%;
-  line-height: 1;
-  white-space: nowrap;
-}
-
-.final-player-name--length-5 {
-  transform: scaleX(calc(4 / 5));
-  transform-origin: left top;
-}
-
-.final-player-name--length-6 {
-  transform: scaleX(calc(4 / 6));
-  transform-origin: left top;
-}
-
-.final-player-points {
-  grid-area: points;
-  font-family: "Jost", sans-serif;
-  font-optical-sizing: auto;
-  font-size: 11vh;
-  font-weight: 500;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  line-height: 1;
-}
-
-.final-player-misses {
-  grid-area: misses;
-  font-family: "BIZUDPGothic-Regular", sans-serif;
-  font-size: 7vh;
-  -webkit-text-stroke: 6px var(--wrong-cross-color);
-  color: var(--wrong-cross-color);
-  text-align: left;
-}
-
-.final-player-stars {
-  font-family: "BIZUDPGothic-Regular", sans-serif;
-  font-size: 6vh;
-  color: #b8a602;
-  text-align: right;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: top;
-  line-height: 1;
-  justify-content: flex-end;
-  width: 90%;
-  margin: 0 auto;
-}
-
-.final-player-previous-result {
-  grid-area: previous-result;
-  grid-row: 1 / 3;
-  width: 100%;
-  height: 100%;
-}
-
-.final-player-previous-result--correct {
-  background-color: var(--correct-mark-color);
-}
-
-.final-player-previous-result--wrong {
-  background-color: var(--wrong-mark-color);
-}
-
-.final-player-set_win {
-  background-color: #976f2f;
-  .final-player-name {
-    opacity: 0.5;
-  }
-}
-
-.final-player-win {
-  background-color: var(--win-plate-color);
-  .final-player-name {
-    color: var(--win-name-color);
-  }
-}
-
-.final-player-waiting {
-  background-color: var(--waiting-plate-color);
-}
-
-/* Sequential score reveal animation classes */
-.hidden {
-  opacity: 0;
 }
 
 .animation-flip-in-x {

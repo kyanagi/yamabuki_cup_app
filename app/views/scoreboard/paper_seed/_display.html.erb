@@ -4,11 +4,11 @@
       <% result = YontakuPlayerResult.find_by(rank:) %>
       <% name = result.player.player_profile.scoreboard_full_name %>
       <div class="paper-seed-player" id="paper-seed-player-<%= rank %>">
-        <div class="paper-seed-rank"><%= rank %></div>
-        <div class="paper-seed-name">
-          <div class="paper-seed-name--length-<%= name.size %>"><%= name %></div>
+        <div class="player__rank"><%= rank %></div>
+        <div class="player__name">
+          <div class="paper-seed-player__name--length-<%= name.size %>"><%= name %></div>
         </div>
-        <div class="paper-seed-score"><%= result.score %></div>
+        <div class="paper-seed-player__score"><%= result.score %></div>
       </div>
     <% end %>
   </div>

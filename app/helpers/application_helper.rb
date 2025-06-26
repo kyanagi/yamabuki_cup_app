@@ -89,20 +89,20 @@ module ApplicationHelper
     question_player_result = score_operation.question_result&.question_player_results&.find { it.player_id == player_id }
     return nil unless question_player_result
     if question_player_result.situation_pushed?
-      "hayaoshi-player-previous-result--#{question_player_result.result}"
+      "player__previous-result--#{question_player_result.result}"
     end
   end
 
   def scoreboard_hayabo_player_previous_situation_class(score_operation, player_id)
     question_player_result = score_operation.question_result&.question_player_results&.find { it.player_id == player_id }
-    "hayabo-player-previous-situation--#{question_player_result.situation}" if question_player_result
+    "hayabo-player__previous-situation--#{question_player_result.situation}" if question_player_result
   end
 
   def scoreboard_hayabo_player_previous_result_class(score_operation, player_id)
     question_player_result = score_operation.question_result&.question_player_results&.find { it.player_id == player_id }
     return nil unless question_player_result
     if question_player_result.situation_pushed? || question_player_result.result_correct?
-      "hayabo-player-previous-result--#{question_player_result.result}"
+      "player__previous-result--#{question_player_result.result}"
     end
   end
 end
