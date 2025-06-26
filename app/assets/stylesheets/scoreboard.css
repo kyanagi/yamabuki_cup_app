@@ -171,7 +171,6 @@ body {
 
 .paper-seed-score {
   grid-area: score;
-  font-family: "Jost", sans-serif;
   font-family: "FORMUDPGothic-Bold", sans-serif;
   font-optical-sizing: auto;
   font-size: 4.5vh;
