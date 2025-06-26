@@ -64,7 +64,9 @@ function createQuestionReadingContext(
       const abortHandler = () => {
         reject();
       };
-      abortController.signal.addEventListener("abort", abortHandler, { once: true });
+      abortController.signal.addEventListener("abort", abortHandler, {
+        once: true,
+      });
       currentSource = audioContext.createBufferSource();
       currentSource.buffer = audioBuffer;
       currentSource.connect(audioContext.destination);
@@ -97,7 +99,9 @@ function createQuestionReadingContext(
       const createAudioBufferPromise = (url: string) => {
         return new Promise<AudioBuffer>((resolve, reject) => {
           const abortHandler = () => reject();
-          abortController.signal.addEventListener("abort", abortHandler, { once: true });
+          abortController.signal.addEventListener("abort", abortHandler, {
+            once: true,
+          });
           loadAudio(url).then((buffer) => {
             abortController.signal.removeEventListener("abort", abortHandler);
             resolve(buffer);
@@ -134,7 +138,9 @@ function createQuestionReadingContext(
         // 「問題」と問題文の間の空白
         await new Promise<void>((resolve, reject) => {
           const abortHandler = () => reject();
-          abortController.signal.addEventListener("abort", abortHandler, { once: true });
+          abortController.signal.addEventListener("abort", abortHandler, {
+            once: true,
+          });
           setTimeout(() => {
             abortController.signal.removeEventListener("abort", abortHandler);
             resolve();
@@ -234,7 +240,10 @@ export default class extends Controller {
 
   private idbPromise = openDB(IDB_NAME, 1, {
     upgrade(db) {
-      db.createObjectStore("question-readings", { keyPath: "id", autoIncrement: true });
+      db.createObjectStore("question-readings", {
+        keyPath: "id",
+        autoIncrement: true,
+      });
     },
   });
 
