@@ -248,8 +248,7 @@ body {
 
 .round2-match-player {
   display: grid;
-  /* grid-template-columns: 55% 100px 1fr; */
-  grid-template: ". name points misses ." 1fr / 5% 55% 25% 1fr 2.5%;
+  grid-template: ". name points misses previous-result" 1fr / 5% 52.5% 25% 1fr 5%;
   width: 90%;
   background-color: var(--normal-plate-color);
   align-items: center;
@@ -335,9 +334,10 @@ body {
   text-align: center;
 }
 
-.round2-match-name--length-3 {
-  transform: scaleX(calc(2 / 3));
-  transform-origin: left top;
+.round2-match-previous-result {
+  grid-area: previous-result;
+  width: 100%;
+  height: 100%;
 }
 
 /* 3R 以降の試合中 */
