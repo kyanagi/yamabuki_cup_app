@@ -284,7 +284,7 @@ body {
 /* 2R 試合中 */
 .round2-match-player {
   display: grid;
-  grid-template: ". name points misses previous-result" 1fr / 5% 52.5% 25% 1fr 5%;
+  grid-template: ". name points misses previous-result" 1fr / 5% 56% 22% 1fr 5%;
   width: 90%;
   align-items: center;
   justify-self: center;
@@ -370,7 +370,7 @@ body {
 .hayaoshi-player-name--length-5,
 .board-player-name--length-5,
 .final-player-name--length-5 {
-  transform: scaleX(calc(4 / 5));
+  transform: scaleX(calc(4 / 5)); /* 5文字を4文字分の幅に縮小 */
   transform-origin: left top;
 }
 
@@ -379,6 +379,11 @@ body {
 .board-player-name--length-6,
 .final-player-name--length-6 {
   transform: scaleX(calc(4 / 6));
+  transform-origin: left top;
+}
+
+.round2-match-name--length-4 {
+  transform: scaleX(calc(3 / 4));
   transform-origin: left top;
 }
 
