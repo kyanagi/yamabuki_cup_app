@@ -38,6 +38,7 @@ type QuestionReadingContext = {
   start(): Promise<void>;
   stop(): void;
   reset(): void;
+  dispose(): void;
   get questionId(): number;
   get fullDuration(): number;
   get readDuration(): number;
@@ -184,6 +185,11 @@ function createQuestionReadingContext(
       setVoiceStatus("STANDBY");
     },
 
+    dispose() {
+      this.stop();
+      audioBuffersPromise = undefined;
+    },
+
     get questionId() {
       return questionId;
     },
@@ -272,6 +278,7 @@ export default class extends Controller {
       this.setPlayStatusIcon(voiceStatus);
     };
 
+    this.readingContext.dispose();
     this.readingContext = createQuestionReadingContext(
       questionId,
       soundId,
@@ -310,9 +317,13 @@ export default class extends Controller {
 
   disconnect() {
     console.log("QuizReaderController disconnected");
-    this.readingContext.stop();
+    this.readingContext.dispose();
     document.removeEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     caches.delete(CACHE_NAME);
+
+    if (audioContext.state !== "closed") {
+      audioContext.close();
+    }
   }
 
   updateOnAirLabel() {
