@@ -250,7 +250,7 @@ export default class extends Controller {
   readingContext: QuestionReadingContext = createQuestionReadingContext(0, "dummy");
 
   private createQuestionReadingContextAndLoad(questionId: number, soundId: string) {
-    const onLoaddingStatusChanged = (loadingStatus: LoadingStatus) => {
+    const onLoadingStatusChanged = (loadingStatus: LoadingStatus) => {
       switch (loadingStatus) {
         case "LOADING":
           this.setVoiceLoadingStatusIcon("LOADING");
@@ -268,7 +268,7 @@ export default class extends Controller {
     this.readingContext = createQuestionReadingContext(
       questionId,
       soundId,
-      onLoaddingStatusChanged,
+      onLoadingStatusChanged,
       onVoiceStatusChanged,
     );
     this.load();
