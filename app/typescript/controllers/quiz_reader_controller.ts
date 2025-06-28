@@ -57,7 +57,7 @@ function createQuestionReadingContext(
   let stopTime: number | undefined;
   let questionDuration: number | undefined;
   let audioBuffersPromise: Promise<[AudioBuffer, AudioBuffer]> | undefined;
-  const abortController = new AbortController();
+  let abortController = new AbortController();
 
   function playAudioBuffer(audioBuffer: AudioBuffer): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -172,6 +172,7 @@ function createQuestionReadingContext(
 
     reset() {
       this.stop();
+      abortController = new AbortController();
       startTime = undefined;
       stopTime = undefined;
       setVoiceStatus("STANDBY");
