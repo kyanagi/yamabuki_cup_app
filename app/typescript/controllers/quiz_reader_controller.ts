@@ -124,12 +124,17 @@ function createQuestionReadingContext(
     },
 
     async start() {
+      if (this.voiceStatus !== "STANDBY") return;
+
       try {
         setVoiceStatus("PLAYING");
-        this.load();
+        await this.load();
 
         // load() を呼んでいるので audioBuffersPromise が undefined になることはないが、型ガードのため必要
-        if (!audioBuffersPromise) return;
+        if (!audioBuffersPromise) {
+          setVoiceStatus("STANDBY");
+          return;
+        }
 
         const [mondaiAudioBuffer, questionAudioBuffer] = await audioBuffersPromise;
 
@@ -152,6 +157,7 @@ function createQuestionReadingContext(
         await playAudioBuffer(questionAudioBuffer);
       } catch (e) {
         if (e instanceof Error) {
+          setVoiceStatus("STANDBY");
           console.error(e);
         }
       }
