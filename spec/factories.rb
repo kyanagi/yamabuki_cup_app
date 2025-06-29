@@ -34,7 +34,8 @@ FactoryBot.define do
 
   factory :question_reading do
     question { nil }
-    duration { 1.5 }
+    read_duration { 1.5 }
+    full_duration { 3.0 }
   end
 
   factory :question_provider do
