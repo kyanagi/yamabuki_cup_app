@@ -12,7 +12,7 @@ class SessionsController < PublicController
       redirect_to after_authentication_url
     else
       flash.now.alert = "メールアドレスまたはパスワードが正しくありません。"
-      render :new, status: :unprocessable_entity
+      render :new, status: 422
     end
   end
 

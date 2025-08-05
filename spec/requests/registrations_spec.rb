@@ -47,7 +47,7 @@ RSpec.describe "Registrations", type: :request do
           post registrations_path, params: valid_params
         end.not_to change(Player, :count)
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(422)
         expect(response.body).to include("は既に登録されています。ログインページからログインしてください。")
       end
     end
@@ -64,7 +64,7 @@ RSpec.describe "Registrations", type: :request do
           post registrations_path, params: invalid_email_params
         end.not_to change(Player, :count)
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(422)
         expect(response.body).to include("は不正な値です")
       end
     end
@@ -89,7 +89,7 @@ RSpec.describe "Registrations", type: :request do
           post registrations_path, params: invalid_params
         end.not_to change(Player, :count)
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(422)
         expect(response.body).to include("を入力してください")
       end
     end

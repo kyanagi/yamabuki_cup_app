@@ -12,7 +12,7 @@ module Admin
           flash.now.alert = "CSVファイルが選択されていません。"
           @upload = YontakuResultUpload.new
           @players = Player.preload(:yontaku_player_papers).order(:id)
-          render :index, status: :unprocessable_entity
+          render :index, status: 422
           return
         end
 
@@ -25,7 +25,7 @@ module Admin
         else
           flash.now.alert = @upload.errors.full_messages.join(", ")
           setup_index_instance_variables
-          render :index, status: :unprocessable_entity
+          render :index, status: 422
         end
       end
 

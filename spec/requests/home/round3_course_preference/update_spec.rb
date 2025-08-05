@@ -75,7 +75,7 @@ RSpec.describe "PUT /home/round3_course_preference", type: :request do
 
       it "422ステータスが返されること" do
         subject
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(422)
       end
     end
 
@@ -86,7 +86,7 @@ RSpec.describe "PUT /home/round3_course_preference", type: :request do
 
       it "422ステータスが返されること" do
         subject
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(422)
       end
 
       it "コース選択希望が更新されないこと" do

@@ -41,7 +41,7 @@ RSpec.describe "Admin::QuizReader::QuestionReadings", type: :request do
 
         it "エラーを返す" do
           post "/admin/quiz_reader/question_readings", params: invalid_params
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(422)
         end
       end
     end

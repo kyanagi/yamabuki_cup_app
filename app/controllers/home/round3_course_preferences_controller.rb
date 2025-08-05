@@ -10,7 +10,7 @@ module Home
         flash.notice = "コース選択希望を更新しました。"
         redirect_to home_round3_course_preference_path
       else
-        render :show, status: :unprocessable_entity
+        render :show, status: 422
       end
     end
 

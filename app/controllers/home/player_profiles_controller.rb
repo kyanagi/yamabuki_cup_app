@@ -11,7 +11,7 @@ module Home
         flash.notice = "エントリー内容を更新しました"
         redirect_to edit_home_player_profile_path
       else
-        render :edit, status: :unprocessable_entity
+        render :edit, status: 422
       end
     end
 

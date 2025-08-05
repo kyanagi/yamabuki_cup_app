@@ -22,7 +22,7 @@ class RegistrationsController < PublicController
       session[:registration_completed] = true
       redirect_to home_path
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: 422
     end
   end
 

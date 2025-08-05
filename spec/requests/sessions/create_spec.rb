@@ -24,7 +24,7 @@ RSpec.describe "POST /session", type: :request do
 
     it "ログインに失敗し、エラーメッセージが表示される" do
       subject
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(422)
       expect(response.body).to include("メールアドレスまたはパスワードが正しくありません。")
     end
   end
@@ -37,7 +37,7 @@ RSpec.describe "POST /session", type: :request do
 
     it "ログインに失敗し、エラーメッセージが表示される" do
       subject
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(422)
       expect(response.body).to include("メールアドレスまたはパスワードが正しくありません。")
     end
   end
