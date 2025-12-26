@@ -11,7 +11,7 @@ module ApplicationHelper
     first = Matchmaking::Round2::NUM_SEED_PLAYERS + 1
     num_round2_matches = 5
     num_advantaged_players = MatchRule::Round2::NUM_ADVANTAGED_PLAYERS * num_round2_matches
-    (first...first+num_advantaged_players).cover?(rank)
+    (first...(first+num_advantaged_players)).cover?(rank)
   end
 
   # @rbs rank Integer
@@ -20,7 +20,7 @@ module ApplicationHelper
     num_round2_matches = 5
     first = Matchmaking::Round2::NUM_SEED_PLAYERS + (MatchRule::Round2::NUM_ADVANTAGED_PLAYERS * num_round2_matches) + 1
     num_normal = (MatchRule::Round2::NUM_BUTTONS - MatchRule::Round2::NUM_ADVANTAGED_PLAYERS) * num_round2_matches
-    (first...first+num_normal).cover?(rank)
+    (first...(first+num_normal)).cover?(rank)
   end
 
   # @rbs rank Integer
@@ -29,7 +29,7 @@ module ApplicationHelper
     num_round2_matches = 5
     first = Matchmaking::Round2::NUM_SEED_PLAYERS + (MatchRule::Round2::NUM_BUTTONS * num_round2_matches) + 1
     num_waiting = (MatchRule::Round2::NUM_SEATS - MatchRule::Round2::NUM_BUTTONS) * num_round2_matches
-    (first...first+num_waiting).cover?(rank)
+    (first...(first+num_waiting)).cover?(rank)
   end
 
   # @rbs rank Integer
