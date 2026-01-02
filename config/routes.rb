@@ -38,6 +38,7 @@ Rails.application.routes.draw do
       collection do
         get :round1_timer
         get :seed_announcement
+        get :first_place_announcement
         get :round2_match1
         get :round2_match2
         get :round2_match3

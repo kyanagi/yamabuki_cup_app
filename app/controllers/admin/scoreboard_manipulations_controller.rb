@@ -11,6 +11,12 @@ module Admin
       render :show, layout: "admin"
     end
 
+    def first_place_announcement
+      @section = "first_place_announcement"
+      @first_place_result = YontakuPlayerResult.includes(player: :player_profile).find_by(rank: 1)
+      render :show, layout: "admin"
+    end
+
     def seed_announcement
       @section = "seed_announcement"
       @yontaku_results = YontakuPlayerResult.includes(player: :player_profile).order(:rank)
@@ -63,6 +69,21 @@ module Admin
         ActionCable.server.broadcast("scoreboard", turbo_stream.timer_start)
       when "round1_timer_stop"
         ActionCable.server.broadcast("scoreboard", turbo_stream.timer_stop)
+      when "first_place_init"
+        ActionCable.server.broadcast(
+          "scoreboard",
+          turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/first_place/_init") } +
+          turbo_stream.update("scoreboard-footer-left") { "1位発表" }
+        )
+      when "first_place_display_player"
+        yontaku_player_result = YontakuPlayerResult.find_by(rank: 1)
+        ActionCable.server.broadcast(
+          "scoreboard",
+          render_to_string(
+            "scoreboard/first_place/_display_player",
+            locals: { yontaku_player_result: }
+          )
+        )
       when "paper_seed_init"
         ActionCable.server.broadcast(
           "scoreboard",

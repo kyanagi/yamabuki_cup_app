@@ -1,0 +1,9 @@
+<% name = yontaku_player_result.player.player_profile.scoreboard_full_name %>
+<%= turbo_stream.replace("first-place-player") do %>
+  <div class="first-place-player animation-flip-in-x" id="first-place-player">
+    <div class="first-place-player__rank">1st</div>
+    <div class="first-place-player__name">
+      <div class="first-place-player__name-text first-place-player__name--length-<%= name.size %>"><%= name %></div>
+    </div>
+  </div>
+<% end %>

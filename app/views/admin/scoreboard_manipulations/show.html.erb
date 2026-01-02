@@ -8,6 +8,7 @@
           <%= select_tag :section,
                 options_for_select([
                   ["1Rタイマー", round1_timer_admin_scoreboard_manipulations_path],
+                  ["1位発表", first_place_announcement_admin_scoreboard_manipulations_path],
                   ["シード発表", seed_announcement_admin_scoreboard_manipulations_path],
                   ["2R発表 第1組", round2_match1_admin_scoreboard_manipulations_path],
                   ["2R発表 第2組", round2_match2_admin_scoreboard_manipulations_path],
@@ -23,6 +24,8 @@
     <% case @section %>
     <% when "round1_timer" %>
       <%= render "round1_timer" %>
+    <% when "first_place_announcement" %>
+      <%= render "first_place_announcement" %>
     <% when "seed_announcement" %>
       <%= render "seed_announcement" %>
     <% when "round2_match1", "round2_match2", "round2_match3", "round2_match4", "round2_match5" %>
