@@ -23,6 +23,9 @@ async function loadAudio(url: string, audioContext: AudioContext): Promise<Audio
     console.log(`Use cached audio: ${url}`);
   } else {
     response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch audio: ${response.status} ${response.statusText}`);
+    }
     console.log(`fetch: ${url}`);
     await cache.put(url, response.clone());
   }
