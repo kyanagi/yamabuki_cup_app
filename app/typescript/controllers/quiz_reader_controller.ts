@@ -13,7 +13,7 @@ const IDB_NAME = "yamabuki-cup-quiz-reader";
 type VoiceStatus = "STANDBY" | "PLAYING" | "PAUSED";
 type LoadingStatus = "NOT_LOADED" | "LOADING" | "LOADED";
 
-async function loadAudio(url: string, audioContext: AudioContext): Promise<AudioBuffer> {
+async function loadAudio(url: string, audioContext: AudioContext, signal: AbortSignal): Promise<AudioBuffer> {
   // await new Promise((resolve) => setTimeout(resolve, 1000)); // DEBUG
 
   const cache = await caches.open(CACHE_NAME);
@@ -22,7 +22,7 @@ async function loadAudio(url: string, audioContext: AudioContext): Promise<Audio
   if (response) {
     console.log(`Use cached audio: ${url}`);
   } else {
-    response = await fetch(url);
+    response = await fetch(url, { signal });
     if (!response.ok) {
       throw new Error(`Failed to fetch audio: ${response.status} ${response.statusText}`);
     }
@@ -105,7 +105,7 @@ function createQuestionReadingContext(
           abortController.signal.addEventListener("abort", abortHandler, {
             once: true,
           });
-          loadAudio(url, audioContext)
+          loadAudio(url, audioContext, abortController.signal)
             .then((buffer) => {
               resolve(buffer);
             })
