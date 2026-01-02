@@ -35,6 +35,11 @@
   - biome.json
 - Stimulus のコントローラは `app/typescript/controllers` ディレクトリにある。
 
+## 仕様書
+
+`docs/spec` ディレクトリに、本プロジェクトに関する仕様書が格納されている。
+
+- `docs/spec/yontaku_result_csv_format.md`: 四択クイズ採点結果CSVフォーマット仕様
 
 ## 開発用のコマンド
 
