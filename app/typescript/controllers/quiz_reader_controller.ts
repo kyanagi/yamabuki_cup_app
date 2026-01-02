@@ -105,10 +105,16 @@ function createQuestionReadingContext(
           abortController.signal.addEventListener("abort", abortHandler, {
             once: true,
           });
-          loadAudio(url, audioContext).then((buffer) => {
-            abortController.signal.removeEventListener("abort", abortHandler);
-            resolve(buffer);
-          });
+          loadAudio(url, audioContext)
+            .then((buffer) => {
+              resolve(buffer);
+            })
+            .catch((error) => {
+              reject(error);
+            })
+            .finally(() => {
+              abortController.signal.removeEventListener("abort", abortHandler);
+            });
         });
       };
 
