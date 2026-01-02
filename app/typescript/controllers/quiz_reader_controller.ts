@@ -13,9 +13,7 @@ const IDB_NAME = "yamabuki-cup-quiz-reader";
 type VoiceStatus = "STANDBY" | "PLAYING" | "PAUSED";
 type LoadingStatus = "NOT_LOADED" | "LOADING" | "LOADED";
 
-const audioContext = new AudioContext();
-
-async function loadAudio(url: string): Promise<AudioBuffer> {
+async function loadAudio(url: string, audioContext: AudioContext): Promise<AudioBuffer> {
   // await new Promise((resolve) => setTimeout(resolve, 1000)); // DEBUG
 
   const cache = await caches.open(CACHE_NAME);
@@ -49,6 +47,7 @@ type QuestionReadingContext = {
 function createQuestionReadingContext(
   questionId: number,
   soundId: string,
+  audioContext: AudioContext,
   onLoadingStatusChanged?: (s: LoadingStatus) => void,
   onVoiceStatusChanged?: (s: VoiceStatus) => void,
 ): QuestionReadingContext {
@@ -103,7 +102,7 @@ function createQuestionReadingContext(
           abortController.signal.addEventListener("abort", abortHandler, {
             once: true,
           });
-          loadAudio(url).then((buffer) => {
+          loadAudio(url, audioContext).then((buffer) => {
             abortController.signal.removeEventListener("abort", abortHandler);
             resolve(buffer);
           });
@@ -260,16 +259,21 @@ export default class extends Controller {
     },
   });
 
-  readingContext: QuestionReadingContext = createQuestionReadingContext(0, "dummy");
+  private audioContext: AudioContext | undefined;
+  private readingContext: QuestionReadingContext | undefined;
 
   private createQuestionReadingContextAndLoad(questionId: number, soundId: string) {
+    if (!this.audioContext) {
+      throw new Error("AudioContext が初期化されていません");
+    }
+
     const onLoadingStatusChanged = (loadingStatus: LoadingStatus) => {
       switch (loadingStatus) {
         case "LOADING":
           this.setVoiceLoadingStatusIcon("LOADING");
           break;
         case "LOADED":
-          console.log(`load done: duration=${this.readingContext.fullDuration}`);
+          console.log(`load done: duration=${this.readingContext?.fullDuration}`);
           this.setVoiceLoadingStatusIcon("LOADED");
           break;
       }
@@ -278,10 +282,11 @@ export default class extends Controller {
       this.setPlayStatusIcon(voiceStatus);
     };
 
-    this.readingContext.dispose();
+    this.readingContext?.dispose();
     this.readingContext = createQuestionReadingContext(
       questionId,
       soundId,
+      this.audioContext,
       onLoadingStatusChanged,
       onVoiceStatusChanged,
     );
@@ -310,6 +315,7 @@ export default class extends Controller {
 
   connect() {
     console.log("QuizReaderController connected");
+    this.audioContext = new AudioContext();
     caches.delete(CACHE_NAME);
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     this.createQuestionReadingContextAndLoad(this.questionIdValue, this.soundIdValue);
@@ -317,13 +323,15 @@ export default class extends Controller {
 
   disconnect() {
     console.log("QuizReaderController disconnected");
-    this.readingContext.dispose();
+    this.readingContext?.dispose();
+    this.readingContext = undefined;
     document.removeEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     caches.delete(CACHE_NAME);
 
-    if (audioContext.state !== "closed") {
-      audioContext.close();
+    if (this.audioContext && this.audioContext.state !== "closed") {
+      this.audioContext.close();
     }
+    this.audioContext = undefined;
   }
 
   updateOnAirLabel() {
@@ -385,11 +393,12 @@ export default class extends Controller {
   }
 
   private load() {
-    this.readingContext.load();
+    this.readingContext?.load();
   }
 
   startReading() {
     if (!this.isOnAirTarget.checked) return;
+    if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "STANDBY") return;
 
     console.log("startReading");
@@ -397,6 +406,7 @@ export default class extends Controller {
   }
 
   pauseReading() {
+    if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "PLAYING") return;
 
     console.log("pauseReading");
@@ -407,6 +417,7 @@ export default class extends Controller {
   }
 
   resetReading() {
+    if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "PAUSED") return;
 
     console.log("resetReading");
@@ -431,7 +442,7 @@ export default class extends Controller {
 
   async proceedToNextQuestion(event: KeyboardEvent) {
     if (event.repeat) return;
-    if (this.readingContext.voiceStatus === "PAUSED") {
+    if (this.readingContext?.voiceStatus === "PAUSED") {
       this.proceedToQuestion("next");
     }
   }
@@ -465,6 +476,8 @@ export default class extends Controller {
   }
 
   private async saveQuestionReading() {
+    if (!this.readingContext) return;
+
     const data = {
       questionId: this.readingContext.questionId,
       readDuration: this.readingContext.readDuration,
@@ -481,6 +494,8 @@ export default class extends Controller {
   }
 
   private async uploadQuestionReading() {
+    if (!this.readingContext) return;
+
     this.setResultUploadingStatusIcon("UPLOADING");
     const data = {
       question_id: this.readingContext.questionId,
@@ -512,6 +527,7 @@ export default class extends Controller {
   }
 
   private get durationText(): string {
+    if (!this.readingContext) return "";
     return `${this.readingContext.readDuration.toFixed(2)} / ${this.readingContext.fullDuration.toFixed(2)}`;
   }
 }
