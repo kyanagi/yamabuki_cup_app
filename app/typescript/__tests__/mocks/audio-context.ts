@@ -1,0 +1,75 @@
+/**
+ * AudioContext / AudioBufferSourceNode のモック
+ */
+
+export class MockAudioBufferSourceNode {
+  buffer: AudioBuffer | null = null;
+  onended: (() => void) | null = null;
+
+  private _connected = false;
+
+  connect(_destination: AudioDestinationNode): void {
+    this._connected = true;
+  }
+
+  disconnect(): void {
+    this._connected = false;
+  }
+
+  start(): void {
+    // 非同期で onended を呼び出す（実際の再生をシミュレート）
+  }
+
+  stop(): void {
+    this.onended?.();
+  }
+
+  // テスト用: 再生完了をシミュレート
+  simulateEnded(): void {
+    this.onended?.();
+  }
+}
+
+export function createMockAudioBuffer(duration = 5.0): AudioBuffer {
+  return {
+    duration,
+    length: 44100 * duration,
+    numberOfChannels: 2,
+    sampleRate: 44100,
+    getChannelData: () => new Float32Array(44100 * duration),
+    copyFromChannel: () => {},
+    copyToChannel: () => {},
+  } as AudioBuffer;
+}
+
+export class MockAudioContext {
+  state: AudioContextState = "running";
+  currentTime = 0;
+  destination = {} as AudioDestinationNode;
+
+  private _closed = false;
+
+  createBufferSource(): MockAudioBufferSourceNode {
+    return new MockAudioBufferSourceNode();
+  }
+
+  async decodeAudioData(_arrayBuffer: ArrayBuffer): Promise<AudioBuffer> {
+    // テスト用の AudioBuffer を返す
+    return createMockAudioBuffer(5.0);
+  }
+
+  async close(): Promise<void> {
+    this._closed = true;
+    this.state = "closed";
+  }
+
+  // テスト用: 時間を進める
+  advanceTime(seconds: number): void {
+    this.currentTime += seconds;
+  }
+
+  // テスト用: クローズ状態を確認
+  get isClosed(): boolean {
+    return this._closed;
+  }
+}

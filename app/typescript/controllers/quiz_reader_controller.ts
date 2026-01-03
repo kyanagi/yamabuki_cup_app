@@ -13,7 +13,8 @@ const IDB_NAME = "yamabuki-cup-quiz-reader";
 type VoiceStatus = "STANDBY" | "PLAYING" | "PAUSED";
 type LoadingStatus = "NOT_LOADED" | "LOADING" | "LOADED";
 
-async function loadAudio(url: string, audioContext: AudioContext, signal: AbortSignal): Promise<AudioBuffer> {
+// テスト用にexport
+export async function loadAudio(url: string, audioContext: AudioContext, signal: AbortSignal): Promise<AudioBuffer> {
   // await new Promise((resolve) => setTimeout(resolve, 1000)); // DEBUG
 
   const cache = await caches.open(CACHE_NAME);

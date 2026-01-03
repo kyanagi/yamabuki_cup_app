@@ -63,6 +63,8 @@ bin/rubocop                         # Ruby linting
 bin/brakeman --no-prism             # Security analysis
 npx biome format --write .          # Format TypeScript/JavaScript code
 npx biome check --write .           # Lint and format frontend code
+npm test                            # Run Vitest (frontend unit tests)
+npm run test:run                    # Run Vitest once without watch mode
 ```
 
 **Database Management**
