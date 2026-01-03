@@ -205,7 +205,7 @@ function createQuestionReadingContext(
       return questionDuration ?? 0;
     },
     get readDuration() {
-      if (!startTime || !stopTime) return 0;
+      if (startTime === undefined || stopTime === undefined) return 0;
       const d = stopTime - startTime;
       return d > this.fullDuration ? this.fullDuration : d;
     },
