@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createQuizReaderHTML } from "../../__tests__/helpers/dom-factory";
+import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import {
   MockAudioBufferSourceNode,
   MockAudioContext,
@@ -6,6 +8,15 @@ import {
 } from "../../__tests__/mocks/audio-context";
 import { createQuestionReadingContext, loadAudio } from "../quiz_reader_controller";
 import type { LoadingStatus, VoiceStatus } from "../quiz_reader_controller";
+import QuizReaderController from "../quiz_reader_controller";
+
+// idb モジュールをトップレベルでモック（Vitestによるホイスティング）
+vi.mock("idb", () => ({
+  openDB: vi.fn().mockResolvedValue({
+    add: vi.fn().mockResolvedValue(1),
+    getAll: vi.fn().mockResolvedValue([]),
+  }),
+}));
 
 describe("loadAudio", () => {
   const CACHE_NAME = "yamabuki-cup-quiz-reader";
@@ -318,6 +329,106 @@ describe("createQuestionReadingContext", () => {
 
       // Assert
       expect(context.voiceStatus).toBe("STANDBY");
+    });
+  });
+});
+
+describe("QuizReaderController (統合テスト)", () => {
+  beforeEach(() => {
+    // fetchのモック設定
+    vi.mocked(fetch).mockImplementation(async () => {
+      return new Response(new ArrayBuffer(100), {
+        status: 200,
+        headers: { "Content-Type": "audio/wav" },
+      });
+    });
+  });
+
+  describe("I1: connect() ライフサイクル", () => {
+    it("AudioContextが作成される", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const AudioContextSpy = vi.fn(MockAudioContext);
+      vi.stubGlobal("AudioContext", AudioContextSpy);
+
+      // Act
+      const { application } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Assert
+      expect(AudioContextSpy).toHaveBeenCalled();
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("キャッシュが削除される", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+
+      // 事前にキャッシュを設定
+      const cache = await caches.open("yamabuki-cup-quiz-reader");
+      await cache.put("/test.wav", new Response(new ArrayBuffer(10)));
+
+      // Act
+      const { application } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // 音声のロードを待つ
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Assert: 事前にキャッシュしたアイテムが削除されている
+      // connect()でcaches.deleteが呼ばれた後、新しい音声がfetchされキャッシュに保存されるが、
+      // 古いキャッシュエントリ(/test.wav)は削除されている
+      const newCache = await caches.open("yamabuki-cup-quiz-reader");
+      const oldCachedResponse = await newCache.match("/test.wav");
+      expect(oldCachedResponse).toBeUndefined();
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+  });
+
+  describe("I4: startReading() 音声再生", () => {
+    it("isOnAir=trueの場合、音声再生が開始される", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001", isOnAir: true });
+      MockAudioBufferSourceNode.autoComplete = false;
+
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // 音声のロードを待つ
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Act
+      (controller as { startReading: () => void }).startReading();
+
+      // Assert: 再生アイコンが表示される（playIconからis-hiddenが削除される）
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      const playIcon = document.querySelector('[data-quiz-reader-target~="playIcon"]');
+      expect(playIcon?.classList.contains("is-hidden")).toBe(false);
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("isOnAir=falseの場合、音声再生されない", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001", isOnAir: false });
+
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // 音声のロードを待つ
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      // Act
+      (controller as { startReading: () => void }).startReading();
+
+      // Assert: 停止アイコンが表示されたまま（STANDBYのまま）
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      const stopIcon = document.querySelector('[data-quiz-reader-target~="stopIcon"]');
+      expect(stopIcon?.classList.contains("is-hidden")).toBe(false);
+
+      // Cleanup
+      teardownControllerTest(application);
     });
   });
 });
