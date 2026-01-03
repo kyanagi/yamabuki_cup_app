@@ -125,6 +125,7 @@ function createQuestionReadingContext(
         questionDuration = (await audioBuffersPromise)[1].duration;
         this.loadingStatus = "LOADED";
       } catch (e) {
+        audioBuffersPromise = undefined;
         if (e instanceof Error) {
           console.error(e);
         }
