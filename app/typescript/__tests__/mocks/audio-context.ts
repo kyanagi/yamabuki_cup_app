@@ -7,6 +7,7 @@ export class MockAudioBufferSourceNode {
   onended: (() => void) | null = null;
 
   private _connected = false;
+  private _started = false;
 
   connect(_destination: AudioDestinationNode): void {
     this._connected = true;
@@ -17,17 +18,28 @@ export class MockAudioBufferSourceNode {
   }
 
   start(): void {
-    // 非同期で onended を呼び出す（実際の再生をシミュレート）
+    this._started = true;
+    // autoCompleteが有効な場合、次のマイクロタスクでonendedを呼ぶ
+    if (MockAudioBufferSourceNode.autoComplete) {
+      queueMicrotask(() => {
+        this.onended?.();
+      });
+    }
   }
 
   stop(): void {
-    this.onended?.();
+    if (this._started) {
+      this.onended?.();
+    }
   }
 
   // テスト用: 再生完了をシミュレート
   simulateEnded(): void {
     this.onended?.();
   }
+
+  // テスト用: 自動で再生完了するかどうか（デフォルトはtrue）
+  static autoComplete = true;
 }
 
 export function createMockAudioBuffer(duration = 5.0): AudioBuffer {

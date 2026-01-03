@@ -10,8 +10,9 @@ const CACHE_NAME = "yamabuki-cup-quiz-reader";
 // IndexedDB の名前
 const IDB_NAME = "yamabuki-cup-quiz-reader";
 
-type VoiceStatus = "STANDBY" | "PLAYING" | "PAUSED";
-type LoadingStatus = "NOT_LOADED" | "LOADING" | "LOADED";
+// テスト用にexport
+export type VoiceStatus = "STANDBY" | "PLAYING" | "PAUSED";
+export type LoadingStatus = "NOT_LOADED" | "LOADING" | "LOADED";
 
 // テスト用にexport
 export async function loadAudio(url: string, audioContext: AudioContext, signal: AbortSignal): Promise<AudioBuffer> {
@@ -35,7 +36,8 @@ export async function loadAudio(url: string, audioContext: AudioContext, signal:
   return await audioContext.decodeAudioData(arrayBuffer);
 }
 
-type QuestionReadingContext = {
+// テスト用にexport
+export type QuestionReadingContext = {
   load(): Promise<void>;
   start(): Promise<void>;
   stop(): void;
@@ -48,7 +50,8 @@ type QuestionReadingContext = {
   set loadingStatus(s: LoadingStatus);
 };
 
-function createQuestionReadingContext(
+// テスト用にexport
+export function createQuestionReadingContext(
   questionId: number,
   soundId: string,
   audioContext: AudioContext,
