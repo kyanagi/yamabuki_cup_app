@@ -75,6 +75,9 @@ RSpec.describe "新規エントリー", type: :system do
     it "確認モーダルでキャンセルできる" do
       visit new_registration_path
 
+      # Stimulusコントローラが初期化されるまで待機
+      expect(page).to have_css("[data-controller='entry-form modal']")
+
       # フォームに入力
       fill_in "registration[email]", with: valid_attributes[:email]
       fill_in "registration[password]", with: valid_attributes[:password]
@@ -86,8 +89,11 @@ RSpec.describe "新規エントリー", type: :system do
 
       click_button "確認する"
 
+      # モーダルが表示されるまで待機
+      expect(page).to have_css(".modal.is-active")
+
       # モーダルでキャンセル
-      within ".modal" do
+      within ".modal.is-active" do
         click_button "キャンセル"
       end
 
