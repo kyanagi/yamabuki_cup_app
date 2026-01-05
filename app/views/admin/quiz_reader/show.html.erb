@@ -15,6 +15,19 @@
       <span class="control-label" data-quiz-reader-target="onAirLabel">問い読みON</span>
     </label>
   </div>
+  <!-- 音声フォルダ選択 -->
+  <div class="field">
+    <div class="control is-flex is-align-items-center">
+      <button class="button" data-action="click->quiz-reader#selectFolder">
+        <span class="icon"><i class="fa-solid fa-folder-open"></i></span>
+        <span>音声フォルダを選択</span>
+      </button>
+      <span class="ml-3 has-text-grey" data-quiz-reader-target="folderStatus">
+        未選択
+      </span>
+    </div>
+    <p class="help has-text-danger is-hidden" data-quiz-reader-target="folderError"></p>
+  </div>
   <div class="field">
     <div class="control is-flex">
       <div class="mr-5">

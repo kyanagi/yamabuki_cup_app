@@ -5,34 +5,38 @@ import { fetchWithRetry } from "../lib/fetch_with_retry";
 
 // 「問題」と問題文の間の空白時間の長さ（ms）
 const INTERVAL_AFTER_MONDAI_MS = 300;
-// キャッシュの名前
-const CACHE_NAME = "yamabuki-cup-quiz-reader";
 // IndexedDB の名前
 const IDB_NAME = "yamabuki-cup-quiz-reader";
+
+// ファイルが見つからない場合のカスタムエラー
+class FileNotFoundError extends Error {
+  constructor(public filename: string) {
+    super(`File not found: ${filename}`);
+    this.name = "FileNotFoundError";
+  }
+}
 
 // テスト用にexport
 export type VoiceStatus = "STANDBY" | "PLAYING" | "PAUSED";
 export type LoadingStatus = "NOT_LOADED" | "LOADING" | "LOADED";
 
 // テスト用にexport
-export async function loadAudio(url: string, audioContext: AudioContext, signal: AbortSignal): Promise<AudioBuffer> {
-  // await new Promise((resolve) => setTimeout(resolve, 1000)); // DEBUG
-
-  const cache = await caches.open(CACHE_NAME);
-  let response = await cache.match(url);
-
-  if (response) {
-    console.log(`Use cached audio: ${url}`);
-  } else {
-    response = await fetch(url, { signal });
-    if (!response.ok) {
-      throw new Error(`Failed to fetch audio: ${response.status} ${response.statusText}`);
-    }
-    console.log(`fetch: ${url}`);
-    await cache.put(url, response.clone());
+export async function loadAudioFromLocalFile(
+  filename: string,
+  dirHandle: FileSystemDirectoryHandle,
+  audioContext: AudioContext,
+  signal: AbortSignal,
+): Promise<AudioBuffer> {
+  // AbortSignal をチェック
+  if (signal.aborted) {
+    throw new DOMException("Aborted", "AbortError");
   }
 
-  const arrayBuffer = await response.arrayBuffer();
+  const fileHandle = await dirHandle.getFileHandle(filename);
+  const file = await fileHandle.getFile();
+  const arrayBuffer = await file.arrayBuffer();
+
+  console.log(`Loaded local audio: ${filename}`);
   return await audioContext.decodeAudioData(arrayBuffer);
 }
 
@@ -55,8 +59,10 @@ export function createQuestionReadingContext(
   questionId: number,
   soundId: string,
   audioContext: AudioContext,
+  dirHandle: FileSystemDirectoryHandle,
   onLoadingStatusChanged?: (s: LoadingStatus) => void,
   onVoiceStatusChanged?: (s: VoiceStatus) => void,
+  onFileNotFound?: (filename: string) => void,
 ): QuestionReadingContext {
   let voiceStatus: VoiceStatus = "STANDBY";
   let currentSource: AudioBufferSourceNode | undefined;
@@ -65,6 +71,7 @@ export function createQuestionReadingContext(
   let questionDuration: number | undefined;
   let audioBuffersPromise: Promise<[AudioBuffer, AudioBuffer]> | undefined;
   let abortController = new AbortController();
+  let loadFailed = false;
 
   function playAudioBuffer(audioBuffer: AudioBuffer): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -103,18 +110,23 @@ export function createQuestionReadingContext(
 
       this.loadingStatus = "LOADING";
 
-      const createAudioBufferPromise = (url: string) => {
+      const createAudioBufferPromise = (filename: string) => {
         return new Promise<AudioBuffer>((resolve, reject) => {
-          const abortHandler = () => reject();
+          const abortHandler = () => reject(new DOMException("Aborted", "AbortError"));
           abortController.signal.addEventListener("abort", abortHandler, {
             once: true,
           });
-          loadAudio(url, audioContext, abortController.signal)
+          loadAudioFromLocalFile(filename, dirHandle, audioContext, abortController.signal)
             .then((buffer) => {
               resolve(buffer);
             })
             .catch((error) => {
-              reject(error);
+              // NotFoundError をファイル名付きのカスタムエラーに変換
+              if (error instanceof DOMException && error.name === "NotFoundError") {
+                reject(new FileNotFoundError(filename));
+              } else {
+                reject(error);
+              }
             })
             .finally(() => {
               abortController.signal.removeEventListener("abort", abortHandler);
@@ -122,15 +134,21 @@ export function createQuestionReadingContext(
         });
       };
 
+      const mondaiFilename = "mondai.wav";
+      const questionFilename = `question${soundId}.wav`;
+
       try {
-        const mondaiAudioBufferPromise = createAudioBufferPromise("/sample/mondai.wav");
-        const questionAudioBufferPromise = createAudioBufferPromise(`/sample/question${soundId}.wav`);
+        const mondaiAudioBufferPromise = createAudioBufferPromise(mondaiFilename);
+        const questionAudioBufferPromise = createAudioBufferPromise(questionFilename);
         audioBuffersPromise = Promise.all([mondaiAudioBufferPromise, questionAudioBufferPromise]);
         questionDuration = (await audioBuffersPromise)[1].duration;
         this.loadingStatus = "LOADED";
       } catch (e) {
         audioBuffersPromise = undefined;
-        if (e instanceof Error) {
+        loadFailed = true;
+        if (e instanceof FileNotFoundError) {
+          onFileNotFound?.(e.filename);
+        } else if (e instanceof Error) {
           console.error(e);
         }
         this.loadingStatus = "NOT_LOADED";
@@ -139,12 +157,13 @@ export function createQuestionReadingContext(
 
     async start() {
       if (this.voiceStatus !== "STANDBY") return;
+      if (loadFailed) return;
 
       try {
         setVoiceStatus("PLAYING");
         await this.load();
 
-        // load() を呼んでいるので audioBuffersPromise が undefined になることはないが、型ガードのため必要
+        // load() でエラーが発生した場合、audioBuffersPromise は undefined のまま
         if (!audioBuffersPromise) {
           setVoiceStatus("STANDBY");
           return;
@@ -195,12 +214,14 @@ export function createQuestionReadingContext(
       abortController = new AbortController();
       startTime = undefined;
       stopTime = undefined;
+      loadFailed = false;
       setVoiceStatus("STANDBY");
     },
 
     dispose() {
       this.stop();
       audioBuffersPromise = undefined;
+      loadFailed = false;
     },
 
     get questionId() {
@@ -241,6 +262,8 @@ export default class extends Controller {
     "resultUploadingIcon",
     "resultUploadedIcon",
     "resultUploadErrorIcon",
+    "folderStatus",
+    "folderError",
   ];
   static values = {
     questionId: Number,
@@ -261,8 +284,12 @@ export default class extends Controller {
   declare resultUploadingIconTarget: HTMLElement;
   declare resultUploadedIconTarget: HTMLElement;
   declare resultUploadErrorIconTarget: HTMLElement;
+  declare folderStatusTarget: HTMLElement;
+  declare folderErrorTarget: HTMLElement;
   declare questionIdValue: number;
   declare soundIdValue: string;
+
+  private dirHandle: FileSystemDirectoryHandle | undefined;
 
   private idbPromise = openDB(IDB_NAME, 1, {
     upgrade(db) {
@@ -280,6 +307,10 @@ export default class extends Controller {
     if (!this.audioContext) {
       throw new Error("AudioContext が初期化されていません");
     }
+    if (!this.dirHandle) {
+      // フォルダ未選択時は readingContext を作成しない
+      return;
+    }
 
     const onLoadingStatusChanged = (loadingStatus: LoadingStatus) => {
       switch (loadingStatus) {
@@ -289,11 +320,15 @@ export default class extends Controller {
         case "LOADED":
           console.log(`load done: duration=${this.readingContext?.fullDuration}`);
           this.setVoiceLoadingStatusIcon("LOADED");
+          this.clearFolderError();
           break;
       }
     };
     const onVoiceStatusChanged = (voiceStatus: VoiceStatus) => {
       this.setPlayStatusIcon(voiceStatus);
+    };
+    const onFileNotFound = (filename: string) => {
+      this.showFolderError(`音声ファイルが見つかりません（${filename}）`);
     };
 
     this.readingContext?.dispose();
@@ -301,8 +336,10 @@ export default class extends Controller {
       questionId,
       soundId,
       this.audioContext,
+      this.dirHandle,
       onLoadingStatusChanged,
       onVoiceStatusChanged,
+      onFileNotFound,
     );
     this.load();
   }
@@ -330,9 +367,7 @@ export default class extends Controller {
   connect() {
     console.log("QuizReaderController connected");
     this.audioContext = new AudioContext();
-    caches.delete(CACHE_NAME);
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
-    this.createQuestionReadingContextAndLoad(this.questionIdValue, this.soundIdValue);
   }
 
   disconnect() {
@@ -340,12 +375,12 @@ export default class extends Controller {
     this.readingContext?.dispose();
     this.readingContext = undefined;
     document.removeEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
-    caches.delete(CACHE_NAME);
 
     if (this.audioContext && this.audioContext.state !== "closed") {
       this.audioContext.close();
     }
     this.audioContext = undefined;
+    this.dirHandle = undefined;
   }
 
   updateOnAirLabel() {
@@ -406,12 +441,54 @@ export default class extends Controller {
     }
   }
 
+  private updateFolderStatusText(text: string, state: "default" | "success") {
+    this.folderStatusTarget.classList.remove("has-text-grey", "has-text-success");
+    this.folderStatusTarget.classList.add(state === "success" ? "has-text-success" : "has-text-grey");
+    this.folderStatusTarget.textContent = text;
+  }
+
+  private showFolderError(message: string) {
+    this.folderErrorTarget.textContent = message;
+    this.folderErrorTarget.classList.remove("is-hidden");
+  }
+
+  private clearFolderError() {
+    this.folderErrorTarget.textContent = "";
+    this.folderErrorTarget.classList.add("is-hidden");
+  }
+
+  async selectFolder() {
+    try {
+      const dirHandle = await window.showDirectoryPicker();
+      this.dirHandle = dirHandle;
+      this.clearFolderError();
+      this.updateFolderStatusText(dirHandle.name, "success");
+      // フォルダ選択後に音声を読み込む
+      this.createQuestionReadingContextAndLoad(this.questionIdValue, this.soundIdValue);
+    } catch (e) {
+      if (e instanceof DOMException && e.name === "AbortError") {
+        // キャンセル時はエラーをクリアするが、folderStatus は既存の選択状態を維持
+        this.clearFolderError();
+        return;
+      }
+      this.showFolderError("フォルダの選択に失敗しました");
+    }
+  }
+
   private load() {
     this.readingContext?.load();
   }
 
   startReading() {
     if (!this.isOnAirTarget.checked) return;
+
+    // フォルダ未選択チェックを先に行う
+    if (!this.dirHandle) {
+      this.updateFolderStatusText("選択してください", "default");
+      this.showFolderError("再生するには音声フォルダの選択が必要です");
+      return;
+    }
+
     if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "STANDBY") return;
 

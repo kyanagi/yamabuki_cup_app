@@ -40,6 +40,11 @@ export class MockAudioBufferSourceNode {
 
   // テスト用: 自動で再生完了するかどうか（デフォルトはtrue）
   static autoComplete = true;
+
+  // テスト用: 接続状態を確認
+  get isConnected(): boolean {
+    return this._connected;
+  }
 }
 
 export function createMockAudioBuffer(duration = 5.0): AudioBuffer {

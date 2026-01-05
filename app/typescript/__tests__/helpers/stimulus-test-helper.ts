@@ -13,7 +13,8 @@ interface ControllerTestContext<T> {
  * Stimulus コントローラーをテスト用にセットアップする
  */
 export async function setupControllerTest<T>(
-  ControllerClass: { new (...args: unknown[]): T },
+  // biome-ignore lint/suspicious/noExplicitAny: Stimulus Controller の型が複雑なため any を使用
+  ControllerClass: any,
   html: string,
   identifier: string,
 ): Promise<ControllerTestContext<T>> {

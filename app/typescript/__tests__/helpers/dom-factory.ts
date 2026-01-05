@@ -41,6 +41,10 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
       <span data-quiz-reader-target="resultUploadingStatusIcon resultUploadingIcon" class="is-hidden"></span>
       <span data-quiz-reader-target="resultUploadingStatusIcon resultUploadedIcon" class="is-hidden"></span>
       <span data-quiz-reader-target="resultUploadingStatusIcon resultUploadErrorIcon" class="is-hidden"></span>
+
+      <!-- Folder selection -->
+      <span data-quiz-reader-target="folderStatus" class="has-text-grey">未選択</span>
+      <p data-quiz-reader-target="folderError" class="is-hidden"></p>
     </div>
   `;
 }
