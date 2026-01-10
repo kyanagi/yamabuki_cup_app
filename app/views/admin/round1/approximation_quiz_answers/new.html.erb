@@ -1,57 +1,57 @@
-<div class="container mb-6">
+<div class="container mb-6 is-max-tablet">
   <h1 class="title">近似値クイズ解答用紙 登録</h1>
-  <div class="block">
-    <% if notice %>
-      <div class="notification is-success is-light">
-        <%= notice %>
-      </div>
-    <% end %>
-    <% if alert %>
-      <div class="notification is-danger is-light">
-        <%= alert %>
-      </div>
-    <% end %>
-    <%= form_with model: @approximation_quiz_answer, url: admin_round1_approximation_quiz_answers_path, html: { autocomplete: "off" } do |f| %>
-      <div class="field has-addons">
-        <div class="control">
-          <%= f.text_field :player_id, placeholder: "ID", class: "input", type: "number", min: 1, required: true, autofocus: true %>
-        </div>
-        <div class="control">
-          <%= f.text_field :answer1, placeholder: "近似値1", class: "input", type: "number", min: 0 %>
-        </div>
-        <div class="control">
-          <%= f.text_field :answer2, placeholder: "近似値2", class: "input", type: "number", min: 0 %>
-        </div>
-        <div class="control">
-          <%= f.submit "送信", class: "button is-primary" %>
-        </div>
-      </div>
-    <% end %>
-  </div>
+  <% if notice %>
+    <div class="notification is-success is-light">
+      <%= notice %>
+    </div>
+  <% end %>
+  <% if alert %>
+    <div class="notification is-danger is-light">
+      <%= alert %>
+    </div>
+  <% end %>
   <div class="block">
     <%= @submitted_players.size %>人入力済み
   </div>
-  <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>氏名</th>
-        <th>近似値1</th>
-        <th>近似値2</th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= render partial: "player", collection: @submitted_players %>
-    </tbody>
+  <table class="table is-striped is-narrow is-hoverable is-fullwidth">
+    <%= form_with model: @approximation_quiz_answer, url: admin_round1_approximation_quiz_answers_path, html: { autocomplete: "off" } do |f| %>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>氏名</th>
+          <th class="has-text-right">近似値1</th>
+          <th class="has-text-right">近似値2</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="has-background-info-light" data-controller="player-name-lookup">
+          <td style="width: 80px;">
+            <%= f.number_field :player_id,
+                placeholder: "ID",
+                class: "input is-small",
+                min: 1,
+                required: true,
+                autofocus: true,
+                data: { player_name_lookup_target: "playerId", action: "input->player-name-lookup#lookup" } %>
+          </td>
+          <td data-player-name-lookup-target="playerName"></td>
+          <td style="width: 120px;"><%= f.number_field :answer1, placeholder: "近似値1", class: "input is-small has-text-right", min: 0 %></td>
+          <td style="width: 120px;"><%= f.number_field :answer2, placeholder: "近似値2", class: "input is-small has-text-right", min: 0 %></td>
+          <td style="width: 80px;"><%= f.submit "送信", class: "button is-primary is-small" %></td>
+        </tr>
+        <%= render partial: "player", collection: @submitted_players %>
+      </tbody>
+    <% end %>
   </table>
   <h2 class="subtitle">未入力</h2>
-  <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+  <table class="table is-striped is-narrow is-hoverable is-fullwidth">
     <thead>
       <tr>
         <th>ID</th>
         <th>氏名</th>
-        <th>近似値1</th>
-        <th>近似値2</th>
+        <th class="has-text-right">近似値1</th>
+        <th class="has-text-right">近似値2</th>
       </tr>
     </thead>
     <tbody>

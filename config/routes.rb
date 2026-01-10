@@ -52,6 +52,7 @@ Rails.application.routes.draw do
 
     namespace :round1 do
       resources :results, only: [:index]
+      resources :players, only: [:show]
       resources :yontaku_player_papers, only: [:create, :index] do
         collection do
           delete :destroy, to: "yontaku_player_papers#destroy_all"
