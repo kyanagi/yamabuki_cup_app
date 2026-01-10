@@ -3,4 +3,11 @@
   <td><%= player.player_profile&.full_name %></td>
   <td class="has-text-right"><%= player.approximation_quiz_answer&.answer1 %></td>
   <td class="has-text-right"><%= player.approximation_quiz_answer&.answer2 %></td>
+  <% if local_assigns[:show_delete_link] %>
+    <td class="has-text-centered">
+      <% if player.approximation_quiz_answer %>
+        <%= link_to "削除", admin_round1_approximation_quiz_answer_path(player.approximation_quiz_answer), class: "button is-small is-danger-outline", tabindex: -1 %>
+      <% end %>
+    </td>
+  <% end %>
 </tr>

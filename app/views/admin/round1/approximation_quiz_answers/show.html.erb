@@ -1,0 +1,36 @@
+<div class="container mb-6 is-max-tablet">
+  <h1 class="title">近似値クイズ解答用紙 詳細</h1>
+  <div class="card mb-4">
+    <div class="card-content">
+      <table class="table is-fullwidth">
+        <tbody>
+          <tr>
+            <th>プレイヤーID</th>
+            <td><%= @approximation_quiz_answer.player_id %></td>
+          </tr>
+          <tr>
+            <th>氏名</th>
+            <td><%= @approximation_quiz_answer.player.player_profile&.full_name %></td>
+          </tr>
+          <tr>
+            <th>近似値1</th>
+            <td><%= @approximation_quiz_answer.answer1 %></td>
+          </tr>
+          <tr>
+            <th>近似値2</th>
+            <td><%= @approximation_quiz_answer.answer2 %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="buttons">
+    <%= link_to "戻る", new_admin_round1_approximation_quiz_answer_path, class: "button" %>
+    <%= form_with url: admin_round1_approximation_quiz_answer_path(@approximation_quiz_answer),
+                  method: :delete,
+                  style: 'display: inline-block;',
+                  data: { turbo_confirm: "この解答用紙を削除しますか？" } do |f| %>
+      <%= f.submit '削除', class: 'button is-danger' %>
+    <% end %>
+  </div>
+</div>

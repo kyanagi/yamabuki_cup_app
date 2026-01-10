@@ -5,6 +5,10 @@ module Admin
         @players = Player.eager_load(:player_profile, :approximation_quiz_answer).order(:id)
       end
 
+      def show
+        @approximation_quiz_answer = ApproximationQuizAnswer.find(params[:id])
+      end
+
       def new
         @approximation_quiz_answer = ApproximationQuizAnswer.new
 
@@ -31,6 +35,13 @@ module Admin
           end
           redirect_to new_admin_round1_approximation_quiz_answer_path
         end
+      end
+
+      def destroy
+        @approximation_quiz_answer = ApproximationQuizAnswer.find(params[:id])
+        player_id = @approximation_quiz_answer.player_id
+        @approximation_quiz_answer.destroy!
+        redirect_to new_admin_round1_approximation_quiz_answer_path, notice: "ID=#{player_id} の近似値を削除しました。"
       end
     end
   end

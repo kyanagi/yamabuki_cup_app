@@ -13,8 +13,8 @@
   <div class="block">
     <%= @submitted_players.size %>人入力済み
   </div>
-  <table class="table is-striped is-narrow is-hoverable is-fullwidth">
-    <%= form_with model: @approximation_quiz_answer, url: admin_round1_approximation_quiz_answers_path, html: { autocomplete: "off" } do |f| %>
+  <%= form_with model: @approximation_quiz_answer, url: admin_round1_approximation_quiz_answers_path, html: { autocomplete: "off" } do |f| %>
+    <table class="table is-striped is-narrow is-hoverable is-fullwidth">
       <thead>
         <tr>
           <th>ID</th>
@@ -36,14 +36,14 @@
                 data: { player_name_lookup_target: "playerId", action: "input->player-name-lookup#lookup" } %>
           </td>
           <td data-player-name-lookup-target="playerName"></td>
-          <td style="width: 120px;"><%= f.number_field :answer1, placeholder: "近似値1", class: "input is-small has-text-right", min: 0 %></td>
-          <td style="width: 120px;"><%= f.number_field :answer2, placeholder: "近似値2", class: "input is-small has-text-right", min: 0 %></td>
-          <td style="width: 80px;"><%= f.submit "送信", class: "button is-primary is-small" %></td>
+          <td class="has-text-right"><%= f.number_field :answer1, placeholder: "近似値1", class: "input is-small", min: 0, style: "width: 120px;" %></td>
+          <td class="has-text-right"><%= f.number_field :answer2, placeholder: "近似値2", class: "input is-small", min: 0, style: "width: 120px;" %></td>
+          <td class="has-text-centered"><%= f.submit "追加", class: "button is-primary is-small" %></td>
         </tr>
-        <%= render partial: "player", collection: @submitted_players %>
+        <%= render partial: "player", collection: @submitted_players, locals: { show_delete_link: true } %>
       </tbody>
-    <% end %>
-  </table>
+    </table>
+  <% end %>
   <h2 class="subtitle">未入力</h2>
   <table class="table is-striped is-narrow is-hoverable is-fullwidth">
     <thead>
@@ -52,10 +52,11 @@
         <th>氏名</th>
         <th class="has-text-right">近似値1</th>
         <th class="has-text-right">近似値2</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
-      <%= render partial: "player", collection: @unsubmitted_players %>
+      <%= render partial: "player", collection: @unsubmitted_players, locals: { show_delete_link: true } %>
     </tbody>
   </table>
   <div class="block has-text-right">
