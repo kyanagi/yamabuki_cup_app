@@ -1,58 +1,56 @@
-<div class="container">
-  <section class="section">
-    <%= render "admin/shared/breadcrumb", items: [
-      { label: "ペーパー採点", path: nil }
-    ] %>
+<div class="container mb-6">
+  <%= render "admin/shared/breadcrumb", items: [
+    { label: "ペーパー採点", path: nil }
+  ] %>
 
-    <div class="columns">
-      <div class="column is-4">
-        <div class="card">
-          <div class="card-content">
-            <div class="media">
-              <div class="media-content">
-                <p class="title is-4">四択解答用紙</p>
-              </div>
+  <div class="columns">
+    <div class="column is-4">
+      <div class="card">
+        <div class="card-content">
+          <div class="media">
+            <div class="media-content">
+              <p class="title is-4">四択解答用紙</p>
             </div>
           </div>
-          <footer class="card-footer">
-            <%= link_to "開く", admin_round1_yontaku_player_papers_path, class: "card-footer-item" %>
-          </footer>
         </div>
-      </div>
-
-      <div class="column is-4">
-        <div class="card">
-          <div class="card-content">
-            <div class="media">
-              <div class="media-content">
-                <p class="title is-4">近似値</p>
-              </div>
-            </div>
-          </div>
-          <footer class="card-footer">
-            <%= link_to "開く", admin_round1_approximation_quiz_answers_path, class: "card-footer-item" %>
-          </footer>
-        </div>
-      </div>
-
-      <div class="column is-4">
-        <div class="card">
-          <div class="card-content">
-            <div class="media">
-              <div class="media-content">
-                <p class="title is-4">結果</p>
-              </div>
-            </div>
-          </div>
-          <footer class="card-footer">
-            <%= link_to "開く", admin_round1_results_path, class: "card-footer-item" %>
-          </footer>
-        </div>
+        <footer class="card-footer">
+          <%= link_to "開く", admin_round1_yontaku_player_papers_path, class: "card-footer-item" %>
+        </footer>
       </div>
     </div>
 
-    <div class="mt-5">
-      <%= link_to "戻る", admin_root_path, class: "button is-light" %>
+    <div class="column is-4">
+      <div class="card">
+        <div class="card-content">
+          <div class="media">
+            <div class="media-content">
+              <p class="title is-4">近似値</p>
+            </div>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <%= link_to "開く", admin_round1_approximation_quiz_answers_path, class: "card-footer-item" %>
+        </footer>
+      </div>
     </div>
-  </section>
+
+    <div class="column is-4">
+      <div class="card">
+        <div class="card-content">
+          <div class="media">
+            <div class="media-content">
+              <p class="title is-4">結果</p>
+            </div>
+          </div>
+        </div>
+        <footer class="card-footer">
+          <%= link_to "開く", admin_round1_results_path, class: "card-footer-item" %>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <%= link_to "戻る", admin_root_path, class: "button is-light" %>
+  </div>
 </div>
