@@ -1,5 +1,8 @@
 <div class="container mb-6">
-  <h1 class="title">四択クイズ解答用紙</h1>
+  <%= render "admin/shared/breadcrumb", items: [
+    { label: "ペーパー採点", path: admin_round1_path },
+    { label: "四択解答用紙", path: nil }
+  ] %>
   <% if notice %>
     <div class="notification is-success is-light">
       <%= notice %>

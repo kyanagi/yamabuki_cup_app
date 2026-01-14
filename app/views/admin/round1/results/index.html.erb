@@ -1,7 +1,10 @@
 <%# frozen_string_literal: true %>
 <section class="section">
   <div class="container">
-    <h1 class="title is-2 has-text-centered mb-6">ペーパークイズ結果</h1>
+    <%= render "admin/shared/breadcrumb", items: [
+      { label: "ペーパー採点", path: admin_round1_path },
+      { label: "結果", path: nil }
+    ] %>
     <div class="table-container">
       <table class="table is-fullwidth is-striped is-hoverable">
         <thead>

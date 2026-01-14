@@ -1,5 +1,9 @@
 <div class="container mb-6 is-max-tablet">
-  <h1 class="title">近似値クイズ解答用紙 登録</h1>
+  <%= render "admin/shared/breadcrumb", items: [
+    { label: "ペーパー採点", path: admin_round1_path },
+    { label: "近似値", path: admin_round1_approximation_quiz_answers_path },
+    { label: "入力", path: nil }
+  ] %>
   <% if notice %>
     <div class="notification is-success is-light">
       <%= notice %>

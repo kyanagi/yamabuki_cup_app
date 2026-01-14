@@ -1,5 +1,9 @@
 <div class="container mb-6 is-max-tablet">
-  <h1 class="title">近似値クイズ解答用紙 詳細</h1>
+  <%= render "admin/shared/breadcrumb", items: [
+    { label: "ペーパー採点", path: admin_round1_path },
+    { label: "近似値", path: admin_round1_approximation_quiz_answers_path },
+    { label: "詳細", path: nil }
+  ] %>
   <div class="card mb-4">
     <div class="card-content">
       <table class="table is-fullwidth">

@@ -34,8 +34,11 @@ RSpec.describe "Admin::Round1::Results", type: :system do
         visit "/admin/round1/results"
       end
 
-      it "ページタイトルが表示されること" do
-        expect(page).to have_content "ペーパークイズ結果"
+      it "パンくずリストが表示されること" do
+        within ".breadcrumb" do
+          expect(page).to have_content "ペーパー採点"
+          expect(page).to have_content "結果"
+        end
       end
 
       it "テーブルのヘッダーが表示されること" do

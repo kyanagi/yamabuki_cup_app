@@ -1,0 +1,25 @@
+<%# locals: (items:) %>
+<%#
+  パンくずリストパーシャル
+  使用例:
+  <%= render "admin/shared/breadcrumb", items: [
+    { label: "ペーパー採点", path: admin_round1_path },
+    { label: "四択解答用紙", path: nil }
+  ]
+%>
+<% if items.present? %>
+  <nav class="breadcrumb mb-4 has-succeeds-separator" aria-label="breadcrumbs">
+    <ul>
+      <% items.each_with_index do |item, index| %>
+        <% is_last = index == items.size - 1 %>
+        <li class="<%= 'is-active' if is_last %>">
+          <% if is_last || item[:path].nil? %>
+            <a href="#" aria-current="<%= 'page' if is_last %>"><%= item[:label] %></a>
+          <% else %>
+            <%= link_to item[:label], item[:path] %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+<% end %>
