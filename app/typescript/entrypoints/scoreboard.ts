@@ -1,7 +1,29 @@
 import "@hotwired/turbo-rails";
+import { StreamActions } from "@hotwired/turbo";
 import { createConsumer } from "@rails/actioncable";
 
 import { application } from "../controllers/application";
+
+// カスタム Turbo Stream アクション: 問題表示を消去（アニメーション付き）
+StreamActions.clear_question = function () {
+  const target = document.getElementById(this.getAttribute("target") || "");
+  if (!target) return;
+
+  const questionElement = target.querySelector(".question");
+  if (!questionElement) {
+    target.innerHTML = "";
+    return;
+  }
+
+  questionElement.classList.add("question--hiding");
+  questionElement.addEventListener(
+    "animationend",
+    () => {
+      target.innerHTML = "";
+    },
+    { once: true },
+  );
+};
 // Stimulus controllers
 import ClockController from "../controllers/clock_controller";
 import Round1TimerController from "../controllers/round1_timer_controller";

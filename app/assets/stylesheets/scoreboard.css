@@ -545,6 +545,29 @@ body {
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 3vh;
+  animation: revealFromTop 0.2s ease-out;
+}
+
+@keyframes revealFromTop {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes hideToTop {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+.question--hiding {
+  animation: hideToTop 0.2s ease-out forwards;
 }
 
 .question-text {
