@@ -72,6 +72,10 @@ Rails.application.routes.draw do
 
     resources :matchmakings, only: [:create]
 
-    resources :question_broadcasts, only: [:new, :create]
+    resources :question_broadcasts, only: [:new, :create] do
+      collection do
+        post :clear
+      end
+    end
   end
 end

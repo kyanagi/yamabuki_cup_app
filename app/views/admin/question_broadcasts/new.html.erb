@@ -30,4 +30,10 @@
       </div>
     </div>
   <% end %>
+
+  <hr>
+
+  <%= form_with url: clear_admin_question_broadcasts_path, method: :post do |f| %>
+    <%= f.submit "消去", class: "button is-danger" %>
+  <% end %>
 </div>

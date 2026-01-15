@@ -74,4 +74,33 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
       end
     end
   end
+
+  describe "POST /admin/question_broadcasts/clear" do
+    it "scoreboardチャンネルにbroadcastが行われる" do
+      expect do
+        post "/admin/question_broadcasts/clear"
+      end.to have_broadcasted_to("scoreboard")
+    end
+
+    it "broadcast内容にturbo_stream updateが含まれる" do
+      expect do
+        post "/admin/question_broadcasts/clear"
+      end.to(have_broadcasted_to("scoreboard").with do |data|
+        expect(data).to include("turbo-stream")
+        expect(data).to include('action="update"')
+        expect(data).to include('target="question"')
+      end)
+    end
+
+    it "問題消去後、リダイレクトする" do
+      post "/admin/question_broadcasts/clear"
+      expect(response).to redirect_to(new_admin_question_broadcast_path)
+    end
+
+    it "成功メッセージがflashに設定される" do
+      post "/admin/question_broadcasts/clear"
+      follow_redirect!
+      expect(response.body).to include("消去しました")
+    end
+  end
 end
