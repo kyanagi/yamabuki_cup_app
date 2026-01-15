@@ -539,13 +539,22 @@ body {
 
 /* 問題表示 */
 .question {
-  font-family: "BIZUDPGothic-Regular", sans-serif;
   padding-top: 5vh;
   padding-right: 2vw;
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 3vh;
   animation: revealFromTop 0.2s ease-out;
+  word-break: auto-phrase;
+  text-autospace: normal;
+}
+
+.question-text {
+  font-family: "migu-1m-regular", sans-serif;
+}
+
+.question-answer {
+  font-family: "BIZUDPGothic-Regular", sans-serif;
 }
 
 @keyframes revealFromTop {
