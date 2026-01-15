@@ -1,0 +1,77 @@
+require "rails_helper"
+
+RSpec.describe "Admin::QuestionBroadcasts", type: :request do
+  describe "GET /admin/question_broadcasts/new" do
+    it "returns 200" do
+      get "/admin/question_broadcasts/new"
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  describe "POST /admin/question_broadcasts" do
+    context "正常系" do
+      let(:question) { create(:question) }
+
+      it "指定されたQuestionをbroadcastしてリダイレクトする" do
+        post "/admin/question_broadcasts", params: { question_id: question.id }
+        expect(response).to redirect_to(new_admin_question_broadcast_path)
+      end
+
+      it "成功メッセージがflashに設定される" do
+        post "/admin/question_broadcasts", params: { question_id: question.id }
+        follow_redirect!
+        expect(response.body).to include("送出しました")
+      end
+
+      it "scoreboardチャンネルにbroadcastが行われる" do
+        expect do
+          post "/admin/question_broadcasts", params: { question_id: question.id }
+        end.to have_broadcasted_to("scoreboard")
+      end
+
+      it "broadcastされる内容にquestionのturbo_stream updateが含まれる" do
+        expect do
+          post "/admin/question_broadcasts", params: { question_id: question.id }
+        end.to(have_broadcasted_to("scoreboard").with do |data|
+          expect(data).to include("turbo-stream")
+          expect(data).to include('action="update"')
+          expect(data).to include('target="question"')
+          expect(data).to include(question.text)
+          expect(data).to include(question.answer)
+        end)
+      end
+    end
+
+    context "異常系" do
+      context "存在しないQuestion IDが指定された場合" do
+        it "エラーメッセージを表示してリダイレクトする" do
+          post "/admin/question_broadcasts", params: { question_id: 999999 }
+          expect(response).to redirect_to(new_admin_question_broadcast_path)
+          follow_redirect!
+          expect(response.body).to include("見つかりません")
+        end
+
+        it "broadcastは行われない" do
+          expect do
+            post "/admin/question_broadcasts", params: { question_id: 999999 }
+          end.not_to have_broadcasted_to("scoreboard")
+        end
+      end
+
+      context "Question IDが空の場合" do
+        it "エラーメッセージを表示してリダイレクトする" do
+          post "/admin/question_broadcasts", params: { question_id: "" }
+          expect(response).to redirect_to(new_admin_question_broadcast_path)
+          follow_redirect!
+          expect(response.body).to include("見つかりません")
+        end
+
+        it "broadcastは行われない" do
+          expect do
+            post "/admin/question_broadcasts", params: { question_id: "" }
+          end.not_to have_broadcasted_to("scoreboard")
+        end
+      end
+    end
+  end
+end

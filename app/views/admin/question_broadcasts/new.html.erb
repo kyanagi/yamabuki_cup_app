@@ -1,0 +1,33 @@
+<div class="container mb-6 is-max-tablet">
+  <%= render "admin/shared/breadcrumb", items: [
+    { label: "問題送出テスト", path: nil }
+  ] %>
+
+  <% if notice %>
+    <div class="notification is-success is-light">
+      <%= notice %>
+    </div>
+  <% end %>
+
+  <% if alert %>
+    <div class="notification is-danger is-light">
+      <%= alert %>
+    </div>
+  <% end %>
+
+  <%= form_with url: admin_question_broadcasts_path, method: :post, html: { autocomplete: "off" } do |f| %>
+    <div class="field has-addons">
+      <div class="control">
+        <%= f.number_field :question_id,
+            placeholder: "Question ID",
+            class: "input",
+            min: 1,
+            required: true,
+            autofocus: true %>
+      </div>
+      <div class="control">
+        <%= f.submit "送出", class: "button is-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>

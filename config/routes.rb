@@ -71,5 +71,7 @@ Rails.application.routes.draw do
     end
 
     resources :matchmakings, only: [:create]
+
+    resources :question_broadcasts, only: [:new, :create]
   end
 end
