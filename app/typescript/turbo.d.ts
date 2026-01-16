@@ -11,3 +11,21 @@ declare module "@hotwired/turbo-rails" {
 
   export const Turbo: Turbo;
 }
+
+declare module "@hotwired/turbo" {
+  type StreamActions = {
+    after: () => void;
+    append: () => void;
+    before: () => void;
+    prepend: () => void;
+    remove: () => void;
+    replace: () => void;
+    update: () => void;
+    refresh: () => void;
+
+    clear_question: () => void;
+    replace_question: () => void;
+  };
+
+  export const StreamActions: StreamActions;
+}
