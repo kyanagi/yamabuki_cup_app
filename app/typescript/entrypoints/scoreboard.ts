@@ -24,6 +24,31 @@ StreamActions.clear_question = function () {
     { once: true },
   );
 };
+
+// カスタム Turbo Stream アクション: 問題表示を切り替え（消去アニメーション→表示アニメーション）
+StreamActions.replace_question = function () {
+  const target = document.getElementById(this.getAttribute("target") || "");
+  if (!target) return;
+
+  const templateContent = this.querySelector("template")?.innerHTML || "";
+  const existingQuestion = target.querySelector(".question");
+
+  if (existingQuestion) {
+    // 既存の問題を消去アニメーション付きで削除してから新問題を表示
+    existingQuestion.classList.add("question--hiding");
+    existingQuestion.addEventListener(
+      "animationend",
+      () => {
+        target.innerHTML = templateContent;
+      },
+      { once: true },
+    );
+  } else {
+    // 問題がなければ直接表示
+    target.innerHTML = templateContent;
+  }
+};
+
 // Stimulus controllers
 import ClockController from "../controllers/clock_controller";
 import Round1TimerController from "../controllers/round1_timer_controller";

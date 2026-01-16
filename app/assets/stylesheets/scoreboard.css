@@ -544,7 +544,7 @@ body {
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 3vh;
-  animation: revealFromTop 0.2s ease-out;
+  animation: revealFromTop 0.3s ease-out;
   word-break: auto-phrase;
   text-autospace: normal;
 }
@@ -576,7 +576,7 @@ body {
 }
 
 .question--hiding {
-  animation: hideToTop 0.2s ease-out forwards;
+  animation: hideToTop 0.3s ease-out forwards;
 }
 
 .question-text {

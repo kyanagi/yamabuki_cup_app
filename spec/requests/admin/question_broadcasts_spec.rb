@@ -29,12 +29,12 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
         end.to have_broadcasted_to("scoreboard")
       end
 
-      it "broadcastされる内容にquestionのturbo_stream updateが含まれる" do
+      it "broadcastされる内容にquestionのturbo_stream replace_questionが含まれる" do
         expect do
           post "/admin/question_broadcasts", params: { question_id: question.id }
         end.to(have_broadcasted_to("scoreboard").with do |data|
           expect(data).to include("turbo-stream")
-          expect(data).to include('action="update"')
+          expect(data).to include('action="replace_question"')
           expect(data).to include('target="question"')
           expect(data).to include(question.text)
           expect(data).to include(question.answer)
@@ -82,12 +82,12 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
       end.to have_broadcasted_to("scoreboard")
     end
 
-    it "broadcast内容にturbo_stream updateが含まれる" do
+    it "broadcast内容にturbo_stream clear_questionが含まれる" do
       expect do
         post "/admin/question_broadcasts/clear"
       end.to(have_broadcasted_to("scoreboard").with do |data|
         expect(data).to include("turbo-stream")
-        expect(data).to include('action="update"')
+        expect(data).to include('action="clear_question"')
         expect(data).to include('target="question"')
       end)
     end

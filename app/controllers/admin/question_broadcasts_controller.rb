@@ -25,9 +25,10 @@ module Admin
     private
 
     def broadcast_question_board(question)
+      html = render_to_string(partial: "scoreboard/question/question", locals: { question: })
       ActionCable.server.broadcast(
         "scoreboard",
-        turbo_stream.update("question") { render_to_string(partial: "scoreboard/question/question", locals: { question: }) }
+        %Q(<turbo-stream action="replace_question" target="question"><template>#{html}</template></turbo-stream>)
       )
     end
 
