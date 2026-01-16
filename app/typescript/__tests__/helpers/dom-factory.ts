@@ -6,13 +6,14 @@ interface QuizReaderHTMLOptions {
   questionId?: number;
   soundId?: string;
   isOnAir?: boolean;
+  isQuestionFollowOn?: boolean;
 }
 
 /**
  * QuizReaderController 用の HTML を生成する
  */
 export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): string {
-  const { questionId = 1, soundId = "001", isOnAir = false } = options;
+  const { questionId = 1, soundId = "001", isOnAir = false, isQuestionFollowOn = true } = options;
 
   return `
     <div
@@ -26,6 +27,12 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
         ${isOnAir ? "checked" : ""}
       />
       <span data-quiz-reader-target="onAirLabel">問い読みOFF</span>
+      <input
+        type="checkbox"
+        data-quiz-reader-target="isQuestionFollowOn"
+        ${isQuestionFollowOn ? "checked" : ""}
+      />
+      <span data-quiz-reader-target="questionFollowLabel">${isQuestionFollowOn ? "問題フォローON" : "問題フォローOFF"}</span>
       <span data-quiz-reader-target="duration"></span>
 
       <!-- Loading status icons -->

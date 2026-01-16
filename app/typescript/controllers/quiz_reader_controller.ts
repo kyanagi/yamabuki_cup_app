@@ -250,6 +250,8 @@ export default class extends Controller {
   static targets = [
     "isOnAir",
     "onAirLabel",
+    "isQuestionFollowOn",
+    "questionFollowLabel",
     "duration",
     "voiceLoadingStatusIcon",
     "playStatusIcon",
@@ -272,6 +274,8 @@ export default class extends Controller {
 
   declare isOnAirTarget: HTMLInputElement;
   declare onAirLabelTarget: HTMLElement;
+  declare isQuestionFollowOnTarget: HTMLInputElement;
+  declare questionFollowLabelTarget: HTMLElement;
   declare durationTarget: HTMLElement;
   declare voiceLoadingStatusIconTargets: HTMLElement[];
   declare playStatusIconTargets: HTMLElement[];
@@ -388,6 +392,14 @@ export default class extends Controller {
       this.onAirLabelTarget.textContent = "問い読みON";
     } else {
       this.onAirLabelTarget.textContent = "問い読みOFF";
+    }
+  }
+
+  updateQuestionFollowLabel() {
+    if (this.isQuestionFollowOnTarget.checked) {
+      this.questionFollowLabelTarget.textContent = "問題フォローON";
+    } else {
+      this.questionFollowLabelTarget.textContent = "問題フォローOFF";
     }
   }
 
@@ -537,8 +549,10 @@ export default class extends Controller {
       // 現在の問題IDを保持してから次の問題に進む
       const currentQuestionId = this.readingContext.questionId;
 
-      // 順次実行: 先に問題を送出、その後次の問題に進む
-      await this.broadcastQuestion(currentQuestionId);
+      // 問題フォローがONの場合のみ問題を送出
+      if (this.isQuestionFollowOnTarget.checked) {
+        await this.broadcastQuestion(currentQuestionId);
+      }
       await this.proceedToQuestion("next");
     }
   }

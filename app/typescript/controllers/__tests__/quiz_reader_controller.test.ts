@@ -575,4 +575,77 @@ describe("proceedToNextQuestion", () => {
     // Cleanup
     teardownControllerTest(application);
   });
+
+  it("問題フォローがONの場合、問題送出と次の問題への遷移が両方実行される", async () => {
+    // Arrange
+    const html = createQuizReaderHTML({ questionId: 42, soundId: "001", isQuestionFollowOn: true });
+    const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+    const mockReadingContext = {
+      voiceStatus: "PAUSED" as VoiceStatus,
+      questionId: 42,
+      fullDuration: 5.0,
+      readDuration: 3.0,
+      load: vi.fn(),
+      start: vi.fn(),
+      stop: vi.fn(),
+      reset: vi.fn(),
+      dispose: vi.fn(),
+      loadingStatus: "LOADED" as LoadingStatus,
+    };
+    // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+    (controller as any).readingContext = mockReadingContext;
+
+    // Act
+    const event = new KeyboardEvent("keydown", { key: "ArrowRight", repeat: false });
+    await (controller as { proceedToNextQuestion: (event: KeyboardEvent) => Promise<void> }).proceedToNextQuestion(
+      event,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    // Assert: 2つのリクエストが送信された（問題送出 + 次の問題）
+    expect(fetchSpy).toHaveBeenCalledTimes(2);
+    expect(fetchSpy.mock.calls[0][0]).toBe("/admin/question_broadcasts");
+    expect(fetchSpy.mock.calls[1][0]).toBe("/admin/quiz_reader/next_question");
+
+    // Cleanup
+    teardownControllerTest(application);
+  });
+
+  it("問題フォローがOFFの場合、問題送出はせず次の問題への遷移のみ実行される", async () => {
+    // Arrange
+    const html = createQuizReaderHTML({ questionId: 42, soundId: "001", isQuestionFollowOn: false });
+    const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+    const mockReadingContext = {
+      voiceStatus: "PAUSED" as VoiceStatus,
+      questionId: 42,
+      fullDuration: 5.0,
+      readDuration: 3.0,
+      load: vi.fn(),
+      start: vi.fn(),
+      stop: vi.fn(),
+      reset: vi.fn(),
+      dispose: vi.fn(),
+      loadingStatus: "LOADED" as LoadingStatus,
+    };
+    // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+    (controller as any).readingContext = mockReadingContext;
+
+    // Act
+    const event = new KeyboardEvent("keydown", { key: "ArrowRight", repeat: false });
+    await (controller as { proceedToNextQuestion: (event: KeyboardEvent) => Promise<void> }).proceedToNextQuestion(
+      event,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    // Assert: 次の問題への遷移リクエストのみ送信された（問題送出は行われない）
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    expect(fetchSpy.mock.calls[0][0]).toBe("/admin/quiz_reader/next_question");
+
+    // Cleanup
+    teardownControllerTest(application);
+  });
 });
