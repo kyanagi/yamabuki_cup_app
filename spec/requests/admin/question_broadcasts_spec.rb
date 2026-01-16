@@ -82,13 +82,14 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
       end.to have_broadcasted_to("scoreboard")
     end
 
-    it "broadcast内容にturbo_stream clear_questionが含まれる" do
+    it "broadcast内容にturbo_stream replace_question（空テンプレート）が含まれる" do
       expect do
         post "/admin/question_broadcasts/clear"
       end.to(have_broadcasted_to("scoreboard").with do |data|
         expect(data).to include("turbo-stream")
-        expect(data).to include('action="clear_question"')
+        expect(data).to include('action="replace_question"')
         expect(data).to include('target="question"')
+        expect(data).to include("<template></template>")
       end)
     end
 

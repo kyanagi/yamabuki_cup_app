@@ -23,7 +23,6 @@ declare module "@hotwired/turbo" {
     update: () => void;
     refresh: () => void;
 
-    clear_question: () => void;
     replace_question: () => void;
   };
 

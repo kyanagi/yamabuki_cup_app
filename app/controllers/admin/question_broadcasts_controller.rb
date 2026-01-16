@@ -35,7 +35,7 @@ module Admin
     def clear_question_board
       ActionCable.server.broadcast(
         "scoreboard",
-        '<turbo-stream action="clear_question" target="question"></turbo-stream>'
+        '<turbo-stream action="replace_question" target="question"><template></template></turbo-stream>'
       )
     end
   end

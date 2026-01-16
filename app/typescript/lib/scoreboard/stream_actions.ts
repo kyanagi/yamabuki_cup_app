@@ -6,31 +6,9 @@
  */
 import { StreamActions } from "@hotwired/turbo";
 
-// カスタム Turbo Stream アクション: 問題表示を消去（アニメーション付き）
-StreamActions.clear_question = function (this: Element) {
-  const target = document.getElementById(this.getAttribute("target") || "");
-  if (!target) return;
-
-  const questionElement = target.querySelector(".question");
-  if (!questionElement) {
-    target.innerHTML = "";
-    return;
-  }
-
-  // すでにアニメーション中なら追加処理不要
-  if (questionElement.classList.contains("question--hiding")) return;
-
-  questionElement.classList.add("question--hiding");
-  questionElement.addEventListener(
-    "animationend",
-    () => {
-      target.innerHTML = "";
-    },
-    { once: true },
-  );
-};
-
-// カスタム Turbo Stream アクション: 問題表示を切り替え（消去アニメーション→表示アニメーション）
+// カスタム Turbo Stream アクション: 問題表示を切り替え
+// - 空テンプレートの場合: 現在の問題を消去（アニメーション付き）
+// - 非空テンプレートの場合: 現在の問題を消去後、新しい問題を表示
 StreamActions.replace_question = function (this: Element) {
   const target = document.getElementById(this.getAttribute("target") || "");
   if (!target) return;
