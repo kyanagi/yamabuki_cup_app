@@ -1,4 +1,0 @@
-# Generated from app/models/approximation_quiz_answer.rb with RBS::Inline
-
-class ApproximationQuizAnswer < ApplicationRecord
-end

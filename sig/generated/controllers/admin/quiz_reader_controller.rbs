@@ -1,7 +1,0 @@
-# Generated from app/controllers/admin/quiz_reader_controller.rb with RBS::Inline
-
-module Admin
-  class QuizReaderController < AdminController
-    def show: () -> untyped
-  end
-end

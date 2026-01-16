@@ -1,4 +1,0 @@
-# Generated from app/models/yontaku_question.rb with RBS::Inline
-
-class YontakuQuestion < ApplicationRecord
-end

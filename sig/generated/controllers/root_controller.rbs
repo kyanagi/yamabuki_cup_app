@@ -1,5 +1,0 @@
-# Generated from app/controllers/root_controller.rb with RBS::Inline
-
-class RootController < PublicController
-  def show: () -> untyped
-end

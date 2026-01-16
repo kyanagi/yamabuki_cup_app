@@ -1,7 +1,0 @@
-# Generated from app/controllers/admin/dashboard_controller.rb with RBS::Inline
-
-module Admin
-  class DashboardController < AdminController
-    def show: () -> untyped
-  end
-end

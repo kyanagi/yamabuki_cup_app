@@ -1,4 +1,0 @@
-# Generated from app/models/yontaku_player_paper.rb with RBS::Inline
-
-class YontakuPlayerPaper < ApplicationRecord
-end

@@ -1,8 +1,0 @@
-# Generated from app/models/question_player_result.rb with RBS::Inline
-
-class QuestionPlayerResult < ApplicationRecord
-  # @rbs correct: String
-  # @rbs ?wrong: String
-  # @rbs ?return: String
-  def to_s: (?correct: String, ?wrong: untyped) -> untyped
-end

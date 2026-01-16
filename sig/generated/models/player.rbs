@@ -1,4 +1,0 @@
-# Generated from app/models/player.rb with RBS::Inline
-
-class Player < ApplicationRecord
-end

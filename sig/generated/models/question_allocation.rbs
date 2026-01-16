@@ -1,5 +1,0 @@
-# Generated from app/models/question_allocation.rb with RBS::Inline
-
-class QuestionAllocation < ApplicationRecord
-  extend ActiveHash::Associations::ActiveRecordExtensions
-end

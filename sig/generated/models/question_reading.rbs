@@ -1,7 +1,0 @@
-# Generated from app/models/question_reading.rb with RBS::Inline
-
-class QuestionReading < ApplicationRecord
-  # QuestionAllocationと結びつけられていないQuestionReadingのうち、
-  # created_atが最も古いものを取得
-  def self.oldest_without_allocation: () -> QuestionReading?
-end
