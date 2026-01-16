@@ -534,7 +534,33 @@ export default class extends Controller {
   async proceedToNextQuestion(event: KeyboardEvent) {
     if (event.repeat) return;
     if (this.readingContext?.voiceStatus === "PAUSED") {
-      this.proceedToQuestion("next");
+      // 現在の問題IDを保持してから次の問題に進む
+      const currentQuestionId = this.readingContext.questionId;
+
+      // 順次実行: 先に問題を送出、その後次の問題に進む
+      await this.broadcastQuestion(currentQuestionId);
+      await this.proceedToQuestion("next");
+    }
+  }
+
+  private async broadcastQuestion(questionId: number) {
+    try {
+      const response = await fetch("/admin/question_broadcasts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
+        },
+        body: JSON.stringify({ question_id: questionId }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTPエラー ${response.status} ${response.statusText}`);
+      }
+    } catch (e) {
+      console.error("問題の送出に失敗しました:", e);
+      // 問題送出の失敗はアラートを出さない（次の問題への遷移は続行）
     }
   }
 

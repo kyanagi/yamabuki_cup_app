@@ -73,6 +73,69 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
         end
       end
     end
+
+    context "JSONリクエスト" do
+      context "正常系" do
+        let(:question) { create(:question) }
+
+        it "200を返す" do
+          post "/admin/question_broadcasts",
+               params: { question_id: question.id },
+               headers: { "Accept" => "application/json", "Content-Type" => "application/json" },
+               as: :json
+          expect(response).to have_http_status(:ok)
+        end
+
+        it "JSONレスポンスにsuccess: trueとquestion_idが含まれる" do
+          post "/admin/question_broadcasts",
+               params: { question_id: question.id },
+               headers: { "Accept" => "application/json", "Content-Type" => "application/json" },
+               as: :json
+          json = response.parsed_body
+          expect(json["success"]).to be true
+          expect(json["question_id"]).to eq question.id
+        end
+
+        it "scoreboardチャンネルにbroadcastが行われる" do
+          expect do
+            post "/admin/question_broadcasts",
+                 params: { question_id: question.id },
+                 headers: { "Accept" => "application/json", "Content-Type" => "application/json" },
+                 as: :json
+          end.to have_broadcasted_to("scoreboard")
+        end
+      end
+
+      context "異常系" do
+        context "存在しないQuestion IDが指定された場合" do
+          it "404を返す" do
+            post "/admin/question_broadcasts",
+                 params: { question_id: 999999 },
+                 headers: { "Accept" => "application/json", "Content-Type" => "application/json" },
+                 as: :json
+            expect(response).to have_http_status(:not_found)
+          end
+
+          it "JSONレスポンスにerrorが含まれる" do
+            post "/admin/question_broadcasts",
+                 params: { question_id: 999999 },
+                 headers: { "Accept" => "application/json", "Content-Type" => "application/json" },
+                 as: :json
+            json = response.parsed_body
+            expect(json["error"]).to be_present
+          end
+
+          it "broadcastは行われない" do
+            expect do
+              post "/admin/question_broadcasts",
+                   params: { question_id: 999999 },
+                   headers: { "Accept" => "application/json", "Content-Type" => "application/json" },
+                   as: :json
+            end.not_to have_broadcasted_to("scoreboard")
+          end
+        end
+      end
+    end
   end
 
   describe "POST /admin/question_broadcasts/clear" do
