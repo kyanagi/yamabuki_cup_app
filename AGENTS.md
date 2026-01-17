@@ -106,6 +106,26 @@ Rubyの例外は、例外的な場合のみに使用してください。単に�
 
 XSS、CSRF、SQLインジェクションといった脆弱性に対する適切な対策を行ってください。
 
+## 管理者認証
+
+管理画面（`/admin/*`）へのアクセスには管理者認証が必要。
+
+**モデル構成:**
+- `AdminUser`: 管理者ユーザー（username + password_digest）
+- `AdminSession`: セッション管理
+
+**認証の仕組み:**
+- `AdminAuthentication` concern が認証を担当
+- Cookie（`admin_session_id`）でセッションを識別
+- `Current.admin_session` でリクエストスコープのセッション管理
+
+**管理者ユーザーの管理:**
+```bash
+rake admin:create_user[username,password]  # 管理者を作成
+rake admin:change_password[username,new_password]  # パスワード変更
+rake admin:list  # 管理者一覧を表示
+```
+
 ## Critical Patterns
 
 **Immutable Audit Trail:**
