@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Admin::QuestionBroadcasts", type: :request do
+  before do
+    sign_in_admin
+  end
+
   describe "GET /admin/question_broadcasts/new" do
     it "returns 200" do
       get "/admin/question_broadcasts/new"

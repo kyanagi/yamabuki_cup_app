@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Admin::Round1::Players", type: :request do
+  before do
+    sign_in_admin
+  end
+
   describe "GET /admin/round1/players/:id" do
     context "存在するプレイヤーの場合" do
       let(:player_profile) { create(:player_profile) }

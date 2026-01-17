@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root "dashboard#show"
 
+    resource :session, only: [:new, :create, :destroy]
     resource :settings, only: [:show, :update]
 
     get "quiz_reader", to: "quiz_reader#show"

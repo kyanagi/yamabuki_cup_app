@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "Admin::QuizReader::QuestionReadings", type: :request do
+  before do
+    sign_in_admin
+  end
+
   describe "POST /admin/quiz_reader/question_readings" do
     let(:question) { create(:question) }
     let(:valid_params) do

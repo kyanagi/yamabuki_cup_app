@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe "GET /admin/round1/approximation_quiz_answers/:id", type: :request do
+  before do
+    sign_in_admin
+  end
+
   let(:player_profile) { create(:player_profile) }
   let(:player) { player_profile.player }
   let!(:approximation_quiz_answer) { create(:approximation_quiz_answer, player: player, answer1: 100, answer2: 200) }

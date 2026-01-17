@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Admin::Round1::Results", type: :system do
   describe "GET /admin/round1/results" do
     context "結果が存在する場合" do
-      before do
+      def setup_test_data_and_visit
         # テストデータの作成
         players_data = [
           { rank: 1, score: 250, family_name: "山田", given_name: "太郎", tiebreaker: 1 },
@@ -31,10 +31,12 @@ RSpec.describe "Admin::Round1::Results", type: :system do
           )
         end
 
+        sign_in_admin_via_page
         visit "/admin/round1/results"
       end
 
       it "パンくずリストが表示されること" do
+        setup_test_data_and_visit
         within ".breadcrumb" do
           expect(page).to have_content "ペーパー採点"
           expect(page).to have_content "結果"
@@ -42,6 +44,7 @@ RSpec.describe "Admin::Round1::Results", type: :system do
       end
 
       it "テーブルのヘッダーが表示されること" do
+        setup_test_data_and_visit
         within "thead" do
           expect(page).to have_content "順位"
           expect(page).to have_content "得点"
@@ -50,6 +53,7 @@ RSpec.describe "Admin::Round1::Results", type: :system do
       end
 
       it "結果が順位順に表示されること" do
+        setup_test_data_and_visit
         within "tbody" do
           # 1位の情報
           within all("tr")[0] do
@@ -76,11 +80,9 @@ RSpec.describe "Admin::Round1::Results", type: :system do
     end
 
     context "結果が存在しない場合" do
-      before do
-        visit "/admin/round1/results"
-      end
-
       it "テーブルが空であること" do
+        sign_in_admin_via_page
+        visit "/admin/round1/results"
         expect(page).to have_selector "tbody tr", count: 0
       end
     end

@@ -23,23 +23,28 @@
   </head>
 
   <body>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-      <div id="navbarBasic" class="navbar-menu">
-        <div class="navbar-end">
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-            </a>
+    <% if admin_authenticated? %>
+      <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div id="navbarBasic" class="navbar-menu">
+          <div class="navbar-end">
+            <div class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link">
+                <%= Current.admin_user&.username %>
+              </a>
 
-            <div class="navbar-dropdown is-right">
-              <%= link_to "ペーパー採点", admin_round1_path, class: "navbar-item" %>
-              <%= link_to "画面表示", new_admin_scoreboard_manipulation_path, class: "navbar-item" %>
-              <%= link_to "試合一覧", admin_matches_path, class: "navbar-item" %>
-              <%= link_to "システム設定", admin_settings_path, class: "navbar-item" %>
+              <div class="navbar-dropdown is-right">
+                <%= link_to "ペーパー採点", admin_round1_path, class: "navbar-item" %>
+                <%= link_to "画面表示", new_admin_scoreboard_manipulation_path, class: "navbar-item" %>
+                <%= link_to "試合一覧", admin_matches_path, class: "navbar-item" %>
+                <%= link_to "システム設定", admin_settings_path, class: "navbar-item" %>
+                <hr class="navbar-divider">
+                <%= button_to "ログアウト", admin_session_path, method: :delete, class: "navbar-item", style: "text-align: left;" %>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    <% end %>
 
     <%= yield %>
   </body>

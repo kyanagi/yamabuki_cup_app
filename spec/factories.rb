@@ -1,4 +1,15 @@
 FactoryBot.define do
+  factory :admin_user do
+    sequence(:username) { |n| "admin#{n}" }
+    password { "password123" }
+  end
+
+  factory :admin_session do
+    admin_user
+    ip_address { "127.0.0.1" }
+    user_agent { "RSpec Test" }
+  end
+
   factory :session do
     player { nil }
     ip_address { "MyString" }
