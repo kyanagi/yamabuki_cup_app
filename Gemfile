@@ -72,13 +72,6 @@ group :rubocop do
   gem "rubocop-kyanagi", github: "kyanagi/rubocop-kyanagi", require: false
 end
 
-group :rbs do
-  gem "listen" # rbs:inline:watch で使う。
-  gem "rbs-inline", require: false
-  gem "rbs_rails", require: false
-  gem "steep", require: false
-end
-
 group :htmlbeautifier do
   gem "htmlbeautifier"
 end
