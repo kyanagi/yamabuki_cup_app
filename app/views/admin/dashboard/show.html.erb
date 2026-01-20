@@ -58,20 +58,22 @@
           </footer>
         </div>
       </div>
-      <div class="column is-3">
-        <div class="card">
-          <div class="card-content">
-            <div class="media">
-              <div class="media-content">
-                <p class="title is-4">問題送出テスト</p>
+      <% if Current.admin_user&.admin? %>
+        <div class="column is-3">
+          <div class="card">
+            <div class="card-content">
+              <div class="media">
+                <div class="media-content">
+                  <p class="title is-4">問題送出テスト</p>
+                </div>
               </div>
             </div>
+            <footer class="card-footer">
+              <%= link_to "開く", new_admin_question_broadcast_path, class: "card-footer-item" %>
+            </footer>
           </div>
-          <footer class="card-footer">
-            <%= link_to "開く", new_admin_question_broadcast_path, class: "card-footer-item" %>
-          </footer>
         </div>
-      </div>
+      <% end %>
     </div>
   </section>
 </div>
