@@ -10,6 +10,12 @@ module AdminAuthentication
     def allow_unauthenticated_admin_access(**)
       skip_before_action(:require_admin_authentication, **)
     end
+
+    # 認可（Authorization）
+    # スタッフ不可、管理者のみアクセス可能にする
+    def require_admin_role
+      before_action :authorize_admin_only
+    end
   end
 
   private
@@ -56,5 +62,18 @@ module AdminAuthentication
   def terminate_admin_session
     Current.admin_session&.destroy
     cookies.delete(:admin_session_id, path: "/admin")
+  end
+
+  # 認可: 管理者のみ許可（スタッフは不可）
+  def authorize_admin_only
+    return if Current.admin_user&.admin?
+
+    respond_to do |format|
+      format.html do
+        render plain: "この操作を行う権限がありません。", status: 403
+      end
+      format.turbo_stream { head 403 }
+      format.json { render json: { error: "Forbidden" }, status: 403 }
+    end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_17_000526) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_18_102801) do
   create_table "admin_sessions", force: :cascade do |t|
     t.integer "admin_user_id", null: false
     t.datetime "created_at", null: false
@@ -23,6 +23,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_17_000526) do
   create_table "admin_users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "password_digest", null: false
+    t.integer "role", default: 0, null: false
     t.datetime "updated_at", null: false
     t.string "username", null: false
     t.index ["username"], name: "index_admin_users_on_username", unique: true

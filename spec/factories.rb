@@ -2,6 +2,11 @@ FactoryBot.define do
   factory :admin_user do
     sequence(:username) { |n| "admin#{n}" }
     password { "password123" }
+    role { :admin }
+
+    trait :staff do
+      role { :staff }
+    end
   end
 
   factory :admin_session do

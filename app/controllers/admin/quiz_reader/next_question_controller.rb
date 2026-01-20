@@ -1,6 +1,8 @@
 module Admin
   module QuizReader
     class NextQuestionController < AdminController
+      require_admin_role
+
       def update
         provider = QuestionProvider.first!
         case params[:question_id]

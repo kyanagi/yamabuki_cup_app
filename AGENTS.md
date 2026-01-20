@@ -111,19 +111,26 @@ XSS、CSRF、SQLインジェクションといった脆弱性に対する適切�
 管理画面（`/admin/*`）へのアクセスには管理者認証が必要。
 
 **モデル構成:**
-- `AdminUser`: 管理者ユーザー（username + password_digest）
+- `AdminUser`: 管理者ユーザー（username + password_digest + role）
 - `AdminSession`: セッション管理
 
-**認証の仕組み:**
-- `AdminAuthentication` concern が認証を担当
+**権限レベル（role）:**
+- `admin`: 全ての管理画面にアクセス可能
+- `staff`: Quiz Reader と問題送出以外の管理画面にアクセス可能
+
+**認証・認可の仕組み:**
+- `AdminAuthentication` concern が認証と認可を担当
 - Cookie（`admin_session_id`）でセッションを識別
 - `Current.admin_session` でリクエストスコープのセッション管理
+- admin role のみアクセス可能にするには、コントローラで `require_admin_role` を呼び出す
 
 **管理者ユーザーの管理:**
 ```bash
-rake admin:create_user[username,password]  # 管理者を作成
+rake admin:create_user[username,password]        # 管理者を作成（デフォルト: admin権限）
+rake admin:create_user[username,password,staff]  # スタッフを作成
+rake admin:change_role[username,admin]           # 権限を変更
 rake admin:change_password[username,new_password]  # パスワード変更
-rake admin:list  # 管理者一覧を表示
+rake admin:list  # 管理者一覧を表示（権限も表示）
 ```
 
 ## Critical Patterns

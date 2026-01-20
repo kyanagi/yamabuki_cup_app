@@ -1,5 +1,7 @@
 module Admin
   class QuestionBroadcastsController < AdminController
+    require_admin_role
+
     def new
     end
 

@@ -58,4 +58,34 @@ RSpec.describe AdminUser, type: :model do
       expect(admin_user).to respond_to(:admin_sessions)
     end
   end
+
+  describe "権限レベル（role）" do
+    describe "enumの定義" do
+      it "adminとstaffの2種類が定義されていること" do
+        expect(AdminUser.roles).to eq({ "admin" => 0, "staff" => 1 })
+      end
+
+      it "デフォルトはadminであること（DB default）" do
+        admin_user = AdminUser.create!(username: "test_default", password: "password123")
+        expect(admin_user).to be_admin
+      end
+    end
+
+    describe "enumメソッド" do
+      let(:admin_user) { create(:admin_user, role: :staff) }
+
+      it "admin?メソッドが使えること" do
+        expect(admin_user.admin?).to be false
+      end
+
+      it "staff?メソッドが使えること" do
+        expect(admin_user.staff?).to be true
+      end
+
+      it "admin!で権限を変更できること" do
+        admin_user.admin!
+        expect(admin_user).to be_admin
+      end
+    end
+  end
 end
