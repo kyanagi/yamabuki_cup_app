@@ -421,7 +421,7 @@ body {
   text-align: right;
   display: flex;
   flex-wrap: wrap;
-  align-items: top;
+  align-items: start;
   line-height: 1;
   justify-content: flex-end;
   width: 90%;
