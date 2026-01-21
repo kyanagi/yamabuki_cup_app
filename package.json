@@ -3,13 +3,16 @@
   "type": "module",
   "scripts": {
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "lint:css": "stylelint '**/*.css'"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/rails__actioncable": "6.1.11",
     "@vitest/coverage-v8": "^4.0.16",
     "jsdom": "^27.4.0",
+    "stylelint": "^17.0.0",
+    "stylelint-config-recommended": "^18.0.0",
     "typescript": "5.7.2",
     "vite": "^6.3.5",
     "vite-plugin-full-reload": "1.2.0",

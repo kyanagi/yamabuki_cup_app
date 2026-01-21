@@ -51,7 +51,7 @@
 ```
 
 ```bash
-# RuboCop, RSpec, Brakeman によるチェックを全て実行する
+# RuboCop, RSpec, Brakeman, Stylelint によるチェックを全て実行する
 bundle exec rake check
 ```
 
@@ -62,8 +62,9 @@ bundle exec rspec spec/path/to/file_spec.rb:42  # Run specific test line
 bundle exec steep check              # Static type checking with Steep
 bin/rubocop                         # Ruby linting
 bin/brakeman --no-prism             # Security analysis
-npx biome format --write .          # Format TypeScript/JavaScript code
-npx biome check --write .           # Lint and format frontend code
+npx biome format --write .          # Format TypeScript/JavaScript code with biome
+npx biome check --write .           # Lint and format frontend code with biome
+npm run lint:css                    # Lint CSS code with Stylelint
 npm test                            # Run Vitest (frontend unit tests)
 npm run test:run                    # Run Vitest once without watch mode
 ```
@@ -98,7 +99,7 @@ Rubyの例外は、例外的な場合のみに使用してください。単に�
 ソースコードを編集・追加・削除した場合、必ず以下のことを確認してください。
 
 - テストが全て通ること
-- RuboCop、Biome、Steepによるチェックが全て通ること
+- RuboCop、Biome、Stylelintによるチェックが全て通ること
 
 リファクタリングを行う際は、Martin Fowlerが推奨する方法で行ってください。
 
