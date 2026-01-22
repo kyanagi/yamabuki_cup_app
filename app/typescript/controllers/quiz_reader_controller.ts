@@ -545,16 +545,15 @@ export default class extends Controller {
 
   async proceedToNextQuestion(event: KeyboardEvent) {
     if (event.repeat) return;
-    if (this.readingContext?.voiceStatus === "PAUSED") {
-      // 現在の問題IDを保持してから次の問題に進む
-      const currentQuestionId = this.readingContext.questionId;
+    if (this.readingContext?.voiceStatus !== "PAUSED") return;
 
-      // 問題フォローがONの場合のみ問題を送出
-      if (this.isQuestionFollowOnTarget.checked) {
-        await this.broadcastQuestion(currentQuestionId);
-      }
-      await this.proceedToQuestion("next");
+    const currentQuestionId = this.readingContext.questionId;
+
+    // 問題フォローがONの場合のみ問題を送出
+    if (this.isQuestionFollowOnTarget.checked) {
+      await this.broadcastQuestion(currentQuestionId);
     }
+    await this.proceedToQuestion("next");
   }
 
   private async broadcastQuestion(questionId: number) {
