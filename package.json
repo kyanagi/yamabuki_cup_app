@@ -25,6 +25,6 @@
     "@rails/actioncable": "8.0.100",
     "idb": "8.0.3",
     "the-new-css-reset": "1.11.3",
-    "valibot": "1.1.0"
+    "valibot": "1.2.0"
   }
 }
