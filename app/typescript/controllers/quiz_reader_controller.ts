@@ -293,7 +293,7 @@ export default class extends Controller {
   declare questionIdValue: number;
   declare soundIdValue: string;
 
-  private dirHandle: FileSystemDirectoryHandle | undefined;
+  private soundDirHandle: FileSystemDirectoryHandle | undefined;
 
   private idbPromise = openDB(IDB_NAME, 1, {
     upgrade(db) {
@@ -311,7 +311,7 @@ export default class extends Controller {
     if (!this.audioContext) {
       throw new Error("AudioContext が初期化されていません");
     }
-    if (!this.dirHandle) {
+    if (!this.soundDirHandle) {
       // フォルダ未選択時は readingContext を作成しない
       return;
     }
@@ -340,7 +340,7 @@ export default class extends Controller {
       questionId,
       soundId,
       this.audioContext,
-      this.dirHandle,
+      this.soundDirHandle,
       onLoadingStatusChanged,
       onVoiceStatusChanged,
       onFileNotFound,
@@ -384,7 +384,7 @@ export default class extends Controller {
       this.audioContext.close();
     }
     this.audioContext = undefined;
-    this.dirHandle = undefined;
+    this.soundDirHandle = undefined;
   }
 
   updateOnAirLabel() {
@@ -472,7 +472,7 @@ export default class extends Controller {
   async selectFolder() {
     try {
       const dirHandle = await window.showDirectoryPicker();
-      this.dirHandle = dirHandle;
+      this.soundDirHandle = dirHandle;
       this.clearFolderError();
       this.updateFolderStatusText(dirHandle.name, "success");
       // フォルダ選択後に音声を読み込む
@@ -495,7 +495,7 @@ export default class extends Controller {
     if (!this.isOnAirTarget.checked) return;
 
     // フォルダ未選択チェックを先に行う
-    if (!this.dirHandle) {
+    if (!this.soundDirHandle) {
       this.updateFolderStatusText("選択してください", "default");
       this.showFolderError("再生するには音声フォルダの選択が必要です");
       return;
