@@ -7,7 +7,7 @@
     "lint:css": "stylelint '**/*.css'"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "^2.3.11",
     "@types/rails__actioncable": "6.1.11",
     "@vitest/coverage-v8": "^4.0.16",
     "jsdom": "^27.4.0",
