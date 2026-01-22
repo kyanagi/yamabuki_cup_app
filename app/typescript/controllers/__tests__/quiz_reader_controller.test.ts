@@ -2,13 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createQuizReaderHTML } from "../../__tests__/helpers/dom-factory";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import {
+  createMockAudioBuffer,
   MockAudioBufferSourceNode,
   MockAudioContext,
-  createMockAudioBuffer,
 } from "../../__tests__/mocks/audio-context";
-import { createQuestionReadingContext, loadAudioFromLocalFile } from "../quiz_reader_controller";
 import type { LoadingStatus, VoiceStatus } from "../quiz_reader_controller";
-import QuizReaderController from "../quiz_reader_controller";
+import QuizReaderController, { createQuestionReadingContext, loadAudioFromLocalFile } from "../quiz_reader_controller";
 
 // FileSystemDirectoryHandle のモック
 function createMockDirectoryHandle(files: Record<string, ArrayBuffer>): FileSystemDirectoryHandle {

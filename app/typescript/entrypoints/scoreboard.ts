@@ -9,6 +9,7 @@ import { application } from "../controllers/application";
 import ClockController from "../controllers/clock_controller";
 import Round1TimerController from "../controllers/round1_timer_controller";
 import ScoreVisibilityTogglerController from "../controllers/score_visibility_toggler_controller";
+
 application.register("clock", ClockController);
 application.register("round1-timer", Round1TimerController);
 application.register("score-visibility-toggler", ScoreVisibilityTogglerController);
