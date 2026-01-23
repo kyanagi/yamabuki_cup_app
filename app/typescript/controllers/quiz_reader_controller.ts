@@ -390,6 +390,9 @@ export default class extends Controller {
     this.soundDirHandle = undefined;
   }
 
+  /**
+   * 問い読みスイッチの状態をUIに反映させる
+   */
   applyOnAirStateToUI() {
     if (this.isOnAirTarget.checked) {
       this.onAirLabelTarget.textContent = "問い読みON";
@@ -399,7 +402,10 @@ export default class extends Controller {
     this.nextQuestionsTarget.classList.toggle("is-hidden", !this.isOnAirTarget.checked);
   }
 
-  updateQuestionFollowLabel() {
+  /**
+   * 問題フォロースイッチの状態をUIに反映させる
+   */
+  applyQuestionFollowStateToUI() {
     if (this.isQuestionFollowOnTarget.checked) {
       this.questionFollowLabelTarget.textContent = "問題フォローON";
     } else {
