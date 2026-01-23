@@ -10,7 +10,7 @@
   <h1 class="title">Quiz Reader</h1>
   <div class="field">
     <label class="switch is-rounded">
-      <input type="checkbox" data-quiz-reader-target="isOnAir" data-action="change->quiz-reader#updateOnAirLabel" checked>
+      <input type="checkbox" data-quiz-reader-target="isOnAir" data-action="change->quiz-reader#applyOnAirStateToUI" checked>
       <span class="check is-danger"></span>
       <span class="control-label" data-quiz-reader-target="onAirLabel">問い読みON</span>
     </label>
@@ -52,7 +52,7 @@
   <div class="columns">
     <div class="column is-7">
       <h2 class="title is-4">Next</h2>
-      <div id="next_questions" class="block">
+      <div id="next_questions" class="block" data-quiz-reader-target="nextQuestions">
         <% if @next_question %>
           <%= render partial: "admin/quiz_reader/next_question/next_question", locals: { question: @next_question } %>
         <% end %>

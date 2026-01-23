@@ -52,6 +52,9 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
       <!-- Folder selection -->
       <span data-quiz-reader-target="folderStatus" class="has-text-grey">未選択</span>
       <p data-quiz-reader-target="folderError" class="is-hidden"></p>
+
+      <!-- Next questions -->
+      <div data-quiz-reader-target="nextQuestions"></div>
     </div>
   `;
 }

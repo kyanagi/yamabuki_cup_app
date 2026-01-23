@@ -266,6 +266,7 @@ export default class extends Controller {
     "resultUploadErrorIcon",
     "folderStatus",
     "folderError",
+    "nextQuestions",
   ];
   static values = {
     questionId: Number,
@@ -290,6 +291,7 @@ export default class extends Controller {
   declare resultUploadErrorIconTarget: HTMLElement;
   declare folderStatusTarget: HTMLElement;
   declare folderErrorTarget: HTMLElement;
+  declare nextQuestionsTarget: HTMLElement;
   declare questionIdValue: number;
   declare soundIdValue: string;
 
@@ -372,6 +374,7 @@ export default class extends Controller {
     console.log("QuizReaderController connected");
     this.audioContext = new AudioContext();
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
+    this.applyOnAirStateToUI();
   }
 
   disconnect() {
@@ -387,12 +390,13 @@ export default class extends Controller {
     this.soundDirHandle = undefined;
   }
 
-  updateOnAirLabel() {
+  applyOnAirStateToUI() {
     if (this.isOnAirTarget.checked) {
       this.onAirLabelTarget.textContent = "問い読みON";
     } else {
       this.onAirLabelTarget.textContent = "問い読みOFF";
     }
+    this.nextQuestionsTarget.classList.toggle("is-hidden", !this.isOnAirTarget.checked);
   }
 
   updateQuestionFollowLabel() {
@@ -504,7 +508,6 @@ export default class extends Controller {
     if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "STANDBY") return;
 
-    console.log("startReading");
     this.readingContext.start();
   }
 
@@ -512,7 +515,6 @@ export default class extends Controller {
     if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "PLAYING") return;
 
-    console.log("pauseReading");
     this.readingContext.stop();
     this.durationTarget.textContent = this.durationText;
     this.saveQuestionReading();
