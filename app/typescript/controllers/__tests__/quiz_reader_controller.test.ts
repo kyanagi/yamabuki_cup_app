@@ -5,6 +5,7 @@ import {
   createMockAudioBuffer,
   MockAudioBufferSourceNode,
   MockAudioContext,
+  MockGainNode,
 } from "../../__tests__/mocks/audio-context";
 import type { LoadingStatus, VoiceStatus } from "../quiz_reader_controller";
 import QuizReaderController, { createQuestionReadingContext, loadAudioFromLocalFile } from "../quiz_reader_controller";
@@ -910,5 +911,276 @@ describe("proceedToNextQuestion", () => {
 
     // Cleanup
     teardownControllerTest(application);
+  });
+});
+
+describe("音量調整機能", () => {
+  const VOLUME_STORAGE_KEY = "quiz-reader-volume";
+  let mockLocalStorage: Record<string, string>;
+
+  beforeEach(() => {
+    // idbモックを再設定
+    mockOpenDB.mockResolvedValue({ add: mockIdbAdd, getAll: mockIdbGetAll });
+    mockIdbAdd.mockResolvedValue(1);
+    mockIdbGetAll.mockResolvedValue([]);
+
+    // localStorageをモック
+    mockLocalStorage = {};
+    const localStorageMock = {
+      getItem: vi.fn((key: string) => mockLocalStorage[key] ?? null),
+      setItem: vi.fn((key: string, value: string) => {
+        mockLocalStorage[key] = value;
+      }),
+      removeItem: vi.fn((key: string) => {
+        delete mockLocalStorage[key];
+      }),
+      clear: vi.fn(() => {
+        mockLocalStorage = {};
+      }),
+    };
+    vi.stubGlobal("localStorage", localStorageMock);
+
+    // AudioContextをモック
+    vi.stubGlobal("AudioContext", MockAudioContext);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  describe("setVolume", () => {
+    it("gainNode.gain.valueを正しく設定する", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // gainNodeをモック
+      const mockGainNode = new MockGainNode();
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).gainNode = mockGainNode;
+
+      // Act: スライダー値を50に設定
+      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+      slider.value = "50";
+      slider.dispatchEvent(new Event("input"));
+
+      // Assert
+      expect(mockGainNode.gain.value).toBe(0.5);
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("localStorageに保存する", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // gainNodeをモック
+      const mockGainNode = new MockGainNode();
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).gainNode = mockGainNode;
+
+      // Act
+      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+      slider.value = "75";
+      slider.dispatchEvent(new Event("input"));
+
+      // Assert
+      expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("75");
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("volumeDisplayを更新する", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // gainNodeをモック
+      const mockGainNode = new MockGainNode();
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).gainNode = mockGainNode;
+
+      // Act
+      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+      slider.value = "30";
+      slider.dispatchEvent(new Event("input"));
+
+      // Assert
+      const volumeDisplay = document.querySelector('[data-quiz-reader-target~="volumeDisplay"]');
+      expect(volumeDisplay?.textContent).toBe("30");
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("gainNodeがなくてもlocalStorageとvolumeDisplayは更新される", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // gainNodeをundefinedに設定
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).gainNode = undefined;
+
+      // Act
+      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+      slider.value = "25";
+      slider.dispatchEvent(new Event("input"));
+
+      // Assert: localStorageとvolumeDisplayは更新される
+      expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("25");
+      const volumeDisplay = document.querySelector('[data-quiz-reader-target~="volumeDisplay"]');
+      expect(volumeDisplay?.textContent).toBe("25");
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+  });
+
+  describe("localStorage復元", () => {
+    it("connect()時にlocalStorageから音量が復元される", async () => {
+      // Arrange: 事前にlocalStorageに値を設定
+      mockLocalStorage[VOLUME_STORAGE_KEY] = "60";
+
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+
+      // Act
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Assert: gainNodeの値が復元される
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      const gainNode = (controller as any).gainNode;
+      expect(gainNode.gain.value).toBe(0.6);
+
+      // スライダーの値も復元される
+      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+      expect(slider.value).toBe("60");
+
+      // volumeDisplayも復元される
+      const volumeDisplay = document.querySelector('[data-quiz-reader-target~="volumeDisplay"]');
+      expect(volumeDisplay?.textContent).toBe("60");
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("localStorageがnullの場合はデフォルト100になる", async () => {
+      // Arrange: localStorageは空（mockLocalStorageにキーがない状態）
+      delete mockLocalStorage[VOLUME_STORAGE_KEY];
+
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+
+      // Act
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Assert: デフォルト値100が使用される
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      const gainNode = (controller as any).gainNode;
+      expect(gainNode.gain.value).toBe(1.0);
+
+      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+      expect(slider.value).toBe("100");
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("localStorageがNaNの場合はデフォルト100になる", async () => {
+      // Arrange: 無効な値を設定
+      mockLocalStorage[VOLUME_STORAGE_KEY] = "invalid";
+
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+
+      // Act
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Assert: デフォルト値100が使用される
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      const gainNode = (controller as any).gainNode;
+      expect(gainNode.gain.value).toBe(1.0);
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("localStorageが範囲外（負の値）の場合は0にクランプされる", async () => {
+      // Arrange: 範囲外の値を設定
+      mockLocalStorage[VOLUME_STORAGE_KEY] = "-10";
+
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+
+      // Act
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Assert: 0にクランプされる
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      const gainNode = (controller as any).gainNode;
+      expect(gainNode.gain.value).toBe(0.0);
+
+      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+      expect(slider.value).toBe("0");
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("localStorageが範囲外（100超）の場合は100にクランプされる", async () => {
+      // Arrange: 範囲外の値を設定
+      mockLocalStorage[VOLUME_STORAGE_KEY] = "150";
+
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+
+      // Act
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Assert: 100にクランプされる
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      const gainNode = (controller as any).gainNode;
+      expect(gainNode.gain.value).toBe(1.0);
+
+      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+      expect(slider.value).toBe("100");
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+  });
+
+  describe("createQuestionReadingContext outputNode接続", () => {
+    it("渡されたoutputNodeに接続してもエラーが発生しない", async () => {
+      // Arrange
+      const mockAudioContext = new MockAudioContext();
+      const mockDirHandle = createMockDirectoryHandle({
+        "mondai.wav": new ArrayBuffer(100),
+        "question001.wav": new ArrayBuffer(100),
+      });
+      mockAudioContext.decodeAudioData = vi.fn().mockResolvedValue(createMockAudioBuffer(5.0));
+
+      // outputNodeとしてMockGainNodeを使用
+      const mockOutputNode = new MockGainNode();
+
+      // Act & Assert: outputNodeを渡してもエラーなくコンテキストが作成できる
+      const context = createQuestionReadingContext(
+        1,
+        "001",
+        mockAudioContext as unknown as AudioContext,
+        mockDirHandle,
+        undefined,
+        undefined,
+        undefined,
+        mockOutputNode as unknown as AudioNode,
+      );
+
+      // コンテキストが正常に作成される
+      expect(context).toBeDefined();
+      expect(context.voiceStatus).toBe("STANDBY");
+
+      // ロードが正常に完了する
+      await context.load();
+      expect(context.fullDuration).toBe(5.0);
+    });
   });
 });

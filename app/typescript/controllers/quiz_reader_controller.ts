@@ -7,6 +7,10 @@ import { fetchWithRetry } from "../lib/fetch_with_retry";
 const INTERVAL_AFTER_MONDAI_MS = 300;
 // IndexedDB の名前
 const IDB_NAME = "yamabuki-cup-quiz-reader";
+// localStorage のキー
+const VOLUME_STORAGE_KEY = "quiz-reader-volume";
+// デフォルト音量
+const DEFAULT_VOLUME = 100;
 
 // ファイルが見つからない場合のカスタムエラー
 class FileNotFoundError extends Error {
@@ -63,7 +67,10 @@ export function createQuestionReadingContext(
   onLoadingStatusChanged?: (s: LoadingStatus) => void,
   onVoiceStatusChanged?: (s: VoiceStatus) => void,
   onFileNotFound?: (filename: string) => void,
+  outputNode?: AudioNode,
 ): QuestionReadingContext {
+  // 出力先を決定（outputNodeが指定されていなければaudioContext.destinationを使用）
+  const destination = outputNode ?? audioContext.destination;
   let voiceStatus: VoiceStatus = "STANDBY";
   let currentSource: AudioBufferSourceNode | undefined;
   let startTime: number | undefined;
@@ -83,7 +90,7 @@ export function createQuestionReadingContext(
       });
       currentSource = audioContext.createBufferSource();
       currentSource.buffer = audioBuffer;
-      currentSource.connect(audioContext.destination);
+      currentSource.connect(destination);
       // note: onended は stop() が呼ばれたときも呼ばれるが、
       // stop() の呼び出し元の処理が終わってからでないと onended は呼ばれない。
       currentSource.onended = () => {
@@ -268,6 +275,8 @@ export default class extends Controller {
     "folderError",
     "nextQuestions",
     "sampleAudioModal",
+    "volumeSlider",
+    "volumeDisplay",
   ];
   static values = {
     questionId: Number,
@@ -294,10 +303,13 @@ export default class extends Controller {
   declare folderErrorTarget: HTMLElement;
   declare nextQuestionsTarget: HTMLElement;
   declare sampleAudioModalTarget: HTMLElement;
+  declare volumeSliderTarget: HTMLInputElement;
+  declare volumeDisplayTarget: HTMLElement;
   declare questionIdValue: number;
   declare soundIdValue: string;
 
   private soundDirHandle: FileSystemDirectoryHandle | undefined;
+  private gainNode: GainNode | undefined;
   private sampleAudioSource: AudioBufferSourceNode | undefined;
   private sampleAudioBuffer: AudioBuffer | undefined;
   private sampleAudioLoading = false;
@@ -352,6 +364,7 @@ export default class extends Controller {
       onLoadingStatusChanged,
       onVoiceStatusChanged,
       onFileNotFound,
+      this.gainNode,
     );
     this.load();
   }
@@ -379,6 +392,14 @@ export default class extends Controller {
   connect() {
     console.log("QuizReaderController connected");
     this.audioContext = new AudioContext();
+
+    // GainNodeを作成してdestinationに接続
+    this.gainNode = this.audioContext.createGain();
+    this.gainNode.connect(this.audioContext.destination);
+
+    // localStorageから音量を復元
+    this.restoreVolume();
+
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     this.applyOnAirStateToUI();
   }
@@ -391,11 +412,65 @@ export default class extends Controller {
     this.readingContext = undefined;
     document.removeEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
 
+    // GainNodeを切断
+    if (this.gainNode) {
+      this.gainNode.disconnect();
+      this.gainNode = undefined;
+    }
+
     if (this.audioContext && this.audioContext.state !== "closed") {
       this.audioContext.close();
     }
     this.audioContext = undefined;
     this.soundDirHandle = undefined;
+  }
+
+  /**
+   * localStorageから音量を復元する
+   */
+  private restoreVolume() {
+    const storedValue = localStorage.getItem(VOLUME_STORAGE_KEY);
+
+    let volume: number;
+    if (storedValue === null) {
+      volume = DEFAULT_VOLUME;
+    } else {
+      const parsed = Number(storedValue);
+      if (!Number.isFinite(parsed)) {
+        volume = DEFAULT_VOLUME;
+      } else {
+        // 0-100の範囲にクランプ
+        volume = Math.max(0, Math.min(100, parsed));
+      }
+    }
+
+    // GainNodeに音量を設定
+    if (this.gainNode) {
+      this.gainNode.gain.value = volume / 100;
+    }
+
+    // UIを更新
+    this.volumeSliderTarget.value = String(volume);
+    this.volumeDisplayTarget.textContent = String(volume);
+  }
+
+  /**
+   * 音量を設定する（スライダーのinputイベントから呼ばれる）
+   */
+  setVolume(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const volume = Number(target.value);
+
+    // localStorageに保存（gainNodeの有無に関わらず）
+    localStorage.setItem(VOLUME_STORAGE_KEY, String(volume));
+
+    // volumeDisplayを更新（gainNodeの有無に関わらず）
+    this.volumeDisplayTarget.textContent = String(volume);
+
+    // gainNodeに音量を反映
+    if (this.gainNode) {
+      this.gainNode.gain.value = volume / 100;
+    }
   }
 
   /**
@@ -722,7 +797,9 @@ export default class extends Controller {
 
       this.sampleAudioSource = this.audioContext.createBufferSource();
       this.sampleAudioSource.buffer = this.sampleAudioBuffer;
-      this.sampleAudioSource.connect(this.audioContext.destination);
+      // gainNodeがあればそれを経由、なければdestinationに直接接続
+      const destination = this.gainNode ?? this.audioContext.destination;
+      this.sampleAudioSource.connect(destination);
       this.sampleAudioSource.onended = () => {
         this.sampleAudioSource = undefined;
       };

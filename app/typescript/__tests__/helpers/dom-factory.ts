@@ -53,6 +53,10 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
       <span data-quiz-reader-target="folderStatus" class="has-text-grey">未選択</span>
       <p data-quiz-reader-target="folderError" class="is-hidden"></p>
 
+      <!-- Volume control -->
+      <input type="range" min="0" max="100" value="100" data-quiz-reader-target="volumeSlider" data-action="input->quiz-reader#setVolume" />
+      <span data-quiz-reader-target="volumeDisplay">100</span>
+
       <!-- Next questions -->
       <div data-quiz-reader-target="nextQuestions"></div>
 

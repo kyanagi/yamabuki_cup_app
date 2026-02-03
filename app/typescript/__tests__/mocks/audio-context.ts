@@ -1,6 +1,32 @@
 /**
- * AudioContext / AudioBufferSourceNode のモック
+ * AudioContext / AudioBufferSourceNode / GainNode のモック
  */
+
+/**
+ * GainNode のモック
+ */
+export class MockGainNode {
+  gain = {
+    value: 1.0,
+  };
+
+  private _connected = false;
+  connectedTo: AudioNode | AudioParam | null = null;
+
+  connect(destination: AudioNode | AudioParam): void {
+    this._connected = true;
+    this.connectedTo = destination;
+  }
+
+  disconnect(): void {
+    this._connected = false;
+    this.connectedTo = null;
+  }
+
+  get isConnected(): boolean {
+    return this._connected;
+  }
+}
 
 export class MockAudioBufferSourceNode {
   buffer: AudioBuffer | null = null;
@@ -8,13 +34,16 @@ export class MockAudioBufferSourceNode {
 
   private _connected = false;
   private _started = false;
+  connectedTo: AudioNode | AudioParam | null = null;
 
-  connect(_destination: AudioDestinationNode): void {
+  connect(destination: AudioNode | AudioParam): void {
     this._connected = true;
+    this.connectedTo = destination;
   }
 
   disconnect(): void {
     this._connected = false;
+    this.connectedTo = null;
   }
 
   start(): void {
@@ -68,6 +97,10 @@ export class MockAudioContext {
 
   createBufferSource(): MockAudioBufferSourceNode {
     return new MockAudioBufferSourceNode();
+  }
+
+  createGain(): MockGainNode {
+    return new MockGainNode();
   }
 
   async decodeAudioData(_arrayBuffer: ArrayBuffer): Promise<AudioBuffer> {
