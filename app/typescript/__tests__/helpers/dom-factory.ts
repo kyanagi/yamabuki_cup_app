@@ -55,6 +55,9 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
 
       <!-- Next questions -->
       <div data-quiz-reader-target="nextQuestions"></div>
+
+      <!-- Sample audio modal -->
+      <div data-quiz-reader-target="sampleAudioModal" class="modal"></div>
     </div>
   `;
 }

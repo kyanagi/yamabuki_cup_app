@@ -375,6 +375,270 @@ describe("QuizReaderController (統合テスト)", () => {
 // ローカルファイル読み込みへの変更に伴い、フォルダ選択のモックが必要になりました。
 // これらのテストは selectFolder のモックを追加した後に再実装する必要があります。
 
+describe("サンプル音声機能", () => {
+  beforeEach(() => {
+    // idbモックを再設定
+    mockOpenDB.mockResolvedValue({ add: mockIdbAdd, getAll: mockIdbGetAll });
+    mockIdbAdd.mockResolvedValue(1);
+    mockIdbGetAll.mockResolvedValue([]);
+  });
+
+  describe("openSampleAudioModal", () => {
+    it("モーダルにis-activeクラスを追加する", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Act
+      (controller as { openSampleAudioModal: () => void }).openSampleAudioModal();
+
+      // Assert
+      const modal = document.querySelector('[data-quiz-reader-target~="sampleAudioModal"]');
+      expect(modal?.classList.contains("is-active")).toBe(true);
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+  });
+
+  describe("closeSampleAudioModal", () => {
+    it("モーダルからis-activeクラスを削除する", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // モーダルを開いておく
+      const modal = document.querySelector('[data-quiz-reader-target~="sampleAudioModal"]');
+      modal?.classList.add("is-active");
+
+      // Act
+      (controller as { closeSampleAudioModal: () => void }).closeSampleAudioModal();
+
+      // Assert
+      expect(modal?.classList.contains("is-active")).toBe(false);
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("stopSampleAudioを呼び出す", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      const stopSpy = vi.spyOn(controller as { stopSampleAudio: () => void }, "stopSampleAudio");
+
+      // Act
+      (controller as { closeSampleAudioModal: () => void }).closeSampleAudioModal();
+
+      // Assert
+      expect(stopSpy).toHaveBeenCalled();
+
+      // Cleanup
+      stopSpy.mockRestore();
+      teardownControllerTest(application);
+    });
+  });
+
+  describe("playSampleAudio", () => {
+    let fetchSpy: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      // fetchをモック
+      const mockArrayBuffer = new ArrayBuffer(100);
+      fetchSpy = vi.fn().mockResolvedValue({
+        ok: true,
+        arrayBuffer: vi.fn().mockResolvedValue(mockArrayBuffer),
+      });
+      vi.stubGlobal("fetch", fetchSpy);
+
+      // AudioContextをモック
+      vi.stubGlobal("AudioContext", MockAudioContext);
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it("サーバーからサンプル音声を取得する", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Act
+      await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
+
+      // Assert
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "/sample/sample.wav",
+        expect.objectContaining({ signal: expect.any(AbortSignal) }),
+      );
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("2回目以降はキャッシュを使用する", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Act: 2回再生
+      await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
+      await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
+
+      // Assert: fetchは1回だけ
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("読み込み中に再度呼ばれた場合は多重再生を防ぐ", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // fetchを遅延させる
+      let resolveFetch: (value: unknown) => void;
+      const delayedFetch = new Promise((resolve) => {
+        resolveFetch = resolve;
+      });
+      fetchSpy.mockReturnValueOnce(delayedFetch);
+
+      // Act: 1回目の再生を開始（まだ完了しない）
+      const firstPlay = (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
+
+      // 2回目の再生を試みる（読み込み中なのでスキップされるはず）
+      await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
+
+      // Assert: fetchは1回だけ呼ばれている
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+      // 1回目のfetchを完了させる
+      // biome-ignore lint/style/noNonNullAssertion: テスト用にPromise内で必ず初期化される
+      resolveFetch!({
+        ok: true,
+        arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(100)),
+      });
+      await firstPlay;
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("読み込み中にstopSampleAudioが呼ばれると再生がキャンセルされる", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // fetchを遅延させる（AbortErrorをシミュレート）
+      fetchSpy.mockImplementationOnce(
+        (_url: string, options?: { signal?: AbortSignal }) =>
+          new Promise((_resolve, reject) => {
+            options?.signal?.addEventListener("abort", () => {
+              reject(new DOMException("Aborted", "AbortError"));
+            });
+          }),
+      );
+
+      // Act: 再生を開始
+      const playPromise = (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
+
+      // 読み込み中に停止
+      (controller as { stopSampleAudio: () => void }).stopSampleAudio();
+
+      // 再生が完了するのを待つ
+      await playPromise;
+
+      // Assert: sampleAudioSourceは作成されない（再生されない）
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      expect((controller as any).sampleAudioSource).toBeUndefined();
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("fetch失敗時にエラーをログ出力する", async () => {
+      // Arrange
+      fetchSpy.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+      });
+
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
+
+      // Act
+      await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
+
+      // Assert
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      expect(alertSpy).toHaveBeenCalledWith("サンプル音声の再生に失敗しました");
+
+      // Cleanup
+      consoleErrorSpy.mockRestore();
+      alertSpy.mockRestore();
+      teardownControllerTest(application);
+    });
+  });
+
+  describe("stopSampleAudio", () => {
+    beforeEach(() => {
+      vi.stubGlobal("AudioContext", MockAudioContext);
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it("再生中の音声を停止する", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // モックのAudioBufferSourceNodeを設定
+      const mockSource = {
+        onended: vi.fn(),
+        stop: vi.fn(),
+        disconnect: vi.fn(),
+      };
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).sampleAudioSource = mockSource;
+
+      // Act
+      (controller as { stopSampleAudio: () => void }).stopSampleAudio();
+
+      // Assert
+      expect(mockSource.onended).toBeNull();
+      expect(mockSource.stop).toHaveBeenCalled();
+      expect(mockSource.disconnect).toHaveBeenCalled();
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      expect((controller as any).sampleAudioSource).toBeUndefined();
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("sampleAudioSourceがundefinedの場合は何もしない", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Act & Assert: エラーが発生しないことを確認
+      expect(() => {
+        (controller as { stopSampleAudio: () => void }).stopSampleAudio();
+      }).not.toThrow();
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+  });
+});
+
 describe("proceedToNextQuestion", () => {
   let fetchSpy: ReturnType<typeof vi.fn>;
 

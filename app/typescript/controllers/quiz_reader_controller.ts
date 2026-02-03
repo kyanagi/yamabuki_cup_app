@@ -267,6 +267,7 @@ export default class extends Controller {
     "folderStatus",
     "folderError",
     "nextQuestions",
+    "sampleAudioModal",
   ];
   static values = {
     questionId: Number,
@@ -292,10 +293,15 @@ export default class extends Controller {
   declare folderStatusTarget: HTMLElement;
   declare folderErrorTarget: HTMLElement;
   declare nextQuestionsTarget: HTMLElement;
+  declare sampleAudioModalTarget: HTMLElement;
   declare questionIdValue: number;
   declare soundIdValue: string;
 
   private soundDirHandle: FileSystemDirectoryHandle | undefined;
+  private sampleAudioSource: AudioBufferSourceNode | undefined;
+  private sampleAudioBuffer: AudioBuffer | undefined;
+  private sampleAudioLoading = false;
+  private sampleAudioAbortController: AbortController | undefined;
 
   private idbPromise = openDB(IDB_NAME, 1, {
     upgrade(db) {
@@ -379,6 +385,8 @@ export default class extends Controller {
 
   disconnect() {
     console.log("QuizReaderController disconnected");
+    this.stopSampleAudio();
+    this.sampleAudioBuffer = undefined;
     this.readingContext?.dispose();
     this.readingContext = undefined;
     document.removeEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
@@ -667,5 +675,76 @@ export default class extends Controller {
   private get durationText(): string {
     if (!this.readingContext) return "";
     return `${this.readingContext.readDuration.toFixed(2)} / ${this.readingContext.fullDuration.toFixed(2)}`;
+  }
+
+  // サンプル音声モーダル関連メソッド
+  openSampleAudioModal() {
+    this.sampleAudioModalTarget.classList.add("is-active");
+  }
+
+  closeSampleAudioModal() {
+    this.stopSampleAudio();
+    this.sampleAudioModalTarget.classList.remove("is-active");
+  }
+
+  async playSampleAudio() {
+    if (!this.audioContext) return;
+    // 読み込み中は多重再生を防ぐ
+    if (this.sampleAudioLoading) return;
+    this.stopSampleAudio();
+
+    // 新しいAbortControllerを作成
+    this.sampleAudioAbortController = new AbortController();
+    const signal = this.sampleAudioAbortController.signal;
+
+    try {
+      // AudioContextがsuspended状態の場合はresumeする
+      if (this.audioContext.state === "suspended") {
+        await this.audioContext.resume();
+      }
+
+      if (!this.sampleAudioBuffer) {
+        this.sampleAudioLoading = true;
+        try {
+          const response = await fetch("/sample/sample.wav", { signal });
+          if (!response.ok) {
+            throw new Error(`Failed to fetch sample audio: ${response.status}`);
+          }
+          const arrayBuffer = await response.arrayBuffer();
+          this.sampleAudioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+        } finally {
+          this.sampleAudioLoading = false;
+        }
+      }
+
+      // キャンセルされていたら再生しない
+      if (signal.aborted) return;
+
+      this.sampleAudioSource = this.audioContext.createBufferSource();
+      this.sampleAudioSource.buffer = this.sampleAudioBuffer;
+      this.sampleAudioSource.connect(this.audioContext.destination);
+      this.sampleAudioSource.onended = () => {
+        this.sampleAudioSource = undefined;
+      };
+      this.sampleAudioSource.start();
+    } catch (e) {
+      // AbortErrorはユーザーの意図的なキャンセルなので無視
+      if (e instanceof Error && e.name === "AbortError") return;
+      console.error("サンプル音声の再生に失敗しました:", e);
+      alert("サンプル音声の再生に失敗しました");
+    }
+  }
+
+  stopSampleAudio() {
+    // 読み込み中の場合はキャンセル
+    this.sampleAudioAbortController?.abort();
+    this.sampleAudioAbortController = undefined;
+
+    if (this.sampleAudioSource) {
+      this.sampleAudioSource.onended = null;
+      this.sampleAudioSource.stop();
+      this.sampleAudioSource.disconnect();
+      this.sampleAudioSource = undefined;
+    }
   }
 }
