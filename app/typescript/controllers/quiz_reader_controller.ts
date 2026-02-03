@@ -585,6 +585,7 @@ export default class extends Controller {
   }
 
   startReading() {
+    if (this.isSampleAudioModalOpen()) return;
     if (!this.isOnAirTarget.checked) return;
 
     // フォルダ未選択チェックを先に行う
@@ -601,6 +602,7 @@ export default class extends Controller {
   }
 
   pauseReading() {
+    if (this.isSampleAudioModalOpen()) return;
     if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "PLAYING") return;
 
@@ -611,6 +613,7 @@ export default class extends Controller {
   }
 
   resetReading() {
+    if (this.isSampleAudioModalOpen()) return;
     if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "PAUSED") return;
 
@@ -635,6 +638,7 @@ export default class extends Controller {
   }
 
   async proceedToNextQuestion(event: KeyboardEvent) {
+    if (this.isSampleAudioModalOpen()) return;
     if (event.repeat) return;
     if (this.readingContext?.voiceStatus !== "PAUSED") return;
 
@@ -750,6 +754,10 @@ export default class extends Controller {
   private get durationText(): string {
     if (!this.readingContext) return "";
     return `${this.readingContext.readDuration.toFixed(2)} / ${this.readingContext.fullDuration.toFixed(2)}`;
+  }
+
+  private isSampleAudioModalOpen(): boolean {
+    return this.hasSampleAudioModalTarget && this.sampleAudioModalTarget.classList.contains("is-active");
   }
 
   // サンプル音声モーダル関連メソッド
