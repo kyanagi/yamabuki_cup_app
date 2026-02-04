@@ -60,7 +60,7 @@ bundle exec rspec                    # Run RSpec tests
 bundle exec rspec spec/path/to/file_spec.rb  # Run specific test file
 bundle exec rspec spec/path/to/file_spec.rb:42  # Run specific test line
 bundle exec steep check              # Static type checking with Steep
-bin/rubocop                         # Ruby linting
+bin/rubocop                         # Ruby linting (*.rb files only)
 bin/brakeman --no-prism             # Security analysis
 npx biome format --write .          # Format TypeScript/JavaScript code with biome
 npx biome check --write .           # Lint and format frontend code with biome
@@ -68,6 +68,8 @@ npm run lint:css                    # Lint CSS code with Stylelint
 npm test                            # Run Vitest (frontend unit tests)
 npm run test:run                    # Run Vitest once without watch mode
 ```
+
+**注意:** RuboCopはRubyファイル（`*.rb`）のみをチェックします。ERBファイル（`*.html.erb`）を個別にRuboCopでチェックしないでください（ERBはRuby構文ではないためパースエラーになります）。
 
 **Database Management**
 ```bash
