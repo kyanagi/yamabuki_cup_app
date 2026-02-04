@@ -16,7 +16,7 @@
               <span class="icon"><i class="fa-solid fa-list-ol"></i></span>
               <span>問題選択</span>
             </button>
-            <button class="button" data-action="click->quiz-reader#openSettingsModal">
+            <button class="button is-warning" data-quiz-reader-target="settingsButton" data-action="click->quiz-reader#openSettingsModal">
               <span class="icon"><i class="fa-solid fa-gear"></i></span>
               <span>設定</span>
             </button>
@@ -39,19 +39,6 @@
       <span class="control-label" data-quiz-reader-target="questionFollowLabel">問題フォローON</span>
     </label>
   </div>
-  <!-- 音声フォルダ選択 -->
-  <div class="field">
-    <div class="control is-flex is-align-items-center">
-      <button class="button" data-action="click->quiz-reader#selectFolder">
-        <span class="icon"><i class="fa-solid fa-folder-open"></i></span>
-        <span>音声フォルダを選択</span>
-      </button>
-      <span class="ml-3 has-text-grey" data-quiz-reader-target="folderStatus">
-        未選択
-      </span>
-    </div>
-    <p class="help has-text-danger is-hidden" data-quiz-reader-target="folderError"></p>
-  </div>
   <div class="field">
     <div class="control is-flex">
       <div class="mr-5">
@@ -68,6 +55,8 @@
       </div>
     </div>
   </div>
+  <!-- メイン画面のエラー表示 -->
+  <p class="help has-text-danger is-hidden" data-quiz-reader-target="mainError"></p>
   <div class="columns">
     <div class="column is-7">
       <h2 class="title is-4">Next</h2>
@@ -94,6 +83,20 @@
     <div class="modal-content">
       <div class="box">
         <h2 class="title is-4">設定</h2>
+
+        <!-- 音声フォルダ選択 -->
+        <div class="field">
+          <label class="label">音声フォルダ</label>
+          <div class="control is-flex is-align-items-center">
+            <button class="button" data-action="click->quiz-reader#selectFolder">
+              <span class="icon"><i class="fa-solid fa-folder-open"></i></span>
+              <span>選択</span>
+            </button>
+            <span class="ml-3 has-text-grey" data-quiz-reader-target="folderStatus">
+              未選択
+            </span>
+          </div>
+        </div>
 
         <!-- 音量調整 -->
         <div class="field">

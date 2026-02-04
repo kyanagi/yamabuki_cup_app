@@ -272,7 +272,8 @@ export default class extends Controller {
     "resultUploadedIcon",
     "resultUploadErrorIcon",
     "folderStatus",
-    "folderError",
+    "settingsButton",
+    "mainError",
     "nextQuestions",
     "settingsModal",
     "volumeSlider",
@@ -300,7 +301,8 @@ export default class extends Controller {
   declare resultUploadedIconTarget: HTMLElement;
   declare resultUploadErrorIconTarget: HTMLElement;
   declare folderStatusTarget: HTMLElement;
-  declare folderErrorTarget: HTMLElement;
+  declare settingsButtonTarget: HTMLButtonElement;
+  declare mainErrorTarget: HTMLElement;
   declare nextQuestionsTarget: HTMLElement;
   declare settingsModalTarget: HTMLElement;
   declare volumeSliderTarget: HTMLInputElement;
@@ -344,7 +346,7 @@ export default class extends Controller {
         case "LOADED":
           console.log(`load done: duration=${this.readingContext?.fullDuration}`);
           this.setVoiceLoadingStatusIcon("LOADED");
-          this.clearFolderError();
+          this.clearMainError();
           break;
       }
     };
@@ -352,7 +354,7 @@ export default class extends Controller {
       this.setPlayStatusIcon(voiceStatus);
     };
     const onFileNotFound = (filename: string) => {
-      this.showFolderError(`音声ファイルが見つかりません（${filename}）`);
+      this.showMainError(`音声ファイルが見つかりません（${filename}）`);
     };
 
     this.readingContext?.dispose();
@@ -574,31 +576,36 @@ export default class extends Controller {
     this.folderStatusTarget.textContent = text;
   }
 
-  private showFolderError(message: string) {
-    this.folderErrorTarget.textContent = message;
-    this.folderErrorTarget.classList.remove("is-hidden");
+  private showMainError(message: string) {
+    this.mainErrorTarget.textContent = message;
+    this.mainErrorTarget.classList.remove("is-hidden");
   }
 
-  private clearFolderError() {
-    this.folderErrorTarget.textContent = "";
-    this.folderErrorTarget.classList.add("is-hidden");
+  private clearMainError() {
+    this.mainErrorTarget.textContent = "";
+    this.mainErrorTarget.classList.add("is-hidden");
+  }
+
+  private clearSettingsButtonHighlight() {
+    this.settingsButtonTarget.classList.remove("is-warning");
   }
 
   async selectFolder() {
     try {
       const dirHandle = await window.showDirectoryPicker();
       this.soundDirHandle = dirHandle;
-      this.clearFolderError();
+      this.clearMainError();
+      this.clearSettingsButtonHighlight();
       this.updateFolderStatusText(dirHandle.name, "success");
       // フォルダ選択後に音声を読み込む
       this.createQuestionReadingContextAndLoad(this.questionIdValue, this.soundIdValue);
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") {
         // キャンセル時はエラーをクリアするが、folderStatus は既存の選択状態を維持
-        this.clearFolderError();
+        this.clearMainError();
         return;
       }
-      this.showFolderError("フォルダの選択に失敗しました");
+      this.showMainError("フォルダの選択に失敗しました");
     }
   }
 
@@ -612,8 +619,7 @@ export default class extends Controller {
 
     // フォルダ未選択チェックを先に行う
     if (!this.soundDirHandle) {
-      this.updateFolderStatusText("選択してください", "default");
-      this.showFolderError("再生するには音声フォルダの選択が必要です");
+      this.showMainError("再生するには音声フォルダの選択が必要です");
       return;
     }
 

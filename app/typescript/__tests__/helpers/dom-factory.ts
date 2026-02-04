@@ -51,7 +51,8 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
 
       <!-- Folder selection -->
       <span data-quiz-reader-target="folderStatus" class="has-text-grey">未選択</span>
-      <p data-quiz-reader-target="folderError" class="is-hidden"></p>
+      <button data-quiz-reader-target="settingsButton" class="button is-warning">設定</button>
+      <p data-quiz-reader-target="mainError" class="is-hidden"></p>
 
       <!-- Volume control -->
       <input type="range" min="0" max="100" value="100" data-quiz-reader-target="volumeSlider" data-action="input->quiz-reader#setVolume" />

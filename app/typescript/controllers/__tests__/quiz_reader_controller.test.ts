@@ -340,13 +340,9 @@ describe("QuizReaderController (統合テスト)", () => {
 
       // Assert: エラーメッセージが表示される
       await new Promise((resolve) => setTimeout(resolve, 50));
-      const folderError = document.querySelector('[data-quiz-reader-target~="folderError"]');
-      expect(folderError?.textContent).toBe("再生するには音声フォルダの選択が必要です");
-      expect(folderError?.classList.contains("is-hidden")).toBe(false);
-
-      // folderStatus が「選択してください」に変わる
-      const folderStatus = document.querySelector('[data-quiz-reader-target~="folderStatus"]');
-      expect(folderStatus?.textContent).toBe("選択してください");
+      const mainError = document.querySelector('[data-quiz-reader-target~="mainError"]');
+      expect(mainError?.textContent).toBe("再生するには音声フォルダの選択が必要です");
+      expect(mainError?.classList.contains("is-hidden")).toBe(false);
 
       // Cleanup
       teardownControllerTest(application);
@@ -363,10 +359,10 @@ describe("QuizReaderController (統合テスト)", () => {
 
       // Assert: 何も変わらない（フォルダエラーも表示されない）
       await new Promise((resolve) => setTimeout(resolve, 50));
-      const folderError = document.querySelector('[data-quiz-reader-target~="folderError"]');
+      const mainError = document.querySelector('[data-quiz-reader-target~="mainError"]');
       // isOnAir=false なので、フォルダ未選択エラーも表示されない
-      expect(folderError?.textContent).toBe("");
-      expect(folderError?.classList.contains("is-hidden")).toBe(true);
+      expect(mainError?.textContent).toBe("");
+      expect(mainError?.classList.contains("is-hidden")).toBe(true);
 
       // Cleanup
       teardownControllerTest(application);
@@ -942,13 +938,13 @@ describe("モーダル表示時のキーバインド無効化", () => {
       modal?.classList.add("is-active");
 
       // フォルダエラーを監視（startReadingが実行されるとエラーが表示される）
-      const folderError = document.querySelector('[data-quiz-reader-target~="folderError"]');
+      const mainError = document.querySelector('[data-quiz-reader-target~="mainError"]');
 
       // Act
       (controller as { startReading: () => void }).startReading();
 
       // Assert: 何も実行されない（フォルダエラーが表示されない）
-      expect(folderError?.classList.contains("is-hidden")).toBe(true);
+      expect(mainError?.classList.contains("is-hidden")).toBe(true);
 
       // Cleanup
       teardownControllerTest(application);
@@ -1073,13 +1069,13 @@ describe("モーダル表示時のキーバインド無効化", () => {
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
       // モーダルは閉じたまま（is-activeなし）
-      const folderError = document.querySelector('[data-quiz-reader-target~="folderError"]');
+      const mainError = document.querySelector('[data-quiz-reader-target~="mainError"]');
 
       // Act: フォルダ未選択なのでエラーが表示されるはず
       (controller as { startReading: () => void }).startReading();
 
       // Assert: エラーが表示される（= startReadingが実行された）
-      expect(folderError?.classList.contains("is-hidden")).toBe(false);
+      expect(mainError?.classList.contains("is-hidden")).toBe(false);
 
       // Cleanup
       teardownControllerTest(application);
