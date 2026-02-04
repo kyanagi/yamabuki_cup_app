@@ -274,7 +274,7 @@ export default class extends Controller {
     "folderStatus",
     "folderError",
     "nextQuestions",
-    "sampleAudioModal",
+    "settingsModal",
     "volumeSlider",
     "volumeDisplay",
   ];
@@ -302,7 +302,7 @@ export default class extends Controller {
   declare folderStatusTarget: HTMLElement;
   declare folderErrorTarget: HTMLElement;
   declare nextQuestionsTarget: HTMLElement;
-  declare sampleAudioModalTarget: HTMLElement;
+  declare settingsModalTarget: HTMLElement;
   declare volumeSliderTarget: HTMLInputElement;
   declare volumeDisplayTarget: HTMLElement;
   declare questionIdValue: number;
@@ -607,7 +607,7 @@ export default class extends Controller {
   }
 
   startReading() {
-    if (this.isSampleAudioModalOpen()) return;
+    if (this.isSettingsModalOpen()) return;
     if (!this.isOnAirTarget.checked) return;
 
     // フォルダ未選択チェックを先に行う
@@ -624,7 +624,7 @@ export default class extends Controller {
   }
 
   pauseReading() {
-    if (this.isSampleAudioModalOpen()) return;
+    if (this.isSettingsModalOpen()) return;
     if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "PLAYING") return;
 
@@ -635,7 +635,7 @@ export default class extends Controller {
   }
 
   resetReading() {
-    if (this.isSampleAudioModalOpen()) return;
+    if (this.isSettingsModalOpen()) return;
     if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "PAUSED") return;
 
@@ -660,7 +660,7 @@ export default class extends Controller {
   }
 
   async proceedToNextQuestion(event: KeyboardEvent) {
-    if (this.isSampleAudioModalOpen()) return;
+    if (this.isSettingsModalOpen()) return;
     if (event.repeat) return;
     if (this.readingContext?.voiceStatus !== "PAUSED") return;
 
@@ -778,18 +778,18 @@ export default class extends Controller {
     return `${this.readingContext.readDuration.toFixed(2)} / ${this.readingContext.fullDuration.toFixed(2)}`;
   }
 
-  private isSampleAudioModalOpen(): boolean {
-    return this.hasSampleAudioModalTarget && this.sampleAudioModalTarget.classList.contains("is-active");
+  private isSettingsModalOpen(): boolean {
+    return this.hasSettingsModalTarget && this.settingsModalTarget.classList.contains("is-active");
   }
 
-  // サンプル音声モーダル関連メソッド
-  openSampleAudioModal() {
-    this.sampleAudioModalTarget.classList.add("is-active");
+  // 設定モーダル関連メソッド
+  openSettingsModal() {
+    this.settingsModalTarget.classList.add("is-active");
   }
 
-  closeSampleAudioModal() {
+  closeSettingsModal() {
     this.stopSampleAudio();
-    this.sampleAudioModalTarget.classList.remove("is-active");
+    this.settingsModalTarget.classList.remove("is-active");
   }
 
   async playSampleAudio() {

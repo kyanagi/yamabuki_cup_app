@@ -386,17 +386,17 @@ describe("サンプル音声機能", () => {
     mockIdbGetAll.mockResolvedValue([]);
   });
 
-  describe("openSampleAudioModal", () => {
+  describe("openSettingsModal", () => {
     it("モーダルにis-activeクラスを追加する", async () => {
       // Arrange
       const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
       // Act
-      (controller as { openSampleAudioModal: () => void }).openSampleAudioModal();
+      (controller as { openSettingsModal: () => void }).openSettingsModal();
 
       // Assert
-      const modal = document.querySelector('[data-quiz-reader-target~="sampleAudioModal"]');
+      const modal = document.querySelector('[data-quiz-reader-target~="settingsModal"]');
       expect(modal?.classList.contains("is-active")).toBe(true);
 
       // Cleanup
@@ -404,18 +404,18 @@ describe("サンプル音声機能", () => {
     });
   });
 
-  describe("closeSampleAudioModal", () => {
+  describe("closeSettingsModal", () => {
     it("モーダルからis-activeクラスを削除する", async () => {
       // Arrange
       const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
       // モーダルを開いておく
-      const modal = document.querySelector('[data-quiz-reader-target~="sampleAudioModal"]');
+      const modal = document.querySelector('[data-quiz-reader-target~="settingsModal"]');
       modal?.classList.add("is-active");
 
       // Act
-      (controller as { closeSampleAudioModal: () => void }).closeSampleAudioModal();
+      (controller as { closeSettingsModal: () => void }).closeSettingsModal();
 
       // Assert
       expect(modal?.classList.contains("is-active")).toBe(false);
@@ -432,7 +432,7 @@ describe("サンプル音声機能", () => {
       const stopSpy = vi.spyOn(controller as { stopSampleAudio: () => void }, "stopSampleAudio");
 
       // Act
-      (controller as { closeSampleAudioModal: () => void }).closeSampleAudioModal();
+      (controller as { closeSettingsModal: () => void }).closeSettingsModal();
 
       // Assert
       expect(stopSpy).toHaveBeenCalled();
@@ -938,7 +938,7 @@ describe("モーダル表示時のキーバインド無効化", () => {
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
       // モーダルを開く
-      const modal = document.querySelector('[data-quiz-reader-target~="sampleAudioModal"]');
+      const modal = document.querySelector('[data-quiz-reader-target~="settingsModal"]');
       modal?.classList.add("is-active");
 
       // フォルダエラーを監視（startReadingが実行されるとエラーが表示される）
@@ -960,7 +960,7 @@ describe("モーダル表示時のキーバインド無効化", () => {
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
       // モーダルを開く
-      const modal = document.querySelector('[data-quiz-reader-target~="sampleAudioModal"]');
+      const modal = document.querySelector('[data-quiz-reader-target~="settingsModal"]');
       modal?.classList.add("is-active");
 
       // readingContextをモック（PLAYING状態）
@@ -998,7 +998,7 @@ describe("モーダル表示時のキーバインド無効化", () => {
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
       // モーダルを開く
-      const modal = document.querySelector('[data-quiz-reader-target~="sampleAudioModal"]');
+      const modal = document.querySelector('[data-quiz-reader-target~="settingsModal"]');
       modal?.classList.add("is-active");
 
       // readingContextをモック（PAUSED状態）
@@ -1036,7 +1036,7 @@ describe("モーダル表示時のキーバインド無効化", () => {
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
       // モーダルを開く
-      const modal = document.querySelector('[data-quiz-reader-target~="sampleAudioModal"]');
+      const modal = document.querySelector('[data-quiz-reader-target~="settingsModal"]');
       modal?.classList.add("is-active");
 
       // readingContextをモック（PAUSED状態）
