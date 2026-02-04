@@ -102,10 +102,14 @@
         <div class="field">
           <label class="label">音量</label>
           <div class="control is-flex is-align-items-center">
+            <input type="number" min="0" max="100" step="1" value="100"
+                   class="input" style="width: 5rem;"
+                   data-quiz-reader-target="volumeInput"
+                   data-action="input->quiz-reader#setVolumeFromInput">
             <input type="range" min="0" max="100" value="100"
+                   class="ml-3" style="flex: 1;"
                    data-quiz-reader-target="volumeSlider"
-                   data-action="input->quiz-reader#setVolume">
-            <span class="ml-2" data-quiz-reader-target="volumeDisplay">100</span>
+                   data-action="input->quiz-reader#setVolumeFromSlider">
           </div>
         </div>
 

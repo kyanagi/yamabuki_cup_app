@@ -277,7 +277,7 @@ export default class extends Controller {
     "nextQuestions",
     "settingsModal",
     "volumeSlider",
-    "volumeDisplay",
+    "volumeInput",
   ];
   static values = {
     questionId: Number,
@@ -306,7 +306,7 @@ export default class extends Controller {
   declare nextQuestionsTarget: HTMLElement;
   declare settingsModalTarget: HTMLElement;
   declare volumeSliderTarget: HTMLInputElement;
-  declare volumeDisplayTarget: HTMLElement;
+  declare volumeInputTarget: HTMLInputElement;
   declare questionIdValue: number;
   declare soundIdValue: string;
 
@@ -453,21 +453,45 @@ export default class extends Controller {
 
     // UIを更新
     this.volumeSliderTarget.value = String(volume);
-    this.volumeDisplayTarget.textContent = String(volume);
+    this.volumeInputTarget.value = String(volume);
   }
 
   /**
    * 音量を設定する（スライダーのinputイベントから呼ばれる）
    */
-  setVolume(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const volume = Number(target.value);
+  setVolumeFromSlider(event: Event) {
+    const volume = Number((event.target as HTMLInputElement).value);
+    this.applyVolume(this.normalizeVolume(volume));
+  }
 
-    // localStorageに保存（gainNodeの有無に関わらず）
+  /**
+   * 音量を設定する（数値入力欄のinputイベントから呼ばれる）
+   */
+  setVolumeFromInput(event: Event) {
+    const volume = Number((event.target as HTMLInputElement).value);
+    this.applyVolume(this.normalizeVolume(volume));
+  }
+
+  /**
+   * 音量値を正規化する（0-100の整数に変換）
+   */
+  private normalizeVolume(value: number): number {
+    if (Number.isNaN(value) || !Number.isFinite(value)) {
+      return DEFAULT_VOLUME;
+    }
+    return Math.max(0, Math.min(100, Math.round(value)));
+  }
+
+  /**
+   * 音量を適用する（UI同期、localStorage保存、GainNode更新）
+   */
+  private applyVolume(volume: number) {
+    // localStorageに保存
     this.saveVolumeToStorage(volume);
 
-    // volumeDisplayを更新（gainNodeの有無に関わらず）
-    this.volumeDisplayTarget.textContent = String(volume);
+    // UIを同期
+    this.volumeSliderTarget.value = String(volume);
+    this.volumeInputTarget.value = String(volume);
 
     // gainNodeに音量を反映
     if (this.gainNode) {
