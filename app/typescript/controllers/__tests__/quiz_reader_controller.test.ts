@@ -312,7 +312,9 @@ describe("QuizReaderController (統合テスト)", () => {
     it("AudioContextが作成される", async () => {
       // Arrange
       const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const AudioContextSpy = vi.fn(MockAudioContext);
+      const AudioContextSpy = vi.fn(function AudioContextSpy() {
+        return new MockAudioContext();
+      });
       vi.stubGlobal("AudioContext", AudioContextSpy);
 
       // Act

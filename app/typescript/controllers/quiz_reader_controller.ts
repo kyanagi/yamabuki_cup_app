@@ -429,7 +429,7 @@ export default class extends Controller {
    * localStorageから音量を復元する
    */
   private restoreVolume() {
-    const storedValue = localStorage.getItem(VOLUME_STORAGE_KEY);
+    const storedValue = this.readVolumeFromStorage();
 
     let volume: number;
     if (storedValue === null) {
@@ -462,7 +462,7 @@ export default class extends Controller {
     const volume = Number(target.value);
 
     // localStorageに保存（gainNodeの有無に関わらず）
-    localStorage.setItem(VOLUME_STORAGE_KEY, String(volume));
+    this.saveVolumeToStorage(volume);
 
     // volumeDisplayを更新（gainNodeの有無に関わらず）
     this.volumeDisplayTarget.textContent = String(volume);
@@ -470,6 +470,28 @@ export default class extends Controller {
     // gainNodeに音量を反映
     if (this.gainNode) {
       this.gainNode.gain.value = volume / 100;
+    }
+  }
+
+  /**
+   * localStorageから音量を取得する（取得できない場合はnull）
+   */
+  private readVolumeFromStorage(): string | null {
+    try {
+      return localStorage.getItem(VOLUME_STORAGE_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * localStorageに音量を保存する（失敗しても無視）
+   */
+  private saveVolumeToStorage(volume: number): void {
+    try {
+      localStorage.setItem(VOLUME_STORAGE_KEY, String(volume));
+    } catch {
+      // localStorageが利用できない環境では保存しない
     }
   }
 
