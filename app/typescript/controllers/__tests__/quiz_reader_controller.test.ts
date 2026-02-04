@@ -440,17 +440,7 @@ describe("サンプル音声機能", () => {
   });
 
   describe("playSampleAudio", () => {
-    let fetchSpy: ReturnType<typeof vi.fn>;
-
     beforeEach(() => {
-      // fetchをモック
-      const mockArrayBuffer = new ArrayBuffer(100);
-      fetchSpy = vi.fn().mockResolvedValue({
-        ok: true,
-        arrayBuffer: vi.fn().mockResolvedValue(mockArrayBuffer),
-      });
-      vi.stubGlobal("fetch", fetchSpy);
-
       // AudioContextをモック
       vi.stubGlobal("AudioContext", MockAudioContext);
     });
@@ -459,19 +449,44 @@ describe("サンプル音声機能", () => {
       vi.unstubAllGlobals();
     });
 
-    it("サーバーからサンプル音声を取得する", async () => {
+    it("音声フォルダ未選択時にalertを表示する", async () => {
       // Arrange
       const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
 
       // Act
       await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
 
       // Assert
-      expect(fetchSpy).toHaveBeenCalledWith(
-        "/sample/sample.wav",
-        expect.objectContaining({ signal: expect.any(AbortSignal) }),
-      );
+      expect(alertSpy).toHaveBeenCalledWith("サンプル音声を再生するには、音声フォルダを選択してください");
+
+      // Cleanup
+      alertSpy.mockRestore();
+      teardownControllerTest(application);
+    });
+
+    it("音声フォルダからsample.wavを読み込んで再生する", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      const mockArrayBuffer = new ArrayBuffer(100);
+      const mockDirHandle = createMockDirectoryHandle({
+        "sample.wav": mockArrayBuffer,
+      });
+
+      // soundDirHandle を設定
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).soundDirHandle = mockDirHandle;
+
+      // Act
+      await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
+
+      // Assert: sampleAudioSourceが作成されている（再生された）
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      expect((controller as any).sampleAudioBuffer).toBeDefined();
 
       // Cleanup
       teardownControllerTest(application);
@@ -482,12 +497,42 @@ describe("サンプル音声機能", () => {
       const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
+      let getFileHandleCallCount = 0;
+      const mockArrayBuffer = new ArrayBuffer(100);
+      const mockDirHandle = {
+        name: "test-folder",
+        kind: "directory",
+        async getFileHandle(fileName: string) {
+          getFileHandleCallCount++;
+          if (fileName !== "sample.wav") {
+            throw new DOMException(`File not found: ${fileName}`, "NotFoundError");
+          }
+          return {
+            kind: "file",
+            name: fileName,
+            async getFile() {
+              return {
+                name: fileName,
+                type: "audio/wav",
+                size: mockArrayBuffer.byteLength,
+                async arrayBuffer() {
+                  return mockArrayBuffer;
+                },
+              } as unknown as File;
+            },
+          } as FileSystemFileHandle;
+        },
+      } as FileSystemDirectoryHandle;
+
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).soundDirHandle = mockDirHandle;
+
       // Act: 2回再生
       await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
       await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
 
-      // Assert: fetchは1回だけ
-      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      // Assert: getFileHandleは1回だけ
+      expect(getFileHandleCallCount).toBe(1);
 
       // Cleanup
       teardownControllerTest(application);
@@ -498,12 +543,33 @@ describe("サンプル音声機能", () => {
       const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // fetchを遅延させる
-      let resolveFetch: (value: unknown) => void;
-      const delayedFetch = new Promise((resolve) => {
-        resolveFetch = resolve;
+      let getFileHandleCallCount = 0;
+      let resolveGetFile: (value: unknown) => void;
+      const delayedGetFile = new Promise((resolve) => {
+        resolveGetFile = resolve;
       });
-      fetchSpy.mockReturnValueOnce(delayedFetch);
+
+      const mockArrayBuffer = new ArrayBuffer(100);
+      const mockDirHandle = {
+        name: "test-folder",
+        kind: "directory",
+        async getFileHandle(fileName: string) {
+          getFileHandleCallCount++;
+          if (fileName !== "sample.wav") {
+            throw new DOMException(`File not found: ${fileName}`, "NotFoundError");
+          }
+          return {
+            kind: "file",
+            name: fileName,
+            getFile() {
+              return delayedGetFile;
+            },
+          } as FileSystemFileHandle;
+        },
+      } as FileSystemDirectoryHandle;
+
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).soundDirHandle = mockDirHandle;
 
       // Act: 1回目の再生を開始（まだ完了しない）
       const firstPlay = (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
@@ -511,14 +577,18 @@ describe("サンプル音声機能", () => {
       // 2回目の再生を試みる（読み込み中なのでスキップされるはず）
       await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
 
-      // Assert: fetchは1回だけ呼ばれている
-      expect(fetchSpy).toHaveBeenCalledTimes(1);
+      // Assert: getFileHandleは1回だけ呼ばれている
+      expect(getFileHandleCallCount).toBe(1);
 
-      // 1回目のfetchを完了させる
+      // 1回目を完了させる
       // biome-ignore lint/style/noNonNullAssertion: テスト用にPromise内で必ず初期化される
-      resolveFetch!({
-        ok: true,
-        arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(100)),
+      resolveGetFile!({
+        name: "sample.wav",
+        type: "audio/wav",
+        size: mockArrayBuffer.byteLength,
+        async arrayBuffer() {
+          return mockArrayBuffer;
+        },
       });
       await firstPlay;
 
@@ -531,15 +601,36 @@ describe("サンプル音声機能", () => {
       const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // fetchを遅延させる（AbortErrorをシミュレート）
-      fetchSpy.mockImplementationOnce(
-        (_url: string, options?: { signal?: AbortSignal }) =>
-          new Promise((_resolve, reject) => {
-            options?.signal?.addEventListener("abort", () => {
-              reject(new DOMException("Aborted", "AbortError"));
-            });
-          }),
-      );
+      const mockArrayBuffer = new ArrayBuffer(100);
+      const mockDirHandle = {
+        name: "test-folder",
+        kind: "directory",
+        async getFileHandle(fileName: string) {
+          if (fileName !== "sample.wav") {
+            throw new DOMException(`File not found: ${fileName}`, "NotFoundError");
+          }
+          return {
+            kind: "file",
+            name: fileName,
+            async getFile() {
+              // getFile中にabortされたらAbortErrorを投げる
+              return {
+                name: fileName,
+                type: "audio/wav",
+                size: mockArrayBuffer.byteLength,
+                async arrayBuffer() {
+                  // 少し遅延させてabortを検知できるようにする
+                  await new Promise((resolve) => setTimeout(resolve, 10));
+                  return mockArrayBuffer;
+                },
+              } as unknown as File;
+            },
+          } as FileSystemFileHandle;
+        },
+      } as FileSystemDirectoryHandle;
+
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).soundDirHandle = mockDirHandle;
 
       // Act: 再生を開始
       const playPromise = (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
@@ -558,29 +649,96 @@ describe("サンプル音声機能", () => {
       teardownControllerTest(application);
     });
 
-    it("fetch失敗時にエラーをログ出力する", async () => {
+    it("sample.wavが存在しない場合にエラーメッセージを表示する", async () => {
       // Arrange
-      fetchSpy.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      });
-
       const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
       const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      // sample.wavが存在しないモックディレクトリ
+      const mockDirHandle = createMockDirectoryHandle({});
+
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).soundDirHandle = mockDirHandle;
+
       const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
 
       // Act
       await (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
 
       // Assert
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      expect(alertSpy).toHaveBeenCalledWith("サンプル音声の再生に失敗しました");
+      expect(alertSpy).toHaveBeenCalledWith("sample.wav が見つかりません");
 
       // Cleanup
-      consoleErrorSpy.mockRestore();
       alertSpy.mockRestore();
+      teardownControllerTest(application);
+    });
+
+    it("読み込み中にキャンセルされ、その後読み込みが完了しても古いバッファがセットされない", async () => {
+      // Arrange
+      // このテストは、フォルダ変更時のシナリオを再現:
+      // 1. playSampleAudio() を呼び出す（フォルダA）
+      // 2. loadAudioFromLocalFile() が進行中に stopSampleAudio() を呼び出す
+      // 3. その後、loadAudioFromLocalFile() が完了する
+      // 4. バグがある場合: 古いバッファがセットされてしまう
+      // 5. 修正後: signal.aborted をチェックしてバッファをセットしない
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      const mockArrayBuffer = new ArrayBuffer(100);
+      let resolveArrayBuffer: (value: ArrayBuffer) => void;
+      const delayedArrayBuffer = new Promise<ArrayBuffer>((resolve) => {
+        resolveArrayBuffer = resolve;
+      });
+
+      const mockDirHandle = {
+        name: "test-folder",
+        kind: "directory",
+        async getFileHandle(fileName: string) {
+          if (fileName !== "sample.wav") {
+            throw new DOMException(`File not found: ${fileName}`, "NotFoundError");
+          }
+          return {
+            kind: "file",
+            name: fileName,
+            async getFile() {
+              return {
+                name: fileName,
+                type: "audio/wav",
+                size: mockArrayBuffer.byteLength,
+                arrayBuffer() {
+                  // arrayBuffer() を遅延させることで、読み込み中にキャンセルを可能にする
+                  return delayedArrayBuffer;
+                },
+              } as unknown as File;
+            },
+          } as FileSystemFileHandle;
+        },
+      } as FileSystemDirectoryHandle;
+
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).soundDirHandle = mockDirHandle;
+
+      // Act: 再生を開始（loadAudioFromLocalFile が進行中の状態）
+      const playPromise = (controller as { playSampleAudio: () => Promise<void> }).playSampleAudio();
+
+      // arrayBuffer() が呼ばれるまで少し待つ
+      await new Promise((resolve) => setTimeout(resolve, 5));
+
+      // 読み込み中に停止（フォルダ変更などのシナリオ）
+      (controller as { stopSampleAudio: () => void }).stopSampleAudio();
+
+      // その後、arrayBuffer() を完了させる（実際のファイルシステムでは非同期に完了する）
+      // biome-ignore lint/style/noNonNullAssertion: テスト用にPromise内で必ず初期化される
+      resolveArrayBuffer!(mockArrayBuffer);
+
+      // 再生処理が完了するのを待つ
+      await playPromise;
+
+      // Assert: キャンセル後なのでバッファがセットされていないはず
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      expect((controller as any).sampleAudioBuffer).toBeUndefined();
+
+      // Cleanup
       teardownControllerTest(application);
     });
   });
@@ -633,6 +791,64 @@ describe("サンプル音声機能", () => {
       }).not.toThrow();
 
       // Cleanup
+      teardownControllerTest(application);
+    });
+  });
+
+  describe("selectFolder", () => {
+    beforeEach(() => {
+      vi.stubGlobal("AudioContext", MockAudioContext);
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it("フォルダ変更時にsampleAudioBufferがクリアされる", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // 既存のsampleAudioBufferを設定
+      const mockBuffer = createMockAudioBuffer(1.0);
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      (controller as any).sampleAudioBuffer = mockBuffer;
+
+      // showDirectoryPickerをモック
+      const mockDirHandle = createMockDirectoryHandle({});
+      vi.stubGlobal("showDirectoryPicker", vi.fn().mockResolvedValue(mockDirHandle));
+
+      // Act
+      await (controller as { selectFolder: () => Promise<void> }).selectFolder();
+
+      // Assert: sampleAudioBufferがクリアされている
+      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+      expect((controller as any).sampleAudioBuffer).toBeUndefined();
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
+
+    it("フォルダ変更時に再生中のサンプル音声が停止される", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // stopSampleAudioをスパイ
+      const stopSpy = vi.spyOn(controller as { stopSampleAudio: () => void }, "stopSampleAudio");
+
+      // showDirectoryPickerをモック
+      const mockDirHandle = createMockDirectoryHandle({});
+      vi.stubGlobal("showDirectoryPicker", vi.fn().mockResolvedValue(mockDirHandle));
+
+      // Act
+      await (controller as { selectFolder: () => Promise<void> }).selectFolder();
+
+      // Assert: stopSampleAudioが呼ばれている
+      expect(stopSpy).toHaveBeenCalled();
+
+      // Cleanup
+      stopSpy.mockRestore();
       teardownControllerTest(application);
     });
   });

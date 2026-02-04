@@ -617,6 +617,11 @@ export default class extends Controller {
   async selectFolder() {
     try {
       const dirHandle = await window.showDirectoryPicker();
+
+      // 再生中のサンプル音声を停止し、読み込み中の処理もキャンセル
+      this.stopSampleAudio();
+      this.sampleAudioBuffer = undefined;
+
       this.soundDirHandle = dirHandle;
       this.clearMainError();
       this.clearSettingsButtonHighlight();
@@ -826,6 +831,13 @@ export default class extends Controller {
     if (!this.audioContext) return;
     // 読み込み中は多重再生を防ぐ
     if (this.sampleAudioLoading) return;
+
+    // 音声フォルダが未選択の場合はエラー
+    if (!this.soundDirHandle) {
+      alert("サンプル音声を再生するには、音声フォルダを選択してください");
+      return;
+    }
+
     this.stopSampleAudio();
 
     // 新しいAbortControllerを作成
@@ -841,12 +853,10 @@ export default class extends Controller {
       if (!this.sampleAudioBuffer) {
         this.sampleAudioLoading = true;
         try {
-          const response = await fetch("/sample/sample.wav", { signal });
-          if (!response.ok) {
-            throw new Error(`Failed to fetch sample audio: ${response.status}`);
-          }
-          const arrayBuffer = await response.arrayBuffer();
-          this.sampleAudioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+          const buffer = await loadAudioFromLocalFile("sample.wav", this.soundDirHandle, this.audioContext, signal);
+          // 読み込み完了後にキャンセルされていたらバッファをセットしない
+          if (signal.aborted) return;
+          this.sampleAudioBuffer = buffer;
         } finally {
           this.sampleAudioLoading = false;
         }
@@ -867,6 +877,11 @@ export default class extends Controller {
     } catch (e) {
       // AbortErrorはユーザーの意図的なキャンセルなので無視
       if (e instanceof Error && e.name === "AbortError") return;
+      // NotFoundError はファイルが見つからない場合
+      if (e instanceof DOMException && e.name === "NotFoundError") {
+        alert("sample.wav が見つかりません");
+        return;
+      }
       console.error("サンプル音声の再生に失敗しました:", e);
       alert("サンプル音声の再生に失敗しました");
     }
