@@ -1,9 +1,11 @@
 <%# locals: (question:) %>
-<div class="box has-background-success-light">
+<div class="box has-background-success-light" data-quiz-reader-target="nextQuestionBox">
   <h2 class="subtitle"><%= question.id %></h2>
-  <p><%= question.text %></p>
-  <p class="mt-4 is-size-4 has-text-weight-bold"><%= question.answer %></p>
-  <p><%= question.another_answer %></p>
+  <div data-quiz-reader-target="nextQuestionContent">
+    <p><%= question.text %></p>
+    <p class="mt-4 is-size-4 has-text-weight-bold"><%= question.answer %></p>
+    <p><%= question.another_answer %></p>
+  </div>
   <p class="has-text-right">
     <span data-quiz-reader-target="duration"></span>
     <span class="icon is-hidden" data-quiz-reader-target="voiceLoadingStatusIcon voiceLoadingIcon"><i class="fa-solid fa-file-arrow-down fa-flip"></i></span>

@@ -280,6 +280,10 @@ export default class extends Controller {
     "volumeInput",
     "samplePlayButton",
     "sampleStopButton",
+    "nextQuestionBox",
+    "next2QuestionBox",
+    "nextQuestionContent",
+    "next2QuestionContent",
   ];
   static values = {
     questionId: Number,
@@ -311,6 +315,14 @@ export default class extends Controller {
   declare volumeInputTarget: HTMLInputElement;
   declare samplePlayButtonTarget: HTMLButtonElement;
   declare sampleStopButtonTarget: HTMLButtonElement;
+  declare nextQuestionBoxTarget: HTMLElement;
+  declare next2QuestionBoxTarget: HTMLElement;
+  declare nextQuestionContentTarget: HTMLElement;
+  declare next2QuestionContentTarget: HTMLElement;
+  declare hasNextQuestionBoxTarget: boolean;
+  declare hasNext2QuestionBoxTarget: boolean;
+  declare hasNextQuestionContentTarget: boolean;
+  declare hasNext2QuestionContentTarget: boolean;
   declare questionIdValue: number;
   declare soundIdValue: string;
 
@@ -534,7 +546,24 @@ export default class extends Controller {
     } else {
       this.onAirLabelTarget.textContent = "問い読みOFF";
     }
-    this.nextQuestionsTarget.classList.toggle("is-hidden", !this.isOnAirTarget.checked);
+
+    const isOffAir = !this.isOnAirTarget.checked;
+
+    // 問題内容の非表示切り替え
+    if (this.hasNextQuestionContentTarget) {
+      this.nextQuestionContentTarget.classList.toggle("is-hidden", isOffAir);
+    }
+    if (this.hasNext2QuestionContentTarget) {
+      this.next2QuestionContentTarget.classList.toggle("is-hidden", isOffAir);
+    }
+
+    // カードのグレーアウト切り替え
+    if (this.hasNextQuestionBoxTarget) {
+      this.nextQuestionBoxTarget.classList.toggle("quiz-reader-off-air", isOffAir);
+    }
+    if (this.hasNext2QuestionBoxTarget) {
+      this.next2QuestionBoxTarget.classList.toggle("quiz-reader-off-air", isOffAir);
+    }
   }
 
   /**
@@ -757,6 +786,12 @@ export default class extends Controller {
 
       const html = await response.text();
       Turbo.renderStreamMessage(html);
+
+      // 問い読みスイッチの状態を新しいDOM要素に反映
+      // Turbo StreamがDOMを更新した後、Stimulusがターゲットを再検出するのを待つ
+      requestAnimationFrame(() => {
+        this.applyOnAirStateToUI();
+      });
     } catch (e) {
       console.error(e);
       if (e instanceof Error) {

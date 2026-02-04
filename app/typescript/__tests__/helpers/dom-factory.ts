@@ -59,7 +59,14 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
       <input type="range" min="0" max="100" value="100" data-quiz-reader-target="volumeSlider" data-action="input->quiz-reader#setVolumeFromSlider" />
 
       <!-- Next questions -->
-      <div data-quiz-reader-target="nextQuestions"></div>
+      <div data-quiz-reader-target="nextQuestions">
+        <div class="box" data-quiz-reader-target="nextQuestionBox">
+          <div data-quiz-reader-target="nextQuestionContent"></div>
+        </div>
+        <div class="box" data-quiz-reader-target="next2QuestionBox">
+          <div data-quiz-reader-target="next2QuestionContent"></div>
+        </div>
+      </div>
 
       <!-- Settings modal -->
       <div data-quiz-reader-target="settingsModal" class="modal">
