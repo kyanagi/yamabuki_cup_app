@@ -614,7 +614,7 @@ export default class extends Controller {
   }
 
   startReading() {
-    if (this.isSettingsModalOpen()) return;
+    if (this.isAnyModalOpen()) return;
     if (!this.isOnAirTarget.checked) return;
 
     // フォルダ未選択チェックを先に行う
@@ -630,7 +630,7 @@ export default class extends Controller {
   }
 
   pauseReading() {
-    if (this.isSettingsModalOpen()) return;
+    if (this.isAnyModalOpen()) return;
     if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "PLAYING") return;
 
@@ -641,7 +641,7 @@ export default class extends Controller {
   }
 
   resetReading() {
-    if (this.isSettingsModalOpen()) return;
+    if (this.isAnyModalOpen()) return;
     if (!this.readingContext) return;
     if (this.readingContext.voiceStatus !== "PAUSED") return;
 
@@ -666,7 +666,7 @@ export default class extends Controller {
   }
 
   async proceedToNextQuestion(event: KeyboardEvent) {
-    if (this.isSettingsModalOpen()) return;
+    if (this.isAnyModalOpen()) return;
     if (event.repeat) return;
     if (this.readingContext?.voiceStatus !== "PAUSED") return;
 
@@ -784,8 +784,8 @@ export default class extends Controller {
     return `${this.readingContext.readDuration.toFixed(2)} / ${this.readingContext.fullDuration.toFixed(2)}`;
   }
 
-  private isSettingsModalOpen(): boolean {
-    return this.hasSettingsModalTarget && this.settingsModalTarget.classList.contains("is-active");
+  private isAnyModalOpen(): boolean {
+    return this.element.querySelector(".modal.is-active") !== null;
   }
 
   // 設定モーダル関連メソッド

@@ -1,12 +1,46 @@
 <%# locals: (reading_histories:) %>
 <% reading_histories.each do |reading_history| %>
-  <div class="box">
-    <div class="is-flex is-justify-content-space-between">
-      <div class="is-flex">
+  <div class="box is-clickable" data-controller="modal"
+       data-action="click->modal#open keydown.enter->modal#open"
+       role="button"
+       tabindex="0"
+       aria-haspopup="dialog"
+       aria-controls="<%= dom_id(reading_history, :modal) %>">
+    <div class="is-flex is-justify-content-space-between is-align-items-center">
+      <div class="is-flex is-align-items-center">
         <p class="mr-4"><%= reading_history.question.id %>.</p>
         <p><%= reading_history.question.answer %></p>
       </div>
-      <p><span class="icon"><i class="fas fa-stopwatch"></i></span><%= '%.2f' % reading_history.read_duration %> / <%= '%.2f' % reading_history.full_duration %></p>
+      <p>
+        <span class="icon"><i class="fas fa-stopwatch"></i></span>
+        <%= '%.2f' % reading_history.read_duration %> / <%= '%.2f' % reading_history.full_duration %>
+      </p>
+    </div>
+
+    <%# 問題詳細モーダル %>
+    <div class="modal" data-modal-target="modal"
+         id="<%= dom_id(reading_history, :modal) %>"
+         role="dialog"
+         aria-labelledby="<%= dom_id(reading_history, :modal_title) %>"
+         aria-modal="true">
+      <div class="modal-background" data-action="click->modal#close:stop"></div>
+      <div class="modal-content">
+        <div class="box">
+          <h2 class="title is-4" id="<%= dom_id(reading_history, :modal_title) %>">
+            問題 <%= reading_history.question.id %>
+          </h2>
+          <div class="content">
+            <p class="is-size-5"><%= reading_history.question.text %></p>
+            <hr>
+            <p><strong>正答:</strong> <%= reading_history.question.answer %></p>
+            <% if reading_history.question.another_answer.present? %>
+              <p><strong>別解:</strong> <%= reading_history.question.another_answer %></p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <button class="modal-close is-large" aria-label="close"
+              data-action="click->modal#close:stop"></button>
     </div>
   </div>
 <% end %>
