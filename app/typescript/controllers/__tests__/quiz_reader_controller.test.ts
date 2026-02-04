@@ -851,6 +851,33 @@ describe("サンプル音声機能", () => {
       stopSpy.mockRestore();
       teardownControllerTest(application);
     });
+
+    it("フォルダ選択後にサンプル音声ボタンが有効化される", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      const playButton = document.querySelector('[data-quiz-reader-target~="samplePlayButton"]') as HTMLButtonElement;
+      const stopButton = document.querySelector('[data-quiz-reader-target~="sampleStopButton"]') as HTMLButtonElement;
+
+      // 初期状態ではdisabled
+      expect(playButton.disabled).toBe(true);
+      expect(stopButton.disabled).toBe(true);
+
+      // showDirectoryPickerをモック
+      const mockDirHandle = createMockDirectoryHandle({});
+      vi.stubGlobal("showDirectoryPicker", vi.fn().mockResolvedValue(mockDirHandle));
+
+      // Act: selectFolderメソッドを直接呼び出す
+      await (controller as { selectFolder: () => Promise<void> }).selectFolder();
+
+      // Assert: ボタンが有効化されている
+      expect(playButton.disabled).toBe(false);
+      expect(stopButton.disabled).toBe(false);
+
+      // Cleanup
+      teardownControllerTest(application);
+    });
   });
 });
 

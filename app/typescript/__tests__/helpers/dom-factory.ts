@@ -62,7 +62,11 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
       <div data-quiz-reader-target="nextQuestions"></div>
 
       <!-- Settings modal -->
-      <div data-quiz-reader-target="settingsModal" class="modal"></div>
+      <div data-quiz-reader-target="settingsModal" class="modal">
+        <!-- Sample audio buttons -->
+        <button data-quiz-reader-target="samplePlayButton" disabled data-action="click->quiz-reader#playSampleAudio">再生</button>
+        <button data-quiz-reader-target="sampleStopButton" disabled data-action="click->quiz-reader#stopSampleAudio">停止</button>
+      </div>
     </div>
   `;
 }

@@ -278,6 +278,8 @@ export default class extends Controller {
     "settingsModal",
     "volumeSlider",
     "volumeInput",
+    "samplePlayButton",
+    "sampleStopButton",
   ];
   static values = {
     questionId: Number,
@@ -307,6 +309,8 @@ export default class extends Controller {
   declare settingsModalTarget: HTMLElement;
   declare volumeSliderTarget: HTMLInputElement;
   declare volumeInputTarget: HTMLInputElement;
+  declare samplePlayButtonTarget: HTMLButtonElement;
+  declare sampleStopButtonTarget: HTMLButtonElement;
   declare questionIdValue: number;
   declare soundIdValue: string;
 
@@ -614,6 +618,11 @@ export default class extends Controller {
     this.settingsButtonTarget.classList.remove("is-warning");
   }
 
+  private enableSampleAudioButtons() {
+    this.samplePlayButtonTarget.disabled = false;
+    this.sampleStopButtonTarget.disabled = false;
+  }
+
   async selectFolder() {
     try {
       const dirHandle = await window.showDirectoryPicker();
@@ -626,6 +635,7 @@ export default class extends Controller {
       this.clearMainError();
       this.clearSettingsButtonHighlight();
       this.updateFolderStatusText(dirHandle.name, "success");
+      this.enableSampleAudioButtons();
       // フォルダ選択後に音声を読み込む
       this.createQuestionReadingContextAndLoad(this.questionIdValue, this.soundIdValue);
     } catch (e) {
