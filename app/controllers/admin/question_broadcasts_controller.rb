@@ -35,6 +35,14 @@ module Admin
       redirect_to new_admin_question_broadcast_path, notice: "問題を消去しました"
     end
 
+    def sample
+      text = params[:text].to_s
+      answer = params[:answer].to_s
+      sample_question = Question.new(text:, answer:)
+      broadcast_question_board(sample_question)
+      redirect_to new_admin_question_broadcast_path, notice: "サンプルテキストを送出しました"
+    end
+
     private
 
     def broadcast_question_board(question)

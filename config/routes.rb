@@ -76,6 +76,7 @@ Rails.application.routes.draw do
     resources :question_broadcasts, only: [:new, :create] do
       collection do
         post :clear
+        post :sample
       end
     end
   end

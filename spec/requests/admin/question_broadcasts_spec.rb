@@ -49,6 +49,13 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
           expect(response).to have_http_status(:forbidden)
         end
       end
+
+      describe "POST /admin/question_broadcasts/sample" do
+        it "403 Forbiddenを返すこと" do
+          post "/admin/question_broadcasts/sample", params: { text: "テスト", answer: "答え" }
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
     end
   end
 
@@ -190,6 +197,53 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
               end.not_to have_broadcasted_to("scoreboard")
             end
           end
+        end
+      end
+    end
+
+    describe "POST /admin/question_broadcasts/sample" do
+      let(:sample_text) { "サンプル問題文です" }
+      let(:sample_answer) { "サンプル答え" }
+
+      it "scoreboardチャンネルにbroadcastが行われる" do
+        expect do
+          post "/admin/question_broadcasts/sample", params: { text: sample_text, answer: sample_answer }
+        end.to have_broadcasted_to("scoreboard")
+      end
+
+      it "broadcast内容に入力したテキストが含まれる" do
+        expect do
+          post "/admin/question_broadcasts/sample", params: { text: sample_text, answer: sample_answer }
+        end.to(have_broadcasted_to("scoreboard").with do |data|
+          expect(data).to include("turbo-stream")
+          expect(data).to include('action="replace_question"')
+          expect(data).to include('target="question"')
+          expect(data).to include(sample_text)
+          expect(data).to include(sample_answer)
+        end)
+      end
+
+      it "サンプルテキスト送出後、リダイレクトする" do
+        post "/admin/question_broadcasts/sample", params: { text: sample_text, answer: sample_answer }
+        expect(response).to redirect_to(new_admin_question_broadcast_path)
+      end
+
+      it "成功メッセージがflashに設定される" do
+        post "/admin/question_broadcasts/sample", params: { text: sample_text, answer: sample_answer }
+        follow_redirect!
+        expect(response.body).to include("サンプルテキストを送出しました")
+      end
+
+      context "テキストが空の場合" do
+        it "broadcastが行われてリダイレクトする" do
+          post "/admin/question_broadcasts/sample", params: { text: "", answer: "" }
+          expect(response).to redirect_to(new_admin_question_broadcast_path)
+        end
+
+        it "broadcastが行われる" do
+          expect do
+            post "/admin/question_broadcasts/sample", params: { text: "", answer: "" }
+          end.to have_broadcasted_to("scoreboard")
         end
       end
     end

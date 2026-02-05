@@ -33,6 +33,27 @@
 
   <hr>
 
+  <h2 class="subtitle">サンプルテキスト送出</h2>
+  <%= form_with url: sample_admin_question_broadcasts_path, method: :post, html: { autocomplete: "off" } do |f| %>
+    <div class="field">
+      <%= f.label :text, "問題文", class: "label" %>
+      <div class="control">
+        <%= f.text_area :text, class: "textarea", rows: 3, placeholder: "問題文を入力" %>
+      </div>
+    </div>
+    <div class="field">
+      <%= f.label :answer, "答え", class: "label" %>
+      <div class="control">
+        <%= f.text_field :answer, class: "input", placeholder: "答えを入力" %>
+      </div>
+    </div>
+    <div class="field">
+      <%= f.submit "サンプル送出", class: "button is-info" %>
+    </div>
+  <% end %>
+
+  <hr>
+
   <%= form_with url: clear_admin_question_broadcasts_path, method: :post do |f| %>
     <%= f.submit "消去", class: "button is-danger" %>
   <% end %>
