@@ -286,17 +286,17 @@ body {
 }
 
 .first-place-player__name--length-5 {
-  transform: scaleX(calc(4 / 5));
+  scale: calc(4 / 5) 1;
   transform-origin: center center;
 }
 
 .first-place-player__name--length-6 {
-  transform: scaleX(calc(4 / 6));
+  scale: calc(4 / 6) 1;
   transform-origin: center center;
 }
 
 .first-place-player__name--length-7 {
-  transform: scaleX(calc(4 / 7));
+  scale: calc(4 / 7) 1;
   transform-origin: center center;
 }
 
@@ -433,7 +433,7 @@ body {
 .hayaoshi-player-name--length-5,
 .board-player-name--length-5,
 .final-player-name--length-5 {
-  transform: scaleX(calc(4 / 5)); /* 5文字を4文字分の幅に縮小 */
+  scale: calc(4 / 5) 1; /* 5文字を4文字分の幅に縮小 */
   transform-origin: left top;
 }
 
@@ -441,12 +441,12 @@ body {
 .hayaoshi-player-name--length-6,
 .board-player-name--length-6,
 .final-player-name--length-6 {
-  transform: scaleX(calc(4 / 6));
+  scale: calc(4 / 6) 1;
   transform-origin: left top;
 }
 
 .round2-match-name--length-4 {
-  transform: scaleX(calc(3 / 4));
+  scale: calc(3 / 4) 1;
   transform-origin: left top;
 }
 
