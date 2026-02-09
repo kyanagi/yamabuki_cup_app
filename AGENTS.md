@@ -25,9 +25,6 @@
 
 標準的なRailsのディレクトリ構成に従う。
 
-### バックエンド（Rails）
-- `sig/`: 型定義ファイル
-
 ### フロントエンド（React + TypeScript + Stimulus）
 - フロントエンドの設定ファイル：
   - tsconfig.json
@@ -76,12 +73,6 @@ npm run test:run                    # Run Vitest once without watch mode
 ```bash
 rails db:create db:migrate db:seed   # Initial database setup
 bundle exec rake sample_data:create  # Generate sample tournament data
-```
-
-**RBS Type System**
-```bash
-bundle exec rake rbs:setup          # Generate RBS type definitions
-bundle exec rake rbs:update         # Update existing RBS files
 ```
 
 ## コーディング規約
