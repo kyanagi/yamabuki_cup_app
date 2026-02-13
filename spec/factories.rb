@@ -60,6 +60,13 @@ FactoryBot.define do
 
   factory :player
 
+  factory :entry do
+    player
+    entry_phase { :primary }
+    status { :pending }
+    priority { nil }
+  end
+
   factory :player_profile do
     player
 

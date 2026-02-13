@@ -6,6 +6,36 @@
         <%= Current.player.player_profile.full_name %>さん
       </p>
     </div>
+    <% if Current.player.entry %>
+      <div class="box mb-5">
+        <h2 class="title is-5">現在のエントリー状況</h2>
+        <table class="table is-fullwidth is-narrow">
+          <tbody>
+            <tr>
+              <th>フェーズ</th>
+              <td><%= Current.player.entry.entry_phase_label %></td>
+            </tr>
+            <tr>
+              <th>ステータス</th>
+              <td><%= Current.player.entry.status_label %></td>
+            </tr>
+            <tr>
+              <th>優先順位</th>
+              <td><%= Current.player.entry.priority || "未確定" %></td>
+            </tr>
+          </tbody>
+        </table>
+        <% if Current.player.entry.cancellable? %>
+          <div class="has-text-right">
+            <%= button_to "エントリーをキャンセルする",
+                          cancel_home_entry_path,
+                          method: :patch,
+                          class: "button is-danger is-light",
+                          data: { turbo_confirm: "エントリーをキャンセルします。よろしいですか？" } %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
     <div class="buttons is-flex is-flex-direction-column">
       <%= link_to edit_home_player_profile_path, class: "button is-primary is-fullwidth mb-4" do %>
         <span class="icon">

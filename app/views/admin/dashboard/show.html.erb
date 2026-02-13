@@ -58,6 +58,20 @@
           </footer>
         </div>
       </div>
+      <div class="column is-3">
+        <div class="card">
+          <div class="card-content">
+            <div class="media">
+              <div class="media-content">
+                <p class="title is-4">エントリー管理</p>
+              </div>
+            </div>
+          </div>
+          <footer class="card-footer">
+            <%= link_to "開く", admin_entries_path, class: "card-footer-item" %>
+          </footer>
+        </div>
+      </div>
       <% if Current.admin_user&.admin? %>
         <div class="column is-3">
           <div class="card">

@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe Registration, type: :model do
   before do
     Rails.application.load_seed
+    Setting.update!(entry_phase: "primary", capacity: 100)
   end
 
   describe "バリデーション" do
@@ -46,9 +47,8 @@ RSpec.describe Registration, type: :model do
     end
 
     it "既に登録されているメールアドレスの場合は無効" do
-      # 既存のユーザーを作成
       player = create(:player)
-      create(:player_email_credential, player: player, email: "existing@example.com")
+      create(:player_email_credential, player:, email: "existing@example.com")
 
       registration = Registration.new(
         email: "existing@example.com",
@@ -77,20 +77,68 @@ RSpec.describe Registration, type: :model do
       )
     end
 
-    it "プレイヤーデータが正しく作成される" do
-      expect { registration.save! }.to change(Player, :count).by(1)
-        .and change(PlayerEmailCredential, :count).by(1)
-        .and change(PlayerProfile, :count).by(1)
-        .and change(Round3CoursePreference, :count).by(1)
+    context "一次エントリー" do
+      before do
+        Setting.update!(entry_phase: "primary", capacity: 100)
+      end
 
-      player = registration.player
-      expect(player).to be_present
-      expect(player.player_email_credential.email).to eq("test@example.com")
-      expect(player.player_profile.family_name).to eq("伊藤")
-      expect(player.player_profile.given_name).to eq("博文")
-      expect(player.player_profile.family_name_kana).to eq("イトウ")
-      expect(player.player_profile.given_name_kana).to eq("ヒロブミ")
-      expect(player.player_profile.entry_list_name).to eq("総理")
+      it "プレイヤーデータと pending の entry が作成される" do
+        expect { registration.save! }.to change(Player, :count).by(1)
+          .and change(PlayerEmailCredential, :count).by(1)
+          .and change(PlayerProfile, :count).by(1)
+          .and change(Round3CoursePreference, :count).by(1)
+          .and change(Entry, :count).by(1)
+
+        player = registration.player
+        expect(player).to be_present
+        expect(player.player_email_credential.email).to eq("test@example.com")
+        expect(player.player_profile.family_name).to eq("伊藤")
+        expect(player.player_profile.given_name).to eq("博文")
+        expect(player.player_profile.family_name_kana).to eq("イトウ")
+        expect(player.player_profile.given_name_kana).to eq("ヒロブミ")
+        expect(player.player_profile.entry_list_name).to eq("総理")
+
+        expect(player.entry).to be_primary
+        expect(player.entry).to be_pending
+        expect(player.entry.priority).to be_nil
+      end
+    end
+
+    context "二次エントリー" do
+      before do
+        Setting.update!(entry_phase: "secondary", capacity: 1)
+      end
+
+      it "空きがあれば accepted で作成される" do
+        expect { registration.save! }.to change(Entry, :count).by(1)
+
+        expect(registration.player.entry).to be_secondary
+        expect(registration.player.entry).to be_accepted
+        expect(registration.player.entry.priority).to eq(1)
+      end
+
+      it "空きがなければ waitlisted で作成される" do
+        create(:entry, status: :accepted, priority: 1)
+
+        expect { registration.save! }.to change(Entry, :count).by(1)
+
+        expect(registration.player.entry).to be_secondary
+        expect(registration.player.entry).to be_waitlisted
+        expect(registration.player.entry.priority).to eq(2)
+      end
+    end
+
+    context "受付期間外" do
+      before do
+        Setting.update!(entry_phase: nil)
+      end
+
+      it "エラーとなりロールバックされる" do
+        expect(registration.save).to be false
+        expect(registration.errors[:base]).to include("エントリー受付期間外です")
+        expect(Player.count).to eq(0)
+        expect(Entry.count).to eq(0)
+      end
     end
 
     it "エラーが発生した場合は全てのデータがロールバックされる" do
@@ -101,6 +149,7 @@ RSpec.describe Registration, type: :model do
       expect(PlayerEmailCredential.count).to eq(0)
       expect(PlayerProfile.count).to eq(0)
       expect(Round3CoursePreference.count).to eq(0)
+      expect(Entry.count).to eq(0)
     end
   end
 end

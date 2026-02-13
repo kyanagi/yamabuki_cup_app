@@ -26,6 +26,20 @@ namespace :sample_data do
     end
   end
 
+  desc "一次エントリーのサンプルデータを作成"
+  task create_primary_entries: :environment do
+    Entry.delete_all
+
+    Player.find_each do |player|
+      Entry.create!(
+        player:,
+        entry_phase: :primary,
+        status: :pending,
+        priority: nil
+      )
+    end
+  end
+
   desc "問題のサンプルデータを作成"
   task create_questions: :environment do
     YontakuQuestion.delete_all

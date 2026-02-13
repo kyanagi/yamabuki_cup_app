@@ -35,11 +35,30 @@ class Registration < ActiveType::Object
   def create_player_data
     ActiveRecord::Base.transaction do
       @player = Player.create!
+      if !create_entry_record?
+        raise ActiveRecord::Rollback
+      end
       PlayerEmailCredential.create!(player: @player, email:, password:, password_confirmation: password)
       PlayerProfile.create!(player: @player, family_name:, given_name:, family_name_kana:, given_name_kana:, entry_list_name:)
 
       attrs = [*1..4].zip(Round::ROUND3.matches).to_h { |i, match| ["choice#{i}_match", match] }
       Round3CoursePreference.create!(player: @player, **attrs)
+    end
+
+    throw(:abort) if errors.any?
+  end
+
+  def create_entry_record?
+    case Setting.entry_phase
+    when "primary"
+      Entry.create!(player: @player, entry_phase: :primary, status: :pending)
+      true
+    when "secondary"
+      Entry.create_secondary!(player: @player, capacity: Setting.capacity)
+      true
+    else
+      errors.add(:base, "エントリー受付期間外です")
+      false
     end
   end
 end

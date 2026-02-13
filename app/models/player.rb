@@ -1,4 +1,5 @@
 class Player < ApplicationRecord
+  has_one :entry, dependent: :destroy
   has_many :sessions, dependent: :destroy
   has_one :player_profile, dependent: :destroy
   has_one :player_email_credential, dependent: :destroy

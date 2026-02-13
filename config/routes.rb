@@ -21,6 +21,9 @@ Rails.application.routes.draw do
   namespace :home do
     resource :round3_course_preference, only: [:show, :update]
     resource :player_profile, only: [:edit, :update]
+    resource :entry, only: [] do
+      patch :cancel
+    end
   end
 
   namespace :admin do
@@ -28,6 +31,11 @@ Rails.application.routes.draw do
 
     resource :session, only: [:new, :create, :destroy]
     resource :settings, only: [:show, :update]
+    resources :entries, only: [:index] do
+      member do
+        patch :cancel
+      end
+    end
 
     get "quiz_reader", to: "quiz_reader#show"
     namespace :quiz_reader do

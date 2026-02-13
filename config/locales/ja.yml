@@ -10,3 +10,12 @@ ja:
         given_name_kana: 名（ふりがな）
         entry_list_name: エントリーリストの名前
         notes: その他
+  entry:
+    entry_phases:
+      primary: 一次
+      secondary: 二次
+    statuses:
+      pending: 抽選待ち
+      accepted: 参加確定
+      waitlisted: キャンセル待ち
+      cancelled: キャンセル済み

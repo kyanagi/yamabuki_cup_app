@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_18_102801) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_13_143000) do
   create_table "admin_sessions", force: :cascade do |t|
     t.integer "admin_user_id", null: false
     t.datetime "created_at", null: false
@@ -43,6 +43,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_102801) do
     t.integer "player_id", null: false
     t.datetime "updated_at", null: false
     t.index ["player_id"], name: "index_approximation_quiz_answers_on_player_id", unique: true
+  end
+
+  create_table "entries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "entry_phase", null: false
+    t.integer "player_id", null: false
+    t.integer "priority"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["player_id"], name: "index_entries_on_player_id", unique: true
+    t.index ["priority"], name: "index_entries_on_priority", unique: true, where: "priority IS NOT NULL"
+    t.index ["status"], name: "index_entries_on_status"
+    t.check_constraint "priority IS NULL OR priority > 0", name: "chk_entries_priority_positive"
   end
 
   create_table "matches", force: :cascade do |t|
@@ -245,6 +258,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_102801) do
 
   add_foreign_key "admin_sessions", "admin_users"
   add_foreign_key "approximation_quiz_answers", "players"
+  add_foreign_key "entries", "players"
   add_foreign_key "matches", "score_operations", column: "last_score_operation_id"
   add_foreign_key "matchings", "matches"
   add_foreign_key "matchings", "players"

@@ -1,0 +1,65 @@
+<div class="container mb-6">
+  <%= render "admin/shared/breadcrumb", items: [
+    { label: "管理画面", path: admin_root_path },
+    { label: "エントリー管理", path: nil }
+  ] %>
+
+  <h1 class="title is-3">エントリー管理</h1>
+
+  <% if notice %>
+    <div class="notification is-success is-light">
+      <%= notice %>
+    </div>
+  <% end %>
+
+  <% if alert %>
+    <div class="notification is-danger is-light" style="white-space: pre-line;">
+      <%= alert %>
+    </div>
+  <% end %>
+
+  <div class="card">
+    <header class="card-header">
+      <p class="card-header-title">エントリー一覧</p>
+    </header>
+    <div class="card-content">
+      <p class="mb-4">優先順位の設定は管理画面からは行えません。必要な場合は運用スクリプトを使用してください。</p>
+      <table class="table is-fullwidth is-striped is-hoverable is-narrow">
+        <thead>
+          <tr>
+            <th class="has-text-centered">ID</th>
+            <th>氏名</th>
+            <th class="has-text-centered">エントリー時刻</th>
+            <th class="has-text-centered">フェーズ</th>
+            <th class="has-text-centered">ステータス</th>
+            <th class="has-text-centered">優先順位</th>
+            <th class="has-text-centered">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @entries.each do |entry| %>
+            <tr>
+              <td class="has-text-centered"><%= entry.id %></td>
+              <td><%= entry.player.player_profile&.full_name %></td>
+              <td class="has-text-centered"><%= entry.created_at.in_time_zone.strftime("%Y/%m/%d %H:%M:%S") %></td>
+              <td class="has-text-centered"><%= entry.entry_phase_label %></td>
+              <td class="has-text-centered"><%= entry.status_label %></td>
+              <td class="has-text-centered"><%= entry.priority || "-" %></td>
+              <td class="has-text-centered">
+                <% if entry.cancellable? %>
+                  <%= button_to "キャンセル",
+                                cancel_admin_entry_path(entry),
+                                method: :patch,
+                                class: "button is-small is-danger is-light",
+                                data: { turbo_confirm: "このエントリーをキャンセルします。よろしいですか？" } %>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
