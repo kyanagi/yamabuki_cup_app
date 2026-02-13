@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get "/sbtest", to: "scoreboard#test"
 
   resources :registrations, only: [:new, :create]
+  resources :entries, only: [:index]
   resource :session
   resources :passwords, param: :token do
     get :created, on: :collection

@@ -43,11 +43,7 @@ module Admin
     private
 
     def setup_index_instance_variables
-      @entries = Entry.includes(player: :player_profile).order(
-        Arel.sql("CASE WHEN priority IS NULL THEN 1 ELSE 0 END"),
-        :priority,
-        :id
-      )
+      @entries = Entry.for_entry_list.includes(player: :player_profile)
     end
   end
 end

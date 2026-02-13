@@ -11,6 +11,13 @@ class Entry < ApplicationRecord
   validates :priority, uniqueness: true, allow_nil: true
 
   scope :promotion_candidates, -> { waitlisted.where.not(priority: nil).order(priority: :asc, id: :asc) }
+  scope :for_entry_list, -> do
+    where.not(status: :cancelled).order(
+      Arel.sql("CASE WHEN priority IS NULL THEN 1 ELSE 0 END"),
+      :priority,
+      :id
+    )
+  end
 
   def cancellable?
     !cancelled?
