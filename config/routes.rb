@@ -32,6 +32,9 @@ Rails.application.routes.draw do
     resource :session, only: [:new, :create, :destroy]
     resource :settings, only: [:show, :update]
     resources :entries, only: [:index] do
+      collection do
+        post :upload_priorities
+      end
       member do
         patch :cancel
       end

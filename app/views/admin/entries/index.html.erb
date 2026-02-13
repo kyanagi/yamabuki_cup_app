@@ -23,7 +23,21 @@
       <p class="card-header-title">エントリー一覧</p>
     </header>
     <div class="card-content">
-      <p class="mb-4">優先順位の設定は管理画面からは行えません。必要な場合は運用スクリプトを使用してください。</p>
+      <div class="block">
+        <p>ヘッダなしCSV（1行1件: <code>ID,優先順位</code>）で優先順位を更新できます。</p>
+      </div>
+      <div class="block">
+        <%= form_with model: @priority_upload, url: upload_priorities_admin_entries_path, multipart: true do |f| %>
+          <div class="field has-addons">
+            <div class="control is-expanded">
+              <%= f.file_field :csv_file, accept: ".csv", class: "input" %>
+            </div>
+            <div class="control">
+              <%= f.submit "アップロード", class: "button is-primary" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
       <table class="table is-fullwidth is-striped is-hoverable is-narrow">
         <thead>
           <tr>
