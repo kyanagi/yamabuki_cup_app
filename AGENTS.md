@@ -36,6 +36,7 @@
 
 `docs/spec` ディレクトリに、本プロジェクトに関する仕様書が格納されている。
 
+- `docs/spec/entry.md`: エントリー仕様
 - `docs/spec/tournament_rule.md`: 大会ルール
 - `docs/spec/yontaku_result_csv_format.md`: 四択クイズ採点結果CSVフォーマット仕様
 
