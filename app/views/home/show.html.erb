@@ -25,15 +25,6 @@
             </tr>
           </tbody>
         </table>
-        <% if Current.player.entry.cancellable? %>
-          <div class="has-text-right">
-            <%= button_to "エントリーをキャンセルする",
-                          cancel_home_entry_path,
-                          method: :patch,
-                          class: "button is-danger is-light",
-                          data: { turbo_confirm: "エントリーをキャンセルします。よろしいですか？" } %>
-          </div>
-        <% end %>
       </div>
     <% end %>
     <div class="buttons is-flex is-flex-direction-column">

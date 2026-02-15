@@ -7,7 +7,7 @@ class SessionsController < PublicController
 
   def create
     credential = PlayerEmailCredential.authenticate_by(email: params[:email], password: params[:password])
-    if credential
+    if credential && !credential.player.entry&.cancelled?
       start_new_session_for(credential.player)
       redirect_to after_authentication_url
     else

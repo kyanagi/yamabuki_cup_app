@@ -41,6 +41,19 @@ RSpec.describe Entry, type: :model do
       expect(waiting2.reload).to be_waitlisted
     end
 
+    it "キャンセル時に資格情報とセッションを削除する" do
+      entry = create(:entry, status: :pending)
+      create(:player_email_credential, player: entry.player)
+      create(:session, player: entry.player)
+      create(:session, player: entry.player)
+
+      entry.cancel!
+
+      expect(entry.reload).to be_cancelled
+      expect(PlayerEmailCredential.where(player: entry.player)).to be_empty
+      expect(Session.where(player: entry.player)).to be_empty
+    end
+
     it "waitlisted のキャンセル時は繰り上げない" do
       waiting = create(:entry, status: :waitlisted, priority: 21)
       another_waiting = create(:entry, status: :waitlisted, priority: 22)

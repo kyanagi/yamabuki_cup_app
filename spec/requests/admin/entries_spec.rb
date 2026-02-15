@@ -62,6 +62,20 @@ RSpec.describe "Admin::Entries", type: :request do
       expect(waiting1.reload).to be_cancelled
       expect(waiting2.reload).to be_waitlisted
     end
+
+    it "キャンセル時に資格情報と参加者セッションを削除する" do
+      player = create(:player)
+      create(:player_email_credential, player:)
+      create(:session, player:)
+      entry = create(:entry, player:, status: :pending)
+
+      patch cancel_admin_entry_path(entry)
+
+      expect(response).to redirect_to(admin_entries_path)
+      expect(entry.reload).to be_cancelled
+      expect(PlayerEmailCredential.where(player:)).to be_empty
+      expect(Session.where(player:)).to be_empty
+    end
   end
 
   describe "POST /admin/entries/upload_priorities" do

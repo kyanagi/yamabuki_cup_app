@@ -23,7 +23,8 @@ Rails.application.routes.draw do
     resource :round3_course_preference, only: [:show, :update]
     resource :player_profile, only: [:edit, :update]
     resource :entry, only: [] do
-      patch :cancel
+      get :cancel
+      patch :cancel, action: :update_cancel
     end
   end
 

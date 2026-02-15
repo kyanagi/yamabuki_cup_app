@@ -57,6 +57,27 @@ RSpec.describe "Registrations", type: :request do
       end
     end
 
+    context "過去にキャンセルしたメールアドレスの場合" do
+      before do
+        player = create(:player)
+        create(:player_email_credential, player:, email: "test@example.com")
+        create(:entry, player:, status: :pending).cancel!
+      end
+
+      it "同じメールアドレスで再登録できる" do
+        expect(PlayerEmailCredential.find_by(email: "test@example.com")).to be_nil
+
+        expect do
+          post registrations_path, params: valid_params
+        end.to change(Player, :count).by(1)
+          .and change(PlayerEmailCredential, :count).by(1)
+          .and change(PlayerProfile, :count).by(1)
+          .and change(Entry, :count).by(1)
+
+        expect(response).to redirect_to(home_path)
+      end
+    end
+
     context "無効なメールアドレス形式の場合" do
       let(:invalid_email_params) do
         valid_params.deep_merge(

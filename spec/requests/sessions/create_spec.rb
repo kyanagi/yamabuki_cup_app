@@ -41,4 +41,19 @@ RSpec.describe "POST /session", type: :request do
       expect(response.body).to include("メールアドレスまたはパスワードが正しくありません。")
     end
   end
+
+  context "キャンセル済みエントリーの場合" do
+    before do
+      create(:entry, player:, status: :cancelled)
+      params[:email] = credential.email
+      params[:password] = "password123"
+    end
+
+    it "ログインに失敗し、エラーメッセージが表示される" do
+      subject
+
+      expect(response).to have_http_status(422)
+      expect(response.body).to include("メールアドレスまたはパスワードが正しくありません。")
+    end
+  end
 end

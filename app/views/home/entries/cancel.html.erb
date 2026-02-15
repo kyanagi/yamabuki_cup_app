@@ -1,0 +1,36 @@
+<section class="section">
+  <div class="container is-max-tablet">
+    <h1 class="title is-2">エントリーキャンセル</h1>
+    <div class="notification is-warning is-light">
+      <p>エントリーを取り消す場合は、下の入力欄に「キャンセル」と入力して実行してください。</p>
+    </div>
+
+    <%= form_with model: @entry_cancellation_form, url: cancel_home_entry_path, method: :patch do |f| %>
+      <% if @entry_cancellation_form.errors.any? %>
+        <div class="notification is-danger is-light">
+          <ul>
+            <% @entry_cancellation_form.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="field">
+        <%= f.label :confirmation_text, "確認入力", class: "label" %>
+        <div class="control">
+          <%= f.text_field :confirmation_text, class: "input", autocomplete: "off" %>
+        </div>
+      </div>
+
+      <div class="field is-grouped is-grouped-right">
+        <div class="control">
+          <%= link_to "エントリー内容の変更に戻る", edit_home_player_profile_path, class: "button" %>
+        </div>
+        <div class="control">
+          <%= f.submit "エントリーをキャンセルする", class: "button is-danger" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>

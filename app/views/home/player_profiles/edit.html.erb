@@ -123,5 +123,14 @@
         <button class="modal-close is-large" aria-label="close" data-action="click->modal#close:prevent"></button>
       </div>
     <% end %>
+
+    <% if Current.player.entry&.cancellable? %>
+      <hr class="my-5">
+      <div class="field">
+        <p class="help">
+          <%= link_to "エントリーをキャンセルしたい方はこちら", cancel_home_entry_path, class: "has-text-danger" %>
+        </p>
+      </div>
+    <% end %>
   </div>
 </section>

@@ -37,6 +37,8 @@ class Entry < ApplicationRecord
       was_accepted = accepted?
 
       update!(status: :cancelled)
+      player.player_email_credential&.destroy!
+      player.sessions.delete_all
 
       return if !was_accepted
 
