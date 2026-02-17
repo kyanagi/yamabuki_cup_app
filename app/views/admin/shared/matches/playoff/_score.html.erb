@@ -1,0 +1,50 @@
+<%# locals: (score:) %>
+<tr data-controller="modal">
+  <td class="has-text-centered is-vcentered">
+    <span class="tag <%= player_status_color(score.status) %>">
+      <%= score.status %>
+    </span>
+    <% if score.rank %>
+      <span>
+        <%= I18n.with_locale(:en) { score.rank.ordinalize } %>
+      </span>
+    <% end %>
+  </td>
+  <td style="width: 8em" class="is-vcentered">
+    <%= button_tag "#{score.matching.player.player_profile.family_name} #{score.matching.player.player_profile.given_name}",
+      class: "button #{player_button_color(score.status)}",
+      disabled: !score.status_playing?,
+      data: { action: "click->modal#open" } %>
+    <div class="modal" data-modal-target="modal">
+      <div class="modal-background" data-action="click->modal#close"></div>
+      <div class="modal-content">
+        <div class="box">
+          <p class="is-size-2">
+            <%= score.matching.player.player_profile.family_name %>
+            <%= score.matching.player.player_profile.given_name %>
+          </p>
+          <div class="is-flex is-justify-content-space-between buttons are-large">
+            <%= form_with url: "/admin/matches/#{score.matching.match_id}/question_closings",
+                         method: :post,
+                         style: 'display: inline-block;' do |f| %>
+              <%= hidden_field_tag "question_player_results_attributes[][player_id]", score.matching.player_id %>
+              <%= hidden_field_tag "question_player_results_attributes[][situation]", 'pushed' %>
+              <%= hidden_field_tag "question_player_results_attributes[][result]", 'correct' %>
+              <%= f.submit '正解', class: 'button is-info', disabled: !score.status_playing? %>
+            <% end %>
+            <%= form_with url: "/admin/matches/#{score.matching.match_id}/question_closings",
+                         method: :post,
+                         style: 'display: inline-block;' do |f| %>
+              <%= hidden_field_tag "question_player_results_attributes[][player_id]", score.matching.player_id %>
+              <%= hidden_field_tag "question_player_results_attributes[][situation]", 'pushed' %>
+              <%= hidden_field_tag "question_player_results_attributes[][result]", 'wrong' %>
+              <%= f.submit '誤答', class: 'button is-danger', disabled: !score.status_playing? %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <button class="modal-close is-large" aria-label="close" data-action="click->modal#close"></button>
+    </div>
+  </td>
+  <td class="has-text-centered is-vcentered"><%= score.points %></td>
+</tr>

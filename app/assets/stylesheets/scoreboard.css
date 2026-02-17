@@ -93,6 +93,16 @@ body {
   gap: 8px;
 }
 
+.match-scorelist-column2-row5 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(5, 10vh);
+  grid-auto-flow: column;
+  height: 100%;
+  padding-top: 10vh;
+  gap: 8px;
+}
+
 /* 氏名 */
 .player__name {
   grid-area: name;
@@ -361,6 +371,16 @@ body {
   z-index: 20;
   opacity: 0.4;
   padding-right: 4vw;
+}
+
+/* プレーオフ */
+.playoff-match-player {
+  display: grid;
+  grid-template: ". name points previous-result" 1fr / 5% 56% 1fr 5%;
+  width: 90%;
+  align-items: center;
+  justify-self: center;
+  position: relative;
 }
 
 /* 3R 以降の試合中 */

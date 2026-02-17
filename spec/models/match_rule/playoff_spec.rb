@@ -21,12 +21,6 @@ RSpec.describe MatchRule::Playoff do
     match.update!(last_score_operation: match_opening)
   end
 
-  describe "管理画面テンプレート" do
-    it "早押し用テンプレートを使うこと" do
-      expect(described_class::ADMIN_VIEW_TEMPLATE).to eq("hayaoshi")
-    end
-  end
-
   describe "初期状態" do
     it "全員10ポイントで開始すること" do
       expect(initial_scores.map(&:points)).to eq([10] * 10)

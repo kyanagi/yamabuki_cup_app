@@ -4,7 +4,7 @@ module MatchRule
     NUM_BUTTONS = 10
     NUM_WINNERS = 1
     INITIAL_POINTS = 10
-    ADMIN_VIEW_TEMPLATE = "hayaoshi"
+    ADMIN_VIEW_TEMPLATE = "playoff"
 
     # @rbs override
     # @rbs score_operation: QuestionClosing
