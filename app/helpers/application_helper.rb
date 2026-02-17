@@ -1,48 +1,52 @@
 module ApplicationHelper
+  ROUND2_OMOTE_RANKS = Matchmaking::Round2::OMOTE_RANKS_BY_GROUP.flatten.freeze
+  ROUND2_ADVANTAGED_RANKS = Matchmaking::Round2::OMOTE_RANKS_BY_GROUP.flat_map { it.first(3) }.freeze
+
   # @rbs rank Integer
   # @rbs return bool
-  def round2_seeded?(rank)
+  def round3_seeded?(rank)
     (1..Matchmaking::Round2::NUM_SEED_PLAYERS).cover?(rank)
   end
 
   # @rbs rank Integer
   # @rbs return bool
+  def round2_omote?(rank)
+    ROUND2_OMOTE_RANKS.include?(rank)
+  end
+
+  # @rbs rank Integer
+  # @rbs return bool
+  def round2_ura?(rank)
+    rank && rank >= 58
+  end
+
+  # @rbs rank Integer
+  # @rbs return bool
   def round2_advantage?(rank)
-    first = Matchmaking::Round2::NUM_SEED_PLAYERS + 1
-    num_round2_matches = 5
-    num_advantaged_players = MatchRule::Round2::NUM_ADVANTAGED_PLAYERS * num_round2_matches
-    (first...(first+num_advantaged_players)).cover?(rank)
+    ROUND2_ADVANTAGED_RANKS.include?(rank)
   end
 
   # @rbs rank Integer
   # @rbs return bool
   def round2_normal?(rank)
-    num_round2_matches = 5
-    first = Matchmaking::Round2::NUM_SEED_PLAYERS + (MatchRule::Round2::NUM_ADVANTAGED_PLAYERS * num_round2_matches) + 1
-    num_normal = (MatchRule::Round2::NUM_BUTTONS - MatchRule::Round2::NUM_ADVANTAGED_PLAYERS) * num_round2_matches
-    (first...(first+num_normal)).cover?(rank)
+    round2_omote?(rank) && !round2_advantage?(rank)
   end
 
   # @rbs rank Integer
   # @rbs return bool
-  def round2_waiting?(rank)
-    num_round2_matches = 5
-    first = Matchmaking::Round2::NUM_SEED_PLAYERS + (MatchRule::Round2::NUM_BUTTONS * num_round2_matches) + 1
-    num_waiting = (MatchRule::Round2::NUM_SEATS - MatchRule::Round2::NUM_BUTTONS) * num_round2_matches
-    (first...(first+num_waiting)).cover?(rank)
+  def round2_waiting?(_rank)
+    false
   end
 
   # @rbs rank Integer
   # @rbs return String
   def round2_rank_color_class(rank)
-    if round2_seeded?(rank)
+    if round3_seeded?(rank)
       "is-danger"
-    elsif round2_advantage?(rank)
+    elsif round2_omote?(rank)
       "is-info"
-    elsif round2_normal?(rank)
+    elsif round2_ura?(rank)
       "is-warning"
-    elsif round2_waiting?(rank)
-      "is-success"
     else
       ""
     end

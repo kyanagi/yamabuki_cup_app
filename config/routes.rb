@@ -53,11 +53,8 @@ Rails.application.routes.draw do
         get :round1_timer
         get :seed_announcement
         get :first_place_announcement
-        get :round2_match1
-        get :round2_match2
-        get :round2_match3
-        get :round2_match4
-        get :round2_match5
+        get :round2_match
+        get :playoff_match
         get :announcement
       end
     end

@@ -1,6 +1,8 @@
 module Matchmaking
   class Round3 < ActiveType::Object
     NUM_SEED_PLAYERS = 7
+    NUM_OMOTE_WINNERS = MatchRule::Round2Omote::NUM_WINNERS * 5
+    NUM_PLAYOFF_WINNERS = MatchRule::Playoff::NUM_WINNERS * 5
 
     attribute :force, :boolean, default: false
 
@@ -25,12 +27,26 @@ module Matchmaking
     end
 
     def previous_round_should_be_complete #: void
-      seeded_players_count = YontakuPlayerResult.round2_seeded.count
-      round2_winners_count = Round::ROUND2.matches.sum do |match|
+      seeded_players_count = YontakuPlayerResult.round3_seeded.count
+      round2_omote_winners_count = Round::ROUND2.matches.where(rule_name: "MatchRule::Round2Omote").sum do |match|
         match.current_scores.status_win.count
       end
-      if seeded_players_count + round2_winners_count != Round::ROUND3.matches.sum { |m| m.rule_class::NUM_SEATS }
-        errors.add(:base, "2Rの勝者がそろっていません。")
+      playoff_winners_count = Round::PLAYOFF.matches.sum do |match|
+        match.current_scores.status_win.count
+      end
+      required_players = Round::ROUND3.matches.sum { |m| m.rule_class::NUM_SEATS }
+
+      if seeded_players_count != NUM_SEED_PLAYERS
+        errors.add(:base, "1Rシードの人数が不足しています。")
+      end
+      if round2_omote_winners_count != NUM_OMOTE_WINNERS
+        errors.add(:base, "2R表の勝者がそろっていません。")
+      end
+      if playoff_winners_count != NUM_PLAYOFF_WINNERS
+        errors.add(:base, "プレーオフの勝者がそろっていません。")
+      end
+      if seeded_players_count + round2_omote_winners_count + playoff_winners_count != required_players
+        errors.add(:base, "3R進出者の人数が不足しています。")
       end
     end
 
@@ -39,11 +55,16 @@ module Matchmaking
 
       matches = Round::ROUND3.matches.order(:match_number).to_a
 
-      seeded_players = YontakuPlayerResult.round2_seeded.preload(:player).map(&:player)
-      round2_winners = Round::ROUND2.matches.flat_map do |match|
+      seeded_players = YontakuPlayerResult.round3_seeded.preload(:player).map(&:player)
+      round2_omote_winners = Round::ROUND2.matches.where(rule_name: "MatchRule::Round2Omote").flat_map do |match|
         match.current_scores.status_win.map { |s| s.matching.player }
       end
-      sorted_target_players = (seeded_players + round2_winners).sort_by { |player| player.yontaku_player_result.rank }
+      playoff_winners = Round::PLAYOFF.matches.flat_map do |match|
+        match.current_scores.status_win.map { |s| s.matching.player }
+      end
+      sorted_target_players = (seeded_players + round2_omote_winners + playoff_winners).sort_by do |player|
+        player.yontaku_player_result.rank
+      end
 
       players_by_match = matches.index_with { [] }
       sorted_target_players.each do |player|

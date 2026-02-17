@@ -1,22 +1,20 @@
 <div class="container">
   <section class="section">
     <h1 class="title is-2">画面表示</h1>
+    <% section_options = [
+      ["1Rタイマー", round1_timer_admin_scoreboard_manipulations_path],
+      ["1位発表", first_place_announcement_admin_scoreboard_manipulations_path],
+      ["シード発表", seed_announcement_admin_scoreboard_manipulations_path],
+    ] %>
+    <% section_options += @round2_matches.map { |match| ["2R発表 #{match.name}", round2_match_admin_scoreboard_manipulations_path(match_id: match.id)] } %>
+    <% section_options += @playoff_matches.map { |match| ["プレーオフ発表 #{match.name}", playoff_match_admin_scoreboard_manipulations_path(match_id: match.id)] } %>
+    <% section_options += [["告知", announcement_admin_scoreboard_manipulations_path]] %>
     <div class="field">
       <label class="label">表示項目</label>
       <div class="control">
         <div class="select">
           <%= select_tag :section,
-                options_for_select([
-                  ["1Rタイマー", round1_timer_admin_scoreboard_manipulations_path],
-                  ["1位発表", first_place_announcement_admin_scoreboard_manipulations_path],
-                  ["シード発表", seed_announcement_admin_scoreboard_manipulations_path],
-                  ["2R発表 第1組", round2_match1_admin_scoreboard_manipulations_path],
-                  ["2R発表 第2組", round2_match2_admin_scoreboard_manipulations_path],
-                  ["2R発表 第3組", round2_match3_admin_scoreboard_manipulations_path],
-                  ["2R発表 第4組", round2_match4_admin_scoreboard_manipulations_path],
-                  ["2R発表 第5組", round2_match5_admin_scoreboard_manipulations_path],
-                  ["告知", announcement_admin_scoreboard_manipulations_path]
-                ], request.path),
+                options_for_select(section_options, request.fullpath),
                 { onchange: "window.location.href=this.value" } %>
         </div>
       </div>
@@ -28,7 +26,7 @@
       <%= render "first_place_announcement" %>
     <% when "seed_announcement" %>
       <%= render "seed_announcement" %>
-    <% when "round2_match1", "round2_match2", "round2_match3", "round2_match4", "round2_match5" %>
+    <% when "round2_match", "playoff_match" %>
       <%= render "round2_match", match: @match %>
     <% when "announcement" %>
       <%= render "announcement" %>

@@ -18,10 +18,10 @@ namespace :sample_data do
       )
       Round3CoursePreference.create!(
         player:,
-        choice1_match_id: 31,
-        choice2_match_id: 32,
-        choice3_match_id: 33,
-        choice4_match_id: 34
+        choice1_match_id: 41,
+        choice2_match_id: 42,
+        choice3_match_id: 43,
+        choice4_match_id: 44
       )
     end
   end
@@ -100,6 +100,18 @@ namespace :sample_data do
   desc "2Rの試合を全て終了させる"
   task finish_round2: :environment do
     Round::ROUND2.matches.each do |match|
+      MatchClosing.create!(match:)
+    end
+  end
+
+  desc "プレーオフの組分けを行う"
+  task matchmake_playoff: :environment do
+    Matchmaking::Playoff.create!
+  end
+
+  desc "プレーオフの試合を全て終了させる"
+  task finish_playoff: :environment do
+    Round::PLAYOFF.matches.each do |match|
       MatchClosing.create!(match:)
     end
   end

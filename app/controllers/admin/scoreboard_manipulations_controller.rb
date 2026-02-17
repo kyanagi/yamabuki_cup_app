@@ -8,54 +8,36 @@ module Admin
 
     def round1_timer
       @section = "round1_timer"
-      render :show, layout: "admin"
+      render_show
     end
 
     def first_place_announcement
       @section = "first_place_announcement"
       @first_place_result = YontakuPlayerResult.includes(player: :player_profile).find_by(rank: 1)
-      render :show, layout: "admin"
+      render_show
     end
 
     def seed_announcement
       @section = "seed_announcement"
       @yontaku_results = YontakuPlayerResult.includes(player: :player_profile).order(:rank)
-      render :show, layout: "admin"
+      render_show
     end
 
-    def round2_match1
-      @section = "round2_match1"
-      @match = Round::ROUND2.matches[0]
-      render :show, layout: "admin"
+    def round2_match
+      @section = "round2_match"
+      @match = find_match_or_default(Round::ROUND2, params[:match_id])
+      render_show
     end
 
-    def round2_match2
-      @section = "round2_match2"
-      @match = Round::ROUND2.matches[1]
-      render :show, layout: "admin"
-    end
-
-    def round2_match3
-      @section = "round2_match3"
-      @match = Round::ROUND2.matches[2]
-      render :show, layout: "admin"
-    end
-
-    def round2_match4
-      @section = "round2_match4"
-      @match = Round::ROUND2.matches[3]
-      render :show, layout: "admin"
-    end
-
-    def round2_match5
-      @section = "round2_match5"
-      @match = Round::ROUND2.matches[4]
-      render :show, layout: "admin"
+    def playoff_match
+      @section = "playoff_match"
+      @match = find_match_or_default(Round::PLAYOFF, params[:match_id])
+      render_show
     end
 
     def announcement
       @section = "announcement"
-      render :show, layout: "admin"
+      render_show
     end
 
     def create
@@ -151,6 +133,24 @@ module Admin
       end
 
       head 204
+    end
+
+    private
+
+    # @rbs round: Round
+    # @rbs match_id: String?
+    # @rbs return: Match?
+    def find_match_or_default(round, match_id)
+      matches = round.matches.order(:match_number)
+      return matches.first if match_id.blank?
+
+      matches.find { it.id == match_id.to_i } || matches.first
+    end
+
+    def render_show #: void
+      @round2_matches = Round::ROUND2.matches.order(:match_number)
+      @playoff_matches = Round::PLAYOFF.matches.order(:match_number)
+      render :show, layout: "admin"
     end
   end
 end

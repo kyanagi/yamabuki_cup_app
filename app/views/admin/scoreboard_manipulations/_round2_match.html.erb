@@ -1,4 +1,4 @@
-<h2 class="title is-4">2R発表 - <%= match.name %></h2>
+<h2 class="title is-4"><%= "#{match.round.name} 発表 - #{match.name}" %></h2>
 <div class="block">
   <%= button_to "初期表示",
         admin_scoreboard_manipulations_path(action_name: "round2_init", match_id: match.id),

@@ -40,14 +40,12 @@
             <td class="has-text-centered is-vcentered"><%= '✓' if player.approximation_quiz_answer %></td>
             <td class="is-size-5 is-vcentered"><%= "#{player.player_profile.family_name} #{player.player_profile.given_name}" %></td>
             <td class="has-text-centered is-vcentered">
-              <% if round2_seeded?(rank) %>
+              <% if round3_seeded?(rank) %>
                 シード
-              <% elsif round2_advantage?(rank) %>
-                2R Adv.
-              <% elsif round2_normal?(rank) %>
-                2R
-              <% elsif round2_waiting?(rank) %>
-                2R Wait
+              <% elsif round2_omote?(rank) %>
+                2R表
+              <% elsif round2_ura?(rank) %>
+                2R裏
               <% elsif rank %>
                 DNQ
               <% else %>

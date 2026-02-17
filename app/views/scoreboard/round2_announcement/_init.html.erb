@@ -1,10 +1,7 @@
 <%# locals: (ranks:) %>
 <div class="round2-announcement-scorelist">
   <% ranks.each do |rank| %>
-    <div class="round2-announcement-player player-frame--incoming-animation
-        <%= "round2-announcement-player--adv" if round2_advantage?(rank) %>
-        <%= "round2-announcement-player--wait" if round2_waiting?(rank) %>
-        "
+    <div class="round2-announcement-player player-frame--incoming-animation"
         id="round2-player-<%= rank %>">
       <div class="player__rank"><%= rank %></div>
       <div class="player__name"></div>
