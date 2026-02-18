@@ -102,6 +102,11 @@ module Admin
         )
       when "match_display"
         match = Match.find(params[:match_id])
+
+        if match.rule_class == MatchRule::Round2Ura
+          return head :unprocessable_entity
+        end
+
         scores = match.current_scores.sort_by { it.matching.seat }
         score_operation = match.last_score_operation
         ActionCable.server.broadcast(

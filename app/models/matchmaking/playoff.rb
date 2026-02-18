@@ -67,7 +67,7 @@ module Matchmaking
       end
       ura_winners = ura_matches.index_with do |match|
         scores = match.current_scores.select(&:status_win?)
-        sorted_scores = scores.sort_by { |score| [-score.points, score.misses, score.matching.seat] }
+        sorted_scores = scores.sort_by { |score| score.rank || Float::INFINITY }
         sorted_scores.first(URA_WINNER_COUNT).map { it.matching.player }
       end
 

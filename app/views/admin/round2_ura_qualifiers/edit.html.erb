@@ -1,0 +1,60 @@
+<div class="container">
+  <section class="section">
+    <h1 class="title"><%= @match.full_name %> 勝抜け者入力</h1>
+    <p class="mb-4">
+      <%= link_to "← 試合画面に戻る", admin_match_path(@match), class: "button is-light" %>
+    </p>
+
+    <% if @qualifier_input.errors.any? %>
+      <div class="notification is-danger">
+        <ul>
+          <% @qualifier_input.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if flash[:notice] %>
+      <div class="notification is-success">
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <%= form_with url: admin_match_round2_ura_qualifier_path(match_id: @match.id),
+                  method: :patch do |f| %>
+      <table class="table is-fullwidth is-striped is-hoverable">
+        <thead>
+          <tr>
+            <th>座席</th>
+            <th>氏名</th>
+            <th class="has-text-centered">順位（空欄=敗退）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @matchings.each do |matching| %>
+            <tr>
+              <td><%= matching.seat %></td>
+              <td><%= matching.player.player_profile&.entry_list_name %></td>
+              <td class="has-text-centered">
+                <div class="select">
+                  <%= select_tag(
+                    "round2_ura_qualifier_input[rank_by_matching_id][#{matching.id}]",
+                    options_for_select(
+                      [["（敗退）", ""], ["1位", "1"], ["2位", "2"], ["3位", "3"], ["4位", "4"]],
+                      @current_ranks[matching.id.to_s]
+                    )
+                  ) %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <div class="buttons mt-4">
+        <%= f.submit "保存する", class: "button is-primary" %>
+      </div>
+    <% end %>
+  </section>
+</div>

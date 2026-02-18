@@ -3,7 +3,12 @@ module Admin
     include MatchInstanceVariables
 
     def create
-      match = nil
+      match = Match.find(params[:match_id])
+
+      if match.rule_class == MatchRule::Round2Ura
+        return head :unprocessable_entity
+      end
+
       ActiveRecord::Base.transaction do
         match = Match
           .preload(last_score_operation: { scores: :matching })

@@ -79,6 +79,7 @@ Rails.application.routes.draw do
       post :disqualifications, to: 'disqualifications#create'
       post :match_closings, to: 'match_closings#create'
       post :undos, to: 'score_operation_undos#create'
+      resource :round2_ura_qualifier, only: [:edit, :update]
     end
 
     resources :matchmakings, only: [:create]
