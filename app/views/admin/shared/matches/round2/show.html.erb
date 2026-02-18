@@ -5,39 +5,80 @@
         <h1 class="title mb-0"><%= @match.full_name %></h1>
         <p><%= @match.progress_summary %></p>
       </div>
-      <div class="columns">
-        <% @scores.in_groups(2, false) do |scores| %>
-          <div class="column">
-            <table class="table is-fullwidth is-striped is-hoverable">
-              <thead>
-                <tr>
-                  <th class="has-text-centered">ステータス</th>
-                  <th style="width: 8em">氏名</th>
-                  <th class="has-text-centered">得点</th>
-                  <th class="has-text-centered">誤答数</th>
-                </tr>
-              </thead>
-              <tbody>
-                <%= render partial: "admin/shared/matches/round2/score", collection: scores %>
-              </tbody>
-            </table>
+
+      <% if @match.rule_class == MatchRule::Round2Ura %>
+        <div class="box mt-4">
+          <p class="mb-3">2R裏は得点入力なし。試合終了後に勝抜け者を登録してください。</p>
+          <%= link_to "勝抜け者入力フォーム", edit_admin_match_round2_ura_qualifier_path(match_id: @match.id), class: "button is-primary", data: { turbo_frame: "_top" } %>
+        </div>
+
+        <% if @scores.any? %>
+          <div class="columns mt-4">
+            <% @scores.in_groups(2, false) do |scores| %>
+              <div class="column">
+                <table class="table is-fullwidth is-striped is-hoverable">
+                  <thead>
+                    <tr>
+                      <th class="has-text-centered">順位</th>
+                      <th style="width: 8em">氏名</th>
+                      <th class="has-text-centered">ステータス</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% scores.each do |score| %>
+                      <tr>
+                        <td class="has-text-centered"><%= score.rank %></td>
+                        <td><%= score.matching.player.player_profile&.entry_list_name %></td>
+                        <td class="has-text-centered">
+                          <% if score.status_win? %>
+                            <span class="tag is-success">勝抜け</span>
+                          <% elsif score.status_lose? %>
+                            <span class="tag is-danger">敗退</span>
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            <% end %>
           </div>
         <% end %>
-      </div>
-      <div class="buttons is-justify-content-space-between mt-4">
-        <%= form_with url: "/admin/matches/#{@match.id}/question_closings",
-                         method: :post,
-                         style: 'display: inline-block;',
-                         data: { turbo_confirm: "この問題をスルーにします。" } do |f| %>
-          <%= f.submit 'スルー', class: 'button is-warning' %>
-        <% end %>
-        <%= form_with url: "/admin/matches/#{@match.id}/match_closings",
-                         method: :post,
-                         style: 'display: inline-block;',
-                         data: { turbo_confirm: "限定問題終了処理を行います。" } do |f| %>
-          <%= f.submit '限定問題終了', class: 'button is-danger' %>
-        <% end %>
-      </div>
+      <% else %>
+        <div class="columns">
+          <% @scores.in_groups(2, false) do |scores| %>
+            <div class="column">
+              <table class="table is-fullwidth is-striped is-hoverable">
+                <thead>
+                  <tr>
+                    <th class="has-text-centered">ステータス</th>
+                    <th style="width: 8em">氏名</th>
+                    <th class="has-text-centered">得点</th>
+                    <th class="has-text-centered">誤答数</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%= render partial: "admin/shared/matches/round2/score", collection: scores %>
+                </tbody>
+              </table>
+            </div>
+          <% end %>
+        </div>
+        <div class="buttons is-justify-content-space-between mt-4">
+          <%= form_with url: "/admin/matches/#{@match.id}/question_closings",
+                           method: :post,
+                           style: 'display: inline-block;',
+                           data: { turbo_confirm: "この問題をスルーにします。" } do |f| %>
+            <%= f.submit 'スルー', class: 'button is-warning' %>
+          <% end %>
+          <%= form_with url: "/admin/matches/#{@match.id}/match_closings",
+                           method: :post,
+                           style: 'display: inline-block;',
+                           data: { turbo_confirm: "限定問題終了処理を行います。" } do |f| %>
+            <%= f.submit '限定問題終了', class: 'button is-danger' %>
+          <% end %>
+        </div>
+      <% end %>
     </section>
     <section class="section">
       <h2 class="title is-4">操作履歴</h2>
@@ -57,9 +98,11 @@
         <% end %>
       </div>
     </section>
-    <section class="section">
-      <h2 class="title is-4">画面表示</h2>
-      <%= button_to "画面をこの試合に切り替える", admin_scoreboard_manipulations_path(action_name: "match_display", match_id: @match.id), method: :post, class: "button is-link" %>
-    </section>
+    <% unless @match.rule_class == MatchRule::Round2Ura %>
+      <section class="section">
+        <h2 class="title is-4">画面表示</h2>
+        <%= button_to "画面をこの試合に切り替える", admin_scoreboard_manipulations_path(action_name: "match_display", match_id: @match.id), method: :post, class: "button is-link" %>
+      </section>
+    <% end %>
   <% end %>
 </div>

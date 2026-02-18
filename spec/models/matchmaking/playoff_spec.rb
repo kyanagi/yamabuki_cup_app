@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Matchmaking::Playoff, type: :model do
   let(:omote_loser_seat_order) { [5, 6, 4, 7, 8, 9] }
-  let(:ura_winner_seat_order) { [1, 2, 0, 3] }
+  let(:ura_winner_seat_order) { [0, 1, 2, 3] }
   let(:omote_matches) { Round::ROUND2.matches.where(rule_name: "MatchRule::Round2Omote").order(:match_number).to_a }
   let(:ura_matches) { Round::ROUND2.matches.where(rule_name: "MatchRule::Round2Ura").order(:match_number).to_a }
   let(:playoff_matches) { Round::PLAYOFF.matches.order(:match_number).to_a }

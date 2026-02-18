@@ -8,5 +8,19 @@ module MatchRule
     ADMIN_VIEW_TEMPLATE = "round2"
 
     include Hayaoshi
+
+    # @rbs override
+    # @rbs score_operation: ScoreOperation
+    # @rbs return: String
+    def summarize_score_operation(score_operation)
+      case score_operation
+      when Round2UraQualifierUpdate
+        winners = score_operation.scores.where(status: "win").order(:rank)
+        names = winners.filter_map { |s| s.matching.player.player_profile&.family_name }
+        "勝抜け確定: #{names.join(', ')}"
+      else
+        super
+      end
+    end
   end
 end
