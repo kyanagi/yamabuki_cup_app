@@ -68,7 +68,6 @@ module MatchRule
       if score.points >= self.class::POINTS_TO_WIN
         mark_as_winner(score)
       end
-      fill_vacant_buttons_with_waiting_players
     end
 
     # @rbs score: Score
@@ -78,7 +77,6 @@ module MatchRule
       if score.misses >= self.class::MISSES_TO_LOSE
         mark_as_loser(score)
       end
-      fill_vacant_buttons_with_waiting_players
 
       # トビ残り
       if num_left_players_is_equal_to_num_left_winners?
@@ -98,17 +96,6 @@ module MatchRule
     def mark_as_loser(score)
       score.status = "lose"
       score.rank = Score.lowest_vacant_rank(@scores)
-    end
-
-    # @rbs return: void
-    def fill_vacant_buttons_with_waiting_players
-      n = self.class::NUM_BUTTONS - @scores.count(&:status_playing?)
-      return if n <= 0
-
-      promoting_players = @scores.select(&:status_waiting?).sort_by { |s| s.matching.seat }.first(n)
-      promoting_players.each do |score|
-        score.status = "playing"
-      end
     end
 
     # @rbs return: bool
