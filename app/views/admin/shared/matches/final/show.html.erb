@@ -5,6 +5,7 @@
         <h1 class="title mb-0"><%= @match.full_name %></h1>
         <p><%= @match.progress_summary %></p>
       </div>
+      <%= render "admin/shared/matches/score_free_edit_link", match: @match %>
       <div class="columns">
         <div class="column">
           <table class="table is-fullwidth is-striped is-hoverable">

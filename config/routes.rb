@@ -80,6 +80,7 @@ Rails.application.routes.draw do
       post :match_closings, to: 'match_closings#create'
       post :undos, to: 'score_operation_undos#create'
       resource :round2_ura_qualifier, only: [:edit, :update]
+      resource :score_free_edit, only: [:edit, :update]
     end
 
     resources :matchmakings, only: [:create]

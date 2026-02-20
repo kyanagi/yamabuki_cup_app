@@ -57,6 +57,8 @@ module MatchRule
         "敗退: #{score_operation.player.player_profile.family_name}"
       when SetTransition
         "新セット開始"
+      when ScoreFreeEditOperation
+        "自由編集"
       else
         score_operation.class.name
       end

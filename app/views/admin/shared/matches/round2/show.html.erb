@@ -45,6 +45,7 @@
           </div>
         <% end %>
       <% else %>
+        <%= render "admin/shared/matches/score_free_edit_link", match: @match %>
         <div class="columns">
           <% @scores.in_groups(2, false) do |scores| %>
             <div class="column">

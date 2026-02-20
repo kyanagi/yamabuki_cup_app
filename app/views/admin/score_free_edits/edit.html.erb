@@ -1,0 +1,118 @@
+<div class="container">
+  <section class="section">
+    <h1 class="title"><%= @match.full_name %> 自由編集</h1>
+    <p class="mb-4">
+      <%= link_to "← 試合画面に戻る", admin_match_path(@match), class: "button is-light" %>
+    </p>
+
+    <% if @score_free_edit_input.errors.any? %>
+      <div class="notification is-danger">
+        <ul>
+          <% @score_free_edit_input.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if flash[:notice] %>
+      <div class="notification is-success">
+        <%= flash[:notice] %>
+      </div>
+    <% end %>
+
+    <%= form_with url: admin_match_score_free_edit_path(match_id: @match.id), method: :patch do %>
+      <table class="table is-fullwidth is-striped is-hoverable">
+        <thead>
+          <tr>
+            <th>座席</th>
+            <th>氏名</th>
+            <% if @editable_fields.include?(:rank) %>
+              <th class="has-text-centered">rank</th>
+            <% end %>
+            <% if @editable_fields.include?(:status) %>
+              <th class="has-text-centered">status</th>
+            <% end %>
+            <% if @editable_fields.include?(:points) %>
+              <th class="has-text-centered">points</th>
+            <% end %>
+            <% if @editable_fields.include?(:misses) %>
+              <th class="has-text-centered">misses</th>
+            <% end %>
+            <% if @editable_fields.include?(:stars) %>
+              <th class="has-text-centered">stars</th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @matchings.each do |matching| %>
+            <% score = @current_scores_by_matching_id.fetch(matching.id.to_s) %>
+            <tr>
+              <td><%= matching.seat %></td>
+              <td><%= matching.player.player_profile&.entry_list_name %></td>
+
+              <% if @editable_fields.include?(:rank) %>
+                <td class="has-text-centered">
+                  <%= number_field_tag(
+                    "score_free_edit_input[scores_by_matching_id][#{matching.id}][rank]",
+                    score["rank"],
+                    class: "input",
+                    step: 1
+                  ) %>
+                </td>
+              <% end %>
+
+              <% if @editable_fields.include?(:status) %>
+                <td class="has-text-centered">
+                  <div class="select">
+                    <%= select_tag(
+                      "score_free_edit_input[scores_by_matching_id][#{matching.id}][status]",
+                      options_for_select(@status_options.map { |status| [status, status] }, score["status"])
+                    ) %>
+                  </div>
+                </td>
+              <% end %>
+
+              <% if @editable_fields.include?(:points) %>
+                <td class="has-text-centered">
+                  <%= number_field_tag(
+                    "score_free_edit_input[scores_by_matching_id][#{matching.id}][points]",
+                    score["points"],
+                    class: "input",
+                    step: 1
+                  ) %>
+                </td>
+              <% end %>
+
+              <% if @editable_fields.include?(:misses) %>
+                <td class="has-text-centered">
+                  <%= number_field_tag(
+                    "score_free_edit_input[scores_by_matching_id][#{matching.id}][misses]",
+                    score["misses"],
+                    class: "input",
+                    step: 1
+                  ) %>
+                </td>
+              <% end %>
+
+              <% if @editable_fields.include?(:stars) %>
+                <td class="has-text-centered">
+                  <%= number_field_tag(
+                    "score_free_edit_input[scores_by_matching_id][#{matching.id}][stars]",
+                    score["stars"],
+                    class: "input",
+                    step: 1
+                  ) %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <div class="buttons mt-4">
+        <%= submit_tag "保存する", class: "button is-primary" %>
+      </div>
+    <% end %>
+  </section>
+</div>
