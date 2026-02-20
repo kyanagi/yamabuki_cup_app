@@ -1,9 +1,14 @@
+<%# locals: (match:) %>
 <h2 class="title is-4"><%= "#{match.round.name} 発表 - #{match.name}" %></h2>
 <div class="block">
   <%= button_to "初期表示",
         admin_scoreboard_manipulations_path(action_name: "round2_init", match_id: match.id),
         method: :post,
         class: "button is-link" %>
+  <%= button_to "一括表示",
+        admin_scoreboard_manipulations_path(action_name: "round2_display_all_players", match_id: match.id),
+        method: :post,
+        class: "button is-primary" %>
 </div>
 <table class="table">
   <% match.matchings.order(:seat).each do |matching| %>

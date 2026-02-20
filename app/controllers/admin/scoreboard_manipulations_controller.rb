@@ -83,22 +83,22 @@ module Admin
         )
       when "round2_init"
         match = Match.find(params[:match_id])
-        ranks = match.matchings.order(:seat).map { it.player.yontaku_player_result.rank }
-        ActionCable.server.broadcast(
-          "scoreboard",
-          turbo_stream.update("scoreboard-main") do
-            render_to_string("scoreboard/round2_announcement/_init", locals: { ranks: })
-          end + turbo_stream.update("scoreboard-footer-left") do
-            "#{match.round.name} #{match.name}"
-          end
-        )
+        ActionCable.server.broadcast("scoreboard", round2_announcement_init_stream(match))
       when "round2_display_player"
         matching = Matching.find(params[:matching_id])
-        player = matching.player
-        rank = player.yontaku_player_result.rank
         ActionCable.server.broadcast(
           "scoreboard",
-          render_to_string("scoreboard/round2_announcement/_display_player", locals: { rank:, player: })
+          render_round2_announcement_player_stream(matching)
+        )
+      when "round2_display_all_players"
+        match = Match.find(params[:match_id])
+        full_stream = +round2_announcement_init_stream(match).to_s
+        match.matchings.order(:seat).each do |matching|
+          full_stream << render_round2_announcement_player_stream(matching, staggered: true)
+        end
+        ActionCable.server.broadcast(
+          "scoreboard",
+          full_stream
         )
       when "match_display"
         match = Match.find(params[:match_id])
@@ -150,6 +150,37 @@ module Admin
       return matches.first if match_id.blank?
 
       matches.find { it.id == match_id.to_i } || matches.first
+    end
+
+    # @rbs match: Match
+    # @rbs return: String
+    def round2_announcement_init_stream(match)
+      ranks = round2_announcement_ranks(match)
+      turbo_stream.update("scoreboard-main") do
+        render_to_string("scoreboard/round2_announcement/_init", locals: { ranks: })
+      end + turbo_stream.update("scoreboard-footer-left") do
+        "#{match.round.name} #{match.name}"
+      end
+    end
+
+    # @rbs match: Match
+    # @rbs return: Array[Integer]
+    def round2_announcement_ranks(match)
+      match.matchings.order(:seat).map { it.player.yontaku_player_result.rank }
+    end
+
+    # @rbs matching: Matching
+    # @rbs staggered: bool
+    # @rbs return: String
+    def render_round2_announcement_player_stream(matching, staggered: false)
+      player = matching.player
+      rank = player.yontaku_player_result.rank
+      partial = if staggered
+                  "scoreboard/round2_announcement/_display_player_staggered"
+                else
+                  "scoreboard/round2_announcement/_display_player"
+                end
+      render_to_string(partial, locals: { rank:, player: })
     end
 
     def render_show #: void
