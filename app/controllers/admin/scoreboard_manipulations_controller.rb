@@ -87,6 +87,11 @@ module Admin
             locals: { yontaku_player_result: }
           )
         )
+      when "paper_seed_exit_all_players"
+        ActionCable.server.broadcast(
+          "scoreboard",
+          "<turbo-stream action='exit_paper_seed_plates' target='scoreboard-main'></turbo-stream>"
+        )
       when "round2_init"
         match = Match.find(params[:match_id])
         ActionCable.server.broadcast("scoreboard", round2_announcement_init_stream(match))

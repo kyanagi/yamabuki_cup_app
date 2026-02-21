@@ -40,3 +40,33 @@ StreamActions.replace_question = function (this: Element) {
     { once: true },
   );
 };
+
+// カスタム Turbo Stream アクション: シード発表の全プレートを退出アニメーション付きで消去
+StreamActions.exit_paper_seed_plates = function (this: Element) {
+  const target = document.getElementById(this.getAttribute("target") || "");
+  if (!target) return;
+
+  const plates = target.querySelectorAll<HTMLElement>(".paper-seed-player");
+  if (plates.length === 0) return;
+
+  plates.forEach((plate, index) => {
+    if (
+      plate.classList.contains("paper-seed-player--exiting") ||
+      plate.classList.contains("paper-seed-player--exited")
+    ) {
+      return;
+    }
+
+    plate.style.animationDelay = `${index * 0.05}s`;
+    plate.classList.add("paper-seed-player--exiting");
+    plate.addEventListener(
+      "animationend",
+      () => {
+        plate.classList.remove("paper-seed-player--exiting");
+        plate.classList.add("paper-seed-player--exited");
+        plate.style.animationDelay = "";
+      },
+      { once: true },
+    );
+  });
+};

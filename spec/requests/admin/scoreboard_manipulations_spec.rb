@@ -147,6 +147,21 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
     end
   end
 
+  describe "POST /admin/scoreboard_manipulations（シード発表）" do
+    describe "paper_seed_exit_all_players" do
+      it "204を返し、全プレートを消去するbroadcastを行う" do
+        expect do
+          post admin_scoreboard_manipulations_path,
+               params: { action_name: "paper_seed_exit_all_players" }
+        end.to(have_broadcasted_to("scoreboard").with do |data|
+          expect(data).to include("action='exit_paper_seed_plates' target='scoreboard-main'")
+        end)
+
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+  end
+
   describe "GET /admin/scoreboard_manipulations（発表操作画面）" do
     it "1位発表画面に初期表示・プレート準備・1位を表示ボタンが表示される" do
       player = create(:player)
@@ -203,6 +218,25 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
       expect(response.body).to include("初期表示")
       expect(response.body).to include("round2_display_player")
       expect(response.body).to include("round2_display_all_players")
+    end
+
+    it "シード発表画面にプレート退出ボタンが表示される" do
+      player = create(:player)
+      create(
+        :player_profile,
+        player:,
+        family_name: "佐藤",
+        given_name: "次郎",
+        family_name_kana: "さとう",
+        given_name_kana: "じろう"
+      )
+      create(:yontaku_player_result, player:, rank: 1, score: 79)
+
+      get seed_announcement_admin_scoreboard_manipulations_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("プレート退出")
+      expect(response.body).to include("paper_seed_exit_all_players")
     end
   end
 end

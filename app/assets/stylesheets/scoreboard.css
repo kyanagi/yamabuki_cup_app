@@ -523,6 +523,28 @@ body {
   animation-delay: calc((sibling-index() - 1) * 0.1s);
 }
 
+@keyframes paperSeedPlateExit {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(4vw) scale(0.95);
+  }
+}
+
+.paper-seed-player--exiting {
+  animation: paperSeedPlateExit 0.35s ease-out forwards;
+  pointer-events: none;
+}
+
+.paper-seed-player--exited {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* 問題表示 */
 .question {
   padding-top: 5vh;

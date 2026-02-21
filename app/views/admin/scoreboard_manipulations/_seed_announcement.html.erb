@@ -1,9 +1,14 @@
+<%# locals: () %>
 <h2 class="title is-4">シード発表</h2>
 <div class="block">
   <%= button_to "初期表示",
           admin_scoreboard_manipulations_path(action_name: "paper_seed_init"),
           method: :post,
           class: "button is-link" %>
+  <%= button_to "プレート退出",
+          admin_scoreboard_manipulations_path(action_name: "paper_seed_exit_all_players"),
+          method: :post,
+          class: "button is-light mt-2" %>
 </div>
 <table class="table">
   <% 1.upto(7) do |rank| %>

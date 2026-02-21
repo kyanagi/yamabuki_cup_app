@@ -24,6 +24,7 @@ declare module "@hotwired/turbo" {
     refresh: () => void;
 
     replace_question: () => void;
+    exit_paper_seed_plates: () => void;
   };
 
   export const StreamActions: StreamActions;
