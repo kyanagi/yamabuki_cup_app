@@ -320,6 +320,22 @@ body {
   transform-origin: center center;
 }
 
+@keyframes firstPlacePlateDropIn {
+  0% {
+    transform: translateY(-64vh);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.first-place-plate--drop-in-animation {
+  animation: firstPlacePlateDropIn 3s linear;
+  animation-fill-mode: both;
+}
+
 /* シード発表 */
 .paper-seed-player {
   display: grid;

@@ -1,9 +1,17 @@
 <h2 class="title is-4">1位発表</h2>
-<div class="block">
-  <%= button_to "初期表示",
-          admin_scoreboard_manipulations_path(action_name: "first_place_init"),
-          method: :post,
-          class: "button is-link" %>
+<div class="field is-grouped mb-5">
+  <div class="control">
+    <%= button_to "初期表示",
+            admin_scoreboard_manipulations_path(action_name: "first_place_init"),
+            method: :post,
+            class: "button is-link" %>
+  </div>
+  <div class="control">
+    <%= button_to "プレート準備",
+            admin_scoreboard_manipulations_path(action_name: "first_place_prepare_plate"),
+            method: :post,
+            class: "button is-primary" %>
+  </div>
 </div>
 <table class="table">
   <% if @first_place_result %>

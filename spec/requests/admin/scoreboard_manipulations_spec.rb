@@ -85,7 +85,92 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
     end
   end
 
+  describe "POST /admin/scoreboard_manipulations（1位発表）" do
+    let!(:player) { create(:player) }
+    let!(:player_profile) do
+      create(
+        :player_profile,
+        player:,
+        family_name: "山田",
+        given_name: "花子",
+        family_name_kana: "やまだ",
+        given_name_kana: "はなこ"
+      )
+    end
+    let!(:first_place_result) { create(:yontaku_player_result, player:, rank: 1, score: 77) }
+
+    describe "first_place_init" do
+      it "204を返し、プレートを表示しない初期表示をbroadcastする" do
+        expect do
+          post admin_scoreboard_manipulations_path,
+               params: { action_name: "first_place_init" }
+        end.to(have_broadcasted_to("scoreboard").with do |data|
+          expect(data).to include('action="update" target="scoreboard-main"')
+          expect(data).to include('action="update" target="scoreboard-footer-left"')
+          expect(data).not_to include("first-place-player")
+        end)
+
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+
+    describe "first_place_prepare_plate" do
+      it "204を返し、順位のみのプレート表示をbroadcastする" do
+        expect do
+          post admin_scoreboard_manipulations_path,
+               params: { action_name: "first_place_prepare_plate" }
+        end.to(have_broadcasted_to("scoreboard").with do |data|
+          expect(data).to include('action="update" target="scoreboard-main"')
+          expect(data).to include("first-place-player")
+          expect(data).to include("first-place-plate--drop-in-animation")
+        end)
+
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+
+    describe "first_place_display_player" do
+      it "204を返し、1位の名前入りプレート差し替えをbroadcastする" do
+        expected_name = player_profile.scoreboard_full_name
+
+        expect do
+          post admin_scoreboard_manipulations_path,
+               params: { action_name: "first_place_display_player" }
+        end.to(have_broadcasted_to("scoreboard").with do |data|
+          expect(data).to include('action="replace" target="first-place-player"')
+          expect(data).to include(expected_name)
+          expect(data).to include("animation-flip-in-x")
+        end)
+
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+  end
+
   describe "GET /admin/scoreboard_manipulations（発表操作画面）" do
+    it "1位発表画面に初期表示・プレート準備・1位を表示ボタンが表示される" do
+      player = create(:player)
+      create(
+        :player_profile,
+        player:,
+        family_name: "山田",
+        given_name: "太郎",
+        family_name_kana: "やまだ",
+        given_name_kana: "たろう"
+      )
+      create(:yontaku_player_result, player:, rank: 1, score: 80)
+
+      get first_place_announcement_admin_scoreboard_manipulations_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("初期表示")
+      expect(response.body).to include("プレート準備")
+      expect(response.body).to include("1位を表示")
+      expect(response.body).to include("first_place_init")
+      expect(response.body).to include("first_place_prepare_plate")
+      expect(response.body).to include("first_place_display_player")
+    end
+
     it "2R発表画面に一括表示ボタンと個別表示ボタンが表示される" do
       match = create_match_with_ranked_players(
         rule_name: "MatchRule::Round2Omote",

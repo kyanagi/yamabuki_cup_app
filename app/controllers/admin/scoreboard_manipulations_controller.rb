@@ -54,6 +54,12 @@ module Admin
       when "first_place_init"
         ActionCable.server.broadcast(
           "scoreboard",
+          turbo_stream.update("scoreboard-main") { "" } +
+          turbo_stream.update("scoreboard-footer-left") { "1位発表" }
+        )
+      when "first_place_prepare_plate"
+        ActionCable.server.broadcast(
+          "scoreboard",
           turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/first_place/_init") } +
           turbo_stream.update("scoreboard-footer-left") { "1位発表" }
         )
