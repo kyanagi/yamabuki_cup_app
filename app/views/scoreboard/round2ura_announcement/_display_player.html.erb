@@ -2,7 +2,7 @@
 <%= turbo_stream.replace("round2-player-#{rank}") do %>
   <div class="round2-announcement-player animation-flip-in-x"
       id="round2-player-<%= rank %>">
-    <div class="player__rank"><%= rank %></div>
+    <div class="player__rank">-</div>
     <div class="player__name"><%= player.player_profile.scoreboard_full_name %></div>
   </div>
 <% end %>

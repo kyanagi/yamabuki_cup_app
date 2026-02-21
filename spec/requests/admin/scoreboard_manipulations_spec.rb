@@ -77,6 +77,16 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
               expect(data).to include(%Q(action="replace" target="round2-player-#{rank}"))
               expect(data).to include(name)
             end
+
+            rank_texts = data.scan(%r{<div class="player__rank">([^<]+)</div>}).flatten
+            if scenario[:rule_name] == "MatchRule::Round2Ura"
+              expect(rank_texts).not_to be_empty
+              expect(rank_texts.uniq).to eq(["-"])
+            else
+              expected_rank_and_names.each do |(rank, _)|
+                expect(rank_texts).to include(rank.to_s)
+              end
+            end
           end)
 
           expect(response).to have_http_status(:no_content)
