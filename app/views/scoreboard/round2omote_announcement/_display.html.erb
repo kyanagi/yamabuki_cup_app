@@ -1,0 +1,10 @@
+<%# locals: (ranks:) %>
+<div class="match-scorelist-column2-row5">
+  <% ranks.each do |rank| %>
+    <div class="round2-announcement-player"
+        id="round2-player-<%= rank %>">
+      <div class="player__rank"><%= rank %></div>
+      <div class="player__name"><%= YontakuPlayerResult.find_by(rank: rank).player.player_profile.scoreboard_full_name %></div>
+    </div>
+  <% end %>
+</div>

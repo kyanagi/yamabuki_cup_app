@@ -103,6 +103,16 @@ body {
   gap: 8px;
 }
 
+.match-scorelist-column2-row6 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(6, 10vh);
+  grid-auto-flow: column;
+  height: 100%;
+  padding-top: 10vh;
+  gap: 8px;
+}
+
 /* 氏名 */
 .player__name {
   grid-area: name;
@@ -328,16 +338,6 @@ body {
 }
 
 /* 2R 発表 */
-.round2-announcement-scorelist {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(7, 10vh);
-  grid-auto-flow: column;
-  height: 100%;
-  padding-top: 10vh;
-  gap: 8px;
-}
-
 .round2-announcement-player {
   display: grid;
   grid-template: ". rank . name" 1fr / 1% 30% 3% 1fr;

@@ -155,32 +155,36 @@ module Admin
     # @rbs match: Match
     # @rbs return: String
     def round2_announcement_init_stream(match)
-      ranks = round2_announcement_ranks(match)
+      dir = round2_template_dir(match)
+      ranks = match.matchings.order(:seat).map { it.player.yontaku_player_result.rank }
       turbo_stream.update("scoreboard-main") do
-        render_to_string("scoreboard/round2_announcement/_init", locals: { ranks: })
+        render_to_string("#{dir}/_init", locals: { ranks: })
       end + turbo_stream.update("scoreboard-footer-left") do
         "#{match.round.name} #{match.name}"
       end
-    end
-
-    # @rbs match: Match
-    # @rbs return: Array[Integer]
-    def round2_announcement_ranks(match)
-      match.matchings.order(:seat).map { it.player.yontaku_player_result.rank }
     end
 
     # @rbs matching: Matching
     # @rbs staggered: bool
     # @rbs return: String
     def render_round2_announcement_player_stream(matching, staggered: false)
+      dir = round2_template_dir(matching.match)
       player = matching.player
       rank = player.yontaku_player_result.rank
       partial = if staggered
-                  "scoreboard/round2_announcement/_display_player_staggered"
+                  "#{dir}/_display_player_staggered"
                 else
-                  "scoreboard/round2_announcement/_display_player"
+                  "#{dir}/_display_player"
                 end
       render_to_string(partial, locals: { rank:, player: })
+    end
+
+    def round2_template_dir(match)
+      if match.rule_class == MatchRule::Round2Ura
+        "scoreboard/round2ura_announcement"
+      else
+        "scoreboard/round2omote_announcement"
+      end
     end
 
     def render_show #: void
