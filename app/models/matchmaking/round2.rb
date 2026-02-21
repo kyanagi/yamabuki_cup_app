@@ -51,14 +51,17 @@ module Matchmaking
     def create_matchings #: void
       Round::ROUND2.matchings.each(&:destroy!)
 
-      results_by_rank = YontakuPlayerResult.where(rank: (NUM_SEED_PLAYERS + 1)..).index_by(&:rank)
+      results_by_rank = YontakuPlayerResult
+        .includes(player: :player_profile)
+        .where(rank: (NUM_SEED_PLAYERS + 1)..)
+        .index_by(&:rank)
 
       omote_matches.each_with_index do |match, group_index|
         create_matchings_for(match, OMOTE_RANKS_BY_GROUP[group_index], results_by_rank, mandatory: true)
       end
 
       ura_matches.each_with_index do |match, group_index|
-        create_matchings_for(match, URA_RANKS_BY_GROUP[group_index], results_by_rank, mandatory: false)
+        create_matchings_for(match, URA_RANKS_BY_GROUP[group_index], results_by_rank, mandatory: false, sort_by_name: true)
       end
     end
 
@@ -84,20 +87,38 @@ module Matchmaking
     # @rbs ranks: Array[Integer]
     # @rbs results_by_rank: Hash[Integer, YontakuPlayerResult]
     # @rbs mandatory: bool
+    # @rbs sort_by_name: bool
     # @rbs return: void
-    def create_matchings_for(match, ranks, results_by_rank, mandatory:)
-      seat = 0
-      ranks.each do |rank|
+    def create_matchings_for(match, ranks, results_by_rank, mandatory:, sort_by_name: false)
+      results = ranks.filter_map do |rank|
         result = results_by_rank[rank]
         if mandatory && result.nil?
           raise ActiveRecord::RecordInvalid, "2R表の必要順位(#{rank}位)の結果がありません"
         end
-        next unless result
+        result
+      end
 
+      results = sort_results_by_name(results) if sort_by_name
+
+      results.each_with_index do |result, seat|
         Matching.create!(match:, player_id: result.player_id, seat:)
-        seat += 1
       end
       MatchOpening.create!(match:)
+    end
+
+    # @rbs results: Array[YontakuPlayerResult]
+    # @rbs return: Array[YontakuPlayerResult]
+    def sort_results_by_name(results)
+      results.sort_by do |result|
+        profile = result.player.player_profile
+        [
+          profile&.family_name_kana.to_s,
+          profile&.given_name_kana.to_s,
+          profile&.family_name.to_s,
+          profile&.given_name.to_s,
+          result.rank,
+        ]
+      end
     end
   end
 end

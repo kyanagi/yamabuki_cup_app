@@ -73,6 +73,19 @@ RSpec.describe Matchmaking::Round2, type: :model do
       end
     end
 
+    def create_player_profile_for_rank(rank:, family_name:, family_name_kana:)
+      result = YontakuPlayerResult.find_by!(rank:)
+      create(
+        :player_profile,
+        player: result.player,
+        entry_list_name: family_name,
+        family_name:,
+        given_name: "太郎",
+        family_name_kana:,
+        given_name_kana: "たろう"
+      )
+    end
+
     context "参加者が117名いる場合" do
       let(:player_count) { 117 }
 
@@ -94,6 +107,37 @@ RSpec.describe Matchmaking::Round2, type: :model do
       end
 
       it_behaves_like "2Rの組分けが仕様どおり作成されること"
+    end
+
+    context "2R裏の同一組内で席順を五十音順にする場合" do
+      let(:player_count) { 117 }
+
+      before do
+        create_player_profile_for_rank(rank: 58, family_name: "佐藤", family_name_kana: "さとう")
+        create_player_profile_for_rank(rank: 67, family_name: "青木", family_name_kana: "あおき")
+        create_player_profile_for_rank(rank: 68, family_name: "山田", family_name_kana: "やまだ")
+        create_player_profile_for_rank(rank: 77, family_name: "伊藤", family_name_kana: "いとう")
+        create_player_profile_for_rank(rank: 78, family_name: "大野", family_name_kana: "おおの")
+        create_player_profile_for_rank(rank: 87, family_name: "上田", family_name_kana: "うえだ")
+        create_player_profile_for_rank(rank: 88, family_name: "遠藤", family_name_kana: "えんどう")
+        create_player_profile_for_rank(rank: 97, family_name: "加藤", family_name_kana: "かとう")
+        create_player_profile_for_rank(rank: 98, family_name: "木村", family_name_kana: "きむら")
+        create_player_profile_for_rank(rank: 107, family_name: "久保", family_name_kana: "くぼ")
+        create_player_profile_for_rank(rank: 108, family_name: "小林", family_name_kana: "こばやし")
+        create_player_profile_for_rank(rank: 117, family_name: "鈴木", family_name_kana: "すずき")
+      end
+
+      it "2R裏は同一組内で名前の五十音順にseatが割り当てられること" do
+        described_class.create!
+
+        ura_first_match = ura_matches.first
+        ura_first_match.reload
+        scores = ura_first_match.current_scores.preload(matching: { player: :yontaku_player_result }).sort_by { it.matching.seat }
+
+        expect(scores.map { it.matching.player.yontaku_player_result.rank }).to eq(
+          [67, 77, 87, 88, 78, 97, 98, 107, 108, 58, 117, 68]
+        )
+      end
     end
   end
 end
