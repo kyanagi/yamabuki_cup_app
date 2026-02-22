@@ -4,6 +4,7 @@ class Setting < ApplicationRecord
   ATTRIBUTES = [
     [:registerable, true],
     [:round3_course_preference_editable, true],
+    [:round2_group_visible_on_mypage, false],
     [:capacity, 0],
     [:entry_phase, nil],
   ]
@@ -53,6 +54,13 @@ class Setting < ApplicationRecord
         normalized[:round3_course_preference_editable] = cast_boolean!(
           "round3_course_preference_editable",
           normalized[:round3_course_preference_editable]
+        )
+      end
+
+      if normalized.key?(:round2_group_visible_on_mypage)
+        normalized[:round2_group_visible_on_mypage] = cast_boolean!(
+          "round2_group_visible_on_mypage",
+          normalized[:round2_group_visible_on_mypage]
         )
       end
 

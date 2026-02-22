@@ -27,6 +27,18 @@
         </table>
       </div>
     <% end %>
+    <% if @round2_group_on_mypage.present? %>
+      <div class="box mb-5">
+        <table class="table is-fullwidth is-narrow">
+          <tbody>
+            <tr>
+              <th>2R参加組</th>
+              <td><%= @round2_group_on_mypage %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
     <div class="buttons is-flex is-flex-direction-column">
       <%= link_to edit_home_player_profile_path, class: "button is-primary is-fullwidth mb-4" do %>
         <span class="icon">
