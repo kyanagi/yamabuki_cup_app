@@ -8,6 +8,11 @@ namespace :sample_data do
     num_players.times do
       name = Gimei.name
       player = Player.create!
+      PlayerEmailCredential.create!(
+        player:,
+        email: "#{player.id}@example.com",
+        password: "hoge"
+      )
       PlayerProfile.create!(
         player:,
         entry_list_name: name.kanji,
