@@ -129,6 +129,19 @@ module Admin
             )
           end + turbo_stream.update("scoreboard-footer-left") { "#{match.round.name} #{match.name}" }
         )
+      when "final_display_champion"
+        match = Match.find(params[:match_id])
+        return head :unprocessable_entity unless match.rule_class == MatchRule::Final
+
+        champion_name = final_champion_name(match)
+        return head :unprocessable_entity unless champion_name
+
+        ActionCable.server.broadcast(
+          "scoreboard",
+          turbo_stream.update("scoreboard-main") do
+            render_to_string("scoreboard/final/_champion", locals: { champion_name: })
+          end
+        )
       when "show_scores"
         ActionCable.server.broadcast(
           "scoreboard",
@@ -202,6 +215,11 @@ module Admin
       @round2_matches = Round::ROUND2.matches.order(:match_number)
       @playoff_matches = Round::PLAYOFF.matches.order(:match_number)
       render :show, layout: "admin"
+    end
+
+    def final_champion_name(match)
+      champion_score = match.current_scores.find_by(rank: 1)
+      champion_score&.matching&.player&.player_profile&.scoreboard_full_name
     end
   end
 end

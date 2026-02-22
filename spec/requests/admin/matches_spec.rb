@@ -50,5 +50,16 @@ RSpec.describe "Admin::Matches", type: :request do
       expect(response.body).not_to include("自由編集")
       expect(response.body).to include("勝抜け者入力フォーム")
     end
+
+    it "決勝では優勝者表示ボタンが表示される" do
+      match = create_match_with_opening(rule_name: "MatchRule::Final")
+
+      get admin_match_path(match)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("優勝者表示")
+      expect(response.body).to include("action_name=final_display_champion")
+      expect(response.body).to include("match_id=#{match.id}")
+    end
   end
 end

@@ -50,6 +50,75 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
     end
   end
 
+  describe "POST /admin/scoreboard_manipulations（final_display_champion）" do
+    def create_final_match_with_players
+      match = create(:match, rule_name: "MatchRule::Final", round_id: Round::FINAL.id)
+      MatchRule::Final::NUM_SEATS.times do |i|
+        player = create(:player)
+        create(
+          :player_profile,
+          player:,
+          family_name: "姓#{i + 1}",
+          given_name: "名",
+          family_name_kana: "せい",
+          given_name_kana: "めい"
+        )
+        create(:matching, match:, player:, seat: i + 1)
+      end
+      MatchOpening.create!(match:)
+      match.reload
+    end
+
+    context "決勝で優勝者が確定している場合" do
+      it "204を返し、CHAMPION表示をbroadcastする" do
+        match = create_final_match_with_players
+        winner_matching = match.matchings.order(:seat).first
+        winner_score = match.last_score_operation.scores.find_by!(matching: winner_matching)
+        winner_score.update!(status: "win", rank: 1)
+
+        expected_name = winner_matching.player.player_profile.scoreboard_full_name
+
+        expect do
+          post admin_scoreboard_manipulations_path,
+               params: { action_name: "final_display_champion", match_id: match.id }
+        end.to(have_broadcasted_to("scoreboard").with do |data|
+          expect(data).to include('action="update" target="scoreboard-main"')
+          expect(data).to include("第2回やまぶき杯")
+          expect(data).to include("CHAMPION")
+          expect(data).to include(expected_name)
+        end)
+
+        expect(response).to have_http_status(:no_content)
+      end
+    end
+
+    context "決勝で優勝者が未確定の場合" do
+      it "422を返し、broadcastを行わない" do
+        match = create_final_match_with_players
+
+        expect do
+          post admin_scoreboard_manipulations_path,
+               params: { action_name: "final_display_champion", match_id: match.id }
+        end.not_to have_broadcasted_to("scoreboard")
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context "決勝以外の試合の場合" do
+      it "422を返し、broadcastを行わない" do
+        match = create(:match, rule_name: "MatchRule::Round2Omote", round_id: Round::ROUND2.id)
+
+        expect do
+          post admin_scoreboard_manipulations_path,
+               params: { action_name: "final_display_champion", match_id: match.id }
+        end.not_to have_broadcasted_to("scoreboard")
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
   describe "POST /admin/scoreboard_manipulations（round2_display_all_players）" do
     [
       { rule_name: "MatchRule::Round2Omote", round_id: Round::ROUND2.id, player_count: 10, start_rank: 8 },

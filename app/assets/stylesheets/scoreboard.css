@@ -464,6 +464,42 @@ body {
   margin: 0 auto;
 }
 
+.final-champion {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  place-content: center;
+  place-items: center;
+  gap: 3vh;
+  text-align: center;
+  padding: 5vh 4vw;
+}
+
+.final-champion__title {
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-size: min(14vh, 14vw);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  color: #e7dbc0;
+}
+
+.final-champion__tournament {
+  font-family: "FORMUDPGothic-Bold", sans-serif;
+  font-size: min(6vh, 6vw);
+  line-height: 1.2;
+  color: #e7dbc0;
+}
+
+.final-champion__name {
+  font-family: "GenShinGothic-Bold", sans-serif;
+  font-size: min(21vh, 21vw);
+  line-height: 1.1;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
 /* 名前の圧縮 */
 .hayabo-player-name--length-5,
 .hayaoshi-player-name--length-5,
