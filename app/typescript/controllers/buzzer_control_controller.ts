@@ -4,113 +4,122 @@ import {
   assignButtonToSeat,
   type BuzzerMapping,
   clearBuzzerMapping,
-  findButtonIdBySeat,
   findSeatByButtonId,
   loadBuzzerMapping,
   saveBuzzerMapping,
 } from "../lib/buzzer/mapping_store";
 
 const INITIAL_LAST_PRESSED_TEXT = "未入力";
-const UNASSIGNED_TEXT = "未割当";
-const LEARNING_TEXT = "ボタンを押してください";
+
+type ToggleLearningDetail = {
+  seat: number;
+};
+
+type ButtonPressDetail = {
+  buttonId: number;
+};
+
+type BuzzerStateChangedDetail = {
+  learningSeat: number | null;
+  lastPressed: string;
+  mapping: Record<string, number>;
+};
 
 export default class extends Controller {
-  static targets = ["connectionStatus", "lastPressed"];
-
-  declare connectionStatusTarget: HTMLElement;
-  declare lastPressedTarget: HTMLElement;
-
   #channel: BuzzerChannel | null = null;
   #mapping: BuzzerMapping = new Map();
   #learningSeat: number | null = null;
+  #lastPressed = INITIAL_LAST_PRESSED_TEXT;
 
   connect(): void {
     this.#mapping = loadBuzzerMapping();
     if (typeof BroadcastChannel !== "undefined") {
       this.#channel = createBuzzerChannel();
     }
-    this.#renderSeatRows();
+
+    window.addEventListener("buzzer:assignment:toggle-learning", this.#toggleLearningHandler as EventListener);
+    window.addEventListener("buzzer:assignment:clear", this.#clearMappingsHandler);
+    window.addEventListener("buzzer:emulator:button-press", this.#buttonPressHandler as EventListener);
+    window.addEventListener("buzzer:emulator:reset", this.#resetHandler);
+    window.addEventListener("buzzer:view:request-state", this.#requestStateHandler);
+
+    this.#emitStateChanged();
   }
 
   disconnect(): void {
+    window.removeEventListener("buzzer:assignment:toggle-learning", this.#toggleLearningHandler as EventListener);
+    window.removeEventListener("buzzer:assignment:clear", this.#clearMappingsHandler);
+    window.removeEventListener("buzzer:emulator:button-press", this.#buttonPressHandler as EventListener);
+    window.removeEventListener("buzzer:emulator:reset", this.#resetHandler);
+    window.removeEventListener("buzzer:view:request-state", this.#requestStateHandler);
+
     this.#channel?.close();
     this.#channel = null;
   }
 
-  pressEmulatorButton(event: Event): void {
-    const button = event.currentTarget as HTMLElement | null;
-    const buttonId = button?.getAttribute("data-button-id");
-    if (!buttonId) return;
-
-    this.lastPressedTarget.textContent = buttonId;
-
-    const numericButtonId = Number.parseInt(buttonId, 10);
-    if (Number.isNaN(numericButtonId)) return;
-
+  #handleButtonPressed(buttonId: number): void {
+    this.#lastPressed = String(buttonId);
     if (this.#learningSeat !== null) {
-      assignButtonToSeat(this.#mapping, numericButtonId, this.#learningSeat);
+      assignButtonToSeat(this.#mapping, buttonId, this.#learningSeat);
       saveBuzzerMapping(this.#mapping);
       this.#learningSeat = null;
-      this.#renderSeatRows();
+      this.#emitStateChanged();
       return;
     }
 
-    const seat = findSeatByButtonId(this.#mapping, numericButtonId);
-    if (seat === null) return;
+    const seat = findSeatByButtonId(this.#mapping, buttonId);
+    if (seat !== null) {
+      this.#channel?.post({ type: "button_pressed", seat });
+    }
 
-    this.#channel?.post({ type: "button_pressed", seat });
+    this.#emitStateChanged();
   }
 
-  resetFromEmulator(): void {
-    this.lastPressedTarget.textContent = INITIAL_LAST_PRESSED_TEXT;
-    this.#learningSeat = null;
-    this.#renderSeatRows();
-    this.#channel?.post({ type: "reset" });
+  #emitStateChanged(): void {
+    const mapping: Record<string, number> = {};
+    for (const [buttonId, seat] of this.#mapping) {
+      mapping[String(buttonId)] = seat;
+    }
+
+    const detail: BuzzerStateChangedDetail = {
+      learningSeat: this.#learningSeat,
+      lastPressed: this.#lastPressed,
+      mapping,
+    };
+
+    window.dispatchEvent(new CustomEvent<BuzzerStateChangedDetail>("buzzer:state-changed", { detail }));
   }
 
-  startLearningSeat(event: Event): void {
-    const button = event.currentTarget as HTMLElement | null;
-    const seatText = button?.getAttribute("data-seat");
-    if (!seatText) return;
-
-    const seat = Number.parseInt(seatText, 10);
-    if (Number.isNaN(seat)) return;
+  #toggleLearningHandler = (event: CustomEvent<ToggleLearningDetail>): void => {
+    const seat = Number(event.detail?.seat);
+    if (!Number.isInteger(seat)) return;
 
     this.#learningSeat = this.#learningSeat === seat ? null : seat;
-    this.#renderSeatRows();
-  }
+    this.#emitStateChanged();
+  };
 
-  clearAllMappings(): void {
+  #clearMappingsHandler = (): void => {
     this.#mapping.clear();
     this.#learningSeat = null;
     clearBuzzerMapping();
-    this.#renderSeatRows();
-  }
+    this.#emitStateChanged();
+  };
 
-  #renderSeatRows(): void {
-    const rows = this.element.querySelectorAll<HTMLElement>("[data-buzzer-control-seat-row]");
-    for (const row of rows) {
-      const seatText = row.getAttribute("data-seat");
-      if (!seatText) continue;
+  #buttonPressHandler = (event: CustomEvent<ButtonPressDetail>): void => {
+    const buttonId = Number(event.detail?.buttonId);
+    if (!Number.isInteger(buttonId)) return;
 
-      const seat = Number.parseInt(seatText, 10);
-      if (Number.isNaN(seat)) continue;
+    this.#handleButtonPressed(buttonId);
+  };
 
-      const assignment = row.querySelector<HTMLElement>('[data-buzzer-control-role="assignment"]');
-      const learnButton = row.querySelector<HTMLButtonElement>('[data-buzzer-control-role="learnButton"]');
-      if (!assignment || !learnButton) continue;
+  #resetHandler = (): void => {
+    this.#lastPressed = INITIAL_LAST_PRESSED_TEXT;
+    this.#learningSeat = null;
+    this.#channel?.post({ type: "reset" });
+    this.#emitStateChanged();
+  };
 
-      if (this.#learningSeat === seat) {
-        assignment.textContent = LEARNING_TEXT;
-        learnButton.textContent = "待受中";
-        learnButton.classList.add("is-warning");
-        continue;
-      }
-
-      const buttonId = findButtonIdBySeat(this.#mapping, seat);
-      assignment.textContent = buttonId === null ? UNASSIGNED_TEXT : `ボタン ${buttonId}`;
-      learnButton.textContent = "設定";
-      learnButton.classList.remove("is-warning");
-    }
-  }
+  #requestStateHandler = (): void => {
+    this.#emitStateChanged();
+  };
 }

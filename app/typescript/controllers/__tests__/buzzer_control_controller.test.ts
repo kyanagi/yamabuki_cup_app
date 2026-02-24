@@ -2,17 +2,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import BuzzerControlController from "../buzzer_control_controller";
 
-type MockMessage = unknown;
+type BuzzerStateChangedDetail = {
+  learningSeat: number | null;
+  lastPressed: string;
+  mapping: Record<string, number>;
+};
 
 class MockBroadcastChannel {
   static instances: MockBroadcastChannel[] = [];
 
-  readonly name: string;
   readonly postMessage: ReturnType<typeof vi.fn>;
   readonly close: ReturnType<typeof vi.fn>;
 
-  constructor(name: string) {
-    this.name = name;
+  constructor(_name: string) {
     this.postMessage = vi.fn();
     this.close = vi.fn();
     MockBroadcastChannel.instances.push(this);
@@ -44,72 +46,18 @@ function createStorageMock(): Storage {
   };
 }
 
-function createHTML(): string {
-  return `
-    <div data-controller="buzzer-control">
-      <p data-buzzer-control-target="lastPressed">未入力</p>
-      <table>
-        <tbody>
-          <tr data-buzzer-control-seat-row data-seat="0">
-            <td>席0</td>
-            <td data-buzzer-control-role="assignment">未割当</td>
-            <td>
-              <button
-                type="button"
-                data-seat="0"
-                data-action="click->buzzer-control#startLearningSeat"
-                data-buzzer-control-role="learnButton"
-              >
-                設定
-              </button>
-            </td>
-          </tr>
-          <tr data-buzzer-control-seat-row data-seat="1">
-            <td>席1</td>
-            <td data-buzzer-control-role="assignment">未割当</td>
-            <td>
-              <button
-                type="button"
-                data-seat="1"
-                data-action="click->buzzer-control#startLearningSeat"
-                data-buzzer-control-role="learnButton"
-              >
-                設定
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <button
-        type="button"
-        class="button"
-        data-button-id="1"
-        data-action="click->buzzer-control#pressEmulatorButton"
-      >
-        1
-      </button>
-      <button
-        type="button"
-        class="button"
-        data-button-id="2"
-        data-action="click->buzzer-control#pressEmulatorButton"
-      >
-        2
-      </button>
-      <button
-        type="button"
-        data-action="click->buzzer-control#resetFromEmulator"
-      >
-        reset
-      </button>
-      <button
-        type="button"
-        data-action="click->buzzer-control#clearAllMappings"
-      >
-        全消去
-      </button>
-    </div>
-  `;
+function latestChannel(): MockBroadcastChannel {
+  const channel = MockBroadcastChannel.instances.at(-1);
+  if (!channel) {
+    throw new Error("BroadcastChannel instance not found");
+  }
+  return channel;
+}
+
+function lastState(states: BuzzerStateChangedDetail[]): BuzzerStateChangedDetail {
+  const state = states.at(-1);
+  if (!state) throw new Error("state not found");
+  return state;
 }
 
 describe("BuzzerControlController", () => {
@@ -123,49 +71,64 @@ describe("BuzzerControlController", () => {
     vi.unstubAllGlobals();
   });
 
-  function latestChannel(): MockBroadcastChannel {
-    const channel = MockBroadcastChannel.instances.at(-1);
-    if (!channel) {
-      throw new Error("BroadcastChannel instance not found");
-    }
-    return channel;
-  }
+  it("接続時に初期状態を配信する", async () => {
+    localStorage.setItem("buzzerMapping", JSON.stringify({ "2": 1 }));
+    const states: BuzzerStateChangedDetail[] = [];
+    const handler = (event: Event) => {
+      states.push((event as CustomEvent<BuzzerStateChangedDetail>).detail);
+    };
+    window.addEventListener("buzzer:state-changed", handler);
 
-  it("エミュレータボタン押下で最終押下表示が更新される", async () => {
-    const { application, element } = await setupControllerTest<BuzzerControlController>(
+    const { application } = await setupControllerTest<BuzzerControlController>(
       BuzzerControlController,
-      createHTML(),
+      '<div data-controller="buzzer-control"></div>',
       "buzzer-control",
     );
 
-    const lastPressed = element.querySelector('[data-buzzer-control-target="lastPressed"]');
-    const button2 = element.querySelector('[data-button-id="2"]');
-    if (!lastPressed || !button2) throw new Error("required element not found");
-
-    button2.dispatchEvent(new Event("click"));
-
-    expect(lastPressed.textContent).toBe("2");
+    expect(lastState(states)).toEqual({
+      learningSeat: null,
+      lastPressed: "未入力",
+      mapping: { "2": 1 },
+    });
 
     teardownControllerTest(application);
+    window.removeEventListener("buzzer:state-changed", handler);
   });
 
-  it("待受中のボタン押下は割り当てのみ行い broadcast しない", async () => {
-    const { application, element } = await setupControllerTest<BuzzerControlController>(
+  it("学習席トグルイベントで learningSeat を切り替える", async () => {
+    const states: BuzzerStateChangedDetail[] = [];
+    const handler = (event: Event) => {
+      states.push((event as CustomEvent<BuzzerStateChangedDetail>).detail);
+    };
+    window.addEventListener("buzzer:state-changed", handler);
+
+    const { application } = await setupControllerTest<BuzzerControlController>(
       BuzzerControlController,
-      createHTML(),
+      '<div data-controller="buzzer-control"></div>',
       "buzzer-control",
     );
 
-    const learnButton = element.querySelector('[data-action="click->buzzer-control#startLearningSeat"]');
-    const button2 = element.querySelector('[data-button-id="2"]');
-    if (!learnButton || !button2) throw new Error("required element not found");
+    window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat: 0 } }));
+    expect(lastState(states).learningSeat).toBe(0);
 
-    learnButton.dispatchEvent(new Event("click"));
-    button2.dispatchEvent(new Event("click"));
+    window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat: 0 } }));
+    expect(lastState(states).learningSeat).toBeNull();
 
-    const mapping = localStorage.getItem("buzzerMapping");
-    expect(mapping).not.toBeNull();
-    expect(mapping && JSON.parse(mapping)).toEqual({ "2": 0 });
+    teardownControllerTest(application);
+    window.removeEventListener("buzzer:state-changed", handler);
+  });
+
+  it("学習中のボタン押下は割り当てのみ行い broadcast しない", async () => {
+    const { application } = await setupControllerTest<BuzzerControlController>(
+      BuzzerControlController,
+      '<div data-controller="buzzer-control"></div>',
+      "buzzer-control",
+    );
+
+    window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat: 0 } }));
+    window.dispatchEvent(new CustomEvent("buzzer:emulator:button-press", { detail: { buttonId: 2 } }));
+
+    expect(localStorage.getItem("buzzerMapping")).toBe(JSON.stringify({ "2": 0 }));
     expect(latestChannel().postMessage).not.toHaveBeenCalled();
 
     teardownControllerTest(application);
@@ -174,78 +137,75 @@ describe("BuzzerControlController", () => {
   it("通常時の押下は割り当て済み seat を button_pressed で送信する", async () => {
     localStorage.setItem("buzzerMapping", JSON.stringify({ "2": 1 }));
 
-    const { application, element } = await setupControllerTest<BuzzerControlController>(
+    const { application } = await setupControllerTest<BuzzerControlController>(
       BuzzerControlController,
-      createHTML(),
+      '<div data-controller="buzzer-control"></div>',
       "buzzer-control",
     );
 
-    const button2 = element.querySelector('[data-button-id="2"]');
-    if (!button2) throw new Error("required element not found");
-
-    button2.dispatchEvent(new Event("click"));
+    window.dispatchEvent(new CustomEvent("buzzer:emulator:button-press", { detail: { buttonId: 2 } }));
 
     expect(latestChannel().postMessage).toHaveBeenCalledWith({
       type: "button_pressed",
       seat: 1,
-    } satisfies MockMessage);
+    });
 
     teardownControllerTest(application);
   });
 
   it("未割り当てボタン押下時は送信しない", async () => {
-    const { application, element } = await setupControllerTest<BuzzerControlController>(
+    const { application } = await setupControllerTest<BuzzerControlController>(
       BuzzerControlController,
-      createHTML(),
+      '<div data-controller="buzzer-control"></div>',
       "buzzer-control",
     );
 
-    const button1 = element.querySelector('[data-button-id="1"]');
-    if (!button1) throw new Error("required element not found");
-
-    button1.dispatchEvent(new Event("click"));
+    window.dispatchEvent(new CustomEvent("buzzer:emulator:button-press", { detail: { buttonId: 1 } }));
 
     expect(latestChannel().postMessage).not.toHaveBeenCalled();
 
     teardownControllerTest(application);
   });
 
-  it("reset 操作で最終押下表示が初期化される", async () => {
-    const { application, element } = await setupControllerTest<BuzzerControlController>(
+  it("reset イベントで reset を送信し state を初期化する", async () => {
+    localStorage.setItem("buzzerMapping", JSON.stringify({ "2": 1 }));
+    const states: BuzzerStateChangedDetail[] = [];
+    const handler = (event: Event) => {
+      states.push((event as CustomEvent<BuzzerStateChangedDetail>).detail);
+    };
+    window.addEventListener("buzzer:state-changed", handler);
+
+    const { application } = await setupControllerTest<BuzzerControlController>(
       BuzzerControlController,
-      createHTML(),
+      '<div data-controller="buzzer-control"></div>',
       "buzzer-control",
     );
 
-    const lastPressed = element.querySelector('[data-buzzer-control-target="lastPressed"]');
-    const button1 = element.querySelector('[data-button-id="1"]');
-    const resetButton = element.querySelector('[data-action="click->buzzer-control#resetFromEmulator"]');
-    if (!lastPressed || !button1 || !resetButton) throw new Error("required element not found");
+    window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat: 0 } }));
+    window.dispatchEvent(new CustomEvent("buzzer:emulator:button-press", { detail: { buttonId: 2 } }));
+    window.dispatchEvent(new CustomEvent("buzzer:emulator:reset"));
 
-    button1.dispatchEvent(new Event("click"));
-    resetButton.dispatchEvent(new Event("click"));
-
-    expect(lastPressed.textContent).toBe("未入力");
-    expect(latestChannel().postMessage).toHaveBeenCalledWith({
-      type: "reset",
-    } satisfies MockMessage);
+    expect(lastState(states)).toEqual({
+      learningSeat: null,
+      lastPressed: "未入力",
+      mapping: { "2": 0 },
+    });
+    expect(latestChannel().postMessage).toHaveBeenCalledWith({ type: "reset" });
 
     teardownControllerTest(application);
+    window.removeEventListener("buzzer:state-changed", handler);
   });
 
-  it("全消去で割り当てが削除される", async () => {
+  it("全消去イベントで割り当てを削除する", async () => {
     localStorage.setItem("buzzerMapping", JSON.stringify({ "1": 0, "2": 1 }));
 
-    const { application, element } = await setupControllerTest<BuzzerControlController>(
+    const { application } = await setupControllerTest<BuzzerControlController>(
       BuzzerControlController,
-      createHTML(),
+      '<div data-controller="buzzer-control"></div>',
       "buzzer-control",
     );
 
-    const clearButton = element.querySelector('[data-action="click->buzzer-control#clearAllMappings"]');
-    if (!clearButton) throw new Error("required element not found");
-
-    clearButton.dispatchEvent(new Event("click"));
+    window.dispatchEvent(new CustomEvent("buzzer:assignment:clear"));
 
     expect(localStorage.getItem("buzzerMapping")).toBeNull();
 
@@ -255,39 +215,16 @@ describe("BuzzerControlController", () => {
   it("同じ席へ別ボタンを割り当てると古い割り当てが外れる", async () => {
     localStorage.setItem("buzzerMapping", JSON.stringify({ "1": 0 }));
 
-    const { application, element } = await setupControllerTest<BuzzerControlController>(
+    const { application } = await setupControllerTest<BuzzerControlController>(
       BuzzerControlController,
-      createHTML(),
+      '<div data-controller="buzzer-control"></div>',
       "buzzer-control",
     );
 
-    const learnButton = element.querySelector('[data-action="click->buzzer-control#startLearningSeat"]');
-    const button2 = element.querySelector('[data-button-id="2"]');
-    if (!learnButton || !button2) throw new Error("required element not found");
+    window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat: 0 } }));
+    window.dispatchEvent(new CustomEvent("buzzer:emulator:button-press", { detail: { buttonId: 2 } }));
 
-    learnButton.dispatchEvent(new Event("click"));
-    button2.dispatchEvent(new Event("click"));
-
-    const mapping = localStorage.getItem("buzzerMapping");
-    expect(mapping && JSON.parse(mapping)).toEqual({ "2": 0 });
-
-    teardownControllerTest(application);
-  });
-
-  it("保存済み割り当てを読み込んで表示する", async () => {
-    localStorage.setItem("buzzerMapping", JSON.stringify({ "2": 1 }));
-
-    const { application, element } = await setupControllerTest<BuzzerControlController>(
-      BuzzerControlController,
-      createHTML(),
-      "buzzer-control",
-    );
-
-    const row = element.querySelector('[data-buzzer-control-seat-row][data-seat="1"]');
-    const assignment = row?.querySelector('[data-buzzer-control-role="assignment"]');
-    if (!assignment) throw new Error("required element not found");
-
-    expect(assignment.textContent).toBe("ボタン 2");
+    expect(localStorage.getItem("buzzerMapping")).toBe(JSON.stringify({ "2": 0 }));
 
     teardownControllerTest(application);
   });
