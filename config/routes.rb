@@ -42,6 +42,8 @@ Rails.application.routes.draw do
       end
     end
 
+    get "buzzer_controls", to: "buzzer_controls#show"
+
     get "quiz_reader", to: "quiz_reader#show"
     namespace :quiz_reader do
       put "next_question", to: "next_question#update"

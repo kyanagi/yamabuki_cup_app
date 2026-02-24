@@ -2,7 +2,8 @@
 <% scores.each do |score| %>
   <% name = score.matching.player.player_profile.scoreboard_full_name %>
   <div class="board-player player--<%= score.status %>"
-        id="board-player-<%= score.matching_id %>">
+        id="board-player-<%= score.matching_id %>"
+        data-seat="<%= score.matching.seat %>">
     <div class="player__rank"><%= score.rank %></div>
     <div class="player__name"><div class="board-player-name--length-<%= name.size %>"><%= name %></div></div>
     <% if score.points >= 0 %>

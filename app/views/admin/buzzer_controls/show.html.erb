@@ -1,0 +1,70 @@
+<div class="container">
+  <section class="section" data-controller="buzzer-control">
+    <h1 class="title is-2">早押し機連携</h1>
+    <p class="mb-4">接続状態: <span class="tag is-warning" data-buzzer-control-target="connectionStatus">未接続（実機未実装）</span></p>
+
+    <div class="box">
+      <h2 class="title is-4">ボタン席割り当て設定</h2>
+      <div class="is-flex is-justify-content-flex-end mb-3">
+        <button type="button" class="button is-light" data-action="click->buzzer-control#clearAllMappings">全消去</button>
+      </div>
+      <table class="table is-fullwidth is-striped">
+        <thead>
+          <tr>
+            <th>席</th>
+            <th>割り当て</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% 0.upto(11) do |seat| %>
+            <tr data-buzzer-control-seat-row data-seat="<%= seat %>">
+              <td>席<%= seat %></td>
+              <td data-buzzer-control-role="assignment">未割当</td>
+              <td>
+                <button
+                  type="button"
+                  class="button is-small"
+                  data-seat="<%= seat %>"
+                  data-buzzer-control-role="learnButton"
+                  data-action="click->buzzer-control#startLearningSeat"
+                >
+                  設定
+                </button>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box">
+      <h2 class="title is-4">早押し機エミュレータ</h2>
+      <p class="mb-3">
+        最終押下ボタン:
+        <span class="tag is-info" data-buzzer-control-target="lastPressed">未入力</span>
+      </p>
+
+      <div class="fixed-grid has-6-cols mb-4">
+        <div class="grid">
+          <% 1.upto(24) do |button_id| %>
+            <div class="cell">
+              <button
+                type="button"
+                class="button is-fullwidth"
+                data-button-id="<%= button_id %>"
+                data-action="click->buzzer-control#pressEmulatorButton"
+              >
+                <%= button_id %>
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <button type="button" class="button is-danger" data-action="click->buzzer-control#resetFromEmulator">
+        reset
+      </button>
+    </div>
+  </section>
+</div>

@@ -157,6 +157,25 @@ body {
   }
 }
 
+@keyframes buzzerPressedBlink {
+  0% {
+    filter: brightness(1);
+    box-shadow: 0 0 0.2vw rgba(255, 238, 128, 0.35);
+  }
+  50% {
+    filter: brightness(1.35);
+    box-shadow: 0 0 0.9vw rgba(255, 238, 128, 0.95);
+  }
+  100% {
+    filter: brightness(1);
+    box-shadow: 0 0 0.2vw rgba(255, 238, 128, 0.35);
+  }
+}
+
+.player--buzzer-pressed {
+  animation: buzzerPressedBlink 0.75s ease-in-out infinite;
+}
+
 /* 順位 */
 .player__rank {
   grid-area: rank;

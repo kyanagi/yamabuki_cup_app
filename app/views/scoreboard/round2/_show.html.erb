@@ -2,7 +2,8 @@
 <% scores.each do |score| %>
   <% name = score.matching.player.player_profile.family_name %>
   <div class="round2-match-player player--<%= score.status %> <%= "animation-flip-in-x" if score.score_changed? %>"
-        id="round2-match-player-<%= score.matching_id %>">
+        id="round2-match-player-<%= score.matching_id %>"
+        data-seat="<%= score.matching.seat %>">
     <div class="player__rank round2-match-player__rank"><%= score.rank %></div>
     <div class="player__name"><div class="round2-match-name--length-<%= name.size %>"><%= name %></div></div>
     <div class="player__points"><%= score.points %></div>

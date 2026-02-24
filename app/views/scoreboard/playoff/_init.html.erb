@@ -1,6 +1,6 @@
 <%# locals: (scores:, score_operation:) %>
 <div class="columns-2">
-  <div id="match-scorelist" class="match-scorelist-column2-row5">
+  <div id="match-scorelist" class="match-scorelist-column2-row5" data-controller="buzzer-scoreboard">
     <%= render partial: "scoreboard/playoff/show", locals: { scores:, score_operation: } %>
   </div>
   <div id="question"></div>
