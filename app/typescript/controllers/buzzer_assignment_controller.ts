@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import type { ButtonId } from "../lib/buzzer/button_id";
 import { findButtonIdBySeat } from "../lib/buzzer/mapping_store";
 
 const UNASSIGNED_TEXT = "未割当";
@@ -6,8 +7,8 @@ const LEARNING_TEXT = "ボタンを押してください";
 
 type BuzzerStateChangedDetail = {
   learningSeat: number | null;
-  lastPressedButtonId: number | null;
-  mapping: Map<number, number>;
+  lastPressedButtonId: ButtonId | null;
+  mapping: Map<ButtonId, number>;
 };
 
 export default class extends Controller {
@@ -39,7 +40,7 @@ export default class extends Controller {
 
   #stateChangedHandler = (event: CustomEvent<BuzzerStateChangedDetail>): void => {
     const detail = event.detail;
-    const mapping = detail.mapping instanceof Map ? detail.mapping : new Map<number, number>();
+    const mapping = detail.mapping instanceof Map ? detail.mapping : new Map<ButtonId, number>();
     const learningSeat = Number.isInteger(detail.learningSeat) ? detail.learningSeat : null;
 
     const rows = this.element.querySelectorAll<HTMLElement>("[data-buzzer-assignment-seat-row]");

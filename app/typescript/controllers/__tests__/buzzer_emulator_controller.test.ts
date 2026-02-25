@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
+import type { ButtonId } from "../../lib/buzzer/button_id";
 import BuzzerEmulatorController from "../buzzer_emulator_controller";
 
 function createHTML(): string {
@@ -92,7 +93,7 @@ describe("BuzzerEmulatorController", () => {
   it("押下ボタンで button-press イベントを送出する", async () => {
     let buttonId: number | null = null;
     const handler = (event: Event) => {
-      buttonId = (event as CustomEvent<{ buttonId: number }>).detail.buttonId;
+      buttonId = (event as CustomEvent<{ buttonId: ButtonId }>).detail.buttonId;
     };
     window.addEventListener("buzzer:emulator:button-press", handler);
 

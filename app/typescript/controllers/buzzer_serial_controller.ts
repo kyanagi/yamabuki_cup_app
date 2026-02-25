@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import type { ButtonId } from "../lib/buzzer/button_id";
 import {
   BUZZER_EMULATOR_BUTTON_PRESS_EVENT,
   BUZZER_EMULATOR_RESET_EVENT,
@@ -206,7 +207,7 @@ export default class extends Controller {
     switch (signal.type) {
       case "button_pressed":
         window.dispatchEvent(
-          new CustomEvent<{ buttonId: number }>(BUZZER_EMULATOR_BUTTON_PRESS_EVENT, {
+          new CustomEvent<{ buttonId: ButtonId }>(BUZZER_EMULATOR_BUTTON_PRESS_EVENT, {
             detail: { buttonId: signal.buttonId },
           }),
         );

@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { type ButtonId, isButtonId } from "../lib/buzzer/button_id";
 import { type BuzzerChannel, createBuzzerChannel } from "../lib/buzzer/channel";
 import { BUZZER_SERIAL_CORRECT_EVENT, BUZZER_SERIAL_WRONG_EVENT } from "../lib/buzzer/events";
 import {
@@ -15,20 +16,20 @@ type ToggleLearningDetail = {
 };
 
 type ButtonPressDetail = {
-  buttonId: number;
+  buttonId: ButtonId;
 };
 
 type BuzzerStateChangedDetail = {
   learningSeat: number | null;
-  lastPressedButtonId: number | null;
-  mapping: Map<number, number>;
+  lastPressedButtonId: ButtonId | null;
+  mapping: Map<ButtonId, number>;
 };
 
 export default class extends Controller {
   #channel: BuzzerChannel | null = null;
   #mapping: BuzzerMapping = new Map();
   #learningSeat: number | null = null;
-  #lastPressedButtonId: number | null = null;
+  #lastPressedButtonId: ButtonId | null = null;
 
   connect(): void {
     this.#mapping = loadBuzzerMapping();
@@ -60,7 +61,7 @@ export default class extends Controller {
     this.#channel = null;
   }
 
-  #handleButtonPressed(buttonId: number): void {
+  #handleButtonPressed(buttonId: ButtonId): void {
     this.#lastPressedButtonId = buttonId;
     if (this.#learningSeat !== null) {
       assignButtonToSeat(this.#mapping, buttonId, this.#learningSeat);
@@ -104,8 +105,9 @@ export default class extends Controller {
   };
 
   #buttonPressHandler = (event: CustomEvent<ButtonPressDetail>): void => {
-    const buttonId = Number(event.detail?.buttonId);
-    if (!Number.isInteger(buttonId)) return;
+    const buttonId = event.detail?.buttonId;
+    // CustomEvent の payload は実行時に壊れ得るため、境界で buttonId を再検証する。
+    if (!isButtonId(buttonId)) return;
 
     this.#handleButtonPressed(buttonId);
   };

@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
+import type { ButtonId } from "../../lib/buzzer/button_id";
 import BuzzerSerialController from "../buzzer_serial_controller";
 
 const encoder = new TextEncoder();
@@ -230,7 +231,7 @@ describe("BuzzerSerialController", () => {
     let correctCount = 0;
     let wrongCount = 0;
     const pressedHandler = (event: Event) => {
-      pressed.push((event as CustomEvent<{ buttonId: number }>).detail.buttonId);
+      pressed.push((event as CustomEvent<{ buttonId: ButtonId }>).detail.buttonId);
     };
     const resetHandler = () => {
       resetCount += 1;
@@ -287,7 +288,7 @@ describe("BuzzerSerialController", () => {
     const pressed: number[] = [];
     let resetCount = 0;
     const pressedHandler = (event: Event) => {
-      pressed.push((event as CustomEvent<{ buttonId: number }>).detail.buttonId);
+      pressed.push((event as CustomEvent<{ buttonId: ButtonId }>).detail.buttonId);
     };
     const resetHandler = () => {
       resetCount += 1;

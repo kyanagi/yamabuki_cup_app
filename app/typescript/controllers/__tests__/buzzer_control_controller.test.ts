@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
+import type { ButtonId } from "../../lib/buzzer/button_id";
 import BuzzerControlController from "../buzzer_control_controller";
 
 type BuzzerStateChangedDetail = {
   learningSeat: number | null;
-  lastPressedButtonId: number | null;
-  mapping: Map<number, number>;
+  lastPressedButtonId: ButtonId | null;
+  mapping: Map<ButtonId, number>;
 };
 
 class MockBroadcastChannel {
@@ -162,6 +163,46 @@ describe("BuzzerControlController", () => {
 
     window.dispatchEvent(new CustomEvent("buzzer:emulator:button-press", { detail: { buttonId: 1 } }));
 
+    expect(latestChannel().postMessage).not.toHaveBeenCalled();
+
+    teardownControllerTest(application);
+  });
+
+  it("不正な buttonId（文字列）を受け取った場合は無視する", async () => {
+    const { application } = await setupControllerTest<BuzzerControlController>(
+      BuzzerControlController,
+      '<div data-controller="buzzer-control"></div>',
+      "buzzer-control",
+    );
+
+    window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat: 0 } }));
+    window.dispatchEvent(
+      new CustomEvent<{ buttonId: ButtonId }>("buzzer:emulator:button-press", {
+        detail: { buttonId: "x" as unknown as ButtonId },
+      }),
+    );
+
+    expect(localStorage.getItem("buzzerMapping")).toBeNull();
+    expect(latestChannel().postMessage).not.toHaveBeenCalled();
+
+    teardownControllerTest(application);
+  });
+
+  it("不正な buttonId（範囲外値）を受け取った場合は無視する", async () => {
+    const { application } = await setupControllerTest<BuzzerControlController>(
+      BuzzerControlController,
+      '<div data-controller="buzzer-control"></div>',
+      "buzzer-control",
+    );
+
+    window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat: 0 } }));
+    window.dispatchEvent(
+      new CustomEvent<{ buttonId: ButtonId }>("buzzer:emulator:button-press", {
+        detail: { buttonId: 999 as unknown as ButtonId },
+      }),
+    );
+
+    expect(localStorage.getItem("buzzerMapping")).toBeNull();
     expect(latestChannel().postMessage).not.toHaveBeenCalled();
 
     teardownControllerTest(application);

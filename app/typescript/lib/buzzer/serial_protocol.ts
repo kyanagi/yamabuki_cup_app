@@ -1,5 +1,7 @@
+import { type ButtonId, createButtonId } from "./button_id";
+
 export type SerialProtocolSignal =
-  | { type: "button_pressed"; buttonId: number }
+  | { type: "button_pressed"; buttonId: ButtonId }
   | { type: "correct" }
   | { type: "wrong" }
   | { type: "reset" }
@@ -10,8 +12,9 @@ export function parseSerialProtocolLine(line: string): SerialProtocolSignal {
 
   if (/^\d+$/.test(raw)) {
     const value = Number(raw);
-    if (value >= 1 && value <= 24) {
-      return { type: "button_pressed", buttonId: value };
+    const buttonId = createButtonId(value);
+    if (buttonId !== null) {
+      return { type: "button_pressed", buttonId };
     }
 
     if (value === 51) return { type: "correct" };

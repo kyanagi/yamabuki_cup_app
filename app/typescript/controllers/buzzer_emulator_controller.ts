@@ -1,11 +1,12 @@
 import { Controller } from "@hotwired/stimulus";
+import { type ButtonId, createButtonId } from "../lib/buzzer/button_id";
 
 const INITIAL_LAST_PRESSED_TEXT = "未入力";
 
 type BuzzerStateChangedDetail = {
   learningSeat: number | null;
-  lastPressedButtonId: number | null;
-  mapping: Map<number, number>;
+  lastPressedButtonId: ButtonId | null;
+  mapping: Map<ButtonId, number>;
 };
 
 export default class extends Controller {
@@ -25,8 +26,8 @@ export default class extends Controller {
   pressButton(event: Event): void {
     const button = event.currentTarget as HTMLElement | null;
     const buttonIdText = button?.getAttribute("data-button-id");
-    const buttonId = Number.parseInt(buttonIdText || "", 10);
-    if (!Number.isInteger(buttonId)) return;
+    const buttonId = createButtonId(Number.parseInt(buttonIdText || "", 10));
+    if (buttonId === null) return;
 
     window.dispatchEvent(new CustomEvent("buzzer:emulator:button-press", { detail: { buttonId } }));
   }

@@ -1,21 +1,19 @@
+import { type ButtonId, createButtonId, isButtonId, MAX_BUTTON_ID, MIN_BUTTON_ID } from "./button_id";
+
 export const BUZZER_MAPPING_STORAGE_KEY = "buzzerMapping";
-export const MIN_BUTTON_ID = 1;
-export const MAX_BUTTON_ID = 24;
 export const MIN_SEAT = 0;
 export const MAX_SEAT = 11;
 
-export type BuzzerMapping = Map<number, number>;
+export { MIN_BUTTON_ID, MAX_BUTTON_ID };
 
-function isValidButtonId(buttonId: number): boolean {
-  return Number.isInteger(buttonId) && buttonId >= MIN_BUTTON_ID && buttonId <= MAX_BUTTON_ID;
-}
+export type BuzzerMapping = Map<ButtonId, number>;
 
 function isValidSeat(seat: number): boolean {
   return Number.isInteger(seat) && seat >= MIN_SEAT && seat <= MAX_SEAT;
 }
 
-export function assignButtonToSeat(mapping: BuzzerMapping, buttonId: number, seat: number): void {
-  if (!isValidButtonId(buttonId) || !isValidSeat(seat)) return;
+export function assignButtonToSeat(mapping: BuzzerMapping, buttonId: ButtonId, seat: number): void {
+  if (!isButtonId(buttonId) || !isValidSeat(seat)) return;
 
   for (const [existingButtonId, existingSeat] of mapping) {
     if (existingSeat === seat && existingButtonId !== buttonId) {
@@ -26,14 +24,12 @@ export function assignButtonToSeat(mapping: BuzzerMapping, buttonId: number, sea
   mapping.set(buttonId, seat);
 }
 
-export function findSeatByButtonId(mapping: BuzzerMapping, buttonId: number): number | null {
-  if (!isValidButtonId(buttonId)) return null;
-
+export function findSeatByButtonId(mapping: BuzzerMapping, buttonId: ButtonId): number | null {
   const seat = mapping.get(buttonId);
   return seat === undefined ? null : seat;
 }
 
-export function findButtonIdBySeat(mapping: BuzzerMapping, seat: number): number | null {
+export function findButtonIdBySeat(mapping: BuzzerMapping, seat: number): ButtonId | null {
   if (!isValidSeat(seat)) return null;
 
   for (const [buttonId, mappedSeat] of mapping) {
@@ -51,8 +47,9 @@ export function loadBuzzerMapping(storage = localStorage): BuzzerMapping {
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     const mapping: BuzzerMapping = new Map();
     for (const [buttonIdText, seatValue] of Object.entries(parsed)) {
-      const buttonId = Number.parseInt(buttonIdText, 10);
+      const buttonId = createButtonId(Number.parseInt(buttonIdText, 10));
       const seat = Number(seatValue);
+      if (buttonId === null) continue;
       assignButtonToSeat(mapping, buttonId, seat);
     }
     return mapping;
@@ -64,7 +61,7 @@ export function loadBuzzerMapping(storage = localStorage): BuzzerMapping {
 export function saveBuzzerMapping(mapping: BuzzerMapping, storage = localStorage): void {
   const json: Record<string, number> = {};
   for (const [buttonId, seat] of mapping) {
-    if (isValidButtonId(buttonId) && isValidSeat(seat)) {
+    if (isButtonId(buttonId) && isValidSeat(seat)) {
       json[String(buttonId)] = seat;
     }
   }
