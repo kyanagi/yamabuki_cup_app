@@ -1,3 +1,9 @@
+/**
+ * Quiz Reader の問い読み結果を IndexedDB に保存するストアモジュール。
+ *
+ * 保存先ストアの初期化と save 操作のみを担当し、
+ * Controller やオーケストレータから永続化詳細を隠蔽する。
+ */
 import { openDB } from "idb";
 
 const IDB_NAME = "yamabuki-cup-quiz-reader";

@@ -1,3 +1,10 @@
+/**
+ * Quiz Reader の本線ユースケースを統括するオーケストレータ。
+ *
+ * Controller からイベント分岐と副作用の手順を移し、
+ * 「イベント仲介 + 依存呼び出し」の流れをここで組み立てる。
+ * UI更新は view、HTTP通信は api、永続化は readingStore に委譲する。
+ */
 import { Turbo } from "@hotwired/turbo-rails";
 import {
   createQuestionReadingContext,
