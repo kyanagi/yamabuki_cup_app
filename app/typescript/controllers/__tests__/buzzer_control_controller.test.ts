@@ -4,8 +4,8 @@ import BuzzerControlController from "../buzzer_control_controller";
 
 type BuzzerStateChangedDetail = {
   learningSeat: number | null;
-  lastPressed: string;
-  mapping: Record<string, number>;
+  lastPressedButtonId: number | null;
+  mapping: Map<number, number>;
 };
 
 class MockBroadcastChannel {
@@ -87,8 +87,8 @@ describe("BuzzerControlController", () => {
 
     expect(lastState(states)).toEqual({
       learningSeat: null,
-      lastPressed: "未入力",
-      mapping: { "2": 1 },
+      lastPressedButtonId: null,
+      mapping: new Map([[2, 1]]),
     });
 
     teardownControllerTest(application);
@@ -187,8 +187,8 @@ describe("BuzzerControlController", () => {
 
     expect(lastState(states)).toEqual({
       learningSeat: null,
-      lastPressed: "未入力",
-      mapping: { "2": 0 },
+      lastPressedButtonId: null,
+      mapping: new Map([[2, 0]]),
     });
     expect(latestChannel().postMessage).toHaveBeenCalledWith({ type: "reset" });
 

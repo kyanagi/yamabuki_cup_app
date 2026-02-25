@@ -54,14 +54,37 @@ describe("BuzzerEmulatorController", () => {
       new CustomEvent("buzzer:state-changed", {
         detail: {
           learningSeat: null,
-          lastPressed: "2",
-          mapping: {},
+          lastPressedButtonId: 2,
+          mapping: new Map<number, number>(),
         },
       }),
     );
 
     const lastPressed = element.querySelector('[data-buzzer-emulator-target="lastPressed"]');
     expect(lastPressed?.textContent).toBe("2");
+
+    teardownControllerTest(application);
+  });
+
+  it("lastPressedButtonId が null の場合は未入力を表示する", async () => {
+    const { application, element } = await setupControllerTest<BuzzerEmulatorController>(
+      BuzzerEmulatorController,
+      createHTML(),
+      "buzzer-emulator",
+    );
+
+    window.dispatchEvent(
+      new CustomEvent("buzzer:state-changed", {
+        detail: {
+          learningSeat: null,
+          lastPressedButtonId: null,
+          mapping: new Map<number, number>(),
+        },
+      }),
+    );
+
+    const lastPressed = element.querySelector('[data-buzzer-emulator-target="lastPressed"]');
+    expect(lastPressed?.textContent).toBe("未入力");
 
     teardownControllerTest(application);
   });

@@ -71,8 +71,8 @@ describe("BuzzerAssignmentController", () => {
       new CustomEvent("buzzer:state-changed", {
         detail: {
           learningSeat: 0,
-          lastPressed: "2",
-          mapping: { "2": 1 },
+          lastPressedButtonId: 2,
+          mapping: new Map([[2, 1]]),
         },
       }),
     );

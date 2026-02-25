@@ -4,8 +4,8 @@ const INITIAL_LAST_PRESSED_TEXT = "未入力";
 
 type BuzzerStateChangedDetail = {
   learningSeat: number | null;
-  lastPressed: string;
-  mapping: Record<string, number>;
+  lastPressedButtonId: number | null;
+  mapping: Map<number, number>;
 };
 
 export default class extends Controller {
@@ -40,7 +40,9 @@ export default class extends Controller {
   }
 
   #stateChangedHandler = (event: CustomEvent<BuzzerStateChangedDetail>): void => {
-    const lastPressed = event.detail?.lastPressed;
-    this.lastPressedTarget.textContent = typeof lastPressed === "string" ? lastPressed : INITIAL_LAST_PRESSED_TEXT;
+    const lastPressedButtonId = event.detail?.lastPressedButtonId;
+    this.lastPressedTarget.textContent = Number.isInteger(lastPressedButtonId)
+      ? String(lastPressedButtonId)
+      : INITIAL_LAST_PRESSED_TEXT;
   };
 }

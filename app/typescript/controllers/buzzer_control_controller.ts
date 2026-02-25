@@ -10,8 +10,6 @@ import {
   saveBuzzerMapping,
 } from "../lib/buzzer/mapping_store";
 
-const INITIAL_LAST_PRESSED_TEXT = "未入力";
-
 type ToggleLearningDetail = {
   seat: number;
 };
@@ -22,15 +20,15 @@ type ButtonPressDetail = {
 
 type BuzzerStateChangedDetail = {
   learningSeat: number | null;
-  lastPressed: string;
-  mapping: Record<string, number>;
+  lastPressedButtonId: number | null;
+  mapping: Map<number, number>;
 };
 
 export default class extends Controller {
   #channel: BuzzerChannel | null = null;
   #mapping: BuzzerMapping = new Map();
   #learningSeat: number | null = null;
-  #lastPressed = INITIAL_LAST_PRESSED_TEXT;
+  #lastPressedButtonId: number | null = null;
 
   connect(): void {
     this.#mapping = loadBuzzerMapping();
@@ -63,7 +61,7 @@ export default class extends Controller {
   }
 
   #handleButtonPressed(buttonId: number): void {
-    this.#lastPressed = String(buttonId);
+    this.#lastPressedButtonId = buttonId;
     if (this.#learningSeat !== null) {
       assignButtonToSeat(this.#mapping, buttonId, this.#learningSeat);
       saveBuzzerMapping(this.#mapping);
@@ -81,15 +79,10 @@ export default class extends Controller {
   }
 
   #emitStateChanged(): void {
-    const mapping: Record<string, number> = {};
-    for (const [buttonId, seat] of this.#mapping) {
-      mapping[String(buttonId)] = seat;
-    }
-
     const detail: BuzzerStateChangedDetail = {
       learningSeat: this.#learningSeat,
-      lastPressed: this.#lastPressed,
-      mapping,
+      lastPressedButtonId: this.#lastPressedButtonId,
+      mapping: new Map(this.#mapping),
     };
 
     window.dispatchEvent(new CustomEvent<BuzzerStateChangedDetail>("buzzer:state-changed", { detail }));
@@ -118,7 +111,7 @@ export default class extends Controller {
   };
 
   #resetHandler = (): void => {
-    this.#lastPressed = INITIAL_LAST_PRESSED_TEXT;
+    this.#lastPressedButtonId = null;
     this.#learningSeat = null;
     this.#channel?.post({ type: "reset" });
     this.#emitStateChanged();
