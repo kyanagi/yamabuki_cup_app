@@ -1,7 +1,7 @@
 <%# locals: (question:) %>
-<div class="box has-background-grey-lighter" data-quiz-reader-target="next2QuestionBox">
+<div class="box has-background-grey-lighter quiz-reader-off-air" data-quiz-reader-target="next2QuestionBox">
   <h2 class="subtitle"><%= question.id %></h2>
-  <div data-quiz-reader-target="next2QuestionContent">
+  <div class="is-hidden" data-quiz-reader-target="next2QuestionContent">
     <p><%= question.text %></p>
     <p class="mt-4"><%= question.answer %></p>
   </div>
