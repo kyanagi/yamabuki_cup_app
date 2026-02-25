@@ -33,21 +33,6 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
         ${isQuestionFollowOn ? "checked" : ""}
       />
       <span data-quiz-reader-target="questionFollowLabel">${isQuestionFollowOn ? "問題フォローON" : "問題フォローOFF"}</span>
-      <span data-quiz-reader-target="duration"></span>
-
-      <!-- Loading status icons -->
-      <span data-quiz-reader-target="voiceLoadingStatusIcon voiceLoadingIcon" class="is-hidden"></span>
-      <span data-quiz-reader-target="voiceLoadingStatusIcon voiceLoadedIcon" class="is-hidden"></span>
-
-      <!-- Play status icons -->
-      <span data-quiz-reader-target="playStatusIcon stopIcon" class="is-hidden"></span>
-      <span data-quiz-reader-target="playStatusIcon playIcon" class="is-hidden"></span>
-      <span data-quiz-reader-target="playStatusIcon pauseIcon" class="is-hidden"></span>
-
-      <!-- Result uploading status icons -->
-      <span data-quiz-reader-target="resultUploadingStatusIcon resultUploadingIcon" class="is-hidden"></span>
-      <span data-quiz-reader-target="resultUploadingStatusIcon resultUploadedIcon" class="is-hidden"></span>
-      <span data-quiz-reader-target="resultUploadingStatusIcon resultUploadErrorIcon" class="is-hidden"></span>
 
       <!-- Folder selection -->
       <span data-quiz-reader-target="folderStatus" class="has-text-grey">未選択</span>
@@ -62,6 +47,18 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
       <div data-quiz-reader-target="nextQuestions">
         <div class="box" data-quiz-reader-target="nextQuestionBox">
           <div data-quiz-reader-target="nextQuestionContent"></div>
+          <p>
+            <span data-quiz-reader-target="duration"></span>
+            <span data-quiz-reader-target="voiceLoadingStatusIcon voiceLoadingIcon" class="is-hidden"></span>
+            <span data-quiz-reader-target="voiceLoadingStatusIcon voiceLoadedIcon" class="is-hidden"></span>
+            <span data-quiz-reader-target="voiceLoadingStatusIcon voiceLoadErrorIcon" class="is-hidden"></span>
+            <span data-quiz-reader-target="playStatusIcon stopIcon"></span>
+            <span data-quiz-reader-target="playStatusIcon playIcon" class="is-hidden"></span>
+            <span data-quiz-reader-target="playStatusIcon pauseIcon" class="is-hidden"></span>
+            <span data-quiz-reader-target="resultUploadingStatusIcon resultUploadingIcon" class="is-hidden"></span>
+            <span data-quiz-reader-target="resultUploadingStatusIcon resultUploadedIcon" class="is-hidden"></span>
+            <span data-quiz-reader-target="resultUploadingStatusIcon resultUploadErrorIcon" class="is-hidden"></span>
+          </p>
         </div>
         <div class="box" data-quiz-reader-target="next2QuestionBox">
           <div data-quiz-reader-target="next2QuestionContent"></div>

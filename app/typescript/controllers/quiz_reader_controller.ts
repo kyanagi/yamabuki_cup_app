@@ -9,6 +9,7 @@ import {
   type VoiceStatus,
 } from "./quiz_reader/question_reading_context";
 import { createQuizReaderApi } from "./quiz_reader/quiz_reader_api";
+import { createQuizReaderView } from "./quiz_reader/quiz_reader_view";
 
 // 既存テストと利用箇所の互換性維持のため再エクスポート
 export { createQuestionReadingContext, loadAudioFromLocalFile };
@@ -19,8 +20,6 @@ const IDB_NAME = "yamabuki-cup-quiz-reader";
 const VOLUME_STORAGE_KEY = "quiz-reader-volume";
 // デフォルト音量
 const DEFAULT_VOLUME = 100;
-
-type ResultUploadingStatus = "NOT_UPLOADING" | "UPLOADING" | "UPLOADED" | "UPLOAD_ERROR";
 
 export default class extends Controller {
   static targets = [
@@ -33,6 +32,7 @@ export default class extends Controller {
     "playStatusIcon",
     "voiceLoadingIcon",
     "voiceLoadedIcon",
+    "voiceLoadErrorIcon",
     "stopIcon",
     "playIcon",
     "pauseIcon",
@@ -68,6 +68,7 @@ export default class extends Controller {
   declare playStatusIconTargets: HTMLElement[];
   declare voiceLoadingIconTarget: HTMLElement;
   declare voiceLoadedIconTarget: HTMLElement;
+  declare voiceLoadErrorIconTarget: HTMLElement;
   declare stopIconTarget: HTMLElement;
   declare playIconTarget: HTMLElement;
   declare pauseIconTarget: HTMLElement;
@@ -104,6 +105,28 @@ export default class extends Controller {
   private readonly quizReaderApi = createQuizReaderApi({
     csrfTokenProvider: () => this.csrfToken(),
   });
+  private readonly quizReaderView = createQuizReaderView({
+    getVoiceLoadingStatusIcons: () =>
+      Array.from(this.element.querySelectorAll<HTMLElement>('[data-quiz-reader-target~="voiceLoadingStatusIcon"]')),
+    getVoiceLoadingIcon: () => this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="voiceLoadingIcon"]'),
+    getVoiceLoadedIcon: () => this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="voiceLoadedIcon"]'),
+    getVoiceLoadErrorIcon: () =>
+      this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="voiceLoadErrorIcon"]'),
+    getPlayStatusIcons: () =>
+      Array.from(this.element.querySelectorAll<HTMLElement>('[data-quiz-reader-target~="playStatusIcon"]')),
+    getStopIcon: () => this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="stopIcon"]'),
+    getPlayIcon: () => this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="playIcon"]'),
+    getPauseIcon: () => this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="pauseIcon"]'),
+    getResultUploadingStatusIcons: () =>
+      Array.from(this.element.querySelectorAll<HTMLElement>('[data-quiz-reader-target~="resultUploadingStatusIcon"]')),
+    getResultUploadingIcon: () =>
+      this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="resultUploadingIcon"]'),
+    getResultUploadedIcon: () =>
+      this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="resultUploadedIcon"]'),
+    getResultUploadErrorIcon: () =>
+      this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="resultUploadErrorIcon"]'),
+    getMainError: () => this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="mainError"]'),
+  });
 
   private idbPromise = openDB(IDB_NAME, 1, {
     upgrade(db) {
@@ -129,20 +152,27 @@ export default class extends Controller {
     const onLoadingStatusChanged = (loadingStatus: LoadingStatus) => {
       switch (loadingStatus) {
         case "LOADING":
-          this.setVoiceLoadingStatusIcon("LOADING");
+          this.quizReaderView.setVoiceLoadingStatusIcon("LOADING");
           break;
         case "LOADED":
           console.log(`load done: duration=${this.readingContext?.fullDuration}`);
-          this.setVoiceLoadingStatusIcon("LOADED");
-          this.clearMainError();
+          this.quizReaderView.setVoiceLoadingStatusIcon("LOADED");
+          this.quizReaderView.clearMainError();
+          break;
+        case "NOT_LOADED":
+          this.quizReaderView.setVoiceLoadingStatusIcon("NOT_LOADED");
+          // NotFound時は既に詳細メッセージが表示済みなので上書きしない。
+          if (this.mainErrorText === "") {
+            this.quizReaderView.showMainError("音声ファイルの読み込みに失敗しました");
+          }
           break;
       }
     };
     const onVoiceStatusChanged = (voiceStatus: VoiceStatus) => {
-      this.setPlayStatusIcon(voiceStatus);
+      this.quizReaderView.setPlayStatusIcon(voiceStatus);
     };
     const onFileNotFound = (filename: string) => {
-      this.showMainError(`音声ファイルが見つかりません（${filename}）`);
+      this.quizReaderView.showMainError(`音声ファイルが見つかりません（${filename}）`);
     };
 
     this.readingContext?.dispose();
@@ -349,70 +379,10 @@ export default class extends Controller {
     }
   }
 
-  private setVoiceLoadingStatusIcon(status: LoadingStatus) {
-    for (const icon of this.voiceLoadingStatusIconTargets) {
-      icon.classList.add("is-hidden");
-    }
-    switch (status) {
-      case "LOADING":
-        this.voiceLoadingIconTarget.classList.remove("is-hidden");
-        break;
-      case "LOADED":
-        this.voiceLoadedIconTarget.classList.remove("is-hidden");
-        break;
-    }
-  }
-
-  private setPlayStatusIcon(status: VoiceStatus) {
-    for (const icon of this.playStatusIconTargets) {
-      icon.classList.add("is-hidden");
-    }
-    switch (status) {
-      case "STANDBY":
-        this.stopIconTarget.classList.remove("is-hidden");
-        break;
-      case "PLAYING":
-        this.playIconTarget.classList.remove("is-hidden");
-        break;
-      case "PAUSED":
-        this.pauseIconTarget.classList.remove("is-hidden");
-        break;
-    }
-  }
-
-  private setResultUploadingStatusIcon(status: ResultUploadingStatus) {
-    for (const icon of this.resultUploadingStatusIconTargets) {
-      icon.classList.add("is-hidden");
-    }
-    switch (status) {
-      case "NOT_UPLOADING":
-        break;
-      case "UPLOADING":
-        this.resultUploadingIconTarget.classList.remove("is-hidden");
-        break;
-      case "UPLOADED":
-        this.resultUploadedIconTarget.classList.remove("is-hidden");
-        break;
-      case "UPLOAD_ERROR":
-        this.resultUploadErrorIconTarget.classList.remove("is-hidden");
-        break;
-    }
-  }
-
   private updateFolderStatusText(text: string, state: "default" | "success") {
     this.folderStatusTarget.classList.remove("has-text-grey", "has-text-success");
     this.folderStatusTarget.classList.add(state === "success" ? "has-text-success" : "has-text-grey");
     this.folderStatusTarget.textContent = text;
-  }
-
-  private showMainError(message: string) {
-    this.mainErrorTarget.textContent = message;
-    this.mainErrorTarget.classList.remove("is-hidden");
-  }
-
-  private clearMainError() {
-    this.mainErrorTarget.textContent = "";
-    this.mainErrorTarget.classList.add("is-hidden");
   }
 
   private clearSettingsButtonHighlight() {
@@ -433,7 +403,7 @@ export default class extends Controller {
       this.sampleAudioBuffer = undefined;
 
       this.soundDirHandle = dirHandle;
-      this.clearMainError();
+      this.quizReaderView.clearMainError();
       this.clearSettingsButtonHighlight();
       this.updateFolderStatusText(dirHandle.name, "success");
       this.enableSampleAudioButtons();
@@ -442,10 +412,10 @@ export default class extends Controller {
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") {
         // キャンセル時はエラーをクリアするが、folderStatus は既存の選択状態を維持
-        this.clearMainError();
+        this.quizReaderView.clearMainError();
         return;
       }
-      this.showMainError("フォルダの選択に失敗しました");
+      this.quizReaderView.showMainError("フォルダの選択に失敗しました");
     }
   }
 
@@ -459,7 +429,7 @@ export default class extends Controller {
 
     // フォルダ未選択チェックを先に行う
     if (!this.soundDirHandle) {
-      this.showMainError("再生するには音声フォルダの選択が必要です");
+      this.quizReaderView.showMainError("再生するには音声フォルダの選択が必要です");
       return;
     }
 
@@ -488,7 +458,7 @@ export default class extends Controller {
     console.log("resetReading");
     this.readingContext.reset();
     this.durationTarget.textContent = "";
-    this.setResultUploadingStatusIcon("NOT_UPLOADING");
+    this.quizReaderView.setResultUploadingStatusIcon("NOT_UPLOADING");
   }
 
   async switchToQuestion() {
@@ -573,18 +543,23 @@ export default class extends Controller {
   private async uploadQuestionReading() {
     if (!this.readingContext) return;
 
-    this.setResultUploadingStatusIcon("UPLOADING");
+    this.quizReaderView.setResultUploadingStatusIcon("UPLOADING");
     try {
       await this.quizReaderApi.uploadQuestionReading({
         questionId: this.readingContext.questionId,
         readDuration: this.readingContext.readDuration,
         fullDuration: this.readingContext.fullDuration,
       });
-      this.setResultUploadingStatusIcon("UPLOADED");
+      this.quizReaderView.setResultUploadingStatusIcon("UPLOADED");
     } catch (e) {
       console.error(e);
-      this.setResultUploadingStatusIcon("UPLOAD_ERROR");
+      this.quizReaderView.setResultUploadingStatusIcon("UPLOAD_ERROR");
     }
+  }
+
+  private get mainErrorText(): string {
+    const mainError = this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="mainError"]');
+    return mainError?.textContent?.trim() ?? "";
   }
 
   private get durationText(): string {
