@@ -9,6 +9,79 @@ const FamilyNameKanaSchema = v.pipe(v.string(), v.nonEmpty("姓（ふりがな�
 const GivenNameKanaSchema = v.pipe(v.string(), v.nonEmpty("名（ふりがな）を入力してください"));
 const EntryListNameSchema = v.pipe(v.string(), v.nonEmpty("エントリーリストの名前を入力してください"));
 
+type ValidationValueTargetKey =
+  | "emailTarget"
+  | "passwordTarget"
+  | "familyNameTarget"
+  | "givenNameTarget"
+  | "familyNameKanaTarget"
+  | "givenNameKanaTarget"
+  | "entryListNameTarget";
+type ValidationErrorTargetKey =
+  | "emailErrorTarget"
+  | "passwordErrorTarget"
+  | "familyNameErrorTarget"
+  | "givenNameErrorTarget"
+  | "familyNameKanaErrorTarget"
+  | "givenNameKanaErrorTarget"
+  | "entryListNameErrorTarget";
+type ValidationFieldDefinition = {
+  schema: v.BaseSchema<unknown, unknown, v.BaseIssue<unknown>>;
+  valueTarget: ValidationValueTargetKey;
+  errorTarget: ValidationErrorTargetKey;
+  skipInEditMode?: boolean;
+};
+const ValidationFields: readonly ValidationFieldDefinition[] = [
+  { schema: EmailSchema, valueTarget: "emailTarget", errorTarget: "emailErrorTarget" },
+  { schema: PasswordSchema, valueTarget: "passwordTarget", errorTarget: "passwordErrorTarget", skipInEditMode: true },
+  { schema: FamilyNameSchema, valueTarget: "familyNameTarget", errorTarget: "familyNameErrorTarget" },
+  { schema: GivenNameSchema, valueTarget: "givenNameTarget", errorTarget: "givenNameErrorTarget" },
+  { schema: FamilyNameKanaSchema, valueTarget: "familyNameKanaTarget", errorTarget: "familyNameKanaErrorTarget" },
+  { schema: GivenNameKanaSchema, valueTarget: "givenNameKanaTarget", errorTarget: "givenNameKanaErrorTarget" },
+  { schema: EntryListNameSchema, valueTarget: "entryListNameTarget", errorTarget: "entryListNameErrorTarget" },
+] as const;
+
+type ConfirmationValueTargetKey =
+  | "emailTarget"
+  | "familyNameTarget"
+  | "givenNameTarget"
+  | "familyNameKanaTarget"
+  | "givenNameKanaTarget"
+  | "entryListNameTarget"
+  | "notesTarget"
+  | "passwordTarget";
+type ConfirmationDisplayTargetKey =
+  | "confirmationEmailTarget"
+  | "confirmationFamilyNameTarget"
+  | "confirmationGivenNameTarget"
+  | "confirmationFamilyNameKanaTarget"
+  | "confirmationGivenNameKanaTarget"
+  | "confirmationEntryListNameTarget"
+  | "confirmationNotesTarget"
+  | "confirmationPasswordTarget";
+type ConfirmationGuardKey = "hasNotesTarget" | "hasConfirmationPasswordTarget";
+type ConfirmationFieldDefinition = {
+  valueTarget: ConfirmationValueTargetKey;
+  confirmationTarget: ConfirmationDisplayTargetKey;
+  guard?: ConfirmationGuardKey;
+  formatter?: (value: string) => string;
+};
+const ConfirmationFields: readonly ConfirmationFieldDefinition[] = [
+  { valueTarget: "emailTarget", confirmationTarget: "confirmationEmailTarget" },
+  { valueTarget: "familyNameTarget", confirmationTarget: "confirmationFamilyNameTarget" },
+  { valueTarget: "givenNameTarget", confirmationTarget: "confirmationGivenNameTarget" },
+  { valueTarget: "familyNameKanaTarget", confirmationTarget: "confirmationFamilyNameKanaTarget" },
+  { valueTarget: "givenNameKanaTarget", confirmationTarget: "confirmationGivenNameKanaTarget" },
+  { valueTarget: "entryListNameTarget", confirmationTarget: "confirmationEntryListNameTarget" },
+  { valueTarget: "notesTarget", confirmationTarget: "confirmationNotesTarget", guard: "hasNotesTarget" },
+  {
+    valueTarget: "passwordTarget",
+    confirmationTarget: "confirmationPasswordTarget",
+    guard: "hasConfirmationPasswordTarget",
+    formatter: (value) => (value ? "変更あり" : "変更なし"),
+  },
+] as const;
+
 export default class extends Controller {
   static values = { editMode: Boolean };
   static targets = [
@@ -78,20 +151,12 @@ export default class extends Controller {
     }
 
     let isValid = true;
-    isValid = this.validateField(EmailSchema, this.emailTarget, this.emailErrorTarget) && isValid;
-
-    // Skip password validation in edit mode
-    if (!this.editModeValue) {
-      isValid = this.validateField(PasswordSchema, this.passwordTarget, this.passwordErrorTarget) && isValid;
+    for (const field of ValidationFields) {
+      if (field.skipInEditMode && this.editModeValue) {
+        continue;
+      }
+      isValid = this.validateField(field.schema, this[field.valueTarget], this[field.errorTarget]) && isValid;
     }
-    isValid = this.validateField(FamilyNameSchema, this.familyNameTarget, this.familyNameErrorTarget) && isValid;
-    isValid = this.validateField(GivenNameSchema, this.givenNameTarget, this.givenNameErrorTarget) && isValid;
-    isValid =
-      this.validateField(FamilyNameKanaSchema, this.familyNameKanaTarget, this.familyNameKanaErrorTarget) && isValid;
-    isValid =
-      this.validateField(GivenNameKanaSchema, this.givenNameKanaTarget, this.givenNameKanaErrorTarget) && isValid;
-    isValid =
-      this.validateField(EntryListNameSchema, this.entryListNameTarget, this.entryListNameErrorTarget) && isValid;
 
     if (!isValid) {
       event.stopImmediatePropagation();
@@ -113,22 +178,12 @@ export default class extends Controller {
   }
 
   updateConfirmationDisplay() {
-    this.confirmationEmailTarget.textContent = this.emailTarget.value;
-    this.confirmationFamilyNameTarget.textContent = this.familyNameTarget.value;
-    this.confirmationGivenNameTarget.textContent = this.givenNameTarget.value;
-    this.confirmationFamilyNameKanaTarget.textContent = this.familyNameKanaTarget.value;
-    this.confirmationGivenNameKanaTarget.textContent = this.givenNameKanaTarget.value;
-    this.confirmationEntryListNameTarget.textContent = this.entryListNameTarget.value;
-
-    // Only update notes if it exists (registration form)
-    if (this.hasNotesTarget) {
-      this.confirmationNotesTarget.textContent = this.notesTarget.value;
-    }
-
-    // Only update password confirmation if it exists (edit form)
-    if (this.hasConfirmationPasswordTarget) {
-      const passwordValue = this.passwordTarget.value;
-      this.confirmationPasswordTarget.textContent = passwordValue ? "変更あり" : "変更なし";
+    for (const field of ConfirmationFields) {
+      if (field.guard && !this[field.guard]) {
+        continue;
+      }
+      const value = this[field.valueTarget].value;
+      this[field.confirmationTarget].textContent = field.formatter ? field.formatter(value) : value;
     }
   }
 }
