@@ -21,7 +21,7 @@ RSpec.describe "Admin 2R裏スコア操作ガード", type: :request do
     it "422が返される" do
       match = create_round2_ura_match_with_participants
       post admin_match_question_closings_path(match_id: match.id)
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "ScoreOperationが作成されない" do
@@ -36,7 +36,7 @@ RSpec.describe "Admin 2R裏スコア操作ガード", type: :request do
     it "422が返される" do
       match = create_round2_ura_match_with_participants
       post admin_match_match_closings_path(match_id: match.id)
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
 
     it "ScoreOperationが作成されない" do

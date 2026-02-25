@@ -98,7 +98,7 @@ RSpec.describe "Admin::ScoreFreeEdits", type: :request do
 
         get edit_admin_match_score_free_edit_path(match_id: match.id)
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -136,7 +136,7 @@ RSpec.describe "Admin::ScoreFreeEdits", type: :request do
 
       patch admin_match_score_free_edit_path(match_id: match.id), params: params
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       expect(response.body).to include("status")
     end
 
@@ -160,7 +160,7 @@ RSpec.describe "Admin::ScoreFreeEdits", type: :request do
               params: score_free_edit_params_from(match, matchings)
       end.not_to change(ScoreFreeEditOperation, :count)
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
     end
   end
 end

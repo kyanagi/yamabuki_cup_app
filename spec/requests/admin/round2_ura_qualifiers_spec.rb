@@ -117,7 +117,7 @@ RSpec.describe "Admin::Round2UraQualifiers", type: :request do
           }
 
           patch admin_match_round2_ura_qualifier_path(match_id: match.id), params: params
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
         end
 
         it "エラーメッセージが表示される" do

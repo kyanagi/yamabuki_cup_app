@@ -28,7 +28,7 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
         post admin_scoreboard_manipulations_path,
              params: { action_name: "match_display", match_id: match.id }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
@@ -101,7 +101,7 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
                params: { action_name: "final_display_champion", match_id: match.id }
         end.not_to have_broadcasted_to("scoreboard")
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
@@ -114,7 +114,7 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
                params: { action_name: "final_display_champion", match_id: match.id }
         end.not_to have_broadcasted_to("scoreboard")
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
