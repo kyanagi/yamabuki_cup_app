@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { testQuestionId } from "../../__tests__/helpers/question-id";
 import type { LoadingStatus, QuestionReadingContext, VoiceStatus } from "../quiz_reader/question_reading_context";
 import type { QuizReaderApi } from "../quiz_reader/quiz_reader_api";
 import {
@@ -70,7 +71,7 @@ function createMockReadingContext(params: {
     reset: vi.fn(),
     dispose: vi.fn(),
     get questionId() {
-      return questionId;
+      return testQuestionId(questionId);
     },
     get fullDuration() {
       return fullDuration;
@@ -130,7 +131,7 @@ function createFixture(options: FixtureOptions = {}): Fixture {
     setSoundDirHandle,
     getReadingContext: vi.fn(() => state.readingContext),
     setReadingContext,
-    getQuestionSeed: vi.fn(() => ({ questionId: 10, soundId: "001" })),
+    getQuestionSeed: vi.fn(() => ({ questionId: testQuestionId(10), soundId: "001" })),
     isAnyModalOpen: vi.fn(() => options.isAnyModalOpen ?? false),
     isOnAirEnabled: vi.fn(() => options.isOnAirEnabled ?? true),
     isQuestionFollowEnabled: vi.fn(() => options.isQuestionFollowEnabled ?? true),
@@ -165,7 +166,7 @@ function createFixture(options: FixtureOptions = {}): Fixture {
 
   const createQuestionReadingContextFn = vi.fn(
     (
-      _questionId: number,
+      _questionId,
       _soundId: string,
       _audioContext: AudioContext,
       _dirHandle: FileSystemDirectoryHandle,
@@ -571,7 +572,7 @@ describe("createQuizReaderOrchestrator", () => {
     await fixture.orchestrator.switchToQuestion();
 
     // Assert
-    expect(fixture.deps.api.fetchNextQuestionStream).toHaveBeenCalledWith("42");
+    expect(fixture.deps.api.fetchNextQuestionStream).toHaveBeenCalledWith(testQuestionId(42));
     expect(fixture.deps.renderStreamMessageFn).toHaveBeenCalledWith("<turbo-stream></turbo-stream>");
     expect(fixture.stateDeps.applyOnAirStateToUI).toHaveBeenCalled();
   });

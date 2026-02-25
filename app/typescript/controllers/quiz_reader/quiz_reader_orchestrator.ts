@@ -7,6 +7,11 @@
  */
 import { Turbo } from "@hotwired/turbo-rails";
 import {
+  parseQuestionIdFromDecimalString,
+  type QuestionId,
+  type QuestionTarget,
+} from "../../lib/quiz_reader/question_id";
+import {
   createQuestionReadingContext,
   type LoadingStatus,
   type QuestionReadingContext,
@@ -36,7 +41,7 @@ export type QuizReaderOrchestratorStateDeps = {
   setSoundDirHandle: (dir: FileSystemDirectoryHandle | undefined) => void;
   getReadingContext: () => QuestionReadingContext | undefined;
   setReadingContext: (ctx: QuestionReadingContext | undefined) => void;
-  getQuestionSeed: () => { questionId: number; soundId: string };
+  getQuestionSeed: () => { questionId: QuestionId; soundId: string };
   isAnyModalOpen: () => boolean;
   isOnAirEnabled: () => boolean;
   isQuestionFollowEnabled: () => boolean;
@@ -60,16 +65,16 @@ export type QuizReaderOrchestrator = {
 };
 
 type UpdateQuestionStreamAttributes = {
-  questionId: number;
+  questionId: QuestionId;
   soundId: string;
 };
 
 export type SwitchToQuestionInputParseResult =
   | { kind: "cancelled" }
   | { kind: "invalid" }
-  | { kind: "valid"; questionId: string };
+  | { kind: "valid"; questionId: QuestionId };
 
-type CreateQuestionReadingContextAndLoad = (questionId: number, soundId: string) => void;
+type CreateQuestionReadingContextAndLoad = (questionId: QuestionId, soundId: string) => void;
 
 const INVALID_QUESTION_ID_MESSAGE = "問題番号は数字で入力してください";
 
@@ -79,8 +84,8 @@ export function parseUpdateQuestionStreamAttributes(streamElement: HTMLElement):
     return null;
   }
 
-  const questionId = streamElement.getAttribute("question-id");
-  if (!questionId) {
+  const questionIdRaw = streamElement.getAttribute("question-id");
+  if (!questionIdRaw) {
     throw new Error("question-id が指定されていません。");
   }
   const soundId = streamElement.getAttribute("sound-id");
@@ -88,8 +93,13 @@ export function parseUpdateQuestionStreamAttributes(streamElement: HTMLElement):
     throw new Error("sound-id が指定されていません。");
   }
 
+  const questionId = parseQuestionIdFromDecimalString(questionIdRaw.trim());
+  if (questionId === null) {
+    throw new Error("question-id は1以上の整数で指定してください。");
+  }
+
   return {
-    questionId: Number(questionId),
+    questionId,
     soundId,
   };
 }
@@ -100,8 +110,8 @@ export function parseSwitchToQuestionInput(questionIdRaw: string | null): Switch
     return { kind: "cancelled" };
   }
 
-  const questionId = questionIdRaw.trim();
-  if (!/^\d+$/.test(questionId)) {
+  const questionId = parseQuestionIdFromDecimalString(questionIdRaw.trim());
+  if (questionId === null) {
     return { kind: "invalid" };
   }
 
@@ -136,7 +146,7 @@ function buildCreateQuestionReadingContextAndLoad(
   deps: ContextLoaderDeps,
   stateDeps: ContextLoaderStateDeps,
 ): CreateQuestionReadingContextAndLoad {
-  return (questionId: number, soundId: string) => {
+  return (questionId: QuestionId, soundId: string) => {
     const audioContext = stateDeps.getAudioContext();
     if (!audioContext) {
       throw new Error("AudioContext が初期化されていません");
@@ -339,7 +349,7 @@ function createQuestionNavigationActions(
   deps: QuestionNavigationDeps,
   stateDeps: QuestionNavigationStateDeps,
 ): Pick<QuizReaderOrchestrator, "switchToQuestion" | "proceedToNextQuestion"> {
-  const broadcastQuestion = async (questionId: number) => {
+  const broadcastQuestion = async (questionId: QuestionId) => {
     try {
       await deps.api.broadcastQuestion(questionId);
     } catch (e) {
@@ -348,9 +358,9 @@ function createQuestionNavigationActions(
     }
   };
 
-  const proceedToQuestion = async (questionId: string) => {
+  const proceedToQuestion = async (questionTarget: QuestionTarget) => {
     try {
-      const html = await deps.api.fetchNextQuestionStream(questionId);
+      const html = await deps.api.fetchNextQuestionStream(questionTarget);
       deps.renderStreamMessageFn(html);
       deps.requestAnimationFrameFn(() => {
         stateDeps.applyOnAirStateToUI();

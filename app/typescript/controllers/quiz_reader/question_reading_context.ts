@@ -1,3 +1,5 @@
+import type { QuestionId } from "../../lib/quiz_reader/question_id";
+
 // 「問題」と問題文の間の空白時間の長さ（ms）
 const INTERVAL_AFTER_MONDAI_MS = 300;
 
@@ -37,7 +39,7 @@ export type QuestionReadingContext = {
   stop(): void;
   reset(): void;
   dispose(): void;
-  get questionId(): number;
+  get questionId(): QuestionId;
   get fullDuration(): number;
   get readDuration(): number;
   get voiceStatus(): VoiceStatus;
@@ -45,7 +47,7 @@ export type QuestionReadingContext = {
 };
 
 export function createQuestionReadingContext(
-  questionId: number,
+  questionId: QuestionId,
   soundId: string,
   audioContext: AudioContext,
   dirHandle: FileSystemDirectoryHandle,

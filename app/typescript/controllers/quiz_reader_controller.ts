@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { createQuestionId, type QuestionId } from "../lib/quiz_reader/question_id";
 import {
   createQuestionReadingContext,
   type LoadingStatus,
@@ -91,6 +92,7 @@ export default class extends Controller {
   declare hasNext2QuestionBoxTarget: boolean;
   declare hasNextQuestionContentTarget: boolean;
   declare hasNext2QuestionContentTarget: boolean;
+  declare hasQuestionIdValue: boolean;
   declare questionIdValue: number;
   declare soundIdValue: string;
 
@@ -129,6 +131,7 @@ export default class extends Controller {
 
   private audioContext: AudioContext | undefined;
   private readingContext: QuestionReadingContext | undefined;
+  private initialQuestionId: QuestionId | undefined;
   private readonly quizReaderOrchestrator = createQuizReaderOrchestrator(
     {
       api: this.quizReaderApi,
@@ -147,7 +150,7 @@ export default class extends Controller {
         this.readingContext = readingContext;
       },
       getQuestionSeed: () => ({
-        questionId: this.questionIdValue,
+        questionId: this.requireInitialQuestionId(),
         soundId: this.soundIdValue,
       }),
       isAnyModalOpen: () => this.isAnyModalOpen(),
@@ -182,6 +185,7 @@ export default class extends Controller {
   };
 
   connect() {
+    this.initialQuestionId = this.resolveInitialQuestionId();
     console.log("QuizReaderController connected");
     this.audioContext = new AudioContext();
 
@@ -213,7 +217,26 @@ export default class extends Controller {
       this.audioContext.close();
     }
     this.audioContext = undefined;
+    this.initialQuestionId = undefined;
     this.soundDirHandle = undefined;
+  }
+
+  private requireInitialQuestionId(): QuestionId {
+    if (this.initialQuestionId === undefined) {
+      throw new Error("question-id-value の初期化に失敗しました。");
+    }
+    return this.initialQuestionId;
+  }
+
+  private resolveInitialQuestionId(): QuestionId {
+    if (!this.hasQuestionIdValue) {
+      throw new Error("data-quiz-reader-question-id-value が指定されていません。");
+    }
+    const questionId = createQuestionId(this.questionIdValue);
+    if (questionId === null) {
+      throw new Error("data-quiz-reader-question-id-value は1以上の整数で指定してください。");
+    }
+    return questionId;
   }
 
   /**

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { testQuestionId } from "../../__tests__/helpers/question-id";
 import { createQuizReaderReadingStore, type QuizReaderReadingRecord } from "../quiz_reader/quiz_reader_reading_store";
 
 type OpenDBFn = ReturnType<typeof vi.fn>;
@@ -19,7 +20,7 @@ describe("createQuizReaderReadingStore", () => {
       logger: { error: vi.fn() },
     });
     const record: QuizReaderReadingRecord = {
-      questionId: 12,
+      questionId: testQuestionId(12),
       readDuration: 2.34,
       timestamp: "2026-02-25T12:34:56.000Z",
     };
@@ -77,7 +78,7 @@ describe("createQuizReaderReadingStore", () => {
     // Act & Assert
     await expect(
       store.save({
-        questionId: 1,
+        questionId: testQuestionId(1),
         readDuration: 1.23,
         timestamp: "2026-02-25T00:00:00.000Z",
       }),

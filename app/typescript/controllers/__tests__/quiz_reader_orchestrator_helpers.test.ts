@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { testQuestionId } from "../../__tests__/helpers/question-id";
 import type { LoadingStatus, QuestionReadingContext } from "../quiz_reader/question_reading_context";
 import {
   formatDurationText,
@@ -14,7 +15,7 @@ function createReadingContext(params: { readDuration: number; fullDuration: numb
     reset: () => {},
     dispose: () => {},
     get questionId() {
-      return 1;
+      return testQuestionId(1);
     },
     get fullDuration() {
       return params.fullDuration;
@@ -62,20 +63,40 @@ describe("parseUpdateQuestionStreamAttributes", () => {
     expect(() => parseUpdateQuestionStreamAttributes(streamElement)).toThrow("sound-id が指定されていません。");
   });
 
-  it("question-id が非数値でも throw せず NaN を返す", () => {
+  it.each([
+    "abc",
+    "0",
+    "-1",
+    "1.5",
+    "1e3",
+    "0x2a",
+    "9007199254740993",
+  ])("question-id=%s は例外を投げる", (questionId) => {
     // Arrange
     const streamElement = document.createElement("turbo-stream");
     streamElement.setAttribute("action", "update-question");
-    streamElement.setAttribute("question-id", "abc");
+    streamElement.setAttribute("question-id", questionId);
+    streamElement.setAttribute("sound-id", "001");
+
+    // Assert
+    expect(() => parseUpdateQuestionStreamAttributes(streamElement)).toThrow();
+  });
+
+  it("question-id が有効値の場合は QuestionId を返す", () => {
+    // Arrange
+    const streamElement = document.createElement("turbo-stream");
+    streamElement.setAttribute("action", "update-question");
+    streamElement.setAttribute("question-id", "10");
     streamElement.setAttribute("sound-id", "001");
 
     // Act
     const parsedAttributes = parseUpdateQuestionStreamAttributes(streamElement);
 
     // Assert
-    expect(parsedAttributes).not.toBeNull();
-    expect(Number.isNaN(parsedAttributes?.questionId)).toBe(true);
-    expect(parsedAttributes?.soundId).toBe("001");
+    expect(parsedAttributes).toEqual({
+      questionId: testQuestionId(10),
+      soundId: "001",
+    });
   });
 });
 
@@ -88,17 +109,18 @@ describe("parseSwitchToQuestionInput", () => {
     expect(parsedInput).toEqual({ kind: "cancelled" });
   });
 
-  it("空白のみは invalid として扱う", () => {
+  it.each([
+    "   ",
+    "abc",
+    "0",
+    "-1",
+    "1.5",
+    "1e3",
+    "0x2a",
+    "9007199254740993",
+  ])("%s は invalid として扱う", (rawValue) => {
     // Act
-    const parsedInput = parseSwitchToQuestionInput("   ");
-
-    // Assert
-    expect(parsedInput).toEqual({ kind: "invalid" });
-  });
-
-  it("非数字は invalid として扱う", () => {
-    // Act
-    const parsedInput = parseSwitchToQuestionInput("abc");
+    const parsedInput = parseSwitchToQuestionInput(rawValue);
 
     // Assert
     expect(parsedInput).toEqual({ kind: "invalid" });
@@ -111,7 +133,7 @@ describe("parseSwitchToQuestionInput", () => {
     // Assert
     expect(parsedInput).toEqual({
       kind: "valid",
-      questionId: "42",
+      questionId: testQuestionId(42),
     });
   });
 });

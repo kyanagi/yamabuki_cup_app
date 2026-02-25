@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { testQuestionId } from "../../__tests__/helpers/question-id";
 import { createQuizReaderApi, type QuizReaderUploadPayload } from "../quiz_reader/quiz_reader_api";
 
 type MockFetchFn = ReturnType<typeof vi.fn>;
@@ -41,7 +42,7 @@ describe("createQuizReaderApi", () => {
     });
 
     // Act
-    await api.broadcastQuestion(42);
+    await api.broadcastQuestion(testQuestionId(42));
 
     // Assert
     expect(fetchFn).toHaveBeenCalledTimes(1);
@@ -70,7 +71,7 @@ describe("createQuizReaderApi", () => {
     });
 
     // Act & Assert
-    await expect(api.broadcastQuestion(42)).rejects.toThrow("HTTPエラー 500 Internal Server Error");
+    await expect(api.broadcastQuestion(testQuestionId(42))).rejects.toThrow("HTTPエラー 500 Internal Server Error");
   });
 
   it("fetchNextQuestionStream がturbo-stream文字列を返す", async () => {
@@ -97,6 +98,25 @@ describe("createQuizReaderApi", () => {
     expect(options.method).toBe("PUT");
     expect(options.headers.Accept).toBe("text/vnd.turbo-stream.html");
     expect(JSON.parse(options.body ?? "{}")).toEqual({ question_id: "next" });
+  });
+
+  it("fetchNextQuestionStream は QuestionId を数値として送信する", async () => {
+    // Arrange
+    fetchFn.mockResolvedValue(createResponse());
+    const api = createQuizReaderApi({
+      csrfTokenProvider: () => "test-csrf-token",
+      fetchFn: fetchFn as unknown as typeof fetch,
+      fetchWithRetryFn: fetchWithRetryFn as never,
+    });
+
+    // Act
+    await api.fetchNextQuestionStream(testQuestionId(42));
+
+    // Assert
+    const options = extractRequestOptions(fetchFn);
+    const body = JSON.parse(options.body ?? "{}");
+    expect(body.question_id).toBe(42);
+    expect(typeof body.question_id).toBe("number");
   });
 
   it("fetchNextQuestionStream はHTTPエラー時に例外を投げる", async () => {
@@ -127,7 +147,7 @@ describe("createQuizReaderApi", () => {
       fetchWithRetryFn: fetchWithRetryFn as never,
     });
     const payload: QuizReaderUploadPayload = {
-      questionId: 7,
+      questionId: testQuestionId(7),
       readDuration: 1.23,
       fullDuration: 4.56,
     };
@@ -168,7 +188,7 @@ describe("createQuizReaderApi", () => {
     // Act & Assert
     await expect(
       api.uploadQuestionReading({
-        questionId: 1,
+        questionId: testQuestionId(1),
         readDuration: 2.5,
         fullDuration: 5.0,
       }),
@@ -186,9 +206,9 @@ describe("createQuizReaderApi", () => {
     });
 
     // Act
-    await api.broadcastQuestion(1);
+    await api.broadcastQuestion(testQuestionId(1));
     await api.fetchNextQuestionStream("next");
-    await api.uploadQuestionReading({ questionId: 1, readDuration: 1.0, fullDuration: 2.0 });
+    await api.uploadQuestionReading({ questionId: testQuestionId(1), readDuration: 1.0, fullDuration: 2.0 });
 
     // Assert
     const broadcastOptions = extractRequestOptions(fetchFn, 0);
@@ -210,9 +230,9 @@ describe("createQuizReaderApi", () => {
     });
 
     // Act
-    await api.broadcastQuestion(1);
+    await api.broadcastQuestion(testQuestionId(1));
     await api.fetchNextQuestionStream("next");
-    await api.uploadQuestionReading({ questionId: 1, readDuration: 1.0, fullDuration: 2.0 });
+    await api.uploadQuestionReading({ questionId: testQuestionId(1), readDuration: 1.0, fullDuration: 2.0 });
 
     // Assert
     const broadcastOptions = extractRequestOptions(fetchFn, 0);

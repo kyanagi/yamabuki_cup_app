@@ -5,16 +5,17 @@
  * UI更新（Turbo描画・アラート・アイコン制御）は呼び出し側で扱う。
  */
 import { fetchWithRetry } from "../../lib/fetch_with_retry";
+import type { QuestionId, QuestionTarget } from "../../lib/quiz_reader/question_id";
 
 export type QuizReaderUploadPayload = {
-  questionId: number;
+  questionId: QuestionId;
   readDuration: number;
   fullDuration: number;
 };
 
 export type QuizReaderApi = {
-  broadcastQuestion(questionId: number): Promise<void>;
-  fetchNextQuestionStream(questionId: string): Promise<string>;
+  broadcastQuestion(questionId: QuestionId): Promise<void>;
+  fetchNextQuestionStream(questionTarget: QuestionTarget): Promise<string>;
   uploadQuestionReading(payload: QuizReaderUploadPayload): Promise<void>;
 };
 
@@ -47,7 +48,7 @@ export function createQuizReaderApi(deps: QuizReaderApiDeps): QuizReaderApi {
   };
 
   return {
-    async broadcastQuestion(questionId: number): Promise<void> {
+    async broadcastQuestion(questionId: QuestionId): Promise<void> {
       const response = await fetchFn("/admin/question_broadcasts", {
         method: "POST",
         headers: jsonHeaders("application/json"),
@@ -56,11 +57,11 @@ export function createQuizReaderApi(deps: QuizReaderApiDeps): QuizReaderApi {
       assertOk(response);
     },
 
-    async fetchNextQuestionStream(questionId: string): Promise<string> {
+    async fetchNextQuestionStream(questionTarget: QuestionTarget): Promise<string> {
       const response = await fetchFn("/admin/quiz_reader/next_question", {
         method: "PUT",
         headers: jsonHeaders("text/vnd.turbo-stream.html"),
-        body: JSON.stringify({ question_id: questionId }),
+        body: JSON.stringify({ question_id: questionTarget }),
       });
       assertOk(response);
       return await response.text();

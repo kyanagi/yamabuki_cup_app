@@ -7,18 +7,26 @@ interface QuizReaderHTMLOptions {
   soundId?: string;
   isOnAir?: boolean;
   isQuestionFollowOn?: boolean;
+  omitQuestionIdValue?: boolean;
 }
 
 /**
  * QuizReaderController 用の HTML を生成する
  */
 export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): string {
-  const { questionId = 1, soundId = "001", isOnAir = false, isQuestionFollowOn = true } = options;
+  const {
+    questionId = 1,
+    soundId = "001",
+    isOnAir = false,
+    isQuestionFollowOn = true,
+    omitQuestionIdValue = false,
+  } = options;
+  const questionIdAttribute = omitQuestionIdValue ? "" : `data-quiz-reader-question-id-value="${questionId}"`;
 
   return `
     <div
       data-controller="quiz-reader"
-      data-quiz-reader-question-id-value="${questionId}"
+      ${questionIdAttribute}
       data-quiz-reader-sound-id-value="${soundId}"
     >
       <input

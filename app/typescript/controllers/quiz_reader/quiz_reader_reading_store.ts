@@ -5,13 +5,14 @@
  * Controller やオーケストレータから永続化詳細を隠蔽する。
  */
 import { openDB } from "idb";
+import type { QuestionId } from "../../lib/quiz_reader/question_id";
 
 const IDB_NAME = "yamabuki-cup-quiz-reader";
 const IDB_VERSION = 1;
 const QUESTION_READINGS_STORE_NAME = "question-readings";
 
 export type QuizReaderReadingRecord = {
-  questionId: number;
+  questionId: QuestionId;
   readDuration: number;
   timestamp: string;
 };
