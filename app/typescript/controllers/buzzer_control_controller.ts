@@ -1,7 +1,16 @@
 import { Controller } from "@hotwired/stimulus";
 import { type ButtonId, isButtonId } from "../lib/buzzer/button_id";
 import { type BuzzerChannel, createBuzzerChannel } from "../lib/buzzer/channel";
-import { BUZZER_SERIAL_CORRECT_EVENT, BUZZER_SERIAL_WRONG_EVENT } from "../lib/buzzer/events";
+import {
+  BUZZER_ASSIGNMENT_CLEAR_EVENT,
+  BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT,
+  BUZZER_EMULATOR_BUTTON_PRESS_EVENT,
+  BUZZER_EMULATOR_RESET_EVENT,
+  BUZZER_SERIAL_CORRECT_EVENT,
+  BUZZER_SERIAL_WRONG_EVENT,
+  BUZZER_STATE_CHANGED_EVENT,
+  BUZZER_VIEW_REQUEST_STATE_EVENT,
+} from "../lib/buzzer/events";
 import {
   assignButtonToSeat,
   type BuzzerMapping,
@@ -38,25 +47,25 @@ export default class extends Controller {
       this.#channel = createBuzzerChannel();
     }
 
-    window.addEventListener("buzzer:assignment:toggle-learning", this.#toggleLearningHandler as EventListener);
-    window.addEventListener("buzzer:assignment:clear", this.#clearMappingsHandler);
-    window.addEventListener("buzzer:emulator:button-press", this.#buttonPressHandler as EventListener);
-    window.addEventListener("buzzer:emulator:reset", this.#resetHandler);
+    window.addEventListener(BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT, this.#toggleLearningHandler as EventListener);
+    window.addEventListener(BUZZER_ASSIGNMENT_CLEAR_EVENT, this.#clearMappingsHandler);
+    window.addEventListener(BUZZER_EMULATOR_BUTTON_PRESS_EVENT, this.#buttonPressHandler as EventListener);
+    window.addEventListener(BUZZER_EMULATOR_RESET_EVENT, this.#resetHandler);
     window.addEventListener(BUZZER_SERIAL_CORRECT_EVENT, this.#serialCorrectHandler);
     window.addEventListener(BUZZER_SERIAL_WRONG_EVENT, this.#serialWrongHandler);
-    window.addEventListener("buzzer:view:request-state", this.#requestStateHandler);
+    window.addEventListener(BUZZER_VIEW_REQUEST_STATE_EVENT, this.#requestStateHandler);
 
     this.#emitStateChanged();
   }
 
   disconnect(): void {
-    window.removeEventListener("buzzer:assignment:toggle-learning", this.#toggleLearningHandler as EventListener);
-    window.removeEventListener("buzzer:assignment:clear", this.#clearMappingsHandler);
-    window.removeEventListener("buzzer:emulator:button-press", this.#buttonPressHandler as EventListener);
-    window.removeEventListener("buzzer:emulator:reset", this.#resetHandler);
+    window.removeEventListener(BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT, this.#toggleLearningHandler as EventListener);
+    window.removeEventListener(BUZZER_ASSIGNMENT_CLEAR_EVENT, this.#clearMappingsHandler);
+    window.removeEventListener(BUZZER_EMULATOR_BUTTON_PRESS_EVENT, this.#buttonPressHandler as EventListener);
+    window.removeEventListener(BUZZER_EMULATOR_RESET_EVENT, this.#resetHandler);
     window.removeEventListener(BUZZER_SERIAL_CORRECT_EVENT, this.#serialCorrectHandler);
     window.removeEventListener(BUZZER_SERIAL_WRONG_EVENT, this.#serialWrongHandler);
-    window.removeEventListener("buzzer:view:request-state", this.#requestStateHandler);
+    window.removeEventListener(BUZZER_VIEW_REQUEST_STATE_EVENT, this.#requestStateHandler);
 
     this.#channel?.close();
     this.#channel = null;
@@ -87,7 +96,7 @@ export default class extends Controller {
       mapping: new Map(this.#mapping),
     };
 
-    window.dispatchEvent(new CustomEvent<BuzzerStateChangedDetail>("buzzer:state-changed", { detail }));
+    window.dispatchEvent(new CustomEvent<BuzzerStateChangedDetail>(BUZZER_STATE_CHANGED_EVENT, { detail }));
   }
 
   #toggleLearningHandler = (event: CustomEvent<ToggleLearningDetail>): void => {

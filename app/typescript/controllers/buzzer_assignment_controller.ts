@@ -1,5 +1,11 @@
 import { Controller } from "@hotwired/stimulus";
 import type { ButtonId } from "../lib/buzzer/button_id";
+import {
+  BUZZER_ASSIGNMENT_CLEAR_EVENT,
+  BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT,
+  BUZZER_STATE_CHANGED_EVENT,
+  BUZZER_VIEW_REQUEST_STATE_EVENT,
+} from "../lib/buzzer/events";
 import { findButtonIdBySeat } from "../lib/buzzer/mapping_store";
 import { createSeatId, isSeatId, type SeatId } from "../lib/buzzer/seat_id";
 
@@ -14,12 +20,12 @@ type BuzzerStateChangedDetail = {
 
 export default class extends Controller {
   connect(): void {
-    window.addEventListener("buzzer:state-changed", this.#stateChangedHandler as EventListener);
+    window.addEventListener(BUZZER_STATE_CHANGED_EVENT, this.#stateChangedHandler as EventListener);
     this.#requestState();
   }
 
   disconnect(): void {
-    window.removeEventListener("buzzer:state-changed", this.#stateChangedHandler as EventListener);
+    window.removeEventListener(BUZZER_STATE_CHANGED_EVENT, this.#stateChangedHandler as EventListener);
   }
 
   startLearningSeat(event: Event): void {
@@ -28,15 +34,17 @@ export default class extends Controller {
     const seat = createSeatId(Number.parseInt(seatText || "", 10));
     if (seat === null) return;
 
-    window.dispatchEvent(new CustomEvent<{ seat: SeatId }>("buzzer:assignment:toggle-learning", { detail: { seat } }));
+    window.dispatchEvent(
+      new CustomEvent<{ seat: SeatId }>(BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT, { detail: { seat } }),
+    );
   }
 
   clearAllMappings(): void {
-    window.dispatchEvent(new CustomEvent("buzzer:assignment:clear"));
+    window.dispatchEvent(new CustomEvent(BUZZER_ASSIGNMENT_CLEAR_EVENT));
   }
 
   #requestState(): void {
-    window.dispatchEvent(new CustomEvent("buzzer:view:request-state"));
+    window.dispatchEvent(new CustomEvent(BUZZER_VIEW_REQUEST_STATE_EVENT));
   }
 
   #stateChangedHandler = (event: CustomEvent<BuzzerStateChangedDetail>): void => {
