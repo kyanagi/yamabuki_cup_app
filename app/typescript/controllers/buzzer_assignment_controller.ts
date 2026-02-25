@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { type BuzzerMapping, findButtonIdBySeat } from "../lib/buzzer/mapping_store";
 
 const UNASSIGNED_TEXT = "未割当";
 const LEARNING_TEXT = "ボタンを押してください";
@@ -38,7 +39,7 @@ export default class extends Controller {
 
   #stateChangedHandler = (event: CustomEvent<BuzzerStateChangedDetail>): void => {
     const detail = event.detail;
-    const mapping = detail.mapping || {};
+    const mapping = this.#toBuzzerMapping(detail.mapping || {});
     const learningSeat = Number.isInteger(detail.learningSeat) ? detail.learningSeat : null;
 
     const rows = this.element.querySelectorAll<HTMLElement>("[data-buzzer-assignment-seat-row]");
@@ -58,21 +59,22 @@ export default class extends Controller {
         continue;
       }
 
-      const buttonId = this.#findButtonIdBySeat(mapping, seat);
+      const buttonId = findButtonIdBySeat(mapping, seat);
       assignment.textContent = buttonId === null ? UNASSIGNED_TEXT : `ボタン ${buttonId}`;
       learnButton.textContent = "設定";
       learnButton.classList.remove("is-warning");
     }
   };
 
-  #findButtonIdBySeat(mapping: Record<string, number>, seat: number): number | null {
-    for (const [buttonIdText, mappedSeat] of Object.entries(mapping)) {
-      if (mappedSeat !== seat) continue;
+  #toBuzzerMapping(mapping: Record<string, number>): BuzzerMapping {
+    const parsedMapping: BuzzerMapping = new Map();
 
+    for (const [buttonIdText, mappedSeat] of Object.entries(mapping)) {
       const buttonId = Number.parseInt(buttonIdText, 10);
-      if (Number.isInteger(buttonId)) return buttonId;
+      if (!Number.isInteger(buttonId)) continue;
+      parsedMapping.set(buttonId, mappedSeat);
     }
 
-    return null;
+    return parsedMapping;
   }
 }

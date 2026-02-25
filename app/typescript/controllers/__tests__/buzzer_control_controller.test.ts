@@ -196,6 +196,34 @@ describe("BuzzerControlController", () => {
     window.removeEventListener("buzzer:state-changed", handler);
   });
 
+  it("serial correct イベントで correct を送信する", async () => {
+    const { application } = await setupControllerTest<BuzzerControlController>(
+      BuzzerControlController,
+      '<div data-controller="buzzer-control"></div>',
+      "buzzer-control",
+    );
+
+    window.dispatchEvent(new CustomEvent("buzzer:serial:correct"));
+
+    expect(latestChannel().postMessage).toHaveBeenCalledWith({ type: "correct" });
+
+    teardownControllerTest(application);
+  });
+
+  it("serial wrong イベントで wrong を送信する", async () => {
+    const { application } = await setupControllerTest<BuzzerControlController>(
+      BuzzerControlController,
+      '<div data-controller="buzzer-control"></div>',
+      "buzzer-control",
+    );
+
+    window.dispatchEvent(new CustomEvent("buzzer:serial:wrong"));
+
+    expect(latestChannel().postMessage).toHaveBeenCalledWith({ type: "wrong" });
+
+    teardownControllerTest(application);
+  });
+
   it("全消去イベントで割り当てを削除する", async () => {
     localStorage.setItem("buzzerMapping", JSON.stringify({ "1": 0, "2": 1 }));
 

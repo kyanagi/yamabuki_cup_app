@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import { type BuzzerChannel, createBuzzerChannel } from "../lib/buzzer/channel";
+import { BUZZER_SERIAL_CORRECT_EVENT, BUZZER_SERIAL_WRONG_EVENT } from "../lib/buzzer/events";
 import {
   assignButtonToSeat,
   type BuzzerMapping,
@@ -41,6 +42,8 @@ export default class extends Controller {
     window.addEventListener("buzzer:assignment:clear", this.#clearMappingsHandler);
     window.addEventListener("buzzer:emulator:button-press", this.#buttonPressHandler as EventListener);
     window.addEventListener("buzzer:emulator:reset", this.#resetHandler);
+    window.addEventListener(BUZZER_SERIAL_CORRECT_EVENT, this.#serialCorrectHandler);
+    window.addEventListener(BUZZER_SERIAL_WRONG_EVENT, this.#serialWrongHandler);
     window.addEventListener("buzzer:view:request-state", this.#requestStateHandler);
 
     this.#emitStateChanged();
@@ -51,6 +54,8 @@ export default class extends Controller {
     window.removeEventListener("buzzer:assignment:clear", this.#clearMappingsHandler);
     window.removeEventListener("buzzer:emulator:button-press", this.#buttonPressHandler as EventListener);
     window.removeEventListener("buzzer:emulator:reset", this.#resetHandler);
+    window.removeEventListener(BUZZER_SERIAL_CORRECT_EVENT, this.#serialCorrectHandler);
+    window.removeEventListener(BUZZER_SERIAL_WRONG_EVENT, this.#serialWrongHandler);
     window.removeEventListener("buzzer:view:request-state", this.#requestStateHandler);
 
     this.#channel?.close();
@@ -121,5 +126,13 @@ export default class extends Controller {
 
   #requestStateHandler = (): void => {
     this.#emitStateChanged();
+  };
+
+  #serialCorrectHandler = (): void => {
+    this.#channel?.post({ type: "correct" });
+  };
+
+  #serialWrongHandler = (): void => {
+    this.#channel?.post({ type: "wrong" });
   };
 }

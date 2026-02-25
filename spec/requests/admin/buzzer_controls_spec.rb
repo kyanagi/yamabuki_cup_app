@@ -5,10 +5,11 @@ RSpec.describe "Admin::BuzzerControls", type: :request do
     context "admin権限の場合" do
       before { sign_in_admin(create(:admin_user, role: :admin)) }
 
-      it "GET /admin/buzzer_controls にアクセスできること" do
+      it "GET /admin/buzzer_controls にアクセスでき、シリアル接続UIが表示されること" do
         get "/admin/buzzer_controls"
 
         expect(response).to have_http_status(:ok)
+        expect(response.body).to include("早押し機接続")
       end
     end
 
