@@ -32,6 +32,22 @@ type Fixture = {
   };
 };
 
+type Deferred<T> = {
+  promise: Promise<T>;
+  resolve: (value: T | PromiseLike<T>) => void;
+  reject: (reason?: unknown) => void;
+};
+
+function createDeferred<T>(): Deferred<T> {
+  let resolve!: Deferred<T>["resolve"];
+  let reject!: Deferred<T>["reject"];
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+}
+
 function createMockReadingContext(params: {
   questionId?: number;
   fullDuration?: number;
@@ -467,6 +483,97 @@ describe("createQuizReaderOrchestrator", () => {
     });
     expect(fixture.deps.view.setResultUploadingStatusIcon).toHaveBeenNthCalledWith(1, "UPLOADING");
     expect(fixture.deps.view.setResultUploadingStatusIcon).toHaveBeenNthCalledWith(2, "UPLOADED");
+  });
+
+  it("pauseReading は保存が未完了でもアップロードを実行する", async () => {
+    // Arrange
+    const fixture = createFixture({
+      readingVoiceStatus: "PLAYING",
+    });
+    const readingContext = createMockReadingContext({
+      voiceStatus: "PLAYING",
+      questionId: 99,
+      readDuration: 2.2,
+      fullDuration: 4.4,
+    });
+    fixture.state.readingContext = readingContext;
+    const saveDeferred = createDeferred<void>();
+    fixture.deps.readingStore.save = vi.fn().mockReturnValue(saveDeferred.promise);
+    fixture.deps.api.uploadQuestionReading = vi.fn().mockResolvedValue(undefined);
+    fixture.orchestrator = createQuizReaderOrchestrator(fixture.deps, fixture.stateDeps);
+
+    try {
+      // Act
+      await fixture.orchestrator.pauseReading();
+
+      // Assert
+      expect(fixture.deps.readingStore.save).toHaveBeenCalled();
+      expect(fixture.deps.api.uploadQuestionReading).toHaveBeenCalledWith({
+        questionId: 99,
+        readDuration: 2.2,
+        fullDuration: 4.4,
+      });
+    } finally {
+      saveDeferred.resolve();
+      await saveDeferred.promise;
+    }
+  });
+
+  it("switchToQuestion は prompt が null の場合は遷移しない", async () => {
+    // Arrange
+    const fixture = createFixture();
+    fixture.deps.promptFn = vi.fn().mockReturnValue(null);
+    fixture.orchestrator = createQuizReaderOrchestrator(fixture.deps, fixture.stateDeps);
+
+    // Act
+    await fixture.orchestrator.switchToQuestion();
+
+    // Assert
+    expect(fixture.deps.alertFn).not.toHaveBeenCalled();
+    expect(fixture.deps.api.fetchNextQuestionStream).not.toHaveBeenCalled();
+  });
+
+  it("switchToQuestion は空白入力時に文言固定でアラートを表示する", async () => {
+    // Arrange
+    const fixture = createFixture();
+    fixture.deps.promptFn = vi.fn().mockReturnValue("   ");
+    fixture.orchestrator = createQuizReaderOrchestrator(fixture.deps, fixture.stateDeps);
+
+    // Act
+    await fixture.orchestrator.switchToQuestion();
+
+    // Assert
+    expect(fixture.deps.alertFn).toHaveBeenCalledWith("問題番号は数字で入力してください");
+    expect(fixture.deps.api.fetchNextQuestionStream).not.toHaveBeenCalled();
+  });
+
+  it("switchToQuestion は非数字入力時に文言固定でアラートを表示する", async () => {
+    // Arrange
+    const fixture = createFixture();
+    fixture.deps.promptFn = vi.fn().mockReturnValue("abc");
+    fixture.orchestrator = createQuizReaderOrchestrator(fixture.deps, fixture.stateDeps);
+
+    // Act
+    await fixture.orchestrator.switchToQuestion();
+
+    // Assert
+    expect(fixture.deps.alertFn).toHaveBeenCalledWith("問題番号は数字で入力してください");
+    expect(fixture.deps.api.fetchNextQuestionStream).not.toHaveBeenCalled();
+  });
+
+  it("switchToQuestion は数字入力を trim して遷移する", async () => {
+    // Arrange
+    const fixture = createFixture();
+    fixture.deps.promptFn = vi.fn().mockReturnValue(" 42 ");
+    fixture.orchestrator = createQuizReaderOrchestrator(fixture.deps, fixture.stateDeps);
+
+    // Act
+    await fixture.orchestrator.switchToQuestion();
+
+    // Assert
+    expect(fixture.deps.api.fetchNextQuestionStream).toHaveBeenCalledWith("42");
+    expect(fixture.deps.renderStreamMessageFn).toHaveBeenCalledWith("<turbo-stream></turbo-stream>");
+    expect(fixture.stateDeps.applyOnAirStateToUI).toHaveBeenCalled();
   });
 
   it("proceedToNextQuestion は問題フォローONで送出し、失敗しても next 遷移を続行する", async () => {
