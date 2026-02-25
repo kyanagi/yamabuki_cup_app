@@ -1,6 +1,4 @@
 import { Controller } from "@hotwired/stimulus";
-import { Turbo } from "@hotwired/turbo-rails";
-import { openDB } from "idb";
 import {
   createQuestionReadingContext,
   type LoadingStatus,
@@ -9,13 +7,13 @@ import {
   type VoiceStatus,
 } from "./quiz_reader/question_reading_context";
 import { createQuizReaderApi } from "./quiz_reader/quiz_reader_api";
+import { createQuizReaderOrchestrator } from "./quiz_reader/quiz_reader_orchestrator";
+import { createQuizReaderReadingStore } from "./quiz_reader/quiz_reader_reading_store";
 import { createQuizReaderView } from "./quiz_reader/quiz_reader_view";
 
 // 既存テストと利用箇所の互換性維持のため再エクスポート
 export { createQuestionReadingContext, loadAudioFromLocalFile };
 export type { LoadingStatus, QuestionReadingContext, VoiceStatus };
-// IndexedDB の名前
-const IDB_NAME = "yamabuki-cup-quiz-reader";
 // localStorage のキー
 const VOLUME_STORAGE_KEY = "quiz-reader-volume";
 // デフォルト音量
@@ -127,86 +125,60 @@ export default class extends Controller {
       this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="resultUploadErrorIcon"]'),
     getMainError: () => this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="mainError"]'),
   });
-
-  private idbPromise = openDB(IDB_NAME, 1, {
-    upgrade(db) {
-      db.createObjectStore("question-readings", {
-        keyPath: "id",
-        autoIncrement: true,
-      });
-    },
-  });
+  private readonly quizReaderReadingStore = createQuizReaderReadingStore();
 
   private audioContext: AudioContext | undefined;
   private readingContext: QuestionReadingContext | undefined;
-
-  private createQuestionReadingContextAndLoad(questionId: number, soundId: string) {
-    if (!this.audioContext) {
-      throw new Error("AudioContext が初期化されていません");
-    }
-    if (!this.soundDirHandle) {
-      // フォルダ未選択時は readingContext を作成しない
-      return;
-    }
-
-    const onLoadingStatusChanged = (loadingStatus: LoadingStatus) => {
-      switch (loadingStatus) {
-        case "LOADING":
-          this.quizReaderView.setVoiceLoadingStatusIcon("LOADING");
-          break;
-        case "LOADED":
-          console.log(`load done: duration=${this.readingContext?.fullDuration}`);
-          this.quizReaderView.setVoiceLoadingStatusIcon("LOADED");
-          this.quizReaderView.clearMainError();
-          break;
-        case "NOT_LOADED":
-          this.quizReaderView.setVoiceLoadingStatusIcon("NOT_LOADED");
-          // NotFound時は既に詳細メッセージが表示済みなので上書きしない。
-          if (this.mainErrorText === "") {
-            this.quizReaderView.showMainError("音声ファイルの読み込みに失敗しました");
-          }
-          break;
-      }
-    };
-    const onVoiceStatusChanged = (voiceStatus: VoiceStatus) => {
-      this.quizReaderView.setPlayStatusIcon(voiceStatus);
-    };
-    const onFileNotFound = (filename: string) => {
-      this.quizReaderView.showMainError(`音声ファイルが見つかりません（${filename}）`);
-    };
-
-    this.readingContext?.dispose();
-    this.readingContext = createQuestionReadingContext(
-      questionId,
-      soundId,
-      this.audioContext,
-      this.soundDirHandle,
-      onLoadingStatusChanged,
-      onVoiceStatusChanged,
-      onFileNotFound,
-      this.gainNode,
-    );
-    this.load();
-  }
+  private readonly quizReaderOrchestrator = createQuizReaderOrchestrator(
+    {
+      api: this.quizReaderApi,
+      view: this.quizReaderView,
+      readingStore: this.quizReaderReadingStore,
+    },
+    {
+      getAudioContext: () => this.audioContext,
+      getGainNode: () => this.gainNode,
+      getSoundDirHandle: () => this.soundDirHandle,
+      setSoundDirHandle: (dir) => {
+        this.soundDirHandle = dir;
+      },
+      getReadingContext: () => this.readingContext,
+      setReadingContext: (readingContext) => {
+        this.readingContext = readingContext;
+      },
+      getQuestionSeed: () => ({
+        questionId: this.questionIdValue,
+        soundId: this.soundIdValue,
+      }),
+      isAnyModalOpen: () => this.isAnyModalOpen(),
+      isOnAirEnabled: () => this.isOnAirTarget.checked,
+      isQuestionFollowEnabled: () => this.isQuestionFollowOnTarget.checked,
+      getMainErrorText: () => this.mainErrorText,
+      setDurationText: (text) => {
+        this.durationTarget.textContent = text;
+      },
+      clearDurationText: () => {
+        this.durationTarget.textContent = "";
+      },
+      applyOnAirStateToUI: () => this.applyOnAirStateToUI(),
+      onFolderSelected: (dirName: string) => {
+        this.clearSettingsButtonHighlight();
+        this.updateFolderStatusText(dirName, "success");
+        this.enableSampleAudioButtons();
+      },
+      resetSampleAudioCache: () => {
+        this.stopSampleAudio();
+        this.sampleAudioBuffer = undefined;
+      },
+    },
+  );
 
   private beforeStreamRenderHandler = (e: Event) => {
-    const customEvent = e as CustomEvent;
-    const fallbackToDefaultActions = customEvent.detail.render;
-    customEvent.detail.render = (streamElement: HTMLElement) => {
-      if (streamElement.getAttribute("action") === "update-question") {
-        const questionId = streamElement.getAttribute("question-id");
-        const soundId = streamElement.getAttribute("sound-id");
-        if (!questionId) {
-          throw new Error("question-id が指定されていません。");
-        }
-        if (!soundId) {
-          throw new Error("sound-id が指定されていません。");
-        }
-        this.createQuestionReadingContextAndLoad(Number(questionId), soundId);
-      } else {
-        fallbackToDefaultActions(streamElement);
-      }
-    };
+    this.quizReaderOrchestrator.handleBeforeStreamRender(
+      e as CustomEvent<{
+        render: (streamElement: HTMLElement) => void;
+      }>,
+    );
   };
 
   connect() {
@@ -228,8 +200,7 @@ export default class extends Controller {
     console.log("QuizReaderController disconnected");
     this.stopSampleAudio();
     this.sampleAudioBuffer = undefined;
-    this.readingContext?.dispose();
-    this.readingContext = undefined;
+    this.quizReaderOrchestrator.dispose();
     document.removeEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
 
     // GainNodeを切断
@@ -395,176 +366,36 @@ export default class extends Controller {
   }
 
   async selectFolder() {
-    try {
-      const dirHandle = await window.showDirectoryPicker();
-
-      // 再生中のサンプル音声を停止し、読み込み中の処理もキャンセル
-      this.stopSampleAudio();
-      this.sampleAudioBuffer = undefined;
-
-      this.soundDirHandle = dirHandle;
-      this.quizReaderView.clearMainError();
-      this.clearSettingsButtonHighlight();
-      this.updateFolderStatusText(dirHandle.name, "success");
-      this.enableSampleAudioButtons();
-      // フォルダ選択後に音声を読み込む
-      this.createQuestionReadingContextAndLoad(this.questionIdValue, this.soundIdValue);
-    } catch (e) {
-      if (e instanceof DOMException && e.name === "AbortError") {
-        // キャンセル時はエラーをクリアするが、folderStatus は既存の選択状態を維持
-        this.quizReaderView.clearMainError();
-        return;
-      }
-      this.quizReaderView.showMainError("フォルダの選択に失敗しました");
-    }
-  }
-
-  private load() {
-    this.readingContext?.load();
+    await this.quizReaderOrchestrator.selectFolder();
   }
 
   startReading() {
-    if (this.isAnyModalOpen()) return;
-    if (!this.isOnAirTarget.checked) return;
-
-    // フォルダ未選択チェックを先に行う
-    if (!this.soundDirHandle) {
-      this.quizReaderView.showMainError("再生するには音声フォルダの選択が必要です");
-      return;
-    }
-
-    if (!this.readingContext) return;
-    if (this.readingContext.voiceStatus !== "STANDBY") return;
-
-    this.readingContext.start();
+    this.quizReaderOrchestrator.startReading();
   }
 
   pauseReading() {
-    if (this.isAnyModalOpen()) return;
-    if (!this.readingContext) return;
-    if (this.readingContext.voiceStatus !== "PLAYING") return;
-
-    this.readingContext.stop();
-    this.durationTarget.textContent = this.durationText;
-    this.saveQuestionReading();
-    this.uploadQuestionReading();
+    void this.quizReaderOrchestrator.pauseReading();
   }
 
   resetReading() {
-    if (this.isAnyModalOpen()) return;
-    if (!this.readingContext) return;
-    if (this.readingContext.voiceStatus !== "PAUSED") return;
-
-    console.log("resetReading");
-    this.readingContext.reset();
-    this.durationTarget.textContent = "";
-    this.quizReaderView.setResultUploadingStatusIcon("NOT_UPLOADING");
+    this.quizReaderOrchestrator.resetReading();
   }
 
   async switchToQuestion() {
-    const questionIdRaw = prompt("問題番号を入力してください");
-    if (questionIdRaw == null) return;
-
-    const questionId = questionIdRaw.trim();
-
-    if (!/^\d+$/.test(questionId)) {
-      alert("問題番号は数字で入力してください");
-      return;
-    }
-
-    this.proceedToQuestion(questionId);
+    await this.quizReaderOrchestrator.switchToQuestion();
   }
 
   async proceedToNextQuestion(event: KeyboardEvent) {
-    if (this.isAnyModalOpen()) return;
-    if (event.repeat) return;
-    if (this.readingContext?.voiceStatus !== "PAUSED") return;
-
-    const currentQuestionId = this.readingContext.questionId;
-
-    // 問題フォローがONの場合のみ問題を送出
-    if (this.isQuestionFollowOnTarget.checked) {
-      await this.broadcastQuestion(currentQuestionId);
-    }
-    await this.proceedToQuestion("next");
+    await this.quizReaderOrchestrator.proceedToNextQuestion(event);
   }
 
   private csrfToken(): string {
     return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ?? "";
   }
 
-  private async broadcastQuestion(questionId: number) {
-    try {
-      await this.quizReaderApi.broadcastQuestion(questionId);
-    } catch (e) {
-      console.error("問題の送出に失敗しました:", e);
-      // 問題送出の失敗はアラートを出さない（次の問題への遷移は続行）
-    }
-  }
-
-  private async proceedToQuestion(questionId: string) {
-    try {
-      const html = await this.quizReaderApi.fetchNextQuestionStream(questionId);
-      Turbo.renderStreamMessage(html);
-
-      // 問い読みスイッチの状態を新しいDOM要素に反映
-      // Turbo StreamがDOMを更新した後、Stimulusがターゲットを再検出するのを待つ
-      requestAnimationFrame(() => {
-        this.applyOnAirStateToUI();
-      });
-    } catch (e) {
-      console.error(e);
-      if (e instanceof Error) {
-        alert(`エラーが発生しました: ${e.message}`);
-      } else {
-        alert("予期せぬエラーが発生しました");
-      }
-    }
-  }
-
-  private async saveQuestionReading() {
-    if (!this.readingContext) return;
-
-    const data = {
-      questionId: this.readingContext.questionId,
-      readDuration: this.readingContext.readDuration,
-      timestamp: new Date().toISOString(),
-    };
-
-    try {
-      const db = await this.idbPromise;
-      await db.add("question-readings", data);
-    } catch (e) {
-      console.error("問い読みの結果の保存に失敗しました:", e);
-      throw e;
-    }
-  }
-
-  private async uploadQuestionReading() {
-    if (!this.readingContext) return;
-
-    this.quizReaderView.setResultUploadingStatusIcon("UPLOADING");
-    try {
-      await this.quizReaderApi.uploadQuestionReading({
-        questionId: this.readingContext.questionId,
-        readDuration: this.readingContext.readDuration,
-        fullDuration: this.readingContext.fullDuration,
-      });
-      this.quizReaderView.setResultUploadingStatusIcon("UPLOADED");
-    } catch (e) {
-      console.error(e);
-      this.quizReaderView.setResultUploadingStatusIcon("UPLOAD_ERROR");
-    }
-  }
-
   private get mainErrorText(): string {
     const mainError = this.element.querySelector<HTMLElement>('[data-quiz-reader-target~="mainError"]');
-    return mainError?.textContent?.trim() ?? "";
-  }
-
-  private get durationText(): string {
-    if (!this.readingContext) return "";
-    return `${this.readingContext.readDuration.toFixed(2)} / ${this.readingContext.fullDuration.toFixed(2)}`;
+    return mainError?.textContent ?? "";
   }
 
   private isAnyModalOpen(): boolean {
