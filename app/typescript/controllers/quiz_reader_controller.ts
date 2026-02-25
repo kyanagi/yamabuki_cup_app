@@ -1,7 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import { Turbo } from "@hotwired/turbo-rails";
 import { openDB } from "idb";
-import { fetchWithRetry } from "../lib/fetch_with_retry";
 import {
   createQuestionReadingContext,
   type LoadingStatus,
@@ -9,6 +8,7 @@ import {
   type QuestionReadingContext,
   type VoiceStatus,
 } from "./quiz_reader/question_reading_context";
+import { createQuizReaderApi } from "./quiz_reader/quiz_reader_api";
 
 // 既存テストと利用箇所の互換性維持のため再エクスポート
 export { createQuestionReadingContext, loadAudioFromLocalFile };
@@ -101,6 +101,9 @@ export default class extends Controller {
   private sampleAudioBuffer: AudioBuffer | undefined;
   private sampleAudioLoading = false;
   private sampleAudioAbortController: AbortController | undefined;
+  private readonly quizReaderApi = createQuizReaderApi({
+    csrfTokenProvider: () => this.csrfToken(),
+  });
 
   private idbPromise = openDB(IDB_NAME, 1, {
     upgrade(db) {
@@ -520,28 +523,9 @@ export default class extends Controller {
     return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ?? "";
   }
 
-  private jsonHeaders(accept?: string): Record<string, string> {
-    const baseHeaders: Record<string, string> = {
-      "Content-Type": "application/json",
-      "X-CSRF-Token": this.csrfToken(),
-    };
-    if (accept) {
-      return { ...baseHeaders, Accept: accept };
-    }
-    return baseHeaders;
-  }
-
   private async broadcastQuestion(questionId: number) {
     try {
-      const response = await fetch("/admin/question_broadcasts", {
-        method: "POST",
-        headers: this.jsonHeaders("application/json"),
-        body: JSON.stringify({ question_id: questionId }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTPエラー ${response.status} ${response.statusText}`);
-      }
+      await this.quizReaderApi.broadcastQuestion(questionId);
     } catch (e) {
       console.error("問題の送出に失敗しました:", e);
       // 問題送出の失敗はアラートを出さない（次の問題への遷移は続行）
@@ -550,17 +534,7 @@ export default class extends Controller {
 
   private async proceedToQuestion(questionId: string) {
     try {
-      const response = await fetch("/admin/quiz_reader/next_question", {
-        method: "PUT",
-        headers: this.jsonHeaders("text/vnd.turbo-stream.html"),
-        body: JSON.stringify({ question_id: questionId }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTPエラー ${response.status} ${response.statusText}`);
-      }
-
-      const html = await response.text();
+      const html = await this.quizReaderApi.fetchNextQuestionStream(questionId);
       Turbo.renderStreamMessage(html);
 
       // 問い読みスイッチの状態を新しいDOM要素に反映
@@ -600,25 +574,12 @@ export default class extends Controller {
     if (!this.readingContext) return;
 
     this.setResultUploadingStatusIcon("UPLOADING");
-    const data = {
-      question_id: this.readingContext.questionId,
-      read_duration: this.readingContext.readDuration,
-      full_duration: this.readingContext.fullDuration,
-    };
-
     try {
-      const response = await fetchWithRetry("/admin/quiz_reader/question_readings", {
-        method: "POST",
-        headers: this.jsonHeaders(),
-        body: JSON.stringify(data),
+      await this.quizReaderApi.uploadQuestionReading({
+        questionId: this.readingContext.questionId,
+        readDuration: this.readingContext.readDuration,
+        fullDuration: this.readingContext.fullDuration,
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTPエラー ${response.status} ${response.statusText}`);
-      }
-
-      await response.json();
-
       this.setResultUploadingStatusIcon("UPLOADED");
     } catch (e) {
       console.error(e);
