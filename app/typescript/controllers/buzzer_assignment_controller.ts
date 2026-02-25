@@ -50,7 +50,8 @@ export default class extends Controller {
   #stateChangedHandler = (event: CustomEvent<BuzzerStateChangedDetail>): void => {
     const detail = event.detail;
     const mapping = detail.mapping instanceof Map ? detail.mapping : new Map<ButtonId, SeatId>();
-    const learningSeat = isSeatId(detail.learningSeat) ? detail.learningSeat : null;
+    const ls = detail.learningSeat;
+    const learningSeat = ls !== null && isSeatId(ls) ? ls : null;
 
     const rows = this.element.querySelectorAll<HTMLElement>("[data-buzzer-assignment-seat-row]");
     for (const row of rows) {
