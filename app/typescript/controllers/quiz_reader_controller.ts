@@ -747,15 +747,26 @@ export default class extends Controller {
     await this.proceedToQuestion("next");
   }
 
+  private csrfToken(): string {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ?? "";
+  }
+
+  private jsonHeaders(accept?: string): Record<string, string> {
+    const baseHeaders: Record<string, string> = {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": this.csrfToken(),
+    };
+    if (accept) {
+      return { ...baseHeaders, Accept: accept };
+    }
+    return baseHeaders;
+  }
+
   private async broadcastQuestion(questionId: number) {
     try {
       const response = await fetch("/admin/question_broadcasts", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
-        },
+        headers: this.jsonHeaders("application/json"),
         body: JSON.stringify({ question_id: questionId }),
       });
 
@@ -772,11 +783,7 @@ export default class extends Controller {
     try {
       const response = await fetch("/admin/quiz_reader/next_question", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
-          Accept: "text/vnd.turbo-stream.html",
-        },
+        headers: this.jsonHeaders("text/vnd.turbo-stream.html"),
         body: JSON.stringify({ question_id: questionId }),
       });
 
@@ -833,10 +840,7 @@ export default class extends Controller {
     try {
       const response = await fetchWithRetry("/admin/quiz_reader/question_readings", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || "",
-        },
+        headers: this.jsonHeaders(),
         body: JSON.stringify(data),
       });
 
