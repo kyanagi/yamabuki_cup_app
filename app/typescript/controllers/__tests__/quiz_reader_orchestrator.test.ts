@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { testQuestionId } from "../../__tests__/helpers/question-id";
+import { testSoundId } from "../../__tests__/helpers/sound-id";
 import type { LoadingStatus, QuestionReadingContext, VoiceStatus } from "../quiz_reader/question_reading_context";
 import type { QuizReaderApi } from "../quiz_reader/quiz_reader_api";
 import {
@@ -131,7 +132,7 @@ function createFixture(options: FixtureOptions = {}): Fixture {
     setSoundDirHandle,
     getReadingContext: vi.fn(() => state.readingContext),
     setReadingContext,
-    getQuestionSeed: vi.fn(() => ({ questionId: testQuestionId(10), soundId: "001" })),
+    getQuestionSeed: vi.fn(() => ({ questionId: testQuestionId(10), soundId: testSoundId("001") })),
     isAnyModalOpen: vi.fn(() => options.isAnyModalOpen ?? false),
     isOnAirEnabled: vi.fn(() => options.isOnAirEnabled ?? true),
     isQuestionFollowEnabled: vi.fn(() => options.isQuestionFollowEnabled ?? true),
@@ -167,7 +168,7 @@ function createFixture(options: FixtureOptions = {}): Fixture {
   const createQuestionReadingContextFn = vi.fn(
     (
       _questionId,
-      _soundId: string,
+      _soundId,
       _audioContext: AudioContext,
       _dirHandle: FileSystemDirectoryHandle,
       _onLoadingStatusChanged?: (s: LoadingStatus) => void,

@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createQuizReaderHTML } from "../../__tests__/helpers/dom-factory";
 import { testQuestionId } from "../../__tests__/helpers/question-id";
+import { testSoundId } from "../../__tests__/helpers/sound-id";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import { waitForCondition } from "../../__tests__/helpers/wait_for_condition";
 import {
@@ -180,7 +181,7 @@ describe("createQuestionReadingContext", () => {
   function createContext(dirHandle: FileSystemDirectoryHandle = mockDirHandle) {
     return createQuestionReadingContext(
       testQuestionId(1),
-      "001",
+      testSoundId("001"),
       mockAudioContext as unknown as AudioContext,
       dirHandle,
       (s: LoadingStatus) => loadingStatusHistory.push(s),
@@ -386,6 +387,77 @@ describe("QuizReaderController (統合テスト)", () => {
           args.some(
             (arg) =>
               arg instanceof Error && arg.message === "data-quiz-reader-question-id-value が指定されていません。",
+          ),
+        ),
+      ).toBe(true);
+      expect(AudioContextSpy).not.toHaveBeenCalled();
+      expect(addEventListenerSpy.mock.calls.some(([eventName]) => eventName === "turbo:before-stream-render")).toBe(
+        false,
+      );
+
+      // Cleanup
+      teardownControllerTest(application);
+      consoleErrorSpy.mockRestore();
+      addEventListenerSpy.mockRestore();
+      vi.unstubAllGlobals();
+    });
+
+    it("soundIdValue が空文字の場合は接続時に fail-fast し、副作用を発生させない", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({ questionId: 1, soundId: "" });
+      const AudioContextSpy = vi.fn(function AudioContextSpy() {
+        return new MockAudioContext();
+      });
+      const addEventListenerSpy = vi.spyOn(document, "addEventListener");
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      vi.stubGlobal("AudioContext", AudioContextSpy);
+
+      // Act
+      const { application } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Assert
+      expect(
+        consoleErrorSpy.mock.calls.some((args) =>
+          args.some(
+            (arg) =>
+              arg instanceof Error &&
+              arg.message === "data-quiz-reader-sound-id-value は空文字以外で指定してください。",
+          ),
+        ),
+      ).toBe(true);
+      expect(AudioContextSpy).not.toHaveBeenCalled();
+      expect(addEventListenerSpy.mock.calls.some(([eventName]) => eventName === "turbo:before-stream-render")).toBe(
+        false,
+      );
+
+      // Cleanup
+      teardownControllerTest(application);
+      consoleErrorSpy.mockRestore();
+      addEventListenerSpy.mockRestore();
+      vi.unstubAllGlobals();
+    });
+
+    it("soundIdValue 属性が欠落している場合は接続時に fail-fast し、副作用を発生させない", async () => {
+      // Arrange
+      const html = createQuizReaderHTML({
+        questionId: 1,
+        omitSoundIdValue: true,
+      });
+      const AudioContextSpy = vi.fn(function AudioContextSpy() {
+        return new MockAudioContext();
+      });
+      const addEventListenerSpy = vi.spyOn(document, "addEventListener");
+      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      vi.stubGlobal("AudioContext", AudioContextSpy);
+
+      // Act
+      const { application } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+
+      // Assert
+      expect(
+        consoleErrorSpy.mock.calls.some((args) =>
+          args.some(
+            (arg) => arg instanceof Error && arg.message === "data-quiz-reader-sound-id-value が指定されていません。",
           ),
         ),
       ).toBe(true);
@@ -2268,7 +2340,7 @@ describe("音量調整機能", () => {
       // Act & Assert: outputNodeを渡してもエラーなくコンテキストが作成できる
       const context = createQuestionReadingContext(
         testQuestionId(1),
-        "001",
+        testSoundId("001"),
         mockAudioContext as unknown as AudioContext,
         mockDirHandle,
         undefined,

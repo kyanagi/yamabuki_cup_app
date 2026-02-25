@@ -11,6 +11,7 @@ import {
   type QuestionId,
   type QuestionTarget,
 } from "../../lib/quiz_reader/question_id";
+import { createSoundId, type SoundId } from "../../lib/quiz_reader/sound_id";
 import {
   createQuestionReadingContext,
   type LoadingStatus,
@@ -41,7 +42,7 @@ export type QuizReaderOrchestratorStateDeps = {
   setSoundDirHandle: (dir: FileSystemDirectoryHandle | undefined) => void;
   getReadingContext: () => QuestionReadingContext | undefined;
   setReadingContext: (ctx: QuestionReadingContext | undefined) => void;
-  getQuestionSeed: () => { questionId: QuestionId; soundId: string };
+  getQuestionSeed: () => { questionId: QuestionId; soundId: SoundId };
   isAnyModalOpen: () => boolean;
   isOnAirEnabled: () => boolean;
   isQuestionFollowEnabled: () => boolean;
@@ -66,7 +67,7 @@ export type QuizReaderOrchestrator = {
 
 type UpdateQuestionStreamAttributes = {
   questionId: QuestionId;
-  soundId: string;
+  soundId: SoundId;
 };
 
 export type SwitchToQuestionInputParseResult =
@@ -74,7 +75,7 @@ export type SwitchToQuestionInputParseResult =
   | { kind: "invalid" }
   | { kind: "valid"; questionId: QuestionId };
 
-type CreateQuestionReadingContextAndLoad = (questionId: QuestionId, soundId: string) => void;
+type CreateQuestionReadingContextAndLoad = (questionId: QuestionId, soundId: SoundId) => void;
 
 const INVALID_QUESTION_ID_MESSAGE = "問題番号は数字で入力してください";
 
@@ -88,14 +89,19 @@ export function parseUpdateQuestionStreamAttributes(streamElement: HTMLElement):
   if (!questionIdRaw) {
     throw new Error("question-id が指定されていません。");
   }
-  const soundId = streamElement.getAttribute("sound-id");
-  if (!soundId) {
+  const soundIdRaw = streamElement.getAttribute("sound-id");
+  if (soundIdRaw === null) {
     throw new Error("sound-id が指定されていません。");
   }
 
   const questionId = parseQuestionIdFromDecimalString(questionIdRaw.trim());
   if (questionId === null) {
     throw new Error("question-id は1以上の整数で指定してください。");
+  }
+
+  const soundId = createSoundId(soundIdRaw);
+  if (soundId === null) {
+    throw new Error("sound-id は空文字以外で指定してください。");
   }
 
   return {
@@ -146,7 +152,7 @@ function buildCreateQuestionReadingContextAndLoad(
   deps: ContextLoaderDeps,
   stateDeps: ContextLoaderStateDeps,
 ): CreateQuestionReadingContextAndLoad {
-  return (questionId: QuestionId, soundId: string) => {
+  return (questionId: QuestionId, soundId: SoundId) => {
     const audioContext = stateDeps.getAudioContext();
     if (!audioContext) {
       throw new Error("AudioContext が初期化されていません");

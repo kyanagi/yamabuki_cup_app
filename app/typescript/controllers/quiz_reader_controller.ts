@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import { createQuestionId, type QuestionId } from "../lib/quiz_reader/question_id";
+import { createSoundId, type SoundId } from "../lib/quiz_reader/sound_id";
 import {
   createQuestionReadingContext,
   type LoadingStatus,
@@ -93,6 +94,7 @@ export default class extends Controller {
   declare hasNextQuestionContentTarget: boolean;
   declare hasNext2QuestionContentTarget: boolean;
   declare hasQuestionIdValue: boolean;
+  declare hasSoundIdValue: boolean;
   declare questionIdValue: number;
   declare soundIdValue: string;
 
@@ -132,6 +134,7 @@ export default class extends Controller {
   private audioContext: AudioContext | undefined;
   private readingContext: QuestionReadingContext | undefined;
   private initialQuestionId: QuestionId | undefined;
+  private initialSoundId: SoundId | undefined;
   private readonly quizReaderOrchestrator = createQuizReaderOrchestrator(
     {
       api: this.quizReaderApi,
@@ -151,7 +154,7 @@ export default class extends Controller {
       },
       getQuestionSeed: () => ({
         questionId: this.requireInitialQuestionId(),
-        soundId: this.soundIdValue,
+        soundId: this.requireInitialSoundId(),
       }),
       isAnyModalOpen: () => this.isAnyModalOpen(),
       isOnAirEnabled: () => this.isOnAirTarget.checked,
@@ -186,6 +189,7 @@ export default class extends Controller {
 
   connect() {
     this.initialQuestionId = this.resolveInitialQuestionId();
+    this.initialSoundId = this.resolveInitialSoundId();
     console.log("QuizReaderController connected");
     this.audioContext = new AudioContext();
 
@@ -218,6 +222,7 @@ export default class extends Controller {
     }
     this.audioContext = undefined;
     this.initialQuestionId = undefined;
+    this.initialSoundId = undefined;
     this.soundDirHandle = undefined;
   }
 
@@ -226,6 +231,13 @@ export default class extends Controller {
       throw new Error("question-id-value の初期化に失敗しました。");
     }
     return this.initialQuestionId;
+  }
+
+  private requireInitialSoundId(): SoundId {
+    if (this.initialSoundId === undefined) {
+      throw new Error("sound-id-value の初期化に失敗しました。");
+    }
+    return this.initialSoundId;
   }
 
   private resolveInitialQuestionId(): QuestionId {
@@ -237,6 +249,17 @@ export default class extends Controller {
       throw new Error("data-quiz-reader-question-id-value は1以上の整数で指定してください。");
     }
     return questionId;
+  }
+
+  private resolveInitialSoundId(): SoundId {
+    if (!this.hasSoundIdValue) {
+      throw new Error("data-quiz-reader-sound-id-value が指定されていません。");
+    }
+    const soundId = createSoundId(this.soundIdValue);
+    if (soundId === null) {
+      throw new Error("data-quiz-reader-sound-id-value は空文字以外で指定してください。");
+    }
+    return soundId;
   }
 
   /**

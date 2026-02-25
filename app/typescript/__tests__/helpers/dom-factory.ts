@@ -8,6 +8,7 @@ interface QuizReaderHTMLOptions {
   isOnAir?: boolean;
   isQuestionFollowOn?: boolean;
   omitQuestionIdValue?: boolean;
+  omitSoundIdValue?: boolean;
 }
 
 /**
@@ -20,14 +21,16 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
     isOnAir = false,
     isQuestionFollowOn = true,
     omitQuestionIdValue = false,
+    omitSoundIdValue = false,
   } = options;
   const questionIdAttribute = omitQuestionIdValue ? "" : `data-quiz-reader-question-id-value="${questionId}"`;
+  const soundIdAttribute = omitSoundIdValue ? "" : `data-quiz-reader-sound-id-value="${soundId}"`;
 
   return `
     <div
       data-controller="quiz-reader"
       ${questionIdAttribute}
-      data-quiz-reader-sound-id-value="${soundId}"
+      ${soundIdAttribute}
     >
       <input
         type="checkbox"

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { testQuestionId } from "../../__tests__/helpers/question-id";
+import { testSoundId } from "../../__tests__/helpers/sound-id";
 import type { LoadingStatus, QuestionReadingContext } from "../quiz_reader/question_reading_context";
 import {
   formatDurationText,
@@ -63,6 +64,19 @@ describe("parseUpdateQuestionStreamAttributes", () => {
     expect(() => parseUpdateQuestionStreamAttributes(streamElement)).toThrow("sound-id が指定されていません。");
   });
 
+  it("sound-id が空文字の場合は例外を投げる", () => {
+    // Arrange
+    const streamElement = document.createElement("turbo-stream");
+    streamElement.setAttribute("action", "update-question");
+    streamElement.setAttribute("question-id", "10");
+    streamElement.setAttribute("sound-id", "");
+
+    // Assert
+    expect(() => parseUpdateQuestionStreamAttributes(streamElement)).toThrow(
+      "sound-id は空文字以外で指定してください。",
+    );
+  });
+
   it.each([
     "abc",
     "0",
@@ -95,7 +109,24 @@ describe("parseUpdateQuestionStreamAttributes", () => {
     // Assert
     expect(parsedAttributes).toEqual({
       questionId: testQuestionId(10),
-      soundId: "001",
+      soundId: testSoundId("001"),
+    });
+  });
+
+  it("sound-id が非空文字であれば任意文字列を許可する", () => {
+    // Arrange
+    const streamElement = document.createElement("turbo-stream");
+    streamElement.setAttribute("action", "update-question");
+    streamElement.setAttribute("question-id", "10");
+    streamElement.setAttribute("sound-id", "abc");
+
+    // Act
+    const parsedAttributes = parseUpdateQuestionStreamAttributes(streamElement);
+
+    // Assert
+    expect(parsedAttributes).toEqual({
+      questionId: testQuestionId(10),
+      soundId: testSoundId("abc"),
     });
   });
 });

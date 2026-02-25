@@ -1,4 +1,5 @@
 import type { QuestionId } from "../../lib/quiz_reader/question_id";
+import type { SoundId } from "../../lib/quiz_reader/sound_id";
 
 // 「問題」と問題文の間の空白時間の長さ（ms）
 const INTERVAL_AFTER_MONDAI_MS = 300;
@@ -48,7 +49,7 @@ export type QuestionReadingContext = {
 
 export function createQuestionReadingContext(
   questionId: QuestionId,
-  soundId: string,
+  soundId: SoundId,
   audioContext: AudioContext,
   dirHandle: FileSystemDirectoryHandle,
   onLoadingStatusChanged?: (s: LoadingStatus) => void,
