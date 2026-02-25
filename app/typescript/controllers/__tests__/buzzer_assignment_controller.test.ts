@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
+import type { SeatId } from "../../lib/buzzer/seat_id";
 import BuzzerAssignmentController from "../buzzer_assignment_controller";
 
 function createHTML(): string {
@@ -93,9 +94,9 @@ describe("BuzzerAssignmentController", () => {
   });
 
   it("席設定ボタン押下で学習席トグルイベントを送出する", async () => {
-    let seat: number | null = null;
+    let seat: SeatId | null = null;
     const handler = (event: Event) => {
-      seat = (event as CustomEvent<{ seat: number }>).detail.seat;
+      seat = (event as CustomEvent<{ seat: SeatId }>).detail.seat;
     };
     window.addEventListener("buzzer:assignment:toggle-learning", handler);
 
@@ -110,6 +111,30 @@ describe("BuzzerAssignmentController", () => {
 
     button.dispatchEvent(new Event("click"));
     expect(seat).toBe(0);
+
+    teardownControllerTest(application);
+    window.removeEventListener("buzzer:assignment:toggle-learning", handler);
+  });
+
+  it("不正な data-seat の席設定ボタン押下では学習席トグルイベントを送出しない", async () => {
+    let called = false;
+    const handler = () => {
+      called = true;
+    };
+    window.addEventListener("buzzer:assignment:toggle-learning", handler);
+
+    const { application, element } = await setupControllerTest<BuzzerAssignmentController>(
+      BuzzerAssignmentController,
+      createHTML(),
+      "buzzer-assignment",
+    );
+
+    const button = element.querySelector('[data-action="click->buzzer-assignment#startLearningSeat"]');
+    if (!button) throw new Error("required element not found");
+
+    button.setAttribute("data-seat", "999");
+    button.dispatchEvent(new Event("click"));
+    expect(called).toBe(false);
 
     teardownControllerTest(application);
     window.removeEventListener("buzzer:assignment:toggle-learning", handler);

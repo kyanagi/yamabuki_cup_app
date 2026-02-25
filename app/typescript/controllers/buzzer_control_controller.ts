@@ -10,9 +10,10 @@ import {
   loadBuzzerMapping,
   saveBuzzerMapping,
 } from "../lib/buzzer/mapping_store";
+import { isSeatId, type SeatId } from "../lib/buzzer/seat_id";
 
 type ToggleLearningDetail = {
-  seat: number;
+  seat: SeatId;
 };
 
 type ButtonPressDetail = {
@@ -20,15 +21,15 @@ type ButtonPressDetail = {
 };
 
 type BuzzerStateChangedDetail = {
-  learningSeat: number | null;
+  learningSeat: SeatId | null;
   lastPressedButtonId: ButtonId | null;
-  mapping: Map<ButtonId, number>;
+  mapping: Map<ButtonId, SeatId>;
 };
 
 export default class extends Controller {
   #channel: BuzzerChannel | null = null;
   #mapping: BuzzerMapping = new Map();
-  #learningSeat: number | null = null;
+  #learningSeat: SeatId | null = null;
   #lastPressedButtonId: ButtonId | null = null;
 
   connect(): void {
@@ -90,8 +91,9 @@ export default class extends Controller {
   }
 
   #toggleLearningHandler = (event: CustomEvent<ToggleLearningDetail>): void => {
-    const seat = Number(event.detail?.seat);
-    if (!Number.isInteger(seat)) return;
+    const seat = event.detail?.seat;
+    // CustomEvent の payload は実行時に壊れ得るため、境界で seat を再検証する。
+    if (!isSeatId(seat)) return;
 
     this.#learningSeat = this.#learningSeat === seat ? null : seat;
     this.#emitStateChanged();

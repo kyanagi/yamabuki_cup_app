@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import type { ButtonId } from "../../lib/buzzer/button_id";
+import type { SeatId } from "../../lib/buzzer/seat_id";
 import BuzzerEmulatorController from "../buzzer_emulator_controller";
 
 function createHTML(): string {
@@ -56,7 +57,7 @@ describe("BuzzerEmulatorController", () => {
         detail: {
           learningSeat: null,
           lastPressedButtonId: 2,
-          mapping: new Map<number, number>(),
+          mapping: new Map<ButtonId, SeatId>(),
         },
       }),
     );
@@ -79,7 +80,7 @@ describe("BuzzerEmulatorController", () => {
         detail: {
           learningSeat: null,
           lastPressedButtonId: null,
-          mapping: new Map<number, number>(),
+          mapping: new Map<ButtonId, SeatId>(),
         },
       }),
     );

@@ -107,6 +107,21 @@ describe("BuzzerScoreboardController", () => {
     teardownControllerTest(application);
   });
 
+  it("不正な型の seat は無視する", async () => {
+    const { application } = await setupControllerTest<BuzzerScoreboardController>(
+      BuzzerScoreboardController,
+      createHTML(),
+      "buzzer-scoreboard",
+    );
+
+    latestChannel().emit({ type: "button_pressed", seat: "1" });
+
+    expect(document.getElementById("seat-0")?.classList.contains("player--buzzer-pressed")).toBe(false);
+    expect(document.getElementById("seat-1")?.classList.contains("player--buzzer-pressed")).toBe(false);
+
+    teardownControllerTest(application);
+  });
+
   it("match-scorelist 更新イベントで点灯状態をクリアする", async () => {
     const { application } = await setupControllerTest<BuzzerScoreboardController>(
       BuzzerScoreboardController,

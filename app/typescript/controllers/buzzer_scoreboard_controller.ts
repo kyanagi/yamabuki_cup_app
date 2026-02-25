@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import { type BuzzerChannel, createBuzzerChannel } from "../lib/buzzer/channel";
+import { isSeatId, type SeatId } from "../lib/buzzer/seat_id";
 import type { BuzzerSignal } from "../lib/buzzer/signal";
 
 const PRESSED_CLASS = "player--buzzer-pressed";
@@ -26,9 +27,13 @@ export default class extends Controller {
 
   #handleSignal(signal: BuzzerSignal): void {
     switch (signal.type) {
-      case "button_pressed":
-        this.#highlightSeat(signal.seat);
+      case "button_pressed": {
+        const seat = signal.seat;
+        // BroadcastChannel の payload は実行時に壊れ得るため、境界で seat を再検証する。
+        if (!isSeatId(seat)) return;
+        this.#highlightSeat(seat);
         break;
+      }
       case "reset":
         this.#clearPressed();
         break;
@@ -37,7 +42,7 @@ export default class extends Controller {
     }
   }
 
-  #highlightSeat(seat: number): void {
+  #highlightSeat(seat: SeatId): void {
     const target = this.element.querySelector<HTMLElement>(`[data-seat="${seat}"]`);
     if (!target) return;
 

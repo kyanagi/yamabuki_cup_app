@@ -1,14 +1,15 @@
 import { Controller } from "@hotwired/stimulus";
 import type { ButtonId } from "../lib/buzzer/button_id";
 import { findButtonIdBySeat } from "../lib/buzzer/mapping_store";
+import { createSeatId, isSeatId, type SeatId } from "../lib/buzzer/seat_id";
 
 const UNASSIGNED_TEXT = "未割当";
 const LEARNING_TEXT = "ボタンを押してください";
 
 type BuzzerStateChangedDetail = {
-  learningSeat: number | null;
+  learningSeat: SeatId | null;
   lastPressedButtonId: ButtonId | null;
-  mapping: Map<ButtonId, number>;
+  mapping: Map<ButtonId, SeatId>;
 };
 
 export default class extends Controller {
@@ -24,10 +25,10 @@ export default class extends Controller {
   startLearningSeat(event: Event): void {
     const button = event.currentTarget as HTMLElement | null;
     const seatText = button?.getAttribute("data-seat");
-    const seat = Number.parseInt(seatText || "", 10);
-    if (!Number.isInteger(seat)) return;
+    const seat = createSeatId(Number.parseInt(seatText || "", 10));
+    if (seat === null) return;
 
-    window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat } }));
+    window.dispatchEvent(new CustomEvent<{ seat: SeatId }>("buzzer:assignment:toggle-learning", { detail: { seat } }));
   }
 
   clearAllMappings(): void {
@@ -40,14 +41,14 @@ export default class extends Controller {
 
   #stateChangedHandler = (event: CustomEvent<BuzzerStateChangedDetail>): void => {
     const detail = event.detail;
-    const mapping = detail.mapping instanceof Map ? detail.mapping : new Map<ButtonId, number>();
-    const learningSeat = Number.isInteger(detail.learningSeat) ? detail.learningSeat : null;
+    const mapping = detail.mapping instanceof Map ? detail.mapping : new Map<ButtonId, SeatId>();
+    const learningSeat = isSeatId(detail.learningSeat) ? detail.learningSeat : null;
 
     const rows = this.element.querySelectorAll<HTMLElement>("[data-buzzer-assignment-seat-row]");
     for (const row of rows) {
       const seatText = row.getAttribute("data-seat");
-      const seat = Number.parseInt(seatText || "", 10);
-      if (!Number.isInteger(seat)) continue;
+      const seat = createSeatId(Number.parseInt(seatText || "", 10));
+      if (seat === null) continue;
 
       const assignment = row.querySelector<HTMLElement>('[data-buzzer-assignment-role="assignment"]');
       const learnButton = row.querySelector<HTMLButtonElement>('[data-buzzer-assignment-role="learnButton"]');

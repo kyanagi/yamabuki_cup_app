@@ -1,12 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import type { ButtonId } from "../../lib/buzzer/button_id";
+import type { SeatId } from "../../lib/buzzer/seat_id";
 import BuzzerControlController from "../buzzer_control_controller";
 
 type BuzzerStateChangedDetail = {
-  learningSeat: number | null;
+  learningSeat: SeatId | null;
   lastPressedButtonId: ButtonId | null;
-  mapping: Map<ButtonId, number>;
+  mapping: Map<ButtonId, SeatId>;
 };
 
 class MockBroadcastChannel {
@@ -113,6 +114,26 @@ describe("BuzzerControlController", () => {
     expect(lastState(states).learningSeat).toBe(0);
 
     window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat: 0 } }));
+    expect(lastState(states).learningSeat).toBeNull();
+
+    teardownControllerTest(application);
+    window.removeEventListener("buzzer:state-changed", handler);
+  });
+
+  it("不正な seat（範囲外値）の学習席トグルイベントは無視する", async () => {
+    const states: BuzzerStateChangedDetail[] = [];
+    const handler = (event: Event) => {
+      states.push((event as CustomEvent<BuzzerStateChangedDetail>).detail);
+    };
+    window.addEventListener("buzzer:state-changed", handler);
+
+    const { application } = await setupControllerTest<BuzzerControlController>(
+      BuzzerControlController,
+      '<div data-controller="buzzer-control"></div>',
+      "buzzer-control",
+    );
+
+    window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat: 999 } }));
     expect(lastState(states).learningSeat).toBeNull();
 
     teardownControllerTest(application);

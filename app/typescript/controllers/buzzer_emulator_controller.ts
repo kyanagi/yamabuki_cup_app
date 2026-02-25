@@ -1,12 +1,13 @@
 import { Controller } from "@hotwired/stimulus";
 import { type ButtonId, createButtonId } from "../lib/buzzer/button_id";
+import type { SeatId } from "../lib/buzzer/seat_id";
 
 const INITIAL_LAST_PRESSED_TEXT = "未入力";
 
 type BuzzerStateChangedDetail = {
-  learningSeat: number | null;
+  learningSeat: SeatId | null;
   lastPressedButtonId: ButtonId | null;
-  mapping: Map<ButtonId, number>;
+  mapping: Map<ButtonId, SeatId>;
 };
 
 export default class extends Controller {
