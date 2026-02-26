@@ -101,8 +101,8 @@ function createHTML(): string {
   return `
     <div data-controller="buzzer-serial">
       <p>接続状態: <span data-buzzer-serial-target="status">未接続</span></p>
-      <button type="button" data-buzzer-serial-target="connectButton" data-action="click->buzzer-serial#connect">接続</button>
-      <button type="button" data-buzzer-serial-target="disconnectButton" data-action="click->buzzer-serial#disconnect">切断</button>
+      <button type="button" data-buzzer-serial-target="connectButton" data-action="click->buzzer-serial#requestConnect">接続</button>
+      <button type="button" data-buzzer-serial-target="disconnectButton" data-action="click->buzzer-serial#requestDisconnect">切断</button>
     </div>
   `;
 }

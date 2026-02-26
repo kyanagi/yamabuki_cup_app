@@ -74,21 +74,21 @@ export default class extends Controller {
   #isDisconnecting = false;
   #state: ConnectionState = "disconnected";
 
-  connect(event?: Event): void {
-    if (event instanceof Event) {
-      event.preventDefault();
-      void this.#connectToPort();
-      return;
-    }
-
+  connect(): void {
     this.#setState(this.#serialApi ? "disconnected" : "unsupported");
   }
 
-  disconnect(event?: Event): void {
-    if (event instanceof Event) {
-      event.preventDefault();
-    }
+  disconnect(): void {
+    void this.#disconnectFromPort();
+  }
 
+  requestConnect(event: Event): void {
+    event.preventDefault();
+    void this.#connectToPort();
+  }
+
+  requestDisconnect(event: Event): void {
+    event.preventDefault();
     void this.#disconnectFromPort();
   }
 

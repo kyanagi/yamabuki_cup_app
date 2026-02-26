@@ -48,7 +48,7 @@
           type="button"
           class="button is-primary"
           data-buzzer-serial-target="connectButton"
-          data-action="click->buzzer-serial#connect"
+          data-action="click->buzzer-serial#requestConnect"
         >
           接続
         </button>
@@ -56,7 +56,7 @@
           type="button"
           class="button is-light"
           data-buzzer-serial-target="disconnectButton"
-          data-action="click->buzzer-serial#disconnect"
+          data-action="click->buzzer-serial#requestDisconnect"
           disabled
         >
           切断
