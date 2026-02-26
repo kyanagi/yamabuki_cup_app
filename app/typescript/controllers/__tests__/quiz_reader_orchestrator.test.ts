@@ -175,7 +175,13 @@ function createFixture(options: FixtureOptions = {}): Fixture {
       _onVoiceStatusChanged?: (s: VoiceStatus) => void,
       _onFileNotFound?: (filename: string) => void,
       _outputNode?: AudioNode,
-    ) => createMockReadingContext({ questionId: 10, readDuration: 2.34, fullDuration: 4.56, voiceStatus: "STANDBY" }),
+    ) =>
+      createMockReadingContext({
+        questionId: 10,
+        readDuration: 2.34,
+        fullDuration: 4.56,
+        voiceStatus: "STANDBY",
+      }),
   );
 
   const deps = {

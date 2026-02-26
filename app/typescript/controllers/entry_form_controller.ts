@@ -33,12 +33,33 @@ type ValidationFieldDefinition = {
 };
 const ValidationFields: readonly ValidationFieldDefinition[] = [
   { schema: EmailSchema, valueTarget: "emailTarget", errorTarget: "emailErrorTarget" },
-  { schema: PasswordSchema, valueTarget: "passwordTarget", errorTarget: "passwordErrorTarget", skipInEditMode: true },
-  { schema: FamilyNameSchema, valueTarget: "familyNameTarget", errorTarget: "familyNameErrorTarget" },
+  {
+    schema: PasswordSchema,
+    valueTarget: "passwordTarget",
+    errorTarget: "passwordErrorTarget",
+    skipInEditMode: true,
+  },
+  {
+    schema: FamilyNameSchema,
+    valueTarget: "familyNameTarget",
+    errorTarget: "familyNameErrorTarget",
+  },
   { schema: GivenNameSchema, valueTarget: "givenNameTarget", errorTarget: "givenNameErrorTarget" },
-  { schema: FamilyNameKanaSchema, valueTarget: "familyNameKanaTarget", errorTarget: "familyNameKanaErrorTarget" },
-  { schema: GivenNameKanaSchema, valueTarget: "givenNameKanaTarget", errorTarget: "givenNameKanaErrorTarget" },
-  { schema: EntryListNameSchema, valueTarget: "entryListNameTarget", errorTarget: "entryListNameErrorTarget" },
+  {
+    schema: FamilyNameKanaSchema,
+    valueTarget: "familyNameKanaTarget",
+    errorTarget: "familyNameKanaErrorTarget",
+  },
+  {
+    schema: GivenNameKanaSchema,
+    valueTarget: "givenNameKanaTarget",
+    errorTarget: "givenNameKanaErrorTarget",
+  },
+  {
+    schema: EntryListNameSchema,
+    valueTarget: "entryListNameTarget",
+    errorTarget: "entryListNameErrorTarget",
+  },
 ] as const;
 
 type ConfirmationValueTargetKey =
@@ -73,7 +94,11 @@ const ConfirmationFields: readonly ConfirmationFieldDefinition[] = [
   { valueTarget: "familyNameKanaTarget", confirmationTarget: "confirmationFamilyNameKanaTarget" },
   { valueTarget: "givenNameKanaTarget", confirmationTarget: "confirmationGivenNameKanaTarget" },
   { valueTarget: "entryListNameTarget", confirmationTarget: "confirmationEntryListNameTarget" },
-  { valueTarget: "notesTarget", confirmationTarget: "confirmationNotesTarget", guard: "hasNotesTarget" },
+  {
+    valueTarget: "notesTarget",
+    confirmationTarget: "confirmationNotesTarget",
+    guard: "hasNotesTarget",
+  },
   {
     valueTarget: "passwordTarget",
     confirmationTarget: "confirmationPasswordTarget",

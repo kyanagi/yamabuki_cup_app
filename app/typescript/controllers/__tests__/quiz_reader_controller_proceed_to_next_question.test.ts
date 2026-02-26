@@ -6,7 +6,11 @@ import QuizReaderController from "../quiz_reader_controller";
 
 type FetchCallArgs = [
   string,
-  { method: string; headers: { "Content-Type"?: string; "X-CSRF-Token"?: string; Accept?: string }; body: string },
+  {
+    method: string;
+    headers: { "Content-Type"?: string; "X-CSRF-Token"?: string; Accept?: string };
+    body: string;
+  },
 ];
 
 // vi.hoisted() でモック関数を事前に定義（vi.mockのホイスティングに対応）
@@ -274,7 +278,11 @@ describe("proceedToNextQuestion", () => {
 
   it("問題フォローがOFFの場合、問題送出はせず次の問題への遷移のみ実行される", async () => {
     // Arrange
-    const html = createQuizReaderHTML({ questionId: 42, soundId: "001", isQuestionFollowOn: false });
+    const html = createQuizReaderHTML({
+      questionId: 42,
+      soundId: "001",
+      isQuestionFollowOn: false,
+    });
     const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
     const mockReadingContext = {

@@ -77,24 +77,19 @@ describe("parseUpdateQuestionStreamAttributes", () => {
     );
   });
 
-  it.each([
-    "abc",
-    "0",
-    "-1",
-    "1.5",
-    "1e3",
-    "0x2a",
-    "9007199254740993",
-  ])("question-id=%s は例外を投げる", (questionId) => {
-    // Arrange
-    const streamElement = document.createElement("turbo-stream");
-    streamElement.setAttribute("action", "update-question");
-    streamElement.setAttribute("question-id", questionId);
-    streamElement.setAttribute("sound-id", "001");
+  it.each(["abc", "0", "-1", "1.5", "1e3", "0x2a", "9007199254740993"])(
+    "question-id=%s は例外を投げる",
+    (questionId) => {
+      // Arrange
+      const streamElement = document.createElement("turbo-stream");
+      streamElement.setAttribute("action", "update-question");
+      streamElement.setAttribute("question-id", questionId);
+      streamElement.setAttribute("sound-id", "001");
 
-    // Assert
-    expect(() => parseUpdateQuestionStreamAttributes(streamElement)).toThrow();
-  });
+      // Assert
+      expect(() => parseUpdateQuestionStreamAttributes(streamElement)).toThrow();
+    },
+  );
 
   it("question-id が有効値の場合は QuestionId を返す", () => {
     // Arrange
@@ -140,22 +135,16 @@ describe("parseSwitchToQuestionInput", () => {
     expect(parsedInput).toEqual({ kind: "cancelled" });
   });
 
-  it.each([
-    "   ",
-    "abc",
-    "0",
-    "-1",
-    "1.5",
-    "1e3",
-    "0x2a",
-    "9007199254740993",
-  ])("%s は invalid として扱う", (rawValue) => {
-    // Act
-    const parsedInput = parseSwitchToQuestionInput(rawValue);
+  it.each(["   ", "abc", "0", "-1", "1.5", "1e3", "0x2a", "9007199254740993"])(
+    "%s は invalid として扱う",
+    (rawValue) => {
+      // Act
+      const parsedInput = parseSwitchToQuestionInput(rawValue);
 
-    // Assert
-    expect(parsedInput).toEqual({ kind: "invalid" });
-  });
+      // Assert
+      expect(parsedInput).toEqual({ kind: "invalid" });
+    },
+  );
 
   it("前後空白のある数字は trim して valid として扱う", () => {
     // Act

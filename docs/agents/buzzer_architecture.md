@@ -14,10 +14,10 @@ USB接続の早押し機（シリアル通信デバイス）を利用し、得�
 
 2つのウィンドウに役割を分離する。
 
-| ウィンドウ | 表示場所 | 役割 |
-|---|---|---|
-| **制御ウィンドウ** | 操作者のPC画面 | シリアル読み取り・エミュレータUI・ボタン席割り当て設定 |
-| **スコアボードウィンドウ** | TV・プロジェクタ | 純粋な表示専用 |
+| ウィンドウ                 | 表示場所         | 役割                                                   |
+| -------------------------- | ---------------- | ------------------------------------------------------ |
+| **制御ウィンドウ**         | 操作者のPC画面   | シリアル読み取り・エミュレータUI・ボタン席割り当て設定 |
+| **スコアボードウィンドウ** | TV・プロジェクタ | 純粋な表示専用                                         |
 
 ## 物理構成
 
@@ -74,10 +74,10 @@ BroadcastChannelはローカル端末内の通信のため、レイテンシの�
 
 ```typescript
 type BuzzerSignal =
-  | { type: "button_pressed"; seat: number }  // 0-indexed
+  | { type: "button_pressed"; seat: number } // 0-indexed
   | { type: "correct" }
   | { type: "wrong" }
-  | { type: "reset" }
+  | { type: "reset" };
 ```
 
 BroadcastChannelのチャンネル名は `"buzzer"` とし、メッセージの `data` に `BuzzerSignal` を乗せる。
@@ -85,7 +85,7 @@ BroadcastChannelのチャンネル名は `"buzzer"` とし、メッセージの 
 ```typescript
 // 送信側（制御ウィンドウ）
 const channel = new BroadcastChannel("buzzer");
-const seat = resolveMapping(buttonId);  // localStorageから解決（0-indexed）
+const seat = resolveMapping(buttonId); // localStorageから解決（0-indexed）
 if (seat !== null) {
   channel.postMessage({ type: "button_pressed", seat });
 }
@@ -252,15 +252,15 @@ if (ports.length > 0) {
 
 ## 責務の分離
 
-| 機能 | 担当 | 理由 |
-|------|------|------|
-| シリアル信号の読み取り | 制御ウィンドウ（Web Serial API） | 低レイテンシ必須 |
-| ボタンID→席番号の変換 | 制御ウィンドウ（localStorage参照） | マッピングロジックを一箇所に集約 |
-| ボタン席割り当て設定UI | 制御ウィンドウ | 操作者が設定・確認しやすい場所 |
-| エミュレータUI | 制御ウィンドウ | 実機不在時の代替 |
-| 誰がボタンを押したか表示 | スコアボードウィンドウ（BroadcastChannel受信） | 純粋な表示専用 |
-| 得点管理・記録 | Railsサーバ | 整合性・永続化が重要 |
-| 他クライアントへのスコア同期 | ActionCable | 既存の仕組みを活用 |
+| 機能                         | 担当                                           | 理由                             |
+| ---------------------------- | ---------------------------------------------- | -------------------------------- |
+| シリアル信号の読み取り       | 制御ウィンドウ（Web Serial API）               | 低レイテンシ必須                 |
+| ボタンID→席番号の変換        | 制御ウィンドウ（localStorage参照）             | マッピングロジックを一箇所に集約 |
+| ボタン席割り当て設定UI       | 制御ウィンドウ                                 | 操作者が設定・確認しやすい場所   |
+| エミュレータUI               | 制御ウィンドウ                                 | 実機不在時の代替                 |
+| 誰がボタンを押したか表示     | スコアボードウィンドウ（BroadcastChannel受信） | 純粋な表示専用                   |
+| 得点管理・記録               | Railsサーバ                                    | 整合性・永続化が重要             |
+| 他クライアントへのスコア同期 | ActionCable                                    | 既存の仕組みを活用               |
 
 ## 未確定事項
 

@@ -35,7 +35,9 @@ export default class extends Controller {
     if (seat === null) return;
 
     window.dispatchEvent(
-      new CustomEvent<{ seat: SeatId }>(BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT, { detail: { seat } }),
+      new CustomEvent<{ seat: SeatId }>(BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT, {
+        detail: { seat },
+      }),
     );
   }
 

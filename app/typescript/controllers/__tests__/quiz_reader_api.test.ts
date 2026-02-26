@@ -211,7 +211,11 @@ describe("createQuizReaderApi", () => {
     // Act
     await api.broadcastQuestion(testQuestionId(1));
     await api.fetchNextQuestionStream("next");
-    await api.uploadQuestionReading({ questionId: testQuestionId(1), readDuration: 1.0, fullDuration: 2.0 });
+    await api.uploadQuestionReading({
+      questionId: testQuestionId(1),
+      readDuration: 1.0,
+      fullDuration: 2.0,
+    });
 
     // Assert
     const broadcastOptions = extractRequestOptions(fetchFn, 0);
@@ -235,7 +239,11 @@ describe("createQuizReaderApi", () => {
     // Act
     await api.broadcastQuestion(testQuestionId(1));
     await api.fetchNextQuestionStream("next");
-    await api.uploadQuestionReading({ questionId: testQuestionId(1), readDuration: 1.0, fullDuration: 2.0 });
+    await api.uploadQuestionReading({
+      questionId: testQuestionId(1),
+      readDuration: 1.0,
+      fullDuration: 2.0,
+    });
 
     // Assert
     const broadcastOptions = extractRequestOptions(fetchFn, 0);
