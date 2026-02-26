@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { testQuestionId } from "../../__tests__/helpers/question-id";
 import { testSoundId } from "../../__tests__/helpers/sound-id";
-import type { LoadingStatus, QuestionReadingContext } from "../quiz_reader/question_reading_context";
+import type { LoadingStatus, QuestionReadingContext, VoiceStatus } from "../quiz_reader/question_reading_context";
 import {
   formatDurationText,
   parseSwitchToQuestionInput,
@@ -24,7 +24,7 @@ function createReadingContext(params: { readDuration: number; fullDuration: numb
     get readDuration() {
       return params.readDuration;
     },
-    get voiceStatus() {
+    get voiceStatus(): VoiceStatus {
       return "STANDBY";
     },
     set loadingStatus(_status: LoadingStatus) {},

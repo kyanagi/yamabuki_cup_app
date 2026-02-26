@@ -4,6 +4,12 @@ import { createQuizReaderApi, type QuizReaderUploadPayload } from "../quiz_reade
 
 type MockFetchFn = ReturnType<typeof vi.fn>;
 
+type TestHeaders = {
+  "Content-Type"?: string;
+  "X-CSRF-Token"?: string;
+  Accept?: string;
+};
+
 function createResponse(overrides: Partial<Response> = {}): Response {
   return {
     ok: true,
@@ -15,12 +21,9 @@ function createResponse(overrides: Partial<Response> = {}): Response {
   } as Response;
 }
 
-function extractRequestOptions(
-  mockFn: MockFetchFn,
-  index = 0,
-): RequestInit & { headers: Record<string, string>; body?: string } {
+function extractRequestOptions(mockFn: MockFetchFn, index = 0): RequestInit & { headers: TestHeaders; body?: string } {
   const options = mockFn.mock.calls[index]?.[1];
-  return options as RequestInit & { headers: Record<string, string>; body?: string };
+  return options as RequestInit & { headers: TestHeaders; body?: string };
 }
 
 describe("createQuizReaderApi", () => {

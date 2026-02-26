@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import type { ButtonId } from "../../lib/buzzer/button_id";
@@ -84,8 +85,8 @@ class MockReader {
 }
 
 class MockPort implements SerialPortLike {
-  readonly open: ReturnType<typeof vi.fn>;
-  readonly close: ReturnType<typeof vi.fn>;
+  readonly open: Mock<(options: SerialOpenOptions) => Promise<void>>;
+  readonly close: Mock<() => Promise<void>>;
   readonly readable: { getReader: () => MockReader };
 
   constructor(private readonly reader: MockReader) {

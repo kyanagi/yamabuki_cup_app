@@ -172,7 +172,7 @@ describe("PlayerNameLookupController", () => {
 
     it("レスポンス受信時に入力値が変わっていたら更新しない", async () => {
       // Arrange
-      let resolveFirstFetch: (value: unknown) => void;
+      let resolveFirstFetch!: (value: unknown) => void;
       const firstFetchPromise = new Promise((resolve) => {
         resolveFirstFetch = resolve;
       });

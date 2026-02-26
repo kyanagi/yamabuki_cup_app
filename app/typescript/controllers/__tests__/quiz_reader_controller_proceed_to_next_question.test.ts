@@ -4,6 +4,11 @@ import { setupControllerTest, teardownControllerTest } from "../../__tests__/hel
 import type { LoadingStatus, VoiceStatus } from "../quiz_reader/question_reading_context";
 import QuizReaderController from "../quiz_reader_controller";
 
+type FetchCallArgs = [
+  string,
+  { method: string; headers: { "Content-Type"?: string; "X-CSRF-Token"?: string; Accept?: string }; body: string },
+];
+
 // vi.hoisted() でモック関数を事前に定義（vi.mockのホイスティングに対応）
 const { mockIdbAdd, mockIdbGetAll, mockRenderStreamMessage, mockOpenDB } = vi.hoisted(() => {
   const add = vi.fn().mockResolvedValue(1);
@@ -95,7 +100,7 @@ describe("proceedToNextQuestion", () => {
     expect(fetchSpy).toHaveBeenCalledTimes(2);
 
     // 1番目: 問題送出リクエスト
-    const firstCall = fetchSpy.mock.calls[0];
+    const firstCall = fetchSpy.mock.calls[0] as FetchCallArgs;
     expect(firstCall[0]).toBe("/admin/question_broadcasts");
     expect(firstCall[1].method).toBe("POST");
     expect(firstCall[1].headers["Content-Type"]).toBe("application/json");
@@ -103,7 +108,7 @@ describe("proceedToNextQuestion", () => {
     expect(JSON.parse(firstCall[1].body)).toEqual({ question_id: 42 });
 
     // 2番目: 次の問題に進むリクエスト
-    const secondCall = fetchSpy.mock.calls[1];
+    const secondCall = fetchSpy.mock.calls[1] as FetchCallArgs;
     expect(secondCall[0]).toBe("/admin/quiz_reader/next_question");
     expect(secondCall[1].method).toBe("PUT");
 
@@ -260,8 +265,8 @@ describe("proceedToNextQuestion", () => {
 
     // Assert: 2つのリクエストが送信された（問題送出 + 次の問題）
     expect(fetchSpy).toHaveBeenCalledTimes(2);
-    expect(fetchSpy.mock.calls[0][0]).toBe("/admin/question_broadcasts");
-    expect(fetchSpy.mock.calls[1][0]).toBe("/admin/quiz_reader/next_question");
+    expect(fetchSpy.mock.calls[0]?.[0]).toBe("/admin/question_broadcasts");
+    expect(fetchSpy.mock.calls[1]?.[0]).toBe("/admin/quiz_reader/next_question");
 
     // Cleanup
     teardownControllerTest(application);
@@ -297,7 +302,7 @@ describe("proceedToNextQuestion", () => {
 
     // Assert: 次の問題への遷移リクエストのみ送信された（問題送出は行われない）
     expect(fetchSpy).toHaveBeenCalledTimes(1);
-    expect(fetchSpy.mock.calls[0][0]).toBe("/admin/quiz_reader/next_question");
+    expect(fetchSpy.mock.calls[0]?.[0]).toBe("/admin/quiz_reader/next_question");
 
     // Cleanup
     teardownControllerTest(application);
