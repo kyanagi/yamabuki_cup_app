@@ -5,6 +5,8 @@
   "scripts": {
     "test": "vitest",
     "test:run": "vitest run",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "lint:css": "stylelint '**/*.css'"
   },
   "devDependencies": {
@@ -12,6 +14,7 @@
     "@types/rails__actioncable": "8.0.3",
     "@vitest/coverage-v8": "^4.0.16",
     "jsdom": "^27.4.0",
+    "oxlint": "^1.49.0",
     "stylelint": "^17.0.0",
     "stylelint-config-recommended": "^18.0.0",
     "typescript": "5.9.3",
