@@ -36,5 +36,5 @@
     "builtin": true
   },
   "globals": {},
-  "ignorePatterns": []
+  "ignorePatterns": ["public/vite/**", "public/vite-dev/**", "public/vite-test/**", "tmp/**"]
 }

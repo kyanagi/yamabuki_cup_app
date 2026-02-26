@@ -1,5 +1,5 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": [],
+  "ignorePatterns": ["public/vite/**", "public/vite-dev/**", "public/vite-test/**", "tmp/**"],
   "printWidth": 120
 }
