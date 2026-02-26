@@ -17,22 +17,4 @@ application.register("score-visibility-toggler", ScoreVisibilityTogglerControlle
 
 const cable = createConsumer();
 
-cable.subscriptions.create(
-  { channel: "ScoreboardChannel" },
-  {
-    connected: () => {
-      console.log("ScoreboardChannel connected");
-    },
-    disconnected: () => {
-      console.log("ScoreboardChannel disconnected");
-    },
-    received: (data) => {
-      console.log("ScoreboardChannel received", data);
-      if (typeof data === "object") {
-        console.log("object");
-      } else if (typeof data === "string") {
-        console.log("string");
-      }
-    },
-  },
-);
+cable.subscriptions.create({ channel: "ScoreboardChannel" });
