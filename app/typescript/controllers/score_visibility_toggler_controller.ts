@@ -20,12 +20,22 @@ export default class extends Controller {
   declare animationClass: string;
   declare scoreHiddenClass: string;
 
+  #scoreTimerIds: ReturnType<typeof setTimeout>[] = [];
+
   connect() {
     document.addEventListener("turbo:before-stream-render", this.#beforeStreamRenderHandler);
   }
 
   disconnect() {
     document.removeEventListener("turbo:before-stream-render", this.#beforeStreamRenderHandler);
+    this.#clearTimers();
+  }
+
+  #clearTimers() {
+    for (const id of this.#scoreTimerIds) {
+      clearTimeout(id);
+    }
+    this.#scoreTimerIds = [];
   }
 
   #beforeStreamRenderHandler = (e: Event) => {
@@ -46,6 +56,7 @@ export default class extends Controller {
   };
 
   #hideScores() {
+    this.#clearTimers();
     this.scorelistTarget.classList.add(this.hiddenScorelistClass);
     for (const element of this.pointsTargets) {
       element.parentElement?.classList.remove(this.animationClass);
@@ -68,11 +79,16 @@ export default class extends Controller {
 
     this.scorelistTarget.classList.remove(this.hiddenScorelistClass);
 
+    this.#clearTimers();
     for (const [index, { element }] of pointsElements.entries()) {
-      setTimeout(() => {
-        element.classList.remove(this.scoreHiddenClass);
-        element.parentElement?.classList.add(this.animationClass);
-      }, index * 800);
+      const id = setTimeout(
+        () => {
+          element.classList.remove(this.scoreHiddenClass);
+          element.parentElement?.classList.add(this.animationClass);
+        },
+        (index + 1) * 800,
+      );
+      this.#scoreTimerIds.push(id);
     }
   }
 }
