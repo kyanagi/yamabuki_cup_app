@@ -106,7 +106,7 @@ describe("createQuestionReadingContext", () => {
       MockAudioBufferSourceNode.autoComplete = false; // 自動完了を無効化
 
       // start()を呼ぶが、完了を待たない（再生中の状態を維持）
-      context.start();
+      void context.start();
 
       // load完了まで待つ
       await context.load();
@@ -133,7 +133,7 @@ describe("createQuestionReadingContext", () => {
       expect(context.voiceStatus).toBe("STANDBY");
 
       // Act & Assert: start() で PLAYING
-      context.start();
+      void context.start();
       await context.load();
       expect(context.voiceStatus).toBe("PLAYING");
 
@@ -151,7 +151,7 @@ describe("createQuestionReadingContext", () => {
       MockAudioBufferSourceNode.autoComplete = false;
 
       // start() → stop() で PAUSED にする
-      context.start();
+      void context.start();
       await context.load();
       context.stop();
       expect(context.voiceStatus).toBe("PAUSED");

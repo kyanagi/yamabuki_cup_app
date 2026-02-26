@@ -209,7 +209,7 @@ export default class extends Controller {
     }
 
     if (this.audioContext && this.audioContext.state !== "closed") {
-      this.audioContext.close();
+      void this.audioContext.close();
     }
     this.audioContext = undefined;
     this.initialQuestionId = undefined;
