@@ -1,13 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import { createQuestionId, type QuestionId } from "../lib/quiz_reader/question_id";
 import { createSoundId, type SoundId } from "../lib/quiz_reader/sound_id";
-import {
-  createQuestionReadingContext,
-  type LoadingStatus,
-  loadAudioFromLocalFile,
-  type QuestionReadingContext,
-  type VoiceStatus,
-} from "./quiz_reader/question_reading_context";
+import { loadAudioFromLocalFile, type QuestionReadingContext } from "./quiz_reader/question_reading_context";
 import { createQuizReaderApi } from "./quiz_reader/quiz_reader_api";
 import { createQuizReaderOrchestrator } from "./quiz_reader/quiz_reader_orchestrator";
 import { createQuizReaderReadingStore } from "./quiz_reader/quiz_reader_reading_store";

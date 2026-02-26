@@ -4,8 +4,8 @@ import { testQuestionId } from "../../__tests__/helpers/question-id";
 import { testSoundId } from "../../__tests__/helpers/sound-id";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import { createMockAudioBuffer, MockAudioContext, MockGainNode } from "../../__tests__/mocks/audio-context";
-import QuizReaderController from "../quiz_reader_controller";
 import { createQuestionReadingContext } from "../quiz_reader/question_reading_context";
+import QuizReaderController from "../quiz_reader_controller";
 import { createMockDirectoryHandle } from "./quiz_reader_controller_test_helpers";
 
 // vi.hoisted() でモック関数を事前に定義（vi.mockのホイスティングに対応）
@@ -70,282 +70,282 @@ describe("音量調整機能", () => {
 
   describe("setVolume", () => {
     describe("スライダーから操作した場合", () => {
-    it("gainNode.gain.valueを正しく設定する", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("gainNode.gain.valueを正しく設定する", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act: スライダー値を50に設定
-      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
-      slider.value = "50";
-      slider.dispatchEvent(new Event("input"));
+        // Act: スライダー値を50に設定
+        const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+        slider.value = "50";
+        slider.dispatchEvent(new Event("input"));
 
-      // Assert
-      expect(mockGainNode.gain.value).toBe(0.5);
+        // Assert
+        expect(mockGainNode.gain.value).toBe(0.5);
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
 
-    it("localStorageに保存する", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("localStorageに保存する", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act
-      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
-      slider.value = "75";
-      slider.dispatchEvent(new Event("input"));
+        // Act
+        const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+        slider.value = "75";
+        slider.dispatchEvent(new Event("input"));
 
-      // Assert
-      expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("75");
+        // Assert
+        expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("75");
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
 
-    it("数値入力欄も同期される", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("数値入力欄も同期される", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act
-      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
-      slider.value = "30";
-      slider.dispatchEvent(new Event("input"));
+        // Act
+        const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+        slider.value = "30";
+        slider.dispatchEvent(new Event("input"));
 
-      // Assert
-      const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
-      expect(volumeInput.value).toBe("30");
+        // Assert
+        const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
+        expect(volumeInput.value).toBe("30");
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
 
-    it("gainNodeがなくてもlocalStorageと数値入力欄は更新される", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("gainNodeがなくてもlocalStorageと数値入力欄は更新される", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをundefinedに設定
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = undefined;
+        // gainNodeをundefinedに設定
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = undefined;
 
-      // Act
-      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
-      slider.value = "25";
-      slider.dispatchEvent(new Event("input"));
+        // Act
+        const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+        slider.value = "25";
+        slider.dispatchEvent(new Event("input"));
 
-      // Assert: localStorageと数値入力欄は更新される
-      expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("25");
-      const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
-      expect(volumeInput.value).toBe("25");
+        // Assert: localStorageと数値入力欄は更新される
+        expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("25");
+        const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
+        expect(volumeInput.value).toBe("25");
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
     });
 
     describe("数値入力欄から操作した場合", () => {
-    it("gainNode.gain.valueを正しく設定する", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("gainNode.gain.valueを正しく設定する", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act: 数値入力欄に値を設定
-      const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
-      volumeInput.value = "50";
-      volumeInput.dispatchEvent(new Event("input"));
+        // Act: 数値入力欄に値を設定
+        const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
+        volumeInput.value = "50";
+        volumeInput.dispatchEvent(new Event("input"));
 
-      // Assert
-      expect(mockGainNode.gain.value).toBe(0.5);
+        // Assert
+        expect(mockGainNode.gain.value).toBe(0.5);
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
 
-    it("localStorageに保存する", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("localStorageに保存する", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act
-      const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
-      volumeInput.value = "75";
-      volumeInput.dispatchEvent(new Event("input"));
+        // Act
+        const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
+        volumeInput.value = "75";
+        volumeInput.dispatchEvent(new Event("input"));
 
-      // Assert
-      expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("75");
+        // Assert
+        expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("75");
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
 
-    it("スライダーも同期される", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("スライダーも同期される", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act
-      const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
-      volumeInput.value = "30";
-      volumeInput.dispatchEvent(new Event("input"));
+        // Act
+        const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
+        volumeInput.value = "30";
+        volumeInput.dispatchEvent(new Event("input"));
 
-      // Assert
-      const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
-      expect(slider.value).toBe("30");
+        // Assert
+        const slider = document.querySelector('[data-quiz-reader-target~="volumeSlider"]') as HTMLInputElement;
+        expect(slider.value).toBe("30");
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
 
-    it("範囲外の値（負の数）は0にクランプされる", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("範囲外の値（負の数）は0にクランプされる", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act
-      const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
-      volumeInput.value = "-10";
-      volumeInput.dispatchEvent(new Event("input"));
+        // Act
+        const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
+        volumeInput.value = "-10";
+        volumeInput.dispatchEvent(new Event("input"));
 
-      // Assert
-      expect(mockGainNode.gain.value).toBe(0);
-      expect(volumeInput.value).toBe("0");
-      expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("0");
+        // Assert
+        expect(mockGainNode.gain.value).toBe(0);
+        expect(volumeInput.value).toBe("0");
+        expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("0");
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
 
-    it("範囲外の値（100超）は100にクランプされる", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("範囲外の値（100超）は100にクランプされる", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act
-      const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
-      volumeInput.value = "150";
-      volumeInput.dispatchEvent(new Event("input"));
+        // Act
+        const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
+        volumeInput.value = "150";
+        volumeInput.dispatchEvent(new Event("input"));
 
-      // Assert
-      expect(mockGainNode.gain.value).toBe(1);
-      expect(volumeInput.value).toBe("100");
-      expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("100");
+        // Assert
+        expect(mockGainNode.gain.value).toBe(1);
+        expect(volumeInput.value).toBe("100");
+        expect(localStorage.getItem(VOLUME_STORAGE_KEY)).toBe("100");
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
 
-    it("小数は整数に丸められる", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("小数は整数に丸められる", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act
-      const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
-      volumeInput.value = "50.7";
-      volumeInput.dispatchEvent(new Event("input"));
+        // Act
+        const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
+        volumeInput.value = "50.7";
+        volumeInput.dispatchEvent(new Event("input"));
 
-      // Assert
-      expect(mockGainNode.gain.value).toBe(0.51);
-      expect(volumeInput.value).toBe("51");
+        // Assert
+        expect(mockGainNode.gain.value).toBe(0.51);
+        expect(volumeInput.value).toBe("51");
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
 
-    it("非数値（abc）の場合は0になる（input type=numberの仕様により空文字列として扱われる）", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("非数値（abc）の場合は0になる（input type=numberの仕様により空文字列として扱われる）", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act: 数値でない文字列を入力
-      // Note: input type="number"では非数値を設定すると空文字列になる（ブラウザの仕様）
-      const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
-      volumeInput.value = "abc";
-      volumeInput.dispatchEvent(new Event("input"));
+        // Act: 数値でない文字列を入力
+        // Note: input type="number"では非数値を設定すると空文字列になる（ブラウザの仕様）
+        const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
+        volumeInput.value = "abc";
+        volumeInput.dispatchEvent(new Event("input"));
 
-      // Assert: input type="number"のvalueは""（空文字列）になり、Number("")は0
-      expect(mockGainNode.gain.value).toBe(0);
-      expect(volumeInput.value).toBe("0");
+        // Assert: input type="number"のvalueは""（空文字列）になり、Number("")は0
+        expect(mockGainNode.gain.value).toBe(0);
+        expect(volumeInput.value).toBe("0");
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
 
-    it("空欄の場合は0になる", async () => {
-      // Arrange
-      const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
-      const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
+      it("空欄の場合は0になる", async () => {
+        // Arrange
+        const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
+        const { application, controller } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
 
-      // gainNodeをモック
-      const mockGainNode = new MockGainNode();
-      // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
-      (controller as any).gainNode = mockGainNode;
+        // gainNodeをモック
+        const mockGainNode = new MockGainNode();
+        // biome-ignore lint/suspicious/noExplicitAny: テスト用にprivateプロパティにアクセス
+        (controller as any).gainNode = mockGainNode;
 
-      // Act: 空欄を入力（Number("")は0になる）
-      const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
-      volumeInput.value = "";
-      volumeInput.dispatchEvent(new Event("input"));
+        // Act: 空欄を入力（Number("")は0になる）
+        const volumeInput = document.querySelector('[data-quiz-reader-target~="volumeInput"]') as HTMLInputElement;
+        volumeInput.value = "";
+        volumeInput.dispatchEvent(new Event("input"));
 
-      // Assert: Number("")は0なので0になる
-      expect(mockGainNode.gain.value).toBe(0);
-      expect(volumeInput.value).toBe("0");
+        // Assert: Number("")は0なので0になる
+        expect(mockGainNode.gain.value).toBe(0);
+        expect(volumeInput.value).toBe("0");
 
-      // Cleanup
-      teardownControllerTest(application);
-    });
+        // Cleanup
+        teardownControllerTest(application);
+      });
     });
   });
 
