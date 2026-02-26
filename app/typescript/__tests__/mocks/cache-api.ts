@@ -2,22 +2,28 @@
  * Cache API のモック
  */
 
+function toUrlString(request: RequestInfo | URL): string {
+  if (typeof request === "string") return request;
+  if (request instanceof URL) return request.href;
+  return request.url;
+}
+
 export class MockCache {
   private store = new Map<string, Response>();
 
   async match(request: RequestInfo | URL): Promise<Response | undefined> {
-    const url = typeof request === "string" ? request : request.toString();
+    const url = toUrlString(request);
     const response = this.store.get(url);
     return response?.clone();
   }
 
   async put(request: RequestInfo | URL, response: Response): Promise<void> {
-    const url = typeof request === "string" ? request : request.toString();
+    const url = toUrlString(request);
     this.store.set(url, response.clone());
   }
 
   async delete(request: RequestInfo | URL): Promise<boolean> {
-    const url = typeof request === "string" ? request : request.toString();
+    const url = toUrlString(request);
     return this.store.delete(url);
   }
 
