@@ -56,7 +56,7 @@
 ```
 
 ```bash
-# RuboCop, RSpec, Brakeman, Stylelint によるチェックを全て実行する
+# RuboCop, RSpec, Brakeman, Stylelint, TypeScript型チェック によるチェックを全て実行する
 bundle exec rake check
 ```
 
@@ -66,6 +66,7 @@ bundle exec rspec spec/path/to/file_spec.rb  # Run specific test file
 bundle exec rspec spec/path/to/file_spec.rb:42  # Run specific test line
 bin/rubocop                         # Ruby linting (*.rb files only)
 bin/brakeman --no-prism             # Security analysis
+npx tsc --noEmit                    # TypeScript type checking
 npx biome format --write .          # Format TypeScript/JavaScript code with biome
 npx biome check --write .           # Lint and format frontend code with biome
 npm run lint:css                    # Lint CSS code with Stylelint
@@ -101,7 +102,7 @@ Rubyの例外は、例外的な場合のみに使用してください。単に�
 ソースコードを編集・追加・削除した場合、必ず以下のことを確認してください。
 
 - テストが全て通ること
-- RuboCop、Biome、Stylelintによるチェックが全て通ること
+- RuboCop、Biome、Stylelint、TypeScript型チェックによるチェックが全て通ること
 
 リファクタリングを行う際は、Martin Fowlerが推奨する方法で行ってください。
 
