@@ -6,7 +6,7 @@
     "test:run": "vitest run",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
-    "lint": "oxlint",
+    "lint": "oxlint --type-aware --type-check",
     "lint:fix": "oxlint --fix",
     "lint:css": "stylelint '**/*.css'"
   },

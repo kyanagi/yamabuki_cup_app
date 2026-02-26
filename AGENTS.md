@@ -32,10 +32,7 @@
 標準的なRailsのディレクトリ構成に従う。
 
 ### フロントエンド（React + TypeScript + Stimulus）
-- フロントエンドの設定ファイル：
-  - tsconfig.json
-  - vite.config.ts
-  - biome.json
+
 - Stimulus のコントローラは `app/typescript/controllers` ディレクトリにある。
 
 ## 仕様書
@@ -56,7 +53,7 @@
 ```
 
 ```bash
-# RuboCop, RSpec, Brakeman, Stylelint, TypeScript型チェック によるチェックを全て実行する
+# RuboCop, RSpec, Brakeman, Stylelint, oxfmt, oxlintによるチェックを全て実行する
 bundle exec rake check
 ```
 
@@ -66,9 +63,9 @@ bundle exec rspec spec/path/to/file_spec.rb  # Run specific test file
 bundle exec rspec spec/path/to/file_spec.rb:42  # Run specific test line
 bin/rubocop                         # Ruby linting (*.rb files only)
 bin/brakeman --no-prism             # Security analysis
-pnpm exec tsc --noEmit              # TypeScript type checking
-pnpm exec biome format --write .    # Format TypeScript/JavaScript code with biome
-pnpm exec biome check --write .     # Lint and format frontend code with biome
+pnpm run fmt:check                  # oxfmtによるフォーマットのチェック
+pnpm run fmt                        # oxfmtによる自動フォーマット
+pnpm run fmt                        # oxlintによるlintチェック
 pnpm run lint:css                   # Lint CSS code with Stylelint
 pnpm test                           # Run Vitest (frontend unit tests)
 pnpm run test:run                   # Run Vitest once without watch mode
@@ -77,6 +74,7 @@ pnpm run test:run                   # Run Vitest once without watch mode
 **注意:** RuboCopはRubyファイル（`*.rb`）のみをチェックします。ERBファイル（`*.html.erb`）を個別にRuboCopでチェックしないでください（ERBはRuby構文ではないためパースエラーになります）。
 
 **Database Management**
+
 ```bash
 rails db:create db:migrate db:seed   # Initial database setup
 bundle exec rake sample_data:create  # Generate sample tournament data
@@ -102,7 +100,7 @@ Rubyの例外は、例外的な場合のみに使用してください。単に�
 ソースコードを編集・追加・削除した場合、必ず以下のことを確認してください。
 
 - テストが全て通ること
-- RuboCop、Biome、Stylelint、TypeScript型チェックによるチェックが全て通ること
+- RuboCop、oxfmt、oxlint、Stylelint、TypeScript型チェックによるチェックが全て通ること
 
 リファクタリングを行う際は、Martin Fowlerが推奨する方法で行ってください。
 
@@ -115,20 +113,24 @@ XSS、CSRF、SQLインジェクションといった脆弱性に対する適切�
 管理画面（`/admin/*`）へのアクセスには管理者認証が必要。
 
 **モデル構成:**
+
 - `AdminUser`: 管理者ユーザー（username + password_digest + role）
 - `AdminSession`: セッション管理
 
 **権限レベル（role）:**
+
 - `admin`: 全ての管理画面にアクセス可能
 - `staff`: Quiz Reader と問題送出以外の管理画面にアクセス可能
 
 **認証・認可の仕組み:**
+
 - `AdminAuthentication` concern が認証と認可を担当
 - Cookie（`admin_session_id`）でセッションを識別
 - `Current.admin_session` でリクエストスコープのセッション管理
 - admin role のみアクセス可能にするには、コントローラで `require_admin_role` を呼び出す
 
 **管理者ユーザーの管理:**
+
 ```bash
 rake admin:create_user[username,password]        # 管理者を作成（デフォルト: admin権限）
 rake admin:create_user[username,password,staff]  # スタッフを作成
