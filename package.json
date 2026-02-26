@@ -1,5 +1,6 @@
 {
   "private": true,
+  "packageManager": "pnpm@10.29.2",
   "type": "module",
   "scripts": {
     "test": "vitest",
@@ -21,6 +22,7 @@
   },
   "dependencies": {
     "@hotwired/stimulus": "3.2.2",
+    "@hotwired/turbo": "8.0.21",
     "@hotwired/turbo-rails": "8.0.21",
     "@rails/actioncable": "8.1.200",
     "idb": "8.0.3",
