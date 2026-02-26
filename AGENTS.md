@@ -64,7 +64,6 @@ bundle exec rake check
 bundle exec rspec                    # Run RSpec tests
 bundle exec rspec spec/path/to/file_spec.rb  # Run specific test file
 bundle exec rspec spec/path/to/file_spec.rb:42  # Run specific test line
-bundle exec steep check              # Static type checking with Steep
 bin/rubocop                         # Ruby linting (*.rb files only)
 bin/brakeman --no-prism             # Security analysis
 npx biome format --write .          # Format TypeScript/JavaScript code with biome
