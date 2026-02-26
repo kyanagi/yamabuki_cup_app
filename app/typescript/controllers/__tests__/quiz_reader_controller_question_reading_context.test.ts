@@ -6,8 +6,8 @@ import {
   MockAudioBufferSourceNode,
   MockAudioContext,
 } from "../../__tests__/mocks/audio-context";
-import type { LoadingStatus, VoiceStatus } from "../quiz_reader_controller";
-import { createQuestionReadingContext } from "../quiz_reader_controller";
+import type { LoadingStatus, VoiceStatus } from "../quiz_reader/question_reading_context";
+import { createQuestionReadingContext } from "../quiz_reader/question_reading_context";
 import { createMockDirectoryHandle } from "./quiz_reader_controller_test_helpers";
 
 describe("createQuestionReadingContext", () => {

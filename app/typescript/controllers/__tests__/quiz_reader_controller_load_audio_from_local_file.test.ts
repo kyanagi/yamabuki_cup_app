@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createMockAudioBuffer, MockAudioContext } from "../../__tests__/mocks/audio-context";
-import { loadAudioFromLocalFile } from "../quiz_reader_controller";
+import { loadAudioFromLocalFile } from "../quiz_reader/question_reading_context";
 import { createMockDirectoryHandle } from "./quiz_reader_controller_test_helpers";
 
 describe("loadAudioFromLocalFile", () => {

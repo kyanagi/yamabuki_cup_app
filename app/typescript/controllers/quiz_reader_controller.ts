@@ -13,9 +13,6 @@ import { createQuizReaderOrchestrator } from "./quiz_reader/quiz_reader_orchestr
 import { createQuizReaderReadingStore } from "./quiz_reader/quiz_reader_reading_store";
 import { createQuizReaderView } from "./quiz_reader/quiz_reader_view";
 
-// 既存テストと利用箇所の互換性維持のため再エクスポート
-export { createQuestionReadingContext, loadAudioFromLocalFile };
-export type { LoadingStatus, QuestionReadingContext, VoiceStatus };
 // localStorage のキー
 const VOLUME_STORAGE_KEY = "quiz-reader-volume";
 // デフォルト音量

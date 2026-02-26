@@ -4,7 +4,8 @@ import { testQuestionId } from "../../__tests__/helpers/question-id";
 import { testSoundId } from "../../__tests__/helpers/sound-id";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import { createMockAudioBuffer, MockAudioContext, MockGainNode } from "../../__tests__/mocks/audio-context";
-import QuizReaderController, { createQuestionReadingContext } from "../quiz_reader_controller";
+import QuizReaderController from "../quiz_reader_controller";
+import { createQuestionReadingContext } from "../quiz_reader/question_reading_context";
 import { createMockDirectoryHandle } from "./quiz_reader_controller_test_helpers";
 
 // vi.hoisted() でモック関数を事前に定義（vi.mockのホイスティングに対応）

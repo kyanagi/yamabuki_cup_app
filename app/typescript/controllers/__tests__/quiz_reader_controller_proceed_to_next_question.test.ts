@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createQuizReaderHTML } from "../../__tests__/helpers/dom-factory";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
-import type { LoadingStatus, VoiceStatus } from "../quiz_reader_controller";
+import type { LoadingStatus, VoiceStatus } from "../quiz_reader/question_reading_context";
 import QuizReaderController from "../quiz_reader_controller";
 
 // vi.hoisted() でモック関数を事前に定義（vi.mockのホイスティングに対応）
