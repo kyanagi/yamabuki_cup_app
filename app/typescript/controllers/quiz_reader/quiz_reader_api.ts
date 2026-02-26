@@ -34,18 +34,11 @@ function assertOk(response: Response): void {
 export function createQuizReaderApi(deps: QuizReaderApiDeps): QuizReaderApi {
   const { csrfTokenProvider, fetchFn = fetch, fetchWithRetryFn = fetchWithRetry } = deps;
 
-  const jsonHeaders = (accept?: string): Record<string, string> => {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      "X-CSRF-Token": csrfTokenProvider(),
-    };
-
-    if (accept) {
-      headers.Accept = accept;
-    }
-
-    return headers;
-  };
+  const jsonHeaders = (accept?: string): Record<string, string> => ({
+    "Content-Type": "application/json",
+    "X-CSRF-Token": csrfTokenProvider(),
+    ...(accept ? { Accept: accept } : {}),
+  });
 
   return {
     async broadcastQuestion(questionId: QuestionId): Promise<void> {
