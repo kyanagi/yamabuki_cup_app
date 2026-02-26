@@ -292,17 +292,9 @@ export default class extends Controller {
   }
 
   /**
-   * 音量を設定する（スライダーのinputイベントから呼ばれる）
+   * 音量を設定する（スライダー・数値入力欄どちらのinputイベントからも呼ばれる）
    */
-  setVolumeFromSlider(event: Event) {
-    const volume = Number((event.target as HTMLInputElement).value);
-    this.applyVolume(this.normalizeVolume(volume));
-  }
-
-  /**
-   * 音量を設定する（数値入力欄のinputイベントから呼ばれる）
-   */
-  setVolumeFromInput(event: Event) {
+  setVolume(event: Event) {
     const volume = Number((event.target as HTMLInputElement).value);
     this.applyVolume(this.normalizeVolume(volume));
   }

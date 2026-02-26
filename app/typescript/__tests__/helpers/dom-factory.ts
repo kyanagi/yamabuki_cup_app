@@ -51,8 +51,8 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
       <p data-quiz-reader-target="mainError" class="is-hidden"></p>
 
       <!-- Volume control -->
-      <input type="number" min="0" max="100" step="1" value="100" data-quiz-reader-target="volumeInput" data-action="input->quiz-reader#setVolumeFromInput" />
-      <input type="range" min="0" max="100" value="100" data-quiz-reader-target="volumeSlider" data-action="input->quiz-reader#setVolumeFromSlider" />
+      <input type="number" min="0" max="100" step="1" value="100" data-quiz-reader-target="volumeInput" data-action="input->quiz-reader#setVolume" />
+      <input type="range" min="0" max="100" value="100" data-quiz-reader-target="volumeSlider" data-action="input->quiz-reader#setVolume" />
 
       <!-- Next questions -->
       <div data-quiz-reader-target="nextQuestions">

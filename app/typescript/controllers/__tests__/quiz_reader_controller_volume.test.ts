@@ -67,7 +67,8 @@ describe("音量調整機能", () => {
     vi.unstubAllGlobals();
   });
 
-  describe("setVolumeFromSlider", () => {
+  describe("setVolume", () => {
+    describe("スライダーから操作した場合", () => {
     it("gainNode.gain.valueを正しく設定する", async () => {
       // Arrange
       const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
@@ -157,9 +158,9 @@ describe("音量調整機能", () => {
       // Cleanup
       teardownControllerTest(application);
     });
-  });
+    });
 
-  describe("setVolumeFromInput", () => {
+    describe("数値入力欄から操作した場合", () => {
     it("gainNode.gain.valueを正しく設定する", async () => {
       // Arrange
       const html = createQuizReaderHTML({ questionId: 1, soundId: "001" });
@@ -343,6 +344,7 @@ describe("音量調整機能", () => {
 
       // Cleanup
       teardownControllerTest(application);
+    });
     });
   });
 
