@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { type MockInstance, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createQuizReaderHTML } from "../../__tests__/helpers/dom-factory";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import { waitForCondition } from "../../__tests__/helpers/wait_for_condition";
@@ -41,7 +41,7 @@ describe("Turbo差し替え後のUI追従", () => {
     audioContext?: MockAudioContext;
   };
   let application: Parameters<typeof teardownControllerTest>[0] | undefined;
-  let consoleErrorSpy: ReturnType<typeof vi.spyOn> | undefined;
+  let consoleErrorSpy: MockInstance | undefined;
 
   beforeEach(() => {
     mockOpenDB.mockResolvedValue({ add: mockIdbAdd, getAll: mockIdbGetAll });
