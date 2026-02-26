@@ -14,9 +14,9 @@ export type QuizReaderUploadPayload = {
 };
 
 export type QuizReaderApi = {
-  broadcastQuestion(questionId: QuestionId): Promise<void>;
-  fetchNextQuestionStream(questionTarget: QuestionTarget): Promise<string>;
-  uploadQuestionReading(payload: QuizReaderUploadPayload): Promise<void>;
+  broadcastQuestion: (questionId: QuestionId) => Promise<void>;
+  fetchNextQuestionStream: (questionTarget: QuestionTarget) => Promise<string>;
+  uploadQuestionReading: (payload: QuizReaderUploadPayload) => Promise<void>;
 };
 
 export type QuizReaderApiDeps = {

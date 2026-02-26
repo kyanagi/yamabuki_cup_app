@@ -25,11 +25,11 @@ export type QuizReaderViewDeps = {
 };
 
 export type QuizReaderView = {
-  setVoiceLoadingStatusIcon(status: LoadingStatus): void;
-  setPlayStatusIcon(status: VoiceStatus): void;
-  setResultUploadingStatusIcon(status: ResultUploadingStatus): void;
-  showMainError(message: string): void;
-  clearMainError(): void;
+  setVoiceLoadingStatusIcon: (status: LoadingStatus) => void;
+  setPlayStatusIcon: (status: VoiceStatus) => void;
+  setResultUploadingStatusIcon: (status: ResultUploadingStatus) => void;
+  showMainError: (message: string) => void;
+  clearMainError: () => void;
 };
 
 const MISSING_MAIN_ERROR_TARGET_MESSAGE = "[quiz_reader_view] mainError target が見つかりません";

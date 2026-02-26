@@ -18,7 +18,7 @@ export type QuizReaderReadingRecord = {
 };
 
 export type QuizReaderReadingStore = {
-  save(record: QuizReaderReadingRecord): Promise<void>;
+  save: (record: QuizReaderReadingRecord) => Promise<void>;
 };
 
 export type QuizReaderReadingStoreDeps = {

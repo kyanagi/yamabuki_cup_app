@@ -21,7 +21,8 @@ describe("loadAudioFromLocalFile", () => {
       });
 
       const expectedBuffer = createMockAudioBuffer(3.0);
-      mockAudioContext.decodeAudioData = vi.fn().mockResolvedValue(expectedBuffer);
+      const decodeAudioDataMock = vi.fn().mockResolvedValue(expectedBuffer);
+      mockAudioContext.decodeAudioData = decodeAudioDataMock;
 
       // Act
       const result = await loadAudioFromLocalFile(
@@ -32,7 +33,7 @@ describe("loadAudioFromLocalFile", () => {
       );
 
       // Assert
-      expect(mockAudioContext.decodeAudioData).toHaveBeenCalled();
+      expect(decodeAudioDataMock).toHaveBeenCalled();
       expect(result).toBe(expectedBuffer);
     });
   });
