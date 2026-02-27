@@ -1,5 +1,5 @@
 import React from "react";
-import type { MatchState } from "../types";
+import type { MatchState, QuestionState } from "../types";
 import type { SeatId } from "../../lib/buzzer/seat_id";
 import { MatchScorelist } from "./MatchScorelist";
 
@@ -7,6 +7,7 @@ type Props = {
   matchState: MatchState | null;
   pressedSeat: SeatId | null;
   visibleScores: Set<number> | null;
+  questionState: QuestionState | null;
 };
 
 const TODAY = new Date().toLocaleDateString("ja-JP", {
@@ -15,12 +16,17 @@ const TODAY = new Date().toLocaleDateString("ja-JP", {
   day: "2-digit",
 });
 
-export function ScoreboardRoot({ matchState, pressedSeat, visibleScores }: Props): React.JSX.Element {
+export function ScoreboardRoot({ matchState, pressedSeat, visibleScores, questionState }: Props): React.JSX.Element {
   return (
     <div id="scoreboard-root">
       <div id="scoreboard-main">
         {matchState && (
-          <MatchScorelist matchState={matchState} pressedSeat={pressedSeat} visibleScores={visibleScores} />
+          <MatchScorelist
+            matchState={matchState}
+            pressedSeat={pressedSeat}
+            visibleScores={visibleScores}
+            questionState={questionState}
+          />
         )}
       </div>
       <div id="scoreboard-footer">

@@ -51,6 +51,8 @@ module Admin
         "scoreboard",
         %Q(<turbo-stream action="replace_question" target="question"><template>#{html}</template></turbo-stream>)
       )
+      ActiveSupport::Notifications.instrument("scoreboard.question_show",
+                                              payload: { text: question.text, answer: question.answer })
     end
 
     def clear_question_board
@@ -58,6 +60,7 @@ module Admin
         "scoreboard",
         '<turbo-stream action="replace_question" target="question"><template></template></turbo-stream>'
       )
+      ActiveSupport::Notifications.instrument("scoreboard.question_clear")
     end
   end
 end

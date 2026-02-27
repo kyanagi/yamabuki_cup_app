@@ -23,6 +23,12 @@ module Scoreboard
       subscribers << ActiveSupport::Notifications.subscribe("scoreboard.hide_scores") do |*|
         queue.push({ event: "hide_scores", data: {} })
       end
+      subscribers << ActiveSupport::Notifications.subscribe("scoreboard.question_show") do |*, payload|
+        queue.push({ event: "question_show", data: payload[:payload] })
+      end
+      subscribers << ActiveSupport::Notifications.subscribe("scoreboard.question_clear") do |*|
+        queue.push({ event: "question_clear", data: {} })
+      end
 
       heartbeat = Thread.new do
         loop do

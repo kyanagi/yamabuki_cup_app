@@ -1,7 +1,12 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useScoreboardSSE } from "../hooks/useScoreboardSSE";
-import type { MatchState } from "../types";
+import type { MatchState, QuestionState } from "../types";
+
+const MOCK_QUESTION_STATE: QuestionState = {
+  text: "テスト問題文",
+  answer: "テスト答え",
+};
 
 const MOCK_MATCH_STATE: MatchState = {
   matchId: 1,
@@ -111,5 +116,53 @@ describe("useScoreboardSSE", () => {
     });
 
     expect(result.current.showScores).toBe(false);
+  });
+
+  it("初期状態では questionState は null", () => {
+    const { result } = renderHook(() => useScoreboardSSE());
+    expect(result.current.questionState).toBeNull();
+  });
+
+  it("question_show イベントで questionState が更新される", () => {
+    const { result } = renderHook(() => useScoreboardSSE());
+    const source = MockEventSource.instances[0];
+
+    act(() => {
+      source?.dispatchEvent("question_show", MOCK_QUESTION_STATE);
+    });
+
+    expect(result.current.questionState).toEqual(MOCK_QUESTION_STATE);
+  });
+
+  it("question_clear イベントで questionState が null になる", () => {
+    const { result } = renderHook(() => useScoreboardSSE());
+    const source = MockEventSource.instances[0];
+
+    act(() => {
+      source?.dispatchEvent("question_show", MOCK_QUESTION_STATE);
+    });
+    expect(result.current.questionState).toEqual(MOCK_QUESTION_STATE);
+
+    act(() => {
+      source?.dispatchEvent("question_clear", {});
+    });
+
+    expect(result.current.questionState).toBeNull();
+  });
+
+  it("match_init イベントで questionState がリセットされる", () => {
+    const { result } = renderHook(() => useScoreboardSSE());
+    const source = MockEventSource.instances[0];
+
+    act(() => {
+      source?.dispatchEvent("question_show", MOCK_QUESTION_STATE);
+    });
+    expect(result.current.questionState).toEqual(MOCK_QUESTION_STATE);
+
+    act(() => {
+      source?.dispatchEvent("match_init", MOCK_MATCH_STATE);
+    });
+
+    expect(result.current.questionState).toBeNull();
   });
 });

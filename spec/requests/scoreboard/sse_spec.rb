@@ -37,6 +37,20 @@ RSpec.describe "Scoreboard::Sse", type: :request do
       Scoreboard::SseWriter.write(io, "hide_scores", {})
       expect(io.string).to include("event: hide_scores\n")
     end
+
+    it "question_show イベントが書き出される" do
+      io = StringIO.new
+      Scoreboard::SseWriter.write(io, "question_show", { text: "問題文", answer: "答え" })
+      expect(io.string).to include("event: question_show\n")
+      expect(io.string).to include('"text":"問題文"')
+      expect(io.string).to include('"answer":"答え"')
+    end
+
+    it "question_clear イベントが書き出される" do
+      io = StringIO.new
+      Scoreboard::SseWriter.write(io, "question_clear", {})
+      expect(io.string).to include("event: question_clear\n")
+    end
   end
 
   describe "ルーティング" do

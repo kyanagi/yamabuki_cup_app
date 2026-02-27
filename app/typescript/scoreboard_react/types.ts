@@ -23,9 +23,16 @@ export type ScoreEntry = {
   previousSituation: "pushed" | "unpushed" | null;
 };
 
+export type QuestionState = {
+  text: string;
+  answer: string;
+};
+
 export type SseEvent =
   | { type: "match_init"; data: MatchState }
   | { type: "match_update"; data: MatchState }
   | { type: "show_scores" }
   | { type: "hide_scores" }
-  | { type: "heartbeat" };
+  | { type: "heartbeat" }
+  | { type: "question_show"; data: QuestionState }
+  | { type: "question_clear" };

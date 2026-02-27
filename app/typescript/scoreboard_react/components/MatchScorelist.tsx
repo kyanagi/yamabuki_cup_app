@@ -1,5 +1,5 @@
 import React from "react";
-import type { MatchState } from "../types";
+import type { MatchState, QuestionState } from "../types";
 import type { SeatId } from "../../lib/buzzer/seat_id";
 import { BoardScorelist } from "./rules/BoardScorelist";
 import { Round2Scorelist } from "./rules/Round2Scorelist";
@@ -7,14 +7,16 @@ import { PlayoffScorelist } from "./rules/PlayoffScorelist";
 import { HayaoshiScorelist } from "./rules/HayaoshiScorelist";
 import { HayaboScorelist } from "./rules/HayaboScorelist";
 import { FinalScorelist } from "./rules/FinalScorelist";
+import { Question } from "./Question";
 
 type Props = {
   matchState: MatchState;
   pressedSeat: SeatId | null;
   visibleScores: Set<number> | null;
+  questionState: QuestionState | null;
 };
 
-export function MatchScorelist({ matchState, pressedSeat, visibleScores }: Props): React.JSX.Element {
+export function MatchScorelist({ matchState, pressedSeat, visibleScores, questionState }: Props): React.JSX.Element {
   const { ruleTemplate, gridClass, scores } = matchState;
 
   const scorelistContent = (() => {
@@ -39,7 +41,9 @@ export function MatchScorelist({ matchState, pressedSeat, visibleScores }: Props
       <div id="match-scorelist" className={gridClass}>
         {scorelistContent}
       </div>
-      <div id="question"></div>
+      <div id="question">
+        <Question questionState={questionState} />
+      </div>
     </div>
   );
 }
