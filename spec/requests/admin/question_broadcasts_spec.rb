@@ -103,6 +103,18 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
             expect(data).to include(question.answer)
           end)
         end
+
+        it "scoreboard.question_show 通知が発火され、payload に text と answer が含まれる" do
+          received = []
+          ActiveSupport::Notifications.subscribed(
+            ->(_name, _started, _finished, _uid, payload) { received << payload },
+            "scoreboard.question_show"
+          ) do
+            post "/admin/question_broadcasts", params: { question_id: question.id }
+          end
+          expect(received.size).to eq 1
+          expect(received.first[:payload]).to include(text: question.text, answer: question.answer)
+        end
       end
 
       context "異常系" do
@@ -119,6 +131,17 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
               post "/admin/question_broadcasts", params: { question_id: 999999 }
             end.not_to have_broadcasted_to("scoreboard")
           end
+
+          it "scoreboard.question_show 通知は発火されない" do
+            received = []
+            ActiveSupport::Notifications.subscribed(
+              ->(_name, _started, _finished, _uid, payload) { received << payload },
+              "scoreboard.question_show"
+            ) do
+              post "/admin/question_broadcasts", params: { question_id: 999999 }
+            end
+            expect(received).to be_empty
+          end
         end
 
         context "Question IDが空の場合" do
@@ -133,6 +156,17 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
             expect do
               post "/admin/question_broadcasts", params: { question_id: "" }
             end.not_to have_broadcasted_to("scoreboard")
+          end
+
+          it "scoreboard.question_show 通知は発火されない" do
+            received = []
+            ActiveSupport::Notifications.subscribed(
+              ->(_name, _started, _finished, _uid, payload) { received << payload },
+              "scoreboard.question_show"
+            ) do
+              post "/admin/question_broadcasts", params: { question_id: "" }
+            end
+            expect(received).to be_empty
           end
         end
       end
@@ -166,6 +200,21 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
                    headers: { "Accept" => "application/json", "Content-Type" => "application/json" },
                    as: :json
             end.to have_broadcasted_to("scoreboard")
+          end
+
+          it "scoreboard.question_show 通知が発火され、payload に text と answer が含まれる" do
+            received = []
+            ActiveSupport::Notifications.subscribed(
+              ->(_name, _started, _finished, _uid, payload) { received << payload },
+              "scoreboard.question_show"
+            ) do
+              post "/admin/question_broadcasts",
+                   params: { question_id: question.id },
+                   headers: { "Accept" => "application/json", "Content-Type" => "application/json" },
+                   as: :json
+            end
+            expect(received.size).to eq 1
+            expect(received.first[:payload]).to include(text: question.text, answer: question.answer)
           end
         end
 
@@ -234,6 +283,18 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
         expect(response.body).to include("サンプルテキストを送出しました")
       end
 
+      it "scoreboard.question_show 通知が発火され、payload に text と answer が含まれる" do
+        received = []
+        ActiveSupport::Notifications.subscribed(
+          ->(_name, _started, _finished, _uid, payload) { received << payload },
+          "scoreboard.question_show"
+        ) do
+          post "/admin/question_broadcasts/sample", params: { text: sample_text, answer: sample_answer }
+        end
+        expect(received.size).to eq 1
+        expect(received.first[:payload]).to include(text: sample_text, answer: sample_answer)
+      end
+
       context "テキストが空の場合" do
         it "broadcastが行われてリダイレクトする" do
           post "/admin/question_broadcasts/sample", params: { text: "", answer: "" }
@@ -275,6 +336,17 @@ RSpec.describe "Admin::QuestionBroadcasts", type: :request do
         post "/admin/question_broadcasts/clear"
         follow_redirect!
         expect(response.body).to include("消去しました")
+      end
+
+      it "scoreboard.question_clear 通知が発火される" do
+        received = []
+        ActiveSupport::Notifications.subscribed(
+          ->(_name, _started, _finished, _uid, _payload) { received << true },
+          "scoreboard.question_clear"
+        ) do
+          post "/admin/question_broadcasts/clear"
+        end
+        expect(received.size).to eq 1
       end
     end
   end
