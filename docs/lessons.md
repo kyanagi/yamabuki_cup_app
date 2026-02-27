@@ -76,6 +76,13 @@
 - パターン: 抽出した純粋関数のテストで、分岐に必要な前提属性（例: `action="update-question"`）を明示せず、意図した経路を検証できない。
 - 対策: 純粋関数の単体テストでは「対象分岐へ到達する前提」を必ずArrangeで固定し、間接検証ではなく直接検証を1本以上追加する。
 
+## 2026-02-27 jsdom での AnimationEvent 非サポートと fireEvent の act() 未ラップ
+
+- パターン1: jsdom は `AnimationEvent` をコンストラクタとして提供しないため、`fireEvent.animationEnd(el, { animationName: '...' })` が plain `Event` を生成し `animationName` が undefined になる。
+- 対策1: テストで animationend を発火する際は `Object.defineProperty` で `animationName` を設定した `Event` を `el.dispatchEvent()` で送出する。
+- パターン2: `@testing-library/react` v16 の `fireEvent` は `act()` でラップされないため、React 19 concurrentモードでは状態更新が即時反映されない。
+- 対策2: `dispatchEvent` を `act(() => { ... })` で包み、状態更新とエフェクトを確実にフラッシュする。
+
 ## 2026-02-25 fire-and-forget 検証時のハング要因見落とし
 
 - パターン: `void` で非同期処理を投げるテストで、待機対象の別非同期（`await` されるAPI）まで未解決にしてしまい、テストがハングしうる。
