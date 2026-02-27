@@ -8,34 +8,12 @@ module Scoreboard
       response.headers["X-Accel-Buffering"] = "no"
 
       queue = Thread::Queue.new
-      subscribers = []
+      subscriptions = nil
       heartbeat = nil
 
-      subscribers << ActiveSupport::Notifications.subscribe("scoreboard.update") do |*, payload|
-        queue.push({ event: "match_update", data: payload[:payload] })
-      end
-      subscribers << ActiveSupport::Notifications.subscribe("scoreboard.match_init") do |*, payload|
-        queue.push({ event: "match_init", data: payload[:payload] })
-      end
-      subscribers << ActiveSupport::Notifications.subscribe("scoreboard.show_scores") do |*|
-        queue.push({ event: "show_scores", data: {} })
-      end
-      subscribers << ActiveSupport::Notifications.subscribe("scoreboard.hide_scores") do |*|
-        queue.push({ event: "hide_scores", data: {} })
-      end
-      subscribers << ActiveSupport::Notifications.subscribe("scoreboard.question_show") do |*, payload|
-        queue.push({ event: "question_show", data: payload[:payload] })
-      end
-      subscribers << ActiveSupport::Notifications.subscribe("scoreboard.question_clear") do |*|
-        queue.push({ event: "question_clear", data: {} })
-      end
-
-      heartbeat = Thread.new do
-        loop do
-          sleep(15)
-          queue.push({ event: "heartbeat", data: {} })
-        end
-      end
+      subscriptions = Scoreboard::SseSubscriptions.new(queue)
+      subscriptions.subscribe_all
+      heartbeat = start_heartbeat(queue)
 
       loop do
         msg = queue.pop
@@ -45,8 +23,19 @@ module Scoreboard
       # クライアント切断
     ensure
       heartbeat&.kill
-      subscribers.each { |sub| ActiveSupport::Notifications.unsubscribe(sub) }
+      subscriptions&.unsubscribe_all
       response.stream.close
+    end
+
+    private
+
+    def start_heartbeat(queue)
+      Thread.new do
+        loop do
+          sleep(15)
+          queue.push({ event: "heartbeat", data: {} })
+        end
+      end
     end
   end
 end

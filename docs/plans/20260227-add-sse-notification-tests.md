@@ -9,6 +9,7 @@
 SSE 通知発火の検証がない。
 
 本 Step では以下の全ケースを追加する：
+
 - 成功系（HTML・JSON）で通知が発火されること
 - 失敗系（不正 question_id・空）で通知が **発火されないこと**
 
@@ -35,8 +36,8 @@ expect(received.first[:payload]).to include(text: question.text, answer: questio
 
 ## 変更ファイル
 
-| ファイル | 変更種別 |
-|---|---|
+| ファイル                                          | 変更種別       |
+| ------------------------------------------------- | -------------- |
 | `spec/requests/admin/question_broadcasts_spec.rb` | テスト追加のみ |
 
 ---
