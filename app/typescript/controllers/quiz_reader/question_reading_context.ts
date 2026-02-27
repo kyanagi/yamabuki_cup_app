@@ -1,3 +1,7 @@
+/**
+ * クイズ読み上げ用音声（「問題」+ 問題文）の読み込み・再生・停止と、
+ * 読み上げ状態/読み込み状態の管理を担当するコンテキストを定義する。
+ */
 import type { QuestionId } from "../../lib/quiz_reader/question_id";
 import type { SoundId } from "../../lib/quiz_reader/sound_id";
 
