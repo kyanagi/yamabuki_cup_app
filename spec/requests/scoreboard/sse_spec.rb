@@ -4,6 +4,11 @@ require "rails_helper"
 # ActionController::Live はストリーミング接続を維持するため request spec は
 # ハングしやすい。そのため、ストリーム書き出しロジック（SseWriter）を経由した
 # 通知→イベントの配線を検証する最小限のテストを行う。
+#
+# 注意: 「通知名→購読キュー→イベント書き出し」の配線責務（どの通知がどのイベントを
+# キューに積むか）は SseSubscriptions クラスに分離済みであり、
+# spec/models/scoreboard/sse_subscriptions_spec.rb で網羅的に検証している。
+# 本ファイルは SseWriter の書き出し形式の正しさと、ルーティングのみを担う。
 RSpec.describe "Scoreboard::Sse", type: :request do
   describe "通知→SSE event 配線の経路確認" do
     it "scoreboard.match_init 通知が match_init イベントを書き出す" do

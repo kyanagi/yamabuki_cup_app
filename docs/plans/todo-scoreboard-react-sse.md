@@ -86,7 +86,7 @@ spec の検証内容:
 
 ---
 
-### [ ] Step 11: sse_spec.rb コメント整備
+### [x] Step 11: sse_spec.rb コメント整備
 
 **ファイル:** `spec/requests/scoreboard/sse_spec.rb`
 
