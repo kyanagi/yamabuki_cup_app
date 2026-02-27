@@ -129,6 +129,8 @@ module Admin
             )
           end + turbo_stream.update("scoreboard-footer-left") { "#{match.round.name} #{match.name}" }
         )
+        json = Scoreboard::MatchSerializer.new(match, scores, score_operation).as_json
+        ActiveSupport::Notifications.instrument("scoreboard.match_init", payload: json)
       when "final_display_champion"
         match = Match.find(params[:match_id])
         return head :unprocessable_entity unless match.rule_class == MatchRule::Final
@@ -147,11 +149,13 @@ module Admin
           "scoreboard",
           "<turbo-stream action='show-scores'></turbo-stream>"
         )
+        ActiveSupport::Notifications.instrument("scoreboard.show_scores")
       when "hide_scores"
         ActionCable.server.broadcast(
           "scoreboard",
           "<turbo-stream action='hide-scores'></turbo-stream>"
         )
+        ActiveSupport::Notifications.instrument("scoreboard.hide_scores")
       when "announcement_display"
         ActionCable.server.broadcast(
           "scoreboard",

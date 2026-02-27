@@ -34,6 +34,10 @@ module Admin
         )
       end
       ActionCable.server.broadcast("scoreboard", template)
+
+      # SSE 用に JSON をシリアライズして通知（score_changed? が有効なこのタイミングで実行）
+      json = Scoreboard::MatchSerializer.new(match, scores, score_operation).as_json
+      ActiveSupport::Notifications.instrument("scoreboard.update", payload: json)
     end
   end
 end

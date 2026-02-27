@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Yamabuki Cup App" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "scoreboard", "data-turbo-track": "reload" %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <%= vite_client_tag %>
+    <% if ViteRuby.instance.dev_server_running? %>
+      <script>
+        window.$RefreshReg$ = () => {};
+        window.$RefreshSig$ = () => (type) => type;
+        window.__vite_plugin_react_preamble_installed__ = true;
+      </script>
+    <% end %>
+    <%= vite_react_refresh_tag %>
+    <%= vite_typescript_tag "scoreboard_react.tsx" %>
+  </head>
+  <body>
+    <div id="react-root"></div>
+    <%= yield %>
+  </body>
+</html>

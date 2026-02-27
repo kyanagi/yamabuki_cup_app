@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   root "root#show"
 
   get "/scoreboard", to: "scoreboard#show"
+  get "/scoreboard/react", to: "scoreboard/react#show"
+  get "/scoreboard/sse", to: "scoreboard/sse#stream"
 
   get "/sbtest", to: "scoreboard#test"
 
