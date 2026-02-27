@@ -20,7 +20,6 @@ export type QuizReaderApi = {
 };
 
 export type QuizReaderApiDeps = {
-  csrfTokenProvider: () => string;
   fetchFn?: typeof fetch;
   fetchWithRetryFn?: typeof fetchWithRetry;
 };
@@ -31,12 +30,11 @@ function assertOk(response: Response): void {
   }
 }
 
-export function createQuizReaderApi(deps: QuizReaderApiDeps): QuizReaderApi {
-  const { csrfTokenProvider, fetchFn = fetch, fetchWithRetryFn = fetchWithRetry } = deps;
+export function createQuizReaderApi(deps: QuizReaderApiDeps = {}): QuizReaderApi {
+  const { fetchFn = fetch, fetchWithRetryFn = fetchWithRetry } = deps;
 
   const jsonHeaders = (accept?: string): Record<string, string> => ({
     "Content-Type": "application/json",
-    "X-CSRF-Token": csrfTokenProvider(),
     ...(accept ? { Accept: accept } : {}),
   });
 

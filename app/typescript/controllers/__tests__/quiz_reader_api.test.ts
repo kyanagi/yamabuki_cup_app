@@ -6,7 +6,6 @@ type MockFetchFn = ReturnType<typeof vi.fn>;
 
 type TestHeaders = {
   "Content-Type"?: string;
-  "X-CSRF-Token"?: string;
   Accept?: string;
 };
 
@@ -39,7 +38,6 @@ describe("createQuizReaderApi", () => {
     // Arrange
     fetchFn.mockResolvedValue(createResponse());
     const api = createQuizReaderApi({
-      csrfTokenProvider: () => "test-csrf-token",
       fetchFn: fetchFn as unknown as typeof fetch,
       fetchWithRetryFn: fetchWithRetryFn as never,
     });
@@ -53,7 +51,6 @@ describe("createQuizReaderApi", () => {
     const options = extractRequestOptions(fetchFn);
     expect(options.method).toBe("POST");
     expect(options.headers["Content-Type"]).toBe("application/json");
-    expect(options.headers["X-CSRF-Token"]).toBe("test-csrf-token");
     expect(options.headers.Accept).toBe("application/json");
     expect(JSON.parse(options.body ?? "{}")).toEqual({ question_id: 42 });
   });
@@ -68,7 +65,6 @@ describe("createQuizReaderApi", () => {
       }),
     );
     const api = createQuizReaderApi({
-      csrfTokenProvider: () => "test-csrf-token",
       fetchFn: fetchFn as unknown as typeof fetch,
       fetchWithRetryFn: fetchWithRetryFn as never,
     });
@@ -86,7 +82,6 @@ describe("createQuizReaderApi", () => {
       }),
     );
     const api = createQuizReaderApi({
-      csrfTokenProvider: () => "test-csrf-token",
       fetchFn: fetchFn as unknown as typeof fetch,
       fetchWithRetryFn: fetchWithRetryFn as never,
     });
@@ -107,7 +102,6 @@ describe("createQuizReaderApi", () => {
     // Arrange
     fetchFn.mockResolvedValue(createResponse());
     const api = createQuizReaderApi({
-      csrfTokenProvider: () => "test-csrf-token",
       fetchFn: fetchFn as unknown as typeof fetch,
       fetchWithRetryFn: fetchWithRetryFn as never,
     });
@@ -132,7 +126,6 @@ describe("createQuizReaderApi", () => {
       }),
     );
     const api = createQuizReaderApi({
-      csrfTokenProvider: () => "test-csrf-token",
       fetchFn: fetchFn as unknown as typeof fetch,
       fetchWithRetryFn: fetchWithRetryFn as never,
     });
@@ -145,7 +138,6 @@ describe("createQuizReaderApi", () => {
     // Arrange
     fetchWithRetryFn.mockResolvedValue(createResponse());
     const api = createQuizReaderApi({
-      csrfTokenProvider: () => "test-csrf-token",
       fetchFn: fetchFn as unknown as typeof fetch,
       fetchWithRetryFn: fetchWithRetryFn as never,
     });
@@ -164,7 +156,6 @@ describe("createQuizReaderApi", () => {
     const options = extractRequestOptions(fetchWithRetryFn);
     expect(options.method).toBe("POST");
     expect(options.headers["Content-Type"]).toBe("application/json");
-    expect(options.headers["X-CSRF-Token"]).toBe("test-csrf-token");
     expect(options.headers.Accept).toBeUndefined();
     expect(JSON.parse(options.body ?? "{}")).toEqual({
       question_id: 7,
@@ -183,7 +174,6 @@ describe("createQuizReaderApi", () => {
       }),
     );
     const api = createQuizReaderApi({
-      csrfTokenProvider: () => "test-csrf-token",
       fetchFn: fetchFn as unknown as typeof fetch,
       fetchWithRetryFn: fetchWithRetryFn as never,
     });
@@ -198,12 +188,11 @@ describe("createQuizReaderApi", () => {
     ).rejects.toThrow("HTTPエラー 400 Bad Request");
   });
 
-  it("すべての通信にX-CSRF-Tokenヘッダを付与する", async () => {
+  it("すべての通信にX-CSRF-Tokenヘッダを付与しない", async () => {
     // Arrange
     fetchFn.mockResolvedValue(createResponse());
     fetchWithRetryFn.mockResolvedValue(createResponse());
     const api = createQuizReaderApi({
-      csrfTokenProvider: () => "test-csrf-token",
       fetchFn: fetchFn as unknown as typeof fetch,
       fetchWithRetryFn: fetchWithRetryFn as never,
     });
@@ -221,9 +210,9 @@ describe("createQuizReaderApi", () => {
     const broadcastOptions = extractRequestOptions(fetchFn, 0);
     const nextQuestionOptions = extractRequestOptions(fetchFn, 1);
     const uploadOptions = extractRequestOptions(fetchWithRetryFn, 0);
-    expect(broadcastOptions.headers["X-CSRF-Token"]).toBe("test-csrf-token");
-    expect(nextQuestionOptions.headers["X-CSRF-Token"]).toBe("test-csrf-token");
-    expect(uploadOptions.headers["X-CSRF-Token"]).toBe("test-csrf-token");
+    expect((broadcastOptions.headers as Record<string, string>)["X-CSRF-Token"]).toBeUndefined();
+    expect((nextQuestionOptions.headers as Record<string, string>)["X-CSRF-Token"]).toBeUndefined();
+    expect((uploadOptions.headers as Record<string, string>)["X-CSRF-Token"]).toBeUndefined();
   });
 
   it("Acceptヘッダをエンドポイントごとに設定する", async () => {
@@ -231,7 +220,6 @@ describe("createQuizReaderApi", () => {
     fetchFn.mockResolvedValue(createResponse());
     fetchWithRetryFn.mockResolvedValue(createResponse());
     const api = createQuizReaderApi({
-      csrfTokenProvider: () => "test-csrf-token",
       fetchFn: fetchFn as unknown as typeof fetch,
       fetchWithRetryFn: fetchWithRetryFn as never,
     });

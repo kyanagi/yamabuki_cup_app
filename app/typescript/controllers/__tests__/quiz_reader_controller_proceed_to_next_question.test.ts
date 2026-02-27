@@ -55,19 +55,10 @@ describe("proceedToNextQuestion", () => {
       json: vi.fn().mockResolvedValue({ success: true, question_id: 1 }),
     });
     vi.stubGlobal("fetch", fetchSpy);
-
-    // CSRFトークンのメタタグを追加
-    const meta = document.createElement("meta");
-    meta.setAttribute("name", "csrf-token");
-    meta.setAttribute("content", "test-csrf-token");
-    document.head.appendChild(meta);
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
-    // メタタグを削除
-    const meta = document.querySelector('meta[name="csrf-token"]');
-    meta?.remove();
   });
 
   it("PAUSED状態で呼ばれると2つのリクエストを送信する（問題送出→次の問題）", async () => {

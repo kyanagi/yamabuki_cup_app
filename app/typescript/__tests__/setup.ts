@@ -15,12 +15,6 @@ beforeEach(() => {
   // fetch モック（テストごとに設定可能）
   vi.stubGlobal("fetch", vi.fn());
 
-  // CSRF トークンのメタタグを追加
-  const meta = document.createElement("meta");
-  meta.name = "csrf-token";
-  meta.content = "test-csrf-token";
-  document.head.appendChild(meta);
-
   // 自動再生完了をデフォルトで有効化
   MockAudioBufferSourceNode.autoComplete = true;
 });

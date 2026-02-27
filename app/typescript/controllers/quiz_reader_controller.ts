@@ -95,9 +95,7 @@ export default class extends Controller {
   private sampleAudioBuffer: AudioBuffer | undefined;
   private sampleAudioLoading = false;
   private sampleAudioAbortController: AbortController | undefined;
-  private readonly quizReaderApi = createQuizReaderApi({
-    csrfTokenProvider: () => this.csrfToken(),
-  });
+  private readonly quizReaderApi = createQuizReaderApi();
   private readonly quizReaderView = createQuizReaderView({
     getVoiceLoadingStatusIcons: () =>
       Array.from(this.element.querySelectorAll<HTMLElement>('[data-quiz-reader-target~="voiceLoadingStatusIcon"]')),
@@ -416,10 +414,6 @@ export default class extends Controller {
 
   async proceedToNextQuestion(event: KeyboardEvent) {
     await this.quizReaderOrchestrator.proceedToNextQuestion(event);
-  }
-
-  private csrfToken(): string {
-    return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ?? "";
   }
 
   private get mainErrorText(): string {
