@@ -2,6 +2,7 @@ import React from "react";
 import type { MatchState, QuestionState } from "../types";
 import type { SeatId } from "../../lib/buzzer/seat_id";
 import { MatchScorelist } from "./MatchScorelist";
+import { Question } from "./Question";
 
 type Props = {
   matchState: MatchState | null;
@@ -21,12 +22,12 @@ export function ScoreboardRoot({ matchState, pressedSeat, visibleScores, questio
     <div id="scoreboard-root">
       <div id="scoreboard-main">
         {matchState && (
-          <MatchScorelist
-            matchState={matchState}
-            pressedSeat={pressedSeat}
-            visibleScores={visibleScores}
-            questionState={questionState}
-          />
+          <div className="columns-2">
+            <MatchScorelist matchState={matchState} pressedSeat={pressedSeat} visibleScores={visibleScores} />
+            <div id="question">
+              <Question questionState={questionState} />
+            </div>
+          </div>
         )}
       </div>
       <div id="scoreboard-footer">

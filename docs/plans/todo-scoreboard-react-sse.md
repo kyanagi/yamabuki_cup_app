@@ -61,7 +61,7 @@ spec の検証内容:
 
 ---
 
-### [ ] Step 9/10: ScoreboardRoot へのレイアウト責務移譲
+### [x] Step 9/10: ScoreboardRoot へのレイアウト責務移譲
 
 **新規ファイル:**
 
