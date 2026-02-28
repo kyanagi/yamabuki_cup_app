@@ -2,7 +2,6 @@ import type { Mock } from "vitest";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import type { ButtonId } from "../../lib/buzzer/button_id";
-import type { BuzzerServiceError } from "../../lib/buzzer/buzzer_service";
 import type { SerialProtocolSignal } from "../../lib/buzzer/serial_protocol";
 import BuzzerSerialController from "../buzzer_serial_controller";
 import type { Application } from "@hotwired/stimulus";
@@ -114,7 +113,6 @@ type MockService = {
   processChunk: Mock;
   flush: Mock;
   onSignal: Mock;
-  onError: Mock;
   terminate: Mock;
 };
 
@@ -146,21 +144,15 @@ describe("BuzzerSerialController", () => {
   let application: Application | null = null;
   let mockService: MockService;
   let capturedOnSignal: ((signal: SerialProtocolSignal) => void) | undefined;
-  let capturedOnError: ((error: BuzzerServiceError) => void) | undefined;
 
   beforeEach(() => {
     capturedOnSignal = undefined;
-    capturedOnError = undefined;
 
     mockService = {
       processChunk: vi.fn(),
       flush: vi.fn(),
       onSignal: vi.fn((handler: (signal: SerialProtocolSignal) => void) => {
         capturedOnSignal = handler;
-        return vi.fn();
-      }),
-      onError: vi.fn((handler: (error: BuzzerServiceError) => void) => {
-        capturedOnError = handler;
         return vi.fn();
       }),
       terminate: vi.fn(),
@@ -386,17 +378,12 @@ describe("BuzzerSerialController", () => {
     expect(port.close).toHaveBeenCalledTimes(1);
   });
 
-  it("切断時に onSignal / onError のクリーンアップが呼ばれる", async () => {
+  it("切断時に onSignal のクリーンアップが呼ばれる", async () => {
     const reader = new MockReader();
     const cleanupSignalFn = vi.fn();
-    const cleanupErrorFn = vi.fn();
     mockService.onSignal.mockImplementation((handler: (signal: SerialProtocolSignal) => void) => {
       capturedOnSignal = handler;
       return cleanupSignalFn;
-    });
-    mockService.onError.mockImplementation((handler: (error: BuzzerServiceError) => void) => {
-      capturedOnError = handler;
-      return cleanupErrorFn;
     });
 
     const serialApi: SerialApiLike = {
@@ -422,44 +409,9 @@ describe("BuzzerSerialController", () => {
     await waitForEffects();
 
     expect(cleanupSignalFn).toHaveBeenCalledTimes(1);
-    expect(cleanupErrorFn).toHaveBeenCalledTimes(1);
   });
 
-  it("Worker エラー時にコントローラが error 状態に遷移しポートがクリーンアップされる", async () => {
-    const reader = new MockReader();
-    const port = new MockPort(reader);
-
-    const serialApi: SerialApiLike = {
-      getPorts: vi.fn(async () => [port]),
-      requestPort: vi.fn(async () => port),
-    };
-    installSerialApi(serialApi);
-
-    const ctx = await setupControllerTest<BuzzerSerialController>(
-      BuzzerSerialController,
-      createHTML(),
-      "buzzer-serial",
-    );
-    application = ctx.application;
-
-    const connectButton = ctx.element.querySelector('[data-buzzer-serial-target="connectButton"]');
-    if (!connectButton) throw new Error("required element not found");
-
-    connectButton.dispatchEvent(new Event("click"));
-    await waitForEffects();
-
-    // Worker エラーをシミュレート
-    expect(capturedOnError).toBeDefined();
-    const errorEvent = new ErrorEvent("error", { message: "worker crash" });
-    capturedOnError?.({ kind: "worker_error", event: errorEvent });
-    await waitForEffects();
-
-    const status = ctx.element.querySelector('[data-buzzer-serial-target="status"]');
-    expect(status?.textContent).toContain("接続エラー");
-    expect(port.close).toHaveBeenCalledTimes(1);
-  });
-
-  it("再接続時に新しい onSignal / onError が登録される", async () => {
+  it("再接続時に新しい onSignal が登録される", async () => {
     const serialApi: SerialApiLike = {
       getPorts: vi.fn(async () => [new MockPort(new MockReader())]),
       requestPort: vi.fn(async () => new MockPort(new MockReader())),

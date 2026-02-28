@@ -1,44 +1,16 @@
 /**
  * BuzzerSerialController 結合テスト
  *
- * vi.mock を使わず FakeWorker を vi.stubGlobal で注入することで
+ * vi.mock を使わず実装をそのまま利用することで
  * BuzzerDecoder → BuzzerService → BuzzerSerialController の実経路を検証する。
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import type { ButtonId } from "../../lib/buzzer/button_id";
-import { BuzzerDecoder } from "../../lib/buzzer/buzzer_decoder";
-import type { WorkerIncomingMessage, WorkerOutgoingMessage } from "../../lib/buzzer/buzzer_worker";
 import BuzzerSerialController from "../buzzer_serial_controller";
 import type { Application } from "@hotwired/stimulus";
 
 const encoder = new TextEncoder();
-
-// ---------------------------------------------------------------------------
-// FakeWorker: BuzzerDecoder を内包し、postMessage に反応して同期的にシグナルを返す
-// ---------------------------------------------------------------------------
-class FakeWorker {
-  private readonly decoder = new BuzzerDecoder();
-  onmessage: ((event: MessageEvent<WorkerOutgoingMessage>) => void) | null = null;
-  onerror: ((event: ErrorEvent) => void) | null = null;
-  onmessageerror: ((event: MessageEvent) => void) | null = null;
-
-  postMessage(msg: WorkerIncomingMessage): void {
-    if (msg.type === "chunk") {
-      for (const signal of this.decoder.processChunk(msg.data)) {
-        this.onmessage?.(new MessageEvent("message", { data: signal }));
-      }
-    } else if (msg.type === "flush") {
-      for (const signal of this.decoder.flush()) {
-        this.onmessage?.(new MessageEvent("message", { data: signal }));
-      }
-    }
-  }
-
-  terminate(): void {
-    // 意図的に何もしない（テストの簡略化）
-  }
-}
 
 // ---------------------------------------------------------------------------
 // テスト用の SerialApi モック
@@ -138,16 +110,13 @@ async function waitForEffects(): Promise<void> {
 // ---------------------------------------------------------------------------
 // テスト本体
 // ---------------------------------------------------------------------------
-describe("BuzzerSerialController 結合テスト（FakeWorker）", () => {
+describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）", () => {
   const originalSerialDescriptor = Object.getOwnPropertyDescriptor(window.navigator, "serial");
 
   let application: Application | null = null;
 
   beforeEach(() => {
-    // FakeWorker を Worker グローバルとして注入（正規関数でコンストラクタとして動作させる）
-    vi.stubGlobal("Worker", function WorkerStub(this: unknown) {
-      return new FakeWorker();
-    });
+    // Worker グローバルのスタブは不要（BuzzerService は BuzzerDecoder を直接使用）
   });
 
   afterEach(() => {
@@ -233,10 +202,7 @@ describe("BuzzerSerialController 結合テスト（FakeWorker）", () => {
     connectButton.dispatchEvent(new Event("click"));
     await waitForEffects();
 
-    // flush 動作により button-press が発火していること（取りこぼし許容のため 0 or 1）
-    // FakeWorker は同期的に flush を処理するため 1 が期待値
-    expect(pressed.length).toBeGreaterThanOrEqual(0);
-    // 実際には FakeWorker が flush を同期処理するため 1 件届く
+    // BuzzerService が flush を同期処理するため button-press が 1 件届く
     expect(pressed).toEqual([2]);
 
     window.removeEventListener("buzzer:emulator:button-press", pressedHandler);

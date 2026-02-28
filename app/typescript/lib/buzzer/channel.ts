@@ -1,3 +1,7 @@
+/**
+ * ブザーシグナルを複数タブ・コンテキスト間で共有するための BroadcastChannel ラッパー。
+ * createBuzzerChannel() でチャンネルインスタンスを生成し、シグナルの送受信とクローズを担う。
+ */
 import type { BuzzerSignal } from "./signal";
 
 export const BUZZER_CHANNEL_NAME = "buzzer";

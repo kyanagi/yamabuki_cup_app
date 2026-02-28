@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 import type { ButtonId } from "../lib/buzzer/button_id";
-import type { BuzzerService } from "../lib/buzzer/buzzer_service";
 import { createBuzzerService } from "../lib/buzzer/buzzer_service";
+import type { BuzzerService } from "../lib/buzzer/buzzer_service";
 import {
   BUZZER_EMULATOR_BUTTON_PRESS_EVENT,
   BUZZER_EMULATOR_RESET_EVENT,
@@ -78,9 +78,6 @@ export default class extends Controller {
   // BuzzerService のライフサイクル管理
   #service: BuzzerService | null = null;
   #cleanupSignal: (() => void) | null = null;
-  #cleanupError: (() => void) | null = null;
-  // Worker エラー発生時に設定する次の遷移先ステート
-  #nextState: ConnectionState | null = null;
 
   connect(): void {
     this.#setState(this.#serialApi ? "disconnected" : "unsupported");
@@ -109,7 +106,6 @@ export default class extends Controller {
     if (this.#state === "connecting" || this.#state === "connected") return;
 
     this.#setState("connecting");
-    this.#nextState = null;
 
     try {
       const knownPorts = await serialApi.getPorts();
@@ -121,17 +117,10 @@ export default class extends Controller {
         throw new Error("serial reader is not available");
       }
 
-      // BuzzerService を起動してシグナル・エラーハンドラを登録
+      // BuzzerService を起動してシグナルハンドラを登録
       this.#service = createBuzzerService();
       this.#cleanupSignal = this.#service.onSignal((signal) => {
         this.#handleSignal(signal);
-      });
-      this.#cleanupError = this.#service.onError((_err) => {
-        // Worker エラー: reader を cancel して read loop を終了させ error 状態へ
-        this.#nextState = "error";
-        void this.#reader?.cancel().catch(() => {
-          // ignore
-        });
       });
 
       this.#port = port;
@@ -188,20 +177,16 @@ export default class extends Controller {
 
       if (!this.#isDisconnecting) {
         await this.#cleanupPort();
-        const state = this.#nextState ?? "disconnected";
-        this.#nextState = null;
-        this.#setState(state);
+        this.#setState("disconnected");
       }
     } catch (error) {
       if (this.#isDisconnecting) return;
 
       await this.#cleanupPort();
-      const state = this.#nextState ?? (this.#isUserCancellationError(error) ? "disconnected" : "error");
-      this.#nextState = null;
-      this.#setState(state);
+      this.#setState(this.#isUserCancellationError(error) ? "disconnected" : "error");
     } finally {
       // 切断時は flush を fire-and-forget で投げて即 terminate する。
-      // Worker からの遅延 onmessage は取りこぼし得るが、運用上許容する仕様とする。
+      // 残留バッファのシグナルは取りこぼし得るが、運用上許容する仕様とする。
       this.#service?.flush();
       this.#cleanupService();
       reader.releaseLock();
@@ -238,12 +223,10 @@ export default class extends Controller {
     }
   }
 
-  /** BuzzerService の購読を解除して Worker を終了する（全経路共通） */
+  /** BuzzerService の購読を解除してサービスを終了する（全経路共通） */
   #cleanupService(): void {
     this.#cleanupSignal?.();
-    this.#cleanupError?.();
     this.#cleanupSignal = null;
-    this.#cleanupError = null;
     this.#service?.terminate();
     this.#service = null;
   }
