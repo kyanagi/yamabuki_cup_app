@@ -1,3 +1,8 @@
+/**
+ * 得点公開アニメーションを管理するフック。
+ * board ルールのみ対象で、show_scores 受信時に得点の高い順へ 800ms 間隔で段階的に表示する。
+ * hide_scores または試合切り替えで全非表示に戻す。
+ */
 import { useEffect, useRef, useState } from "react";
 import type { MatchState } from "../types";
 

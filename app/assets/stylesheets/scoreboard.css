@@ -259,6 +259,10 @@ body {
   color: #e7dbc0;
 }
 
+.announcement-clock__colon--hidden {
+  opacity: 0;
+}
+
 .announcement-text {
   font-family: "FORMUDPGothic-Regular", sans-serif;
   font-size: 10vh;

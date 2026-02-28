@@ -44,25 +44,37 @@ module Admin
       case params[:action_name]
       when "round1_timer_init"
         ActionCable.server.broadcast("scoreboard", render_to_string("scoreboard/timer"))
+        ActiveSupport::Notifications.instrument("scoreboard.timer_init", payload: { footerLabel: Round::ROUND1.name })
+      when "round1_timer_init_with_time"
+        remaining_time = ((params[:minutes].to_i * 60) + params[:seconds].to_i) * 1000
+        ActionCable.server.broadcast("scoreboard", render_to_string("scoreboard/timer"))
+        ActionCable.server.broadcast("scoreboard", turbo_stream.timer_set_remaining_time(remaining_time))
+        ActiveSupport::Notifications.instrument("scoreboard.timer_init", payload: { footerLabel: Round::ROUND1.name })
+        ActiveSupport::Notifications.instrument("scoreboard.timer_set_remaining_time", payload: { remainingTimeMs: remaining_time })
       when "round1_timer_update_remaining_time"
         remaining_time = ((params[:minutes].to_i * 60) + params[:seconds].to_i) * 1000
         ActionCable.server.broadcast("scoreboard", turbo_stream.timer_set_remaining_time(remaining_time))
+        ActiveSupport::Notifications.instrument("scoreboard.timer_set_remaining_time", payload: { remainingTimeMs: remaining_time })
       when "round1_timer_start"
         ActionCable.server.broadcast("scoreboard", turbo_stream.timer_start)
+        ActiveSupport::Notifications.instrument("scoreboard.timer_start")
       when "round1_timer_stop"
         ActionCable.server.broadcast("scoreboard", turbo_stream.timer_stop)
+        ActiveSupport::Notifications.instrument("scoreboard.timer_stop")
       when "first_place_init"
         ActionCable.server.broadcast(
           "scoreboard",
           turbo_stream.update("scoreboard-main") { "" } +
           turbo_stream.update("scoreboard-footer-left") { "1位発表" }
         )
+        ActiveSupport::Notifications.instrument("scoreboard.first_place_init")
       when "first_place_prepare_plate"
         ActionCable.server.broadcast(
           "scoreboard",
           turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/first_place/_init") } +
           turbo_stream.update("scoreboard-footer-left") { "1位発表" }
         )
+        ActiveSupport::Notifications.instrument("scoreboard.first_place_prepare_plate")
       when "first_place_display_player"
         yontaku_player_result = YontakuPlayerResult.find_by(rank: 1)
         ActionCable.server.broadcast(
@@ -72,12 +84,15 @@ module Admin
             locals: { yontaku_player_result: }
           )
         )
+        player_name = yontaku_player_result.player.player_profile.scoreboard_full_name
+        ActiveSupport::Notifications.instrument("scoreboard.first_place_display_player", payload: { playerName: player_name })
       when "paper_seed_init"
         ActionCable.server.broadcast(
           "scoreboard",
           turbo_stream.update("scoreboard-main") { render_to_string("scoreboard/paper_seed/_init") } +
           turbo_stream.update("scoreboard-footer-left") { Round::ROUND1.name }
         )
+        ActiveSupport::Notifications.instrument("scoreboard.paper_seed_init", payload: { footerLabel: Round::ROUND1.name })
       when "paper_seed_display_player"
         yontaku_player_result = YontakuPlayerResult.find_by(rank: params[:rank])
         ActionCable.server.broadcast(
@@ -87,20 +102,36 @@ module Admin
             locals: { yontaku_player_result: }
           )
         )
+        ActiveSupport::Notifications.instrument("scoreboard.paper_seed_display_player", payload: {
+          rank: yontaku_player_result.rank,
+          name: yontaku_player_result.player.player_profile.scoreboard_full_name,
+          score: yontaku_player_result.score,
+        })
       when "paper_seed_exit_all_players"
         ActionCable.server.broadcast(
           "scoreboard",
           "<turbo-stream action='exit_paper_seed_plates' target='scoreboard-main'></turbo-stream>"
         )
+        ActiveSupport::Notifications.instrument("scoreboard.paper_seed_exit_all_players")
       when "round2_init"
         match = Match.find(params[:match_id])
         ActionCable.server.broadcast("scoreboard", round2_announcement_init_stream(match))
+        grid_class = match.rule_class == MatchRule::Round2Ura ? "match-scorelist-column2-row6" : "match-scorelist-column2-row5"
+        players = match.matchings.order(:seat).map { |m| { rank: m.player.yontaku_player_result.rank } }
+        ActiveSupport::Notifications.instrument("scoreboard.round2_announcement_init", payload: {
+          footerLabel: "#{match.round.name} #{match.name}",
+          gridClass: grid_class,
+          players: players,
+        })
       when "round2_display_player"
         matching = Matching.find(params[:matching_id])
         ActionCable.server.broadcast(
           "scoreboard",
           render_round2_announcement_player_stream(matching)
         )
+        rank = matching.player.yontaku_player_result.rank
+        name = matching.player.player_profile.scoreboard_full_name
+        ActiveSupport::Notifications.instrument("scoreboard.round2_announcement_display_player", payload: { rank: rank, name: name })
       when "round2_display_all_players"
         match = Match.find(params[:match_id])
         full_stream = +round2_announcement_init_stream(match).to_s
@@ -111,6 +142,15 @@ module Admin
           "scoreboard",
           full_stream
         )
+        grid_class = match.rule_class == MatchRule::Round2Ura ? "match-scorelist-column2-row6" : "match-scorelist-column2-row5"
+        players = match.matchings.order(:seat).map do |m|
+          { rank: m.player.yontaku_player_result.rank, name: m.player.player_profile.scoreboard_full_name }
+        end
+        ActiveSupport::Notifications.instrument("scoreboard.round2_announcement_display_all_players", payload: {
+          footerLabel: "#{match.round.name} #{match.name}",
+          gridClass: grid_class,
+          players: players,
+        })
       when "match_display"
         match = Match.find(params[:match_id])
 
@@ -144,6 +184,10 @@ module Admin
             render_to_string("scoreboard/final/_champion", locals: { champion_name: })
           end
         )
+        ActiveSupport::Notifications.instrument("scoreboard.champion", payload: {
+          name: champion_name,
+          tournamentName: "第2回やまぶき杯",
+        })
       when "show_scores"
         ActionCable.server.broadcast(
           "scoreboard",
@@ -163,6 +207,7 @@ module Admin
             render_to_string("scoreboard/announcement/_display", locals: { text: params[:announcement_text] })
           end + turbo_stream.update("scoreboard-footer-left") { "" }
         )
+        ActiveSupport::Notifications.instrument("scoreboard.announcement", payload: { text: params[:announcement_text] })
       end
 
       head 204

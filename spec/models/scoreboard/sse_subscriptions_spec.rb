@@ -6,8 +6,95 @@ SSE_EVENT_TABLE = [
   ["scoreboard.update", { payload: { matchId: 2 } }, "match_update", { matchId: 2 }],
   ["scoreboard.show_scores", {}, "show_scores", {}],
   ["scoreboard.hide_scores", {}, "hide_scores", {}],
-  ["scoreboard.question_show", { payload: { text: "Q", answer: "A" } }, "question_show", { text: "Q", answer: "A" }],
+  [
+    "scoreboard.question_show",
+    { payload: { text: "Q", answer: "A" } },
+    "question_show",
+    { text: "Q", answer: "A" },
+  ],
   ["scoreboard.question_clear", {}, "question_clear", {}],
+  # タイマー
+  [
+    "scoreboard.timer_init",
+    { payload: { footerLabel: "1R 1時間クイズ" } },
+    "timer_init",
+    { footerLabel: "1R 1時間クイズ" },
+  ],
+  [
+    "scoreboard.timer_set_remaining_time",
+    { payload: { remainingTimeMs: 60000 } },
+    "timer_set_remaining_time",
+    { remainingTimeMs: 60000 },
+  ],
+  ["scoreboard.timer_start", {}, "timer_start", {}],
+  ["scoreboard.timer_stop", {}, "timer_stop", {}],
+  # 1位発表
+  ["scoreboard.first_place_init", {}, "first_place_init", {}],
+  ["scoreboard.first_place_prepare_plate", {}, "first_place_prepare_plate", {}],
+  [
+    "scoreboard.first_place_display_player",
+    { payload: { playerName: "テスト選手" } },
+    "first_place_display_player",
+    { playerName: "テスト選手" },
+  ],
+  # シード発表
+  [
+    "scoreboard.paper_seed_init",
+    { payload: { footerLabel: "1R 1時間クイズ" } },
+    "paper_seed_init",
+    { footerLabel: "1R 1時間クイズ" },
+  ],
+  [
+    "scoreboard.paper_seed_display_player",
+    { payload: { rank: 1, name: "テスト選手", score: 100 } },
+    "paper_seed_display_player",
+    { rank: 1, name: "テスト選手", score: 100 },
+  ],
+  ["scoreboard.paper_seed_exit_all_players", {}, "paper_seed_exit_all_players", {}],
+  # 2R発表
+  [
+    "scoreboard.round2_announcement_init",
+    { payload: {
+      footerLabel: "2R A卓",
+      gridClass: "match-scorelist-column2-row5",
+      players: [{ rank: 1 }],
+    } },
+    "round2_announcement_init",
+    { footerLabel: "2R A卓", gridClass: "match-scorelist-column2-row5", players: [{ rank: 1 }] },
+  ],
+  [
+    "scoreboard.round2_announcement_display_player",
+    { payload: { rank: 1, name: "テスト選手" } },
+    "round2_announcement_display_player",
+    { rank: 1, name: "テスト選手" },
+  ],
+  [
+    "scoreboard.round2_announcement_display_all_players",
+    { payload: {
+      footerLabel: "2R A卓",
+      gridClass: "match-scorelist-column2-row5",
+      players: [{ rank: 1, name: "テスト選手" }],
+    } },
+    "round2_announcement_display_all_players",
+    {
+      footerLabel: "2R A卓",
+      gridClass: "match-scorelist-column2-row5",
+      players: [{ rank: 1, name: "テスト選手" }],
+    },
+  ],
+  # アナウンス・チャンピオン
+  [
+    "scoreboard.announcement",
+    { payload: { text: "テストアナウンス" } },
+    "announcement",
+    { text: "テストアナウンス" },
+  ],
+  [
+    "scoreboard.champion",
+    { payload: { name: "テスト選手", tournamentName: "第2回やまぶき杯" } },
+    "champion",
+    { name: "テスト選手", tournamentName: "第2回やまぶき杯" },
+  ],
 ].freeze
 
 RSpec.describe Scoreboard::SseSubscriptions do

@@ -1,3 +1,7 @@
+/**
+ * BroadcastChannel 経由でブザー信号を受信し、押下席 (pressedSeat) を管理するフック。
+ * matchState が変化するたびに pressedSeat をリセットする。
+ */
 import { useEffect, useState } from "react";
 import { createBuzzerChannel } from "../../lib/buzzer/channel";
 import { isSeatId, type SeatId } from "../../lib/buzzer/seat_id";
