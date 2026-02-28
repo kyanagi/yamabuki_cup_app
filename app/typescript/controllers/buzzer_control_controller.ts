@@ -4,6 +4,7 @@ import { type BuzzerChannel, createBuzzerChannel } from "../lib/buzzer/channel";
 import {
   BUZZER_ASSIGNMENT_CLEAR_EVENT,
   BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT,
+  type BuzzerStateChangedDetail,
   BUZZER_EMULATOR_BUTTON_PRESS_EVENT,
   BUZZER_EMULATOR_RESET_EVENT,
   BUZZER_SERIAL_CORRECT_EVENT,
@@ -27,12 +28,6 @@ type ToggleLearningDetail = {
 
 type ButtonPressDetail = {
   buttonId: ButtonId;
-};
-
-type BuzzerStateChangedDetail = {
-  learningSeat: SeatId | null;
-  lastPressedButtonId: ButtonId | null;
-  mapping: Map<ButtonId, SeatId>;
 };
 
 export default class extends Controller {

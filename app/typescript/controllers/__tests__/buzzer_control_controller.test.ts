@@ -1,14 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import type { ButtonId } from "../../lib/buzzer/button_id";
-import type { SeatId } from "../../lib/buzzer/seat_id";
+import type { BuzzerStateChangedDetail } from "../../lib/buzzer/events";
 import BuzzerControlController from "../buzzer_control_controller";
-
-type BuzzerStateChangedDetail = {
-  learningSeat: SeatId | null;
-  lastPressedButtonId: ButtonId | null;
-  mapping: Map<ButtonId, SeatId>;
-};
 
 class MockBroadcastChannel {
   static instances: MockBroadcastChannel[] = [];

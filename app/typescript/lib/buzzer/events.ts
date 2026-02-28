@@ -1,3 +1,12 @@
+import type { ButtonId } from "./button_id";
+import type { SeatId } from "./seat_id";
+
+export type BuzzerStateChangedDetail = {
+  learningSeat: SeatId | null;
+  lastPressedButtonId: ButtonId | null;
+  mapping: Map<ButtonId, SeatId>;
+};
+
 export const BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT = "buzzer:assignment:toggle-learning";
 export const BUZZER_ASSIGNMENT_CLEAR_EVENT = "buzzer:assignment:clear";
 export const BUZZER_EMULATOR_BUTTON_PRESS_EVENT = "buzzer:emulator:button-press";

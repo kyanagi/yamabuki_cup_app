@@ -3,6 +3,7 @@ import type { ButtonId } from "../lib/buzzer/button_id";
 import {
   BUZZER_ASSIGNMENT_CLEAR_EVENT,
   BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT,
+  type BuzzerStateChangedDetail,
   BUZZER_STATE_CHANGED_EVENT,
   BUZZER_VIEW_REQUEST_STATE_EVENT,
 } from "../lib/buzzer/events";
@@ -11,12 +12,6 @@ import { createSeatId, isSeatId, type SeatId } from "../lib/buzzer/seat_id";
 
 const UNASSIGNED_TEXT = "未割当";
 const LEARNING_TEXT = "ボタンを押してください";
-
-type BuzzerStateChangedDetail = {
-  learningSeat: SeatId | null;
-  lastPressedButtonId: ButtonId | null;
-  mapping: Map<ButtonId, SeatId>;
-};
 
 export default class extends Controller {
   connect(): void {
