@@ -1,12 +1,14 @@
 import { Controller } from "@hotwired/stimulus";
 import type { ButtonId } from "../lib/buzzer/button_id";
+import type { BuzzerService } from "../lib/buzzer/buzzer_service";
+import { createBuzzerService } from "../lib/buzzer/buzzer_service";
 import {
   BUZZER_EMULATOR_BUTTON_PRESS_EVENT,
   BUZZER_EMULATOR_RESET_EVENT,
   BUZZER_SERIAL_CORRECT_EVENT,
   BUZZER_SERIAL_WRONG_EVENT,
 } from "../lib/buzzer/events";
-import { parseSerialProtocolLine } from "../lib/buzzer/serial_protocol";
+import type { SerialProtocolSignal } from "../lib/buzzer/serial_protocol";
 
 const SERIAL_OPEN_OPTIONS = {
   baudRate: 9600,
@@ -70,9 +72,15 @@ export default class extends Controller {
   #port: SerialPortLike | null = null;
   #reader: SerialReaderLike | null = null;
   #readLoopPromise: Promise<void> | null = null;
-  #buffer = "";
   #isDisconnecting = false;
   #state: ConnectionState = "disconnected";
+
+  // BuzzerService のライフサイクル管理
+  #service: BuzzerService | null = null;
+  #cleanupSignal: (() => void) | null = null;
+  #cleanupError: (() => void) | null = null;
+  // Worker エラー発生時に設定する次の遷移先ステート
+  #nextState: ConnectionState | null = null;
 
   connect(): void {
     this.#setState(this.#serialApi ? "disconnected" : "unsupported");
@@ -101,6 +109,7 @@ export default class extends Controller {
     if (this.#state === "connecting" || this.#state === "connected") return;
 
     this.#setState("connecting");
+    this.#nextState = null;
 
     try {
       const knownPorts = await serialApi.getPorts();
@@ -112,13 +121,26 @@ export default class extends Controller {
         throw new Error("serial reader is not available");
       }
 
+      // BuzzerService を起動してシグナル・エラーハンドラを登録
+      this.#service = createBuzzerService();
+      this.#cleanupSignal = this.#service.onSignal((signal) => {
+        this.#handleSignal(signal);
+      });
+      this.#cleanupError = this.#service.onError((_err) => {
+        // Worker エラー: reader を cancel して read loop を終了させ error 状態へ
+        this.#nextState = "error";
+        void this.#reader?.cancel().catch(() => {
+          // ignore
+        });
+      });
+
       this.#port = port;
       this.#reader = reader;
-      this.#buffer = "";
       this.#isDisconnecting = false;
       this.#setState("connected");
       this.#readLoopPromise = this.#startReadLoop(reader);
     } catch (error) {
+      this.#cleanupService();
       await this.#cleanupPort();
       if (this.#isUserCancellationError(error)) {
         this.#setState("disconnected");
@@ -155,36 +177,33 @@ export default class extends Controller {
   }
 
   async #startReadLoop(reader: SerialReaderLike): Promise<void> {
-    const decoder = new TextDecoder();
-
     try {
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
         if (!value) continue;
 
-        this.#processChunk(decoder.decode(value, { stream: true }));
-      }
-
-      const decodedTail = decoder.decode();
-      if (decodedTail.length > 0) {
-        this.#processChunk(decodedTail);
-      }
-      if (this.#buffer.length > 0) {
-        this.#handleLine(this.#buffer);
-        this.#buffer = "";
+        this.#service?.processChunk(value);
       }
 
       if (!this.#isDisconnecting) {
         await this.#cleanupPort();
-        this.#setState("disconnected");
+        const state = this.#nextState ?? "disconnected";
+        this.#nextState = null;
+        this.#setState(state);
       }
     } catch (error) {
       if (this.#isDisconnecting) return;
 
       await this.#cleanupPort();
-      this.#setState(this.#isUserCancellationError(error) ? "disconnected" : "error");
+      const state = this.#nextState ?? (this.#isUserCancellationError(error) ? "disconnected" : "error");
+      this.#nextState = null;
+      this.#setState(state);
     } finally {
+      // 切断時は flush を fire-and-forget で投げて即 terminate する。
+      // Worker からの遅延 onmessage は取りこぼし得るが、運用上許容する仕様とする。
+      this.#service?.flush();
+      this.#cleanupService();
       reader.releaseLock();
       if (this.#reader === reader) {
         this.#reader = null;
@@ -193,17 +212,8 @@ export default class extends Controller {
     }
   }
 
-  #processChunk(chunk: string): void {
-    const lines = `${this.#buffer}${chunk}`.split(/\r?\n/);
-    this.#buffer = lines.pop() ?? "";
-
-    for (const line of lines) {
-      this.#handleLine(line);
-    }
-  }
-
-  #handleLine(line: string): void {
-    const signal = parseSerialProtocolLine(line);
+  /** シリアルシグナルを対応する CustomEvent に変換して window へ送出する */
+  #handleSignal(signal: SerialProtocolSignal): void {
     switch (signal.type) {
       case "button_pressed":
         window.dispatchEvent(
@@ -228,12 +238,21 @@ export default class extends Controller {
     }
   }
 
+  /** BuzzerService の購読を解除して Worker を終了する（全経路共通） */
+  #cleanupService(): void {
+    this.#cleanupSignal?.();
+    this.#cleanupError?.();
+    this.#cleanupSignal = null;
+    this.#cleanupError = null;
+    this.#service?.terminate();
+    this.#service = null;
+  }
+
   async #cleanupPort(): Promise<void> {
     const port = this.#port;
     this.#port = null;
     this.#reader = null;
     this.#readLoopPromise = null;
-    this.#buffer = "";
 
     if (!port) return;
 
