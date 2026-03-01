@@ -46,20 +46,11 @@ module Admin
     private
 
     def broadcast_question_board(question)
-      html = render_to_string(partial: "scoreboard/question/question", locals: { question: }, formats: [:html])
-      ActionCable.server.broadcast(
-        "scoreboard",
-        %Q(<turbo-stream action="replace_question" target="question"><template>#{html}</template></turbo-stream>)
-      )
       ActiveSupport::Notifications.instrument("scoreboard.question_show",
                                               payload: { text: question.text, answer: question.answer })
     end
 
     def clear_question_board
-      ActionCable.server.broadcast(
-        "scoreboard",
-        '<turbo-stream action="replace_question" target="question"><template></template></turbo-stream>'
-      )
       ActiveSupport::Notifications.instrument("scoreboard.question_clear")
     end
   end

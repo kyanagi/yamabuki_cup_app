@@ -1,6 +1,0 @@
-<%= turbo_stream.update "scoreboard-main" do %>
-  <div id="timer" data-controller="round1-timer">
-    <div data-round1-timer-target="time"></div>
-  </div>
-<% end %>
-<%= turbo_stream.update("scoreboard-footer-left") { Round::ROUND1.name } %>

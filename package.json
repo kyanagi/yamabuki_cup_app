@@ -14,7 +14,6 @@
     "@hotwired/stimulus": "3.2.2",
     "@hotwired/turbo": "8.0.21",
     "@hotwired/turbo-rails": "8.0.21",
-    "@rails/actioncable": "8.1.200",
     "idb": "8.0.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -24,7 +23,6 @@
   "devDependencies": {
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
-    "@types/rails__actioncable": "8.0.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",

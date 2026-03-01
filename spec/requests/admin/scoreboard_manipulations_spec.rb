@@ -18,6 +18,18 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
     post admin_session_path, params: { username: admin_user.username, password: "password123" }
   end
 
+  # SSE イベントをキャプチャするヘルパー
+  def capture_notifications(event_name)
+    notifications = []
+    subscription = ActiveSupport::Notifications.subscribe(event_name) do |*, payload|
+      notifications << payload
+    end
+    yield
+    notifications
+  ensure
+    ActiveSupport::Notifications.unsubscribe(subscription)
+  end
+
   before { login_as_admin }
 
   describe "POST /admin/scoreboard_manipulations（match_display）" do
@@ -70,7 +82,7 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
     end
 
     context "決勝で優勝者が確定している場合" do
-      it "204を返し、CHAMPION表示をbroadcastする" do
+      it "204を返し、championイベントをinstrumentする" do
         match = create_final_match_with_players
         winner_matching = match.matchings.order(:seat).first
         winner_score = match.last_score_operation.scores.find_by!(matching: winner_matching)
@@ -78,41 +90,36 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
 
         expected_name = winner_matching.player.player_profile.scoreboard_full_name
 
-        expect do
+        notifications = capture_notifications("scoreboard.champion") do
           post admin_scoreboard_manipulations_path,
                params: { action_name: "final_display_champion", match_id: match.id }
-        end.to(have_broadcasted_to("scoreboard").with do |data|
-          expect(data).to include('action="update" target="scoreboard-main"')
-          expect(data).to include("第2回やまぶき杯")
-          expect(data).to include("CHAMPION")
-          expect(data).to include(expected_name)
-        end)
+        end
 
+        expect(notifications).not_to be_empty
+        payload = notifications.first[:payload]
+        expect(payload[:name]).to eq(expected_name)
+        expect(payload[:tournamentName]).to eq("第2回やまぶき杯")
         expect(response).to have_http_status(:no_content)
       end
     end
 
     context "決勝で優勝者が未確定の場合" do
-      it "422を返し、broadcastを行わない" do
+      it "422を返す" do
         match = create_final_match_with_players
 
-        expect do
-          post admin_scoreboard_manipulations_path,
-               params: { action_name: "final_display_champion", match_id: match.id }
-        end.not_to have_broadcasted_to("scoreboard")
+        post admin_scoreboard_manipulations_path,
+             params: { action_name: "final_display_champion", match_id: match.id }
 
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
     context "決勝以外の試合の場合" do
-      it "422を返し、broadcastを行わない" do
+      it "422を返す" do
         match = create(:match, rule_name: "MatchRule::Round2Omote", round_id: Round::ROUND2.id)
 
-        expect do
-          post admin_scoreboard_manipulations_path,
-               params: { action_name: "final_display_champion", match_id: match.id }
-        end.not_to have_broadcasted_to("scoreboard")
+        post admin_scoreboard_manipulations_path,
+             params: { action_name: "final_display_champion", match_id: match.id }
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -126,38 +133,21 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
       { rule_name: "MatchRule::Playoff", round_id: Round::PLAYOFF.id, player_count: 10, start_rank: 8 },
     ].each do |scenario|
       context "#{scenario[:rule_name]} の場合" do
-        it "204を返し、初期化後に全員分の時間差表示をbroadcastする" do
+        it "204を返し、round2_announcement_display_all_playersをinstrumentする" do
           match = create_match_with_ranked_players(**scenario)
 
-          expected_rank_and_names = match.matchings.order(:seat).map do |matching|
-            rank = matching.player.yontaku_player_result.rank
-            [rank, matching.player.player_profile.scoreboard_full_name]
+          expected_players = match.matchings.order(:seat).map do |m|
+            { rank: m.player.yontaku_player_result.rank, name: m.player.player_profile.scoreboard_full_name }
           end
 
-          expect do
+          notifications = capture_notifications("scoreboard.round2_announcement_display_all_players") do
             post admin_scoreboard_manipulations_path,
                  params: { action_name: "round2_display_all_players", match_id: match.id }
-          end.to(have_broadcasted_to("scoreboard").with do |data|
-            expect(data).to include('action="update" target="scoreboard-main"')
-            expect(data).to include('action="update" target="scoreboard-footer-left"')
-            expect(data).to include("player-frame--incoming-animation")
+          end
 
-            expected_rank_and_names.each do |rank, name|
-              expect(data).to include(%Q(action="replace" target="round2-player-#{rank}"))
-              expect(data).to include(name)
-            end
-
-            rank_texts = data.scan(%r{<div class="player__rank">([^<]+)</div>}).flatten
-            if scenario[:rule_name] == "MatchRule::Round2Ura"
-              expect(rank_texts).not_to be_empty
-              expect(rank_texts.uniq).to eq(["-"])
-            else
-              expected_rank_and_names.each do |(rank, _)|
-                expect(rank_texts).to include(rank.to_s)
-              end
-            end
-          end)
-
+          expect(notifications).not_to be_empty
+          payload = notifications.first[:payload]
+          expect(payload[:players]).to eq(expected_players)
           expect(response).to have_http_status(:no_content)
         end
       end
@@ -179,48 +169,40 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
     let!(:first_place_result) { create(:yontaku_player_result, player:, rank: 1, score: 77) }
 
     describe "first_place_init" do
-      it "204を返し、プレートを表示しない初期表示をbroadcastする" do
-        expect do
+      it "204を返し、first_place_initをinstrumentする" do
+        notifications = capture_notifications("scoreboard.first_place_init") do
           post admin_scoreboard_manipulations_path,
                params: { action_name: "first_place_init" }
-        end.to(have_broadcasted_to("scoreboard").with do |data|
-          expect(data).to include('action="update" target="scoreboard-main"')
-          expect(data).to include('action="update" target="scoreboard-footer-left"')
-          expect(data).not_to include("first-place-player")
-        end)
+        end
 
+        expect(notifications).not_to be_empty
         expect(response).to have_http_status(:no_content)
       end
     end
 
     describe "first_place_prepare_plate" do
-      it "204を返し、順位のみのプレート表示をbroadcastする" do
-        expect do
+      it "204を返し、first_place_prepare_plateをinstrumentする" do
+        notifications = capture_notifications("scoreboard.first_place_prepare_plate") do
           post admin_scoreboard_manipulations_path,
                params: { action_name: "first_place_prepare_plate" }
-        end.to(have_broadcasted_to("scoreboard").with do |data|
-          expect(data).to include('action="update" target="scoreboard-main"')
-          expect(data).to include("first-place-player")
-          expect(data).to include("first-place-plate--drop-in-animation")
-        end)
+        end
 
+        expect(notifications).not_to be_empty
         expect(response).to have_http_status(:no_content)
       end
     end
 
     describe "first_place_display_player" do
-      it "204を返し、1位の名前入りプレート差し替えをbroadcastする" do
+      it "204を返し、1位の選手名を含むfirst_place_display_playerをinstrumentする" do
         expected_name = player_profile.scoreboard_full_name
 
-        expect do
+        notifications = capture_notifications("scoreboard.first_place_display_player") do
           post admin_scoreboard_manipulations_path,
                params: { action_name: "first_place_display_player" }
-        end.to(have_broadcasted_to("scoreboard").with do |data|
-          expect(data).to include('action="replace" target="first-place-player"')
-          expect(data).to include(expected_name)
-          expect(data).to include("animation-flip-in-x")
-        end)
+        end
 
+        expect(notifications).not_to be_empty
+        expect(notifications.first[:payload][:playerName]).to eq(expected_name)
         expect(response).to have_http_status(:no_content)
       end
     end
@@ -228,14 +210,13 @@ RSpec.describe "Admin::ScoreboardManipulations", type: :request do
 
   describe "POST /admin/scoreboard_manipulations（シード発表）" do
     describe "paper_seed_exit_all_players" do
-      it "204を返し、全プレートを消去するbroadcastを行う" do
-        expect do
+      it "204を返し、paper_seed_exit_all_playersをinstrumentする" do
+        notifications = capture_notifications("scoreboard.paper_seed_exit_all_players") do
           post admin_scoreboard_manipulations_path,
                params: { action_name: "paper_seed_exit_all_players" }
-        end.to(have_broadcasted_to("scoreboard").with do |data|
-          expect(data).to include("action='exit_paper_seed_plates' target='scoreboard-main'")
-        end)
+        end
 
+        expect(notifications).not_to be_empty
         expect(response).to have_http_status(:no_content)
       end
     end
