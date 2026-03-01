@@ -116,11 +116,10 @@ module Admin
       when "round2_init"
         match = Match.find(params[:match_id])
         ActionCable.server.broadcast("scoreboard", round2_announcement_init_stream(match))
-        grid_class = match.rule_class == MatchRule::Round2Ura ? "match-scorelist-column2-row6" : "match-scorelist-column2-row5"
         players = match.matchings.order(:seat).map { |m| { rank: m.player.yontaku_player_result.rank } }
         ActiveSupport::Notifications.instrument("scoreboard.round2_announcement_init", payload: {
           footerLabel: "#{match.round.name} #{match.name}",
-          gridClass: grid_class,
+          gridClass: round2_grid_class(match),
           players: players,
         })
       when "round2_display_player"
@@ -134,21 +133,18 @@ module Admin
         ActiveSupport::Notifications.instrument("scoreboard.round2_announcement_display_player", payload: { rank: rank, name: name })
       when "round2_display_all_players"
         match = Match.find(params[:match_id])
+        matchings = match.matchings.preload(player: [:yontaku_player_result, :player_profile]).order(:seat)
         full_stream = +round2_announcement_init_stream(match).to_s
-        match.matchings.order(:seat).each do |matching|
+        matchings.each do |matching|
           full_stream << render_round2_announcement_player_stream(matching, staggered: true)
         end
-        ActionCable.server.broadcast(
-          "scoreboard",
-          full_stream
-        )
-        grid_class = match.rule_class == MatchRule::Round2Ura ? "match-scorelist-column2-row6" : "match-scorelist-column2-row5"
-        players = match.matchings.order(:seat).map do |m|
+        ActionCable.server.broadcast("scoreboard", full_stream)
+        players = matchings.map do |m|
           { rank: m.player.yontaku_player_result.rank, name: m.player.player_profile.scoreboard_full_name }
         end
         ActiveSupport::Notifications.instrument("scoreboard.round2_announcement_display_all_players", payload: {
           footerLabel: "#{match.round.name} #{match.name}",
-          gridClass: grid_class,
+          gridClass: round2_grid_class(match),
           players: players,
         })
       when "match_display"
@@ -250,6 +246,10 @@ module Admin
                   "#{dir}/_display_player"
                 end
       render_to_string(partial, locals: { rank:, player: })
+    end
+
+    def round2_grid_class(match)
+      match.rule_class == MatchRule::Round2Ura ? "match-scorelist-column2-row6" : "match-scorelist-column2-row5"
     end
 
     def round2_template_dir(match)
