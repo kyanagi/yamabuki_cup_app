@@ -5,6 +5,14 @@ import type { ButtonId } from "../../lib/buzzer/button_id";
 import type { SerialProtocolSignal } from "../../lib/buzzer/serial_protocol";
 import BuzzerSerialController from "../buzzer_serial_controller";
 import type { Application } from "@hotwired/stimulus";
+import {
+  MockReader,
+  MockPort,
+  createBuzzerSerialHTML,
+  installSerialApi,
+  waitForEffects,
+  type SerialApiLike,
+} from "../../__tests__/helpers/serial-api-mocks";
 
 // vi.mock のホイスティングに対応して事前に定義
 const { mockCreateBuzzerService } = vi.hoisted(() => ({
@@ -17,126 +25,12 @@ vi.mock("../../lib/buzzer/buzzer_service", () => ({
 
 const encoder = new TextEncoder();
 
-type ReadResult = {
-  value?: Uint8Array;
-  done: boolean;
-};
-
-type SerialOpenOptions = {
-  baudRate: number;
-  dataBits?: number;
-  stopBits?: number;
-  parity?: string;
-};
-
-type SerialPortLike = {
-  readable: {
-    getReader: () => MockReader;
-  };
-  open: (options: SerialOpenOptions) => Promise<void>;
-  close: () => Promise<void>;
-};
-
-type SerialApiLike = {
-  getPorts: () => Promise<SerialPortLike[]>;
-  requestPort: () => Promise<SerialPortLike>;
-};
-
-class MockReader {
-  #queue: ReadResult[] = [];
-  #pending: ((result: ReadResult) => void) | null = null;
-
-  readonly read: ReturnType<typeof vi.fn>;
-  readonly cancel: ReturnType<typeof vi.fn>;
-  readonly releaseLock: ReturnType<typeof vi.fn>;
-
-  constructor() {
-    this.read = vi.fn(this.#readImpl);
-    this.cancel = vi.fn(this.#cancelImpl);
-    this.releaseLock = vi.fn();
-  }
-
-  enqueueText(text: string): void {
-    this.enqueue({ done: false, value: encoder.encode(text) });
-  }
-
-  enqueueDone(): void {
-    this.enqueue({ done: true });
-  }
-
-  enqueue(result: ReadResult): void {
-    if (this.#pending) {
-      const resolve = this.#pending;
-      this.#pending = null;
-      resolve(result);
-      return;
-    }
-
-    this.#queue.push(result);
-  }
-
-  #readImpl = async (): Promise<ReadResult> => {
-    const queued = this.#queue.shift();
-    if (queued) {
-      return queued;
-    }
-
-    return await new Promise<ReadResult>((resolve) => {
-      this.#pending = resolve;
-    });
-  };
-
-  #cancelImpl = async (): Promise<void> => {
-    if (!this.#pending) return;
-
-    const resolve = this.#pending;
-    this.#pending = null;
-    resolve({ done: true });
-  };
-}
-
-class MockPort implements SerialPortLike {
-  readonly open: Mock<(options: SerialOpenOptions) => Promise<void>>;
-  readonly close: Mock<() => Promise<void>>;
-  readonly readable: { getReader: () => MockReader };
-
-  constructor(private readonly reader: MockReader) {
-    this.open = vi.fn(async (_options: SerialOpenOptions) => {});
-    this.close = vi.fn(async () => {});
-    this.readable = {
-      getReader: () => this.reader,
-    };
-  }
-}
-
 type MockService = {
   processChunk: Mock;
   flush: Mock;
   onSignal: Mock;
   terminate: Mock;
 };
-
-function createHTML(): string {
-  return `
-    <div data-controller="buzzer-serial">
-      <p>接続状態: <span data-buzzer-serial-target="status">未接続</span></p>
-      <button type="button" data-buzzer-serial-target="connectButton" data-action="click->buzzer-serial#requestConnect">接続</button>
-      <button type="button" data-buzzer-serial-target="disconnectButton" data-action="click->buzzer-serial#requestDisconnect">切断</button>
-    </div>
-  `;
-}
-
-function installSerialApi(serial: SerialApiLike | undefined): void {
-  Object.defineProperty(window.navigator, "serial", {
-    configurable: true,
-    value: serial,
-  });
-}
-
-async function waitForEffects(): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  await new Promise((resolve) => setTimeout(resolve, 0));
-}
 
 describe("BuzzerSerialController", () => {
   const originalSerialDescriptor = Object.getOwnPropertyDescriptor(window.navigator, "serial");
@@ -178,7 +72,7 @@ describe("BuzzerSerialController", () => {
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;
@@ -200,7 +94,7 @@ describe("BuzzerSerialController", () => {
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;
@@ -233,7 +127,7 @@ describe("BuzzerSerialController", () => {
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;
@@ -286,7 +180,7 @@ describe("BuzzerSerialController", () => {
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;
@@ -333,7 +227,7 @@ describe("BuzzerSerialController", () => {
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;
@@ -360,7 +254,7 @@ describe("BuzzerSerialController", () => {
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;
@@ -394,7 +288,7 @@ describe("BuzzerSerialController", () => {
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;
@@ -425,7 +319,7 @@ describe("BuzzerSerialController", () => {
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;

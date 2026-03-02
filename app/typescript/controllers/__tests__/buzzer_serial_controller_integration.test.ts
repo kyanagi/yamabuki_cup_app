@@ -9,103 +9,14 @@ import { setupControllerTest, teardownControllerTest } from "../../__tests__/hel
 import type { ButtonId } from "../../lib/buzzer/button_id";
 import BuzzerSerialController from "../buzzer_serial_controller";
 import type { Application } from "@hotwired/stimulus";
-
-const encoder = new TextEncoder();
-
-// ---------------------------------------------------------------------------
-// テスト用の SerialApi モック
-// ---------------------------------------------------------------------------
-type ReadResult = { value?: Uint8Array; done: boolean };
-
-type SerialOpenOptions = {
-  baudRate: number;
-  dataBits?: number;
-  stopBits?: number;
-  parity?: string;
-};
-
-type SerialPortLike = {
-  readable: { getReader: () => MockReader };
-  open: (options: SerialOpenOptions) => Promise<void>;
-  close: () => Promise<void>;
-};
-
-type SerialApiLike = {
-  getPorts: () => Promise<SerialPortLike[]>;
-  requestPort: () => Promise<SerialPortLike>;
-};
-
-class MockReader {
-  #queue: ReadResult[] = [];
-  #pending: ((result: ReadResult) => void) | null = null;
-
-  read = async (): Promise<ReadResult> => {
-    const queued = this.#queue.shift();
-    if (queued) return queued;
-    return await new Promise<ReadResult>((resolve) => {
-      this.#pending = resolve;
-    });
-  };
-
-  cancel = async (): Promise<void> => {
-    if (!this.#pending) return;
-    const resolve = this.#pending;
-    this.#pending = null;
-    resolve({ done: true });
-  };
-
-  releaseLock = (): void => {};
-
-  enqueue(result: ReadResult): void {
-    if (this.#pending) {
-      const resolve = this.#pending;
-      this.#pending = null;
-      resolve(result);
-      return;
-    }
-    this.#queue.push(result);
-  }
-
-  enqueueText(text: string): void {
-    this.enqueue({ done: false, value: encoder.encode(text) });
-  }
-
-  enqueueDone(): void {
-    this.enqueue({ done: true });
-  }
-}
-
-class MockPort implements SerialPortLike {
-  readonly open = vi.fn(async (_options: SerialOpenOptions) => {});
-  readonly close = vi.fn(async () => {});
-  readonly readable: { getReader: () => MockReader };
-
-  constructor(private readonly reader: MockReader) {
-    this.readable = { getReader: () => this.reader };
-  }
-}
-
-function createHTML(): string {
-  return `
-    <div data-controller="buzzer-serial">
-      <p>接続状態: <span data-buzzer-serial-target="status">未接続</span></p>
-      <button type="button" data-buzzer-serial-target="connectButton" data-action="click->buzzer-serial#requestConnect">接続</button>
-      <button type="button" data-buzzer-serial-target="disconnectButton" data-action="click->buzzer-serial#requestDisconnect">切断</button>
-    </div>
-  `;
-}
-
-function installSerialApi(api: SerialApiLike): void {
-  Object.defineProperty(window.navigator, "serial", {
-    configurable: true,
-    value: api,
-  });
-}
-
-async function waitForEffects(): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  await new Promise((resolve) => setTimeout(resolve, 0));
-}
+import {
+  MockReader,
+  MockPort,
+  createBuzzerSerialHTML,
+  installSerialApi,
+  waitForEffects,
+  type SerialApiLike,
+} from "../../__tests__/helpers/serial-api-mocks";
 
 // ---------------------------------------------------------------------------
 // テスト本体
@@ -156,7 +67,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;
@@ -192,7 +103,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;
@@ -232,7 +143,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
-      createHTML(),
+      createBuzzerSerialHTML(),
       "buzzer-serial",
     );
     application = ctx.application;
