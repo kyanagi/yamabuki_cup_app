@@ -7,9 +7,10 @@ import { PreviousResult } from "../shared/PreviousResult";
 type Props = {
   scores: ScoreEntry[];
   pressedSeat: number | null;
+  scoreOperationId: number | null;
 };
 
-export function PlayoffScorelist({ scores, pressedSeat }: Props): React.JSX.Element {
+export function PlayoffScorelist({ scores, pressedSeat, scoreOperationId }: Props): React.JSX.Element {
   return (
     <>
       {scores.map((score) => {
@@ -22,10 +23,14 @@ export function PlayoffScorelist({ scores, pressedSeat }: Props): React.JSX.Elem
         ]
           .filter(Boolean)
           .join(" ");
+        const scoreKey =
+          score.scoreChanged && scoreOperationId !== null
+            ? `${score.matchingId}-${scoreOperationId}`
+            : `${score.matchingId}`;
 
         return (
           <div
-            key={score.matchingId}
+            key={scoreKey}
             className={className}
             id={`playoff-match-player-${score.matchingId}`}
             data-seat={score.seat}

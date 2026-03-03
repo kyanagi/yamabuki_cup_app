@@ -89,6 +89,28 @@ RSpec.describe MatchRule::Playoff do
       expect(score).to be_status_win
       expect(score.rank).to eq(1)
     end
+
+    it "連続正解時に2問目で正解者以外のみscore_changedになること" do
+      QuestionClosing.create!(
+        match:,
+        question_player_results_attributes: [
+          { player_id: players[0].id, result: "correct", situation: "pushed" },
+        ]
+      )
+
+      second_question_closing = QuestionClosing.create!(
+        match:,
+        question_player_results_attributes: [
+          { player_id: players[1].id, result: "correct", situation: "pushed" },
+        ]
+      )
+
+      second_scores = second_question_closing.scores.sort_by { it.matching.seat }
+      expect(second_scores.map(&:points)).to eq([9, 9, 8, 8, 8, 8, 8, 8, 8, 8])
+      expect(second_scores[0].score_changed?).to be true
+      expect(second_scores[1].score_changed?).to be false
+      expect(second_scores[2..].map(&:score_changed?)).to all(be(true))
+    end
   end
 
   describe "#progress_summary" do

@@ -15,7 +15,7 @@ type Props = {
 };
 
 export function MatchScorelist({ matchState, pressedSeat, visibleScores }: Props): React.JSX.Element {
-  const { ruleTemplate, gridClass, scores } = matchState;
+  const { ruleTemplate, gridClass, scores, scoreOperationId } = matchState;
 
   const scorelistContent = (() => {
     switch (ruleTemplate) {
@@ -24,7 +24,7 @@ export function MatchScorelist({ matchState, pressedSeat, visibleScores }: Props
       case "round2":
         return <Round2Scorelist scores={scores} pressedSeat={pressedSeat} />;
       case "playoff":
-        return <PlayoffScorelist scores={scores} pressedSeat={pressedSeat} />;
+        return <PlayoffScorelist scores={scores} pressedSeat={pressedSeat} scoreOperationId={scoreOperationId} />;
       case "hayaoshi":
         return <HayaoshiScorelist scores={scores} pressedSeat={pressedSeat} />;
       case "hayabo":

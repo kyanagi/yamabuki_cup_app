@@ -27,4 +27,9 @@ class Score < ApplicationRecord
   def mark_as_score_changed
     @score_changed = true
   end
+
+  def initialize_copy(other)
+    super
+    remove_instance_variable(:@score_changed) if instance_variable_defined?(:@score_changed)
+  end
 end
