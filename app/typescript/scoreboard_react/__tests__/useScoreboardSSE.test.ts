@@ -433,25 +433,18 @@ describe("useScoreboardSSE", () => {
 
   it("resync_required イベント受信時に window.location.reload() が呼ばれる", () => {
     const reloadSpy = vi.fn();
-    // jsdom では window.location は configurable でないため Object.defineProperty で上書きする
+    // jsdom では window.location の reload は non-configurable のため vi.spyOn は使えない。
+    // Object.create でプロトタイプチェーンを維持しつつ reload だけをオーバーライドする。
     const originalLocation = window.location;
+    const mockLocation = Object.create(window.location) as Location;
+    Object.defineProperty(mockLocation, "reload", {
+      value: reloadSpy,
+      configurable: true,
+      writable: true,
+    });
     Object.defineProperty(window, "location", {
       writable: true,
-      value: {
-        href: window.location.href,
-        origin: window.location.origin,
-        protocol: window.location.protocol,
-        host: window.location.host,
-        hostname: window.location.hostname,
-        port: window.location.port,
-        pathname: window.location.pathname,
-        search: window.location.search,
-        hash: window.location.hash,
-        reload: reloadSpy,
-        assign: window.location.assign.bind(window.location),
-        replace: window.location.replace.bind(window.location),
-        toString: window.location.toString.bind(window.location),
-      },
+      value: mockLocation,
     });
 
     try {
