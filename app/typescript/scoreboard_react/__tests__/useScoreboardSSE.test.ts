@@ -437,7 +437,21 @@ describe("useScoreboardSSE", () => {
     const originalLocation = window.location;
     Object.defineProperty(window, "location", {
       writable: true,
-      value: { ...window.location, reload: reloadSpy },
+      value: {
+        href: window.location.href,
+        origin: window.location.origin,
+        protocol: window.location.protocol,
+        host: window.location.host,
+        hostname: window.location.hostname,
+        port: window.location.port,
+        pathname: window.location.pathname,
+        search: window.location.search,
+        hash: window.location.hash,
+        reload: reloadSpy,
+        assign: window.location.assign.bind(window.location),
+        replace: window.location.replace.bind(window.location),
+        toString: window.location.toString.bind(window.location),
+      },
     });
 
     try {
