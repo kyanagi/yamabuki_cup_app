@@ -430,4 +430,30 @@ describe("useScoreboardSSE", () => {
       tournamentName: "第2回やまぶき杯",
     });
   });
+
+  it("resync_required イベント受信時に window.location.reload() が呼ばれる", () => {
+    const reloadSpy = vi.fn();
+    // jsdom では window.location は configurable でないため Object.defineProperty で上書きする
+    const originalLocation = window.location;
+    Object.defineProperty(window, "location", {
+      writable: true,
+      value: { ...window.location, reload: reloadSpy },
+    });
+
+    try {
+      renderHook(() => useScoreboardSSE());
+      const source = MockEventSource.instances[0];
+
+      act(() => {
+        source?.dispatchEvent("resync_required", {});
+      });
+
+      expect(reloadSpy).toHaveBeenCalledOnce();
+    } finally {
+      Object.defineProperty(window, "location", {
+        writable: true,
+        value: originalLocation,
+      });
+    }
+  });
 });

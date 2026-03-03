@@ -27,5 +27,26 @@ RSpec.describe Scoreboard::SseWriter do
       expect(parsed["matchId"]).to eq 42
       expect(parsed["ruleTemplate"]).to eq "board"
     end
+
+    context "id: キーワード引数" do
+      it "id: 42 を指定すると出力の先頭が 'id: 42\n' になる" do
+        described_class.write(io, "show_scores", {}, id: 42)
+        expect(io.string).to start_with("id: 42\n")
+      end
+
+      it "id: を省略（nil）すると 'id:' 行が出力されない" do
+        described_class.write(io, "show_scores", {})
+        expect(io.string).not_to include("id:")
+      end
+
+      it "出力行順序は id: → event: → data: → 空行" do
+        described_class.write(io, "show_scores", { foo: 1 }, id: 7)
+        lines = io.string.lines
+        expect(lines[0]).to eq("id: 7\n")
+        expect(lines[1]).to start_with("event: show_scores")
+        expect(lines[2]).to start_with("data:")
+        expect(lines[3]).to eq("\n")
+      end
+    end
   end
 end

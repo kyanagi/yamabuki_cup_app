@@ -26,16 +26,6 @@ module Admin
     def broadcast_scoreboard(match) #: void
       scores = match.current_scores.sort_by { it.matching.seat }
       score_operation = match.last_score_operation
-      template = turbo_stream.update("match-scorelist") do
-        render_to_string(
-          "scoreboard/#{match.rule_class::ADMIN_VIEW_TEMPLATE}/_show",
-          layout: false,
-          locals: { scores:, score_operation: }
-        )
-      end
-      ActionCable.server.broadcast("scoreboard", template)
-
-      # SSE 用に JSON をシリアライズして通知（score_changed? が有効なこのタイミングで実行）
       json = Scoreboard::MatchSerializer.new(match, scores, score_operation).as_json
       ActiveSupport::Notifications.instrument("scoreboard.update", payload: json)
     end

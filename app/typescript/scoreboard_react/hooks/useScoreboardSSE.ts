@@ -182,6 +182,12 @@ export function useScoreboardSSE(): UseScoreboardSSEResult {
       setScene({ type: "champion", name: data.name, tournamentName: data.tournamentName });
     });
 
+    // 再同期要求: Last-Event-ID が保持範囲外の場合にサーバーから送信される
+    // ページをリロードして最新状態を再取得する
+    source.addEventListener("resync_required", () => {
+      window.location.reload();
+    });
+
     return () => {
       source.close();
     };
