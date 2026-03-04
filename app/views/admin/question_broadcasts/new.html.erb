@@ -26,6 +26,13 @@
             autofocus: true %>
       </div>
       <div class="control">
+        <%= f.number_field :read_duration,
+            placeholder: "Read duration (秒)",
+            class: "input",
+            min: 0,
+            step: 0.01 %>
+      </div>
+      <div class="control">
         <%= f.submit "送出", class: "button is-primary" %>
       </div>
     </div>
