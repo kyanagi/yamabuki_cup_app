@@ -8,18 +8,22 @@
         <button type="button" class="button is-light" data-action="click->buzzer-assignment#clearAllMappings">全消去</button>
       </div>
       <table class="table is-fullwidth is-striped">
+        <colgroup>
+          <col style="width: 4rem">
+          <col style="width: 7rem">
+          <col>
+        </colgroup>
         <thead>
           <tr>
             <th>席</th>
-            <th>割り当て</th>
             <th></th>
+            <th>割り当て</th>
           </tr>
         </thead>
         <tbody>
           <% 0.upto(11) do |seat| %>
             <tr data-buzzer-assignment-seat-row data-seat="<%= seat %>">
               <td>席<%= seat %></td>
-              <td data-buzzer-assignment-role="assignment">未割当</td>
               <td>
                 <button
                   type="button"
@@ -31,6 +35,7 @@
                   設定
                 </button>
               </td>
+              <td data-buzzer-assignment-role="assignment">未割当</td>
             </tr>
           <% end %>
         </tbody>
