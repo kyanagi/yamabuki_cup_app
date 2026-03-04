@@ -1,11 +1,5 @@
 <div class="container" data-controller="match-buzzer">
-  <div class="px-5 pt-4">
-    <label class="switch is-rounded">
-      <input type="checkbox" data-match-buzzer-target="switch">
-      <span class="check is-success"></span>
-      <span class="control-label">早押し機連動（操作補助）</span>
-    </label>
-  </div>
+  <%= render "admin/shared/matches/buzzer_switch" %>
   <%= turbo_frame_tag 'match' do %>
     <section class="section">
       <div class="is-flex is-justify-content-space-between is-align-items-flex-end">
