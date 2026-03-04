@@ -29,6 +29,8 @@ export function useBuzzerChannel(matchState: MatchState | null): SeatId | null {
           setPressedSeat(seat);
           break;
         }
+        case "correct":
+        case "wrong":
         case "reset":
           setPressedSeat(null);
           break;

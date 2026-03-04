@@ -21,6 +21,18 @@ function createHTML(): string {
       >
         reset
       </button>
+      <button
+        type="button"
+        data-action="click->buzzer-emulator#correct"
+      >
+        正解
+      </button>
+      <button
+        type="button"
+        data-action="click->buzzer-emulator#wrong"
+      >
+        誤答
+      </button>
     </div>
   `;
 }
@@ -135,5 +147,102 @@ describe("BuzzerEmulatorController", () => {
 
     teardownControllerTest(application);
     window.removeEventListener("buzzer:emulator:reset", handler);
+  });
+
+  it("正解ボタンクリックで最終押下が「正解」になる", async () => {
+    const { application, element } = await setupControllerTest<BuzzerEmulatorController>(
+      BuzzerEmulatorController,
+      createHTML(),
+      "buzzer-emulator",
+    );
+
+    const button = element.querySelector('[data-action="click->buzzer-emulator#correct"]');
+    if (!button) throw new Error("required element not found");
+    button.dispatchEvent(new Event("click"));
+
+    const lastPressed = element.querySelector('[data-buzzer-emulator-target="lastPressed"]');
+    expect(lastPressed?.textContent).toBe("正解");
+
+    teardownControllerTest(application);
+  });
+
+  it("誤答ボタンクリックで最終押下が「誤答」になる", async () => {
+    const { application, element } = await setupControllerTest<BuzzerEmulatorController>(
+      BuzzerEmulatorController,
+      createHTML(),
+      "buzzer-emulator",
+    );
+
+    const button = element.querySelector('[data-action="click->buzzer-emulator#wrong"]');
+    if (!button) throw new Error("required element not found");
+    button.dispatchEvent(new Event("click"));
+
+    const lastPressed = element.querySelector('[data-buzzer-emulator-target="lastPressed"]');
+    expect(lastPressed?.textContent).toBe("誤答");
+
+    teardownControllerTest(application);
+  });
+
+  it("resetボタンクリックで最終押下が「リセット」になる", async () => {
+    const { application, element } = await setupControllerTest<BuzzerEmulatorController>(
+      BuzzerEmulatorController,
+      createHTML(),
+      "buzzer-emulator",
+    );
+
+    const button = element.querySelector('[data-action="click->buzzer-emulator#reset"]');
+    if (!button) throw new Error("required element not found");
+    button.dispatchEvent(new Event("click"));
+
+    const lastPressed = element.querySelector('[data-buzzer-emulator-target="lastPressed"]');
+    expect(lastPressed?.textContent).toBe("リセット");
+
+    teardownControllerTest(application);
+  });
+
+  it("正解ボタンで buzzer:emulator:correct イベントを送出する", async () => {
+    let called = false;
+    const handler = () => {
+      called = true;
+    };
+    window.addEventListener("buzzer:emulator:correct", handler);
+
+    const { application, element } = await setupControllerTest<BuzzerEmulatorController>(
+      BuzzerEmulatorController,
+      createHTML(),
+      "buzzer-emulator",
+    );
+
+    const button = element.querySelector('[data-action="click->buzzer-emulator#correct"]');
+    if (!button) throw new Error("required element not found");
+
+    button.dispatchEvent(new Event("click"));
+    expect(called).toBe(true);
+
+    teardownControllerTest(application);
+    window.removeEventListener("buzzer:emulator:correct", handler);
+  });
+
+  it("誤答ボタンで buzzer:emulator:wrong イベントを送出する", async () => {
+    let called = false;
+    const handler = () => {
+      called = true;
+    };
+    window.addEventListener("buzzer:emulator:wrong", handler);
+
+    const { application, element } = await setupControllerTest<BuzzerEmulatorController>(
+      BuzzerEmulatorController,
+      createHTML(),
+      "buzzer-emulator",
+    );
+
+    const button = element.querySelector('[data-action="click->buzzer-emulator#wrong"]');
+    if (!button) throw new Error("required element not found");
+
+    button.dispatchEvent(new Event("click"));
+    expect(called).toBe(true);
+
+    teardownControllerTest(application);
+    window.removeEventListener("buzzer:emulator:wrong", handler);
   });
 });

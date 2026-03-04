@@ -6,6 +6,8 @@ import {
   BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT,
   type BuzzerStateChangedDetail,
   BUZZER_EMULATOR_BUTTON_PRESS_EVENT,
+  BUZZER_EMULATOR_CORRECT_EVENT,
+  BUZZER_EMULATOR_WRONG_EVENT,
   BUZZER_EMULATOR_RESET_EVENT,
   BUZZER_SERIAL_CORRECT_EVENT,
   BUZZER_SERIAL_WRONG_EVENT,
@@ -45,6 +47,8 @@ export default class extends Controller {
     window.addEventListener(BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT, this.#toggleLearningHandler as EventListener);
     window.addEventListener(BUZZER_ASSIGNMENT_CLEAR_EVENT, this.#clearMappingsHandler);
     window.addEventListener(BUZZER_EMULATOR_BUTTON_PRESS_EVENT, this.#buttonPressHandler as EventListener);
+    window.addEventListener(BUZZER_EMULATOR_CORRECT_EVENT, this.#emulatorCorrectHandler);
+    window.addEventListener(BUZZER_EMULATOR_WRONG_EVENT, this.#emulatorWrongHandler);
     window.addEventListener(BUZZER_EMULATOR_RESET_EVENT, this.#resetHandler);
     window.addEventListener(BUZZER_SERIAL_CORRECT_EVENT, this.#serialCorrectHandler);
     window.addEventListener(BUZZER_SERIAL_WRONG_EVENT, this.#serialWrongHandler);
@@ -57,6 +61,8 @@ export default class extends Controller {
     window.removeEventListener(BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT, this.#toggleLearningHandler as EventListener);
     window.removeEventListener(BUZZER_ASSIGNMENT_CLEAR_EVENT, this.#clearMappingsHandler);
     window.removeEventListener(BUZZER_EMULATOR_BUTTON_PRESS_EVENT, this.#buttonPressHandler as EventListener);
+    window.removeEventListener(BUZZER_EMULATOR_CORRECT_EVENT, this.#emulatorCorrectHandler);
+    window.removeEventListener(BUZZER_EMULATOR_WRONG_EVENT, this.#emulatorWrongHandler);
     window.removeEventListener(BUZZER_EMULATOR_RESET_EVENT, this.#resetHandler);
     window.removeEventListener(BUZZER_SERIAL_CORRECT_EVENT, this.#serialCorrectHandler);
     window.removeEventListener(BUZZER_SERIAL_WRONG_EVENT, this.#serialWrongHandler);
@@ -127,6 +133,14 @@ export default class extends Controller {
 
   #requestStateHandler = (): void => {
     this.#emitStateChanged();
+  };
+
+  #emulatorCorrectHandler = (): void => {
+    this.#channel?.post({ type: "correct" });
+  };
+
+  #emulatorWrongHandler = (): void => {
+    this.#channel?.post({ type: "wrong" });
   };
 
   #serialCorrectHandler = (): void => {

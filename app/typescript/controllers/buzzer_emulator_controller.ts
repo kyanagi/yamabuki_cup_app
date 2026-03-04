@@ -3,6 +3,8 @@ import { createButtonId } from "../lib/buzzer/button_id";
 import {
   type BuzzerStateChangedDetail,
   BUZZER_EMULATOR_BUTTON_PRESS_EVENT,
+  BUZZER_EMULATOR_CORRECT_EVENT,
+  BUZZER_EMULATOR_WRONG_EVENT,
   BUZZER_EMULATOR_RESET_EVENT,
   BUZZER_STATE_CHANGED_EVENT,
   BUZZER_VIEW_REQUEST_STATE_EVENT,
@@ -34,7 +36,19 @@ export default class extends Controller {
   }
 
   reset(): void {
+    // BUZZER_STATE_CHANGED_EVENT が同期的に発火して "未入力" を設定するため、その後に上書きする
     window.dispatchEvent(new CustomEvent(BUZZER_EMULATOR_RESET_EVENT));
+    this.lastPressedTarget.textContent = "リセット";
+  }
+
+  correct(): void {
+    window.dispatchEvent(new CustomEvent(BUZZER_EMULATOR_CORRECT_EVENT));
+    this.lastPressedTarget.textContent = "正解";
+  }
+
+  wrong(): void {
+    window.dispatchEvent(new CustomEvent(BUZZER_EMULATOR_WRONG_EVENT));
+    this.lastPressedTarget.textContent = "誤答";
   }
 
   #requestState(): void {

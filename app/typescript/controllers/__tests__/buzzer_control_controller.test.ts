@@ -1,8 +1,10 @@
+import { Application } from "@hotwired/stimulus";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import type { ButtonId } from "../../lib/buzzer/button_id";
 import type { BuzzerStateChangedDetail } from "../../lib/buzzer/events";
 import BuzzerControlController from "../buzzer_control_controller";
+import BuzzerEmulatorController from "../buzzer_emulator_controller";
 
 class MockBroadcastChannel {
   static instances: MockBroadcastChannel[] = [];
@@ -252,6 +254,34 @@ describe("BuzzerControlController", () => {
     window.removeEventListener("buzzer:state-changed", handler);
   });
 
+  it("emulator correct イベントで correct を channel に送信する", async () => {
+    const { application } = await setupControllerTest<BuzzerControlController>(
+      BuzzerControlController,
+      '<div data-controller="buzzer-control"></div>',
+      "buzzer-control",
+    );
+
+    window.dispatchEvent(new CustomEvent("buzzer:emulator:correct"));
+
+    expect(latestChannel().postMessage).toHaveBeenCalledWith({ type: "correct" });
+
+    teardownControllerTest(application);
+  });
+
+  it("emulator wrong イベントで wrong を channel に送信する", async () => {
+    const { application } = await setupControllerTest<BuzzerControlController>(
+      BuzzerControlController,
+      '<div data-controller="buzzer-control"></div>',
+      "buzzer-control",
+    );
+
+    window.dispatchEvent(new CustomEvent("buzzer:emulator:wrong"));
+
+    expect(latestChannel().postMessage).toHaveBeenCalledWith({ type: "wrong" });
+
+    teardownControllerTest(application);
+  });
+
   it("serial correct イベントで correct を送信する", async () => {
     const { application } = await setupControllerTest<BuzzerControlController>(
       BuzzerControlController,
@@ -311,5 +341,55 @@ describe("BuzzerControlController", () => {
     expect(localStorage.getItem("buzzerMapping")).toBe(JSON.stringify({ "2": 0 }));
 
     teardownControllerTest(application);
+  });
+
+  describe("エミュレータ統合: 正解/誤答ボタン → channel 送信", () => {
+    async function setupBothControllers(): Promise<Application> {
+      // show.html.erb の構造を再現: buzzer-control が外側、buzzer-emulator が内側
+      document.body.innerHTML = `
+        <div data-controller="buzzer-control">
+          <div data-controller="buzzer-emulator">
+            <span data-buzzer-emulator-target="lastPressed">未入力</span>
+            <button type="button" data-action="click->buzzer-emulator#correct">正解</button>
+            <button type="button" data-action="click->buzzer-emulator#wrong">誤答</button>
+            <button type="button" data-action="click->buzzer-emulator#reset">reset</button>
+          </div>
+        </div>
+      `;
+
+      const application = Application.start();
+      application.register("buzzer-control", BuzzerControlController);
+      application.register("buzzer-emulator", BuzzerEmulatorController);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      return application;
+    }
+
+    it("正解ボタンクリックで channel に correct を送信する", async () => {
+      const application = await setupBothControllers();
+
+      const button = document.querySelector('[data-action="click->buzzer-emulator#correct"]');
+      if (!button) throw new Error("正解ボタンが見つかりません");
+
+      button.dispatchEvent(new Event("click"));
+
+      expect(latestChannel().postMessage).toHaveBeenCalledWith({ type: "correct" });
+
+      application.stop();
+      document.body.innerHTML = "";
+    });
+
+    it("誤答ボタンクリックで channel に wrong を送信する", async () => {
+      const application = await setupBothControllers();
+
+      const button = document.querySelector('[data-action="click->buzzer-emulator#wrong"]');
+      if (!button) throw new Error("誤答ボタンが見つかりません");
+
+      button.dispatchEvent(new Event("click"));
+
+      expect(latestChannel().postMessage).toHaveBeenCalledWith({ type: "wrong" });
+
+      application.stop();
+      document.body.innerHTML = "";
+    });
   });
 });

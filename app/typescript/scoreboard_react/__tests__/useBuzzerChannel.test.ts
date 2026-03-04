@@ -94,6 +94,36 @@ describe("useBuzzerChannel", () => {
     expect(result.current).toBeNull();
   });
 
+  it("correct シグナルで pressedSeat がクリアされる", () => {
+    const { result } = renderHook(() => useBuzzerChannel(MATCH_STATE_A));
+    const channel = MockBroadcastChannel.instances[0];
+
+    act(() => {
+      channel?.simulateMessage({ type: "button_pressed", seat: 3 });
+    });
+
+    act(() => {
+      channel?.simulateMessage({ type: "correct" });
+    });
+
+    expect(result.current).toBeNull();
+  });
+
+  it("wrong シグナルで pressedSeat がクリアされる", () => {
+    const { result } = renderHook(() => useBuzzerChannel(MATCH_STATE_A));
+    const channel = MockBroadcastChannel.instances[0];
+
+    act(() => {
+      channel?.simulateMessage({ type: "button_pressed", seat: 3 });
+    });
+
+    act(() => {
+      channel?.simulateMessage({ type: "wrong" });
+    });
+
+    expect(result.current).toBeNull();
+  });
+
   it("無効な seat は無視される", () => {
     const { result } = renderHook(() => useBuzzerChannel(MATCH_STATE_A));
     const channel = MockBroadcastChannel.instances[0];
