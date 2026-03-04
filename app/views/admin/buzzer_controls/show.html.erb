@@ -1,6 +1,34 @@
 <div class="container">
   <section class="section" data-controller="buzzer-control">
     <h1 class="title is-2">早押し機連携</h1>
+    <p class="has-text-grey mb-4">早押し機連動中はこのページを閉じないでください。</p>
+
+    <div class="box" data-controller="buzzer-serial">
+      <h2 class="title is-4">早押し機接続</h2>
+      <p class="mb-3">
+        接続状態:
+        <span class="tag is-warning" data-buzzer-serial-target="status">未接続</span>
+      </p>
+      <div class="buttons">
+        <button
+          type="button"
+          class="button is-primary"
+          data-buzzer-serial-target="connectButton"
+          data-action="click->buzzer-serial#requestConnect"
+        >
+          接続
+        </button>
+        <button
+          type="button"
+          class="button is-light"
+          data-buzzer-serial-target="disconnectButton"
+          data-action="click->buzzer-serial#requestDisconnect"
+          disabled
+        >
+          切断
+        </button>
+      </div>
+    </div>
 
     <div class="box" data-controller="buzzer-assignment">
       <h2 class="title is-4">ボタン席割り当て設定</h2>
@@ -40,33 +68,6 @@
           <% end %>
         </tbody>
       </table>
-    </div>
-
-    <div class="box" data-controller="buzzer-serial">
-      <h2 class="title is-4">早押し機接続</h2>
-      <p class="mb-3">
-        接続状態:
-        <span class="tag is-warning" data-buzzer-serial-target="status">未接続</span>
-      </p>
-      <div class="buttons">
-        <button
-          type="button"
-          class="button is-primary"
-          data-buzzer-serial-target="connectButton"
-          data-action="click->buzzer-serial#requestConnect"
-        >
-          接続
-        </button>
-        <button
-          type="button"
-          class="button is-light"
-          data-buzzer-serial-target="disconnectButton"
-          data-action="click->buzzer-serial#requestDisconnect"
-          disabled
-        >
-          切断
-        </button>
-      </div>
     </div>
 
     <div class="box" data-controller="buzzer-emulator">
