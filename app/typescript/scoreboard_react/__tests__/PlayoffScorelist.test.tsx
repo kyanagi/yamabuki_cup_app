@@ -1,25 +1,7 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { PlayoffScorelist } from "../components/rules/PlayoffScorelist";
-import type { ScoreEntry } from "../types";
-
-function makeScore(matchingId: number, seat: number, points: number, scoreChanged: boolean): ScoreEntry {
-  return {
-    matchingId,
-    seat,
-    playerId: matchingId,
-    name: `選手${matchingId}`,
-    nameLength: 2,
-    status: "playing",
-    points,
-    misses: 0,
-    rank: null,
-    stars: 0,
-    scoreChanged,
-    previousResult: null,
-    previousSituation: null,
-  };
-}
+import { makeScore } from "./helpers";
 
 describe("PlayoffScorelist", () => {
   it("同じ選手が連続で減点されたとき、2問目でもフリップアニメーションを再実行できる", () => {

@@ -18,6 +18,7 @@ export function Stars({ stars }: Props): React.JSX.Element {
       return () => clearTimeout(timer);
     }
     prevStarsRef.current = stars;
+    return undefined;
   }, [stars]);
 
   return (

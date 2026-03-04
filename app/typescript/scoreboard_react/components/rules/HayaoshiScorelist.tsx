@@ -1,5 +1,6 @@
 import React from "react";
 import type { ScoreEntry } from "../../types";
+import { buildScoreKey } from "../../utils/scoreKey";
 import { PlayerMisses } from "../shared/PlayerMisses";
 import { PlayerName } from "../shared/PlayerName";
 import { PlayerPoints } from "../shared/PlayerPoints";
@@ -9,9 +10,10 @@ import { PreviousResult } from "../shared/PreviousResult";
 type Props = {
   scores: ScoreEntry[];
   pressedSeat: number | null;
+  scoreOperationId: number | null;
 };
 
-export function HayaoshiScorelist({ scores, pressedSeat }: Props): React.JSX.Element {
+export function HayaoshiScorelist({ scores, pressedSeat, scoreOperationId }: Props): React.JSX.Element {
   return (
     <>
       {scores.map((score) => {
@@ -24,14 +26,10 @@ export function HayaoshiScorelist({ scores, pressedSeat }: Props): React.JSX.Ele
         ]
           .filter(Boolean)
           .join(" ");
+        const scoreKey = buildScoreKey(score, scoreOperationId);
 
         return (
-          <div
-            key={score.matchingId}
-            className={className}
-            id={`hayaoshi-player-${score.matchingId}`}
-            data-seat={score.seat}
-          >
+          <div key={scoreKey} className={className} id={`hayaoshi-player-${score.matchingId}`} data-seat={score.seat}>
             <PlayerRank rank={score.rank} />
             <PlayerName name={score.name} nameLength={score.nameLength} prefix="hayaoshi-player" />
             <PlayerPoints points={score.points} />

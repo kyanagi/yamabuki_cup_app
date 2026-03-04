@@ -22,15 +22,15 @@ export function MatchScorelist({ matchState, pressedSeat, visibleScores }: Props
       case "board":
         return <BoardScorelist scores={scores} pressedSeat={pressedSeat} visibleScores={visibleScores} />;
       case "round2":
-        return <Round2Scorelist scores={scores} pressedSeat={pressedSeat} />;
+        return <Round2Scorelist scores={scores} pressedSeat={pressedSeat} scoreOperationId={scoreOperationId} />;
       case "playoff":
         return <PlayoffScorelist scores={scores} pressedSeat={pressedSeat} scoreOperationId={scoreOperationId} />;
       case "hayaoshi":
-        return <HayaoshiScorelist scores={scores} pressedSeat={pressedSeat} />;
+        return <HayaoshiScorelist scores={scores} pressedSeat={pressedSeat} scoreOperationId={scoreOperationId} />;
       case "hayabo":
-        return <HayaboScorelist scores={scores} pressedSeat={pressedSeat} />;
+        return <HayaboScorelist scores={scores} pressedSeat={pressedSeat} scoreOperationId={scoreOperationId} />;
       case "final":
-        return <FinalScorelist scores={scores} pressedSeat={pressedSeat} />;
+        return <FinalScorelist scores={scores} pressedSeat={pressedSeat} scoreOperationId={scoreOperationId} />;
     }
   })();
 

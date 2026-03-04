@@ -1,5 +1,6 @@
 import React from "react";
 import type { ScoreEntry } from "../../types";
+import { buildScoreKey } from "../../utils/scoreKey";
 import { PlayerName } from "../shared/PlayerName";
 import { PlayerPoints } from "../shared/PlayerPoints";
 import { PreviousResult } from "../shared/PreviousResult";
@@ -23,10 +24,7 @@ export function PlayoffScorelist({ scores, pressedSeat, scoreOperationId }: Prop
         ]
           .filter(Boolean)
           .join(" ");
-        const scoreKey =
-          score.scoreChanged && scoreOperationId !== null
-            ? `${score.matchingId}-${scoreOperationId}`
-            : `${score.matchingId}`;
+        const scoreKey = buildScoreKey(score, scoreOperationId);
 
         return (
           <div
