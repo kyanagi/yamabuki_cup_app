@@ -1,0 +1,18 @@
+<%# locals: (match:) %>
+<div data-controller="modal" style="display: inline-block;">
+  <%= button_tag 'スルー', class: 'button is-warning', data: { action: "click->modal#open" } %>
+  <div class="modal" data-modal-target="modal">
+    <div class="modal-background" data-action="click->modal#close"></div>
+    <div class="modal-content">
+      <div class="box">
+        <p class="is-size-2">スルー</p>
+        <div class="is-flex is-justify-content-flex-end buttons are-large">
+          <%= form_with url: "/admin/matches/#{match.id}/question_closings", method: :post, style: 'display: inline-block;' do |f| %>
+            <%= f.submit 'スルー', class: 'button is-warning' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close" data-action="click->modal#close"></button>
+  </div>
+</div>
