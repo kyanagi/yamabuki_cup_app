@@ -1,5 +1,5 @@
 <%# locals: (score:) %>
-<tr data-controller="modal">
+<tr data-controller="modal" data-seat="<%= score.matching.seat %>">
   <td class="has-text-centered is-vcentered">
     <span class="tag <%= player_status_color(score.status) %>">
       <%= score.status %>
