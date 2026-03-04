@@ -18,6 +18,8 @@ function makeMatchState(): MatchState {
 const MOCK_QUESTION: QuestionState = {
   text: "テスト問題文",
   answer: "テスト解答",
+  readText: "",
+  unreadText: "テスト問題文",
 };
 
 const MATCH_SCENE: Scene = { type: "match" };

@@ -50,10 +50,10 @@ end
 
 ## 変更ファイル一覧
 
-| ファイル | 変更種別 |
-|---|---|
-| `db/migrate/YYYYMMDD_add_char_timestamps_to_questions.rb` | 新規作成 |
-| `db/schema.rb` | `db:migrate` 実行で自動更新 |
+| ファイル                                                  | 変更種別                    |
+| --------------------------------------------------------- | --------------------------- |
+| `db/migrate/YYYYMMDD_add_char_timestamps_to_questions.rb` | 新規作成                    |
+| `db/schema.rb`                                            | `db:migrate` 実行で自動更新 |
 
 ## 検証手順
 

@@ -7,6 +7,10 @@ function isSameQuestion(a: QuestionState | null, b: QuestionState | null): boole
   return a.text === b.text && a.answer === b.answer;
 }
 
+function isSameReadPosition(a: QuestionState | null, b: QuestionState | null): boolean {
+  return a?.readText === b?.readText;
+}
+
 type Props = { questionState: QuestionState | null };
 
 export function Question({ questionState }: Props): React.JSX.Element | null {
@@ -21,7 +25,13 @@ export function Question({ questionState }: Props): React.JSX.Element | null {
       nextRef.current = { value: questionState };
       return;
     }
-    if (isSameQuestion(questionState, displayedQuestion)) return;
+    if (isSameQuestion(questionState, displayedQuestion)) {
+      // 同一問題でも読了位置が変わった場合はアニメーションなしで即座に更新
+      if (!isSameReadPosition(questionState, displayedQuestion)) {
+        setDisplayedQuestion(questionState);
+      }
+      return;
+    }
     if (!displayedQuestion) {
       setDisplayedQuestion(questionState);
       return;
@@ -42,7 +52,10 @@ export function Question({ questionState }: Props): React.JSX.Element | null {
 
   return (
     <div className={isHiding ? "question question--hiding" : "question"} lang="ja" onAnimationEnd={handleAnimationEnd}>
-      <div className="question-text">{displayedQuestion.text}</div>
+      <div className="question-text">
+        <span className="question-text-read">{displayedQuestion.readText}</span>
+        <span className="question-text-unread">{displayedQuestion.unreadText}</span>
+      </div>
       <div className="question-answer">{displayedQuestion.answer}</div>
     </div>
   );

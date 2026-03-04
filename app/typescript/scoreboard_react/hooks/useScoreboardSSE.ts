@@ -53,8 +53,8 @@ export function useScoreboardSSE(): UseScoreboardSSEResult {
     });
 
     source.addEventListener("question_show", (event: MessageEvent<string>) => {
-      const data = JSON.parse(event.data) as QuestionState;
-      setQuestionState(data);
+      const raw = JSON.parse(event.data) as { text: string; answer: string; read_text: string; unread_text: string };
+      setQuestionState({ text: raw.text, answer: raw.answer, readText: raw.read_text, unreadText: raw.unread_text });
     });
 
     source.addEventListener("question_clear", () => {

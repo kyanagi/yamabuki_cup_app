@@ -14,7 +14,7 @@ export type QuizReaderUploadPayload = {
 };
 
 export type QuizReaderApi = {
-  broadcastQuestion: (questionId: QuestionId) => Promise<void>;
+  broadcastQuestion: (questionId: QuestionId, readDuration?: number) => Promise<void>;
   fetchNextQuestionStream: (questionTarget: QuestionTarget) => Promise<string>;
   uploadQuestionReading: (payload: QuizReaderUploadPayload) => Promise<void>;
 };
@@ -39,11 +39,14 @@ export function createQuizReaderApi(deps: QuizReaderApiDeps = {}): QuizReaderApi
   });
 
   return {
-    async broadcastQuestion(questionId: QuestionId): Promise<void> {
+    async broadcastQuestion(questionId: QuestionId, readDuration?: number): Promise<void> {
       const response = await fetchFn("/admin/question_broadcasts", {
         method: "POST",
         headers: jsonHeaders("application/json"),
-        body: JSON.stringify({ question_id: questionId }),
+        body: JSON.stringify({
+          question_id: questionId,
+          read_duration: readDuration,
+        }),
       });
       assertOk(response);
     },

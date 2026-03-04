@@ -19,7 +19,7 @@ module Admin
         return
       end
 
-      broadcast_question_board(question)
+      broadcast_question_board(question, read_duration: params[:read_duration])
 
       respond_to do |format|
         format.html do
@@ -45,9 +45,15 @@ module Admin
 
     private
 
-    def broadcast_question_board(question)
+    def broadcast_question_board(question, read_duration: nil)
+      split = question.split_text_at(read_duration)
       ActiveSupport::Notifications.instrument("scoreboard.question_show",
-                                              payload: { text: question.text, answer: question.answer })
+                                              payload: {
+                                                text: question.text,
+                                                answer: question.answer,
+                                                read_text: split[:read_text],
+                                                unread_text: split[:unread_text],
+                                              })
     end
 
     def clear_question_board

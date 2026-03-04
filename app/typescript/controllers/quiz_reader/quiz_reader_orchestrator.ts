@@ -357,7 +357,8 @@ function createQuestionNavigationActions(
 ): Pick<QuizReaderOrchestrator, "switchToQuestion" | "proceedToNextQuestion"> {
   const broadcastQuestion = async (questionId: QuestionId) => {
     try {
-      await deps.api.broadcastQuestion(questionId);
+      const readDuration = stateDeps.getReadingContext()?.readDuration;
+      await deps.api.broadcastQuestion(questionId, readDuration);
     } catch (e) {
       deps.logger.error("問題の送出に失敗しました:", e);
       // 問題送出の失敗はアラートを出さない（次の問題への遷移は続行）

@@ -603,7 +603,7 @@ describe("createQuizReaderOrchestrator", () => {
     await fixture.orchestrator.proceedToNextQuestion(event);
 
     // Assert
-    expect(fixture.deps.api.broadcastQuestion).toHaveBeenCalledWith(42);
+    expect(fixture.deps.api.broadcastQuestion).toHaveBeenCalledWith(42, 1.5);
     expect(fixture.deps.api.fetchNextQuestionStream).toHaveBeenCalledWith("next");
     expect(fixture.deps.renderStreamMessageFn).toHaveBeenCalledWith("<turbo-stream></turbo-stream>");
     expect(fixture.stateDeps.applyOnAirStateToUI).toHaveBeenCalled();

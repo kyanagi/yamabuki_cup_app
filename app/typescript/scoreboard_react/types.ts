@@ -26,6 +26,8 @@ export type ScoreEntry = {
 export type QuestionState = {
   text: string;
   answer: string;
+  readText: string;
+  unreadText: string;
 };
 
 export type PaperSeedSlot = {

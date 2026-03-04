@@ -3,9 +3,20 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useScoreboardSSE } from "../hooks/useScoreboardSSE";
 import type { MatchState, QuestionState } from "../types";
 
+// SSEから届くrawデータ（snake_case）
+const MOCK_QUESTION_RAW = {
+  text: "テスト問題文",
+  answer: "テスト答え",
+  read_text: "テスト",
+  unread_text: "問題文",
+};
+
+// useScoreboardSSEが返すQuestionState（camelCase変換後）
 const MOCK_QUESTION_STATE: QuestionState = {
   text: "テスト問題文",
   answer: "テスト答え",
+  readText: "テスト",
+  unreadText: "問題文",
 };
 
 const MOCK_MATCH_STATE: MatchState = {
@@ -128,7 +139,7 @@ describe("useScoreboardSSE", () => {
     const source = MockEventSource.instances[0];
 
     act(() => {
-      source?.dispatchEvent("question_show", MOCK_QUESTION_STATE);
+      source?.dispatchEvent("question_show", MOCK_QUESTION_RAW);
     });
 
     expect(result.current.questionState).toEqual(MOCK_QUESTION_STATE);
@@ -139,7 +150,7 @@ describe("useScoreboardSSE", () => {
     const source = MockEventSource.instances[0];
 
     act(() => {
-      source?.dispatchEvent("question_show", MOCK_QUESTION_STATE);
+      source?.dispatchEvent("question_show", MOCK_QUESTION_RAW);
     });
     expect(result.current.questionState).toEqual(MOCK_QUESTION_STATE);
 
@@ -155,7 +166,7 @@ describe("useScoreboardSSE", () => {
     const source = MockEventSource.instances[0];
 
     act(() => {
-      source?.dispatchEvent("question_show", MOCK_QUESTION_STATE);
+      source?.dispatchEvent("question_show", MOCK_QUESTION_RAW);
     });
     expect(result.current.questionState).toEqual(MOCK_QUESTION_STATE);
 

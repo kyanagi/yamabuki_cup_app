@@ -622,6 +622,10 @@ body {
   line-height: 1.5;
 }
 
+.question-text-unread {
+  opacity: 0.5;
+}
+
 .question-answer {
   font-family: "BIZUDPGothic-Regular", sans-serif;
   font-size: 6vh;

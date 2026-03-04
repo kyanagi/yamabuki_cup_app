@@ -6,16 +6,22 @@ import type { QuestionState } from "../types";
 const MOCK_QUESTION: QuestionState = {
   text: "これはテスト問題文です",
   answer: "テスト解答",
+  readText: "",
+  unreadText: "これはテスト問題文です",
 };
 
 const MOCK_QUESTION2: QuestionState = {
   text: "これは別のテスト問題文です",
   answer: "別のテスト解答",
+  readText: "",
+  unreadText: "これは別のテスト問題文です",
 };
 
 const MOCK_QUESTION3: QuestionState = {
   text: "3問目の問題文です",
   answer: "3問目の解答",
+  readText: "",
+  unreadText: "3問目の問題文です",
 };
 
 // jsdom は AnimationEvent をコンストラクタとしてサポートしないため、

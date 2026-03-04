@@ -100,7 +100,7 @@ describe("proceedToNextQuestion", () => {
     expect(firstCall[1].method).toBe("POST");
     expect(firstCall[1].headers["Content-Type"]).toBe("application/json");
     expect(firstCall[1].headers.Accept).toBe("application/json");
-    expect(JSON.parse(firstCall[1].body)).toEqual({ question_id: 42 });
+    expect(JSON.parse(firstCall[1].body)).toEqual({ question_id: 42, read_duration: 3 });
 
     // 2番目: 次の問題に進むリクエスト
     const secondCall = fetchSpy.mock.calls[1] as FetchCallArgs;

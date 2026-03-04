@@ -11,6 +11,7 @@
 **新規作成: `tools/generate_timestamps.py`**
 
 ### 依存ライブラリ
+
 - `stable-ts`（`pip install stable-ts`）
 - `faster-whisper`（stable-tsの依存として自動インストール）
 
@@ -55,6 +56,7 @@ python tools/generate_timestamps.py --batch /path/to/audio_folder questions.csv
 ```
 
 ### 実装ポイント
+
 - `stable_whisper` の `align()` メソッドで既知テキストを音声にアライメント（文字起こしではなく強制アライメント）
 - `result.segments[*].words[*]` から `start`/`end` を取得して文字単位に分解
 - スペース・句読点もそのまま含める（インデックスをテキストと一対一対応させるため）
@@ -72,8 +74,8 @@ sound_id,text
 
 ## 変更ファイル一覧
 
-| ファイル | 変更種別 |
-|---|---|
+| ファイル                       | 変更種別 |
+| ------------------------------ | -------- |
 | `tools/generate_timestamps.py` | 新規作成 |
 
 ## 検証手順
