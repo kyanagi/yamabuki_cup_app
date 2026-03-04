@@ -19,7 +19,7 @@ module Admin
         return
       end
 
-      broadcast_question_board(question, read_duration: params[:read_duration])
+      broadcast_question_board(question, read_duration: params[:read_duration].presence&.to_f)
 
       respond_to do |format|
         format.html do
