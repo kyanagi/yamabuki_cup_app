@@ -46,6 +46,7 @@ export type QuizReaderOrchestratorStateDeps = {
   isAnyModalOpen: () => boolean;
   isOnAirEnabled: () => boolean;
   isQuestionFollowEnabled: () => boolean;
+  isSlashEnabled: () => boolean;
   getMainErrorText: () => string;
   setDurationText: (text: string) => void;
   clearDurationText: () => void;
@@ -348,7 +349,7 @@ type QuestionNavigationDeps = {
 
 type QuestionNavigationStateDeps = Pick<
   QuizReaderOrchestratorStateDeps,
-  "applyOnAirStateToUI" | "isAnyModalOpen" | "getReadingContext" | "isQuestionFollowEnabled"
+  "applyOnAirStateToUI" | "isAnyModalOpen" | "getReadingContext" | "isQuestionFollowEnabled" | "isSlashEnabled"
 >;
 
 function createQuestionNavigationActions(
@@ -357,7 +358,7 @@ function createQuestionNavigationActions(
 ): Pick<QuizReaderOrchestrator, "switchToQuestion" | "proceedToNextQuestion"> {
   const broadcastQuestion = async (questionId: QuestionId) => {
     try {
-      const readDuration = stateDeps.getReadingContext()?.readDuration;
+      const readDuration = stateDeps.isSlashEnabled() ? stateDeps.getReadingContext()?.readDuration : undefined;
       await deps.api.broadcastQuestion(questionId, readDuration);
     } catch (e) {
       deps.logger.error("問題の送出に失敗しました:", e);

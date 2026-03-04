@@ -18,6 +18,8 @@ export default class extends Controller {
     "onAirLabel",
     "isQuestionFollowOn",
     "questionFollowLabel",
+    "isSlashOn",
+    "slashLabel",
     "duration",
     "voiceLoadingStatusIcon",
     "playStatusIcon",
@@ -54,6 +56,8 @@ export default class extends Controller {
   declare onAirLabelTarget: HTMLElement;
   declare isQuestionFollowOnTarget: HTMLInputElement;
   declare questionFollowLabelTarget: HTMLElement;
+  declare isSlashOnTarget: HTMLInputElement;
+  declare slashLabelTarget: HTMLElement;
   declare durationTarget: HTMLElement;
   declare voiceLoadingStatusIconTargets: HTMLElement[];
   declare playStatusIconTargets: HTMLElement[];
@@ -148,6 +152,7 @@ export default class extends Controller {
       isAnyModalOpen: () => this.isAnyModalOpen(),
       isOnAirEnabled: () => this.isOnAirTarget.checked,
       isQuestionFollowEnabled: () => this.isQuestionFollowOnTarget.checked,
+      isSlashEnabled: () => this.isSlashOnTarget.checked,
       getMainErrorText: () => this.mainErrorText,
       setDurationText: (text) => {
         this.durationTarget.textContent = text;
@@ -374,6 +379,17 @@ export default class extends Controller {
       this.questionFollowLabelTarget.textContent = "問題フォローON";
     } else {
       this.questionFollowLabelTarget.textContent = "問題フォローOFF";
+    }
+  }
+
+  /**
+   * スラッシュスイッチの状態をUIに反映させる
+   */
+  applySlashStateToUI() {
+    if (this.isSlashOnTarget.checked) {
+      this.slashLabelTarget.textContent = "スラッシュON";
+    } else {
+      this.slashLabelTarget.textContent = "スラッシュOFF";
     }
   }
 

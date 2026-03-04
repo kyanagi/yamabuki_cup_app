@@ -7,6 +7,7 @@ interface QuizReaderHTMLOptions {
   soundId?: string;
   isOnAir?: boolean;
   isQuestionFollowOn?: boolean;
+  isSlashOn?: boolean;
   omitQuestionIdValue?: boolean;
   omitSoundIdValue?: boolean;
 }
@@ -20,6 +21,7 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
     soundId = "001",
     isOnAir = false,
     isQuestionFollowOn = true,
+    isSlashOn = true,
     omitQuestionIdValue = false,
     omitSoundIdValue = false,
   } = options;
@@ -44,6 +46,12 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
         ${isQuestionFollowOn ? "checked" : ""}
       />
       <span data-quiz-reader-target="questionFollowLabel">${isQuestionFollowOn ? "問題フォローON" : "問題フォローOFF"}</span>
+      <input
+        type="checkbox"
+        data-quiz-reader-target="isSlashOn"
+        ${isSlashOn ? "checked" : ""}
+      />
+      <span data-quiz-reader-target="slashLabel">${isSlashOn ? "スラッシュON" : "スラッシュOFF"}</span>
 
       <!-- Folder selection -->
       <span data-quiz-reader-target="folderStatus" class="has-text-grey">未選択</span>

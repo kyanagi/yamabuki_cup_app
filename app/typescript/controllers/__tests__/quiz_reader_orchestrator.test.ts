@@ -16,6 +16,7 @@ type FixtureOptions = {
   isAnyModalOpen?: boolean;
   isOnAirEnabled?: boolean;
   isQuestionFollowEnabled?: boolean;
+  isSlashEnabled?: boolean;
   initialMainErrorText?: string;
 };
 
@@ -136,6 +137,7 @@ function createFixture(options: FixtureOptions = {}): Fixture {
     isAnyModalOpen: vi.fn(() => options.isAnyModalOpen ?? false),
     isOnAirEnabled: vi.fn(() => options.isOnAirEnabled ?? true),
     isQuestionFollowEnabled: vi.fn(() => options.isQuestionFollowEnabled ?? true),
+    isSlashEnabled: vi.fn(() => options.isSlashEnabled ?? true),
     getMainErrorText: vi.fn(() => state.mainErrorText),
     setDurationText: vi.fn(),
     clearDurationText: vi.fn(),
@@ -607,5 +609,51 @@ describe("createQuizReaderOrchestrator", () => {
     expect(fixture.deps.api.fetchNextQuestionStream).toHaveBeenCalledWith("next");
     expect(fixture.deps.renderStreamMessageFn).toHaveBeenCalledWith("<turbo-stream></turbo-stream>");
     expect(fixture.stateDeps.applyOnAirStateToUI).toHaveBeenCalled();
+  });
+
+  it("proceedToNextQuestion はスラッシュONのとき readDuration を送信する", async () => {
+    // Arrange
+    const fixture = createFixture({
+      readingVoiceStatus: "PAUSED",
+      isQuestionFollowEnabled: true,
+      isSlashEnabled: true,
+    });
+    const readingContext = createMockReadingContext({
+      voiceStatus: "PAUSED",
+      questionId: 42,
+      readDuration: 1.5,
+    });
+    fixture.state.readingContext = readingContext;
+    fixture.orchestrator = createQuizReaderOrchestrator(fixture.deps, fixture.stateDeps);
+    const event = new KeyboardEvent("keydown", { repeat: false });
+
+    // Act
+    await fixture.orchestrator.proceedToNextQuestion(event);
+
+    // Assert
+    expect(fixture.deps.api.broadcastQuestion).toHaveBeenCalledWith(42, 1.5);
+  });
+
+  it("proceedToNextQuestion はスラッシュOFFのとき readDuration を送信しない", async () => {
+    // Arrange
+    const fixture = createFixture({
+      readingVoiceStatus: "PAUSED",
+      isQuestionFollowEnabled: true,
+      isSlashEnabled: false,
+    });
+    const readingContext = createMockReadingContext({
+      voiceStatus: "PAUSED",
+      questionId: 42,
+      readDuration: 1.5,
+    });
+    fixture.state.readingContext = readingContext;
+    fixture.orchestrator = createQuizReaderOrchestrator(fixture.deps, fixture.stateDeps);
+    const event = new KeyboardEvent("keydown", { repeat: false });
+
+    // Act
+    await fixture.orchestrator.proceedToNextQuestion(event);
+
+    // Assert
+    expect(fixture.deps.api.broadcastQuestion).toHaveBeenCalledWith(42, undefined);
   });
 });
