@@ -1,24 +1,18 @@
-# README
+# やまぶき杯運営システム
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Requirement
 
-Things you may want to cover:
+- Ruby 4
+- SQLite
 
-- Ruby version
+## 初期環境構築
 
-- System dependencies
+```
+bin/setup
+bin/rails db:seed
+```
 
-- Configuration
+## 開発
 
-- Database creation
-
-- Database initialization
-
-- How to run the test suite
-
-- Services (job queues, cache servers, search engines, etc.)
-
-- Deployment instructions
-
-- ...
+- 開発サーバ起動: `bin/dev/`
+- lint, テストをまとめて実行: `bin/rails check`
