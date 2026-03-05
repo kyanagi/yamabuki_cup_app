@@ -4,4 +4,5 @@ export type BuzzerSignal =
   | { type: "button_pressed"; seat: SeatId }
   | { type: "correct" }
   | { type: "wrong" }
-  | { type: "reset" };
+  | { type: "reset" }
+  | { type: "commit" };

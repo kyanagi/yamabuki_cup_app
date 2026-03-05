@@ -1,4 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
+import type { BuzzerChannel } from "../lib/buzzer/channel";
+import { createBuzzerChannel } from "../lib/buzzer/channel";
 import { createQuestionId, type QuestionId } from "../lib/quiz_reader/question_id";
 import { createSoundId, type SoundId } from "../lib/quiz_reader/sound_id";
 import { loadAudioFromLocalFile, type QuestionReadingContext } from "./quiz_reader/question_reading_context";
@@ -94,6 +96,8 @@ export default class extends Controller {
   declare hasSoundIdValue: boolean;
   declare questionIdValue: number;
   declare soundIdValue: string;
+
+  #buzzerChannel: BuzzerChannel | null = null;
 
   private soundDirHandle: FileSystemDirectoryHandle | undefined;
   private gainNode: GainNode | undefined;
@@ -196,6 +200,10 @@ export default class extends Controller {
     // localStorageから音量を復元
     this.restoreVolume();
 
+    if (typeof BroadcastChannel !== "undefined") {
+      this.#buzzerChannel = createBuzzerChannel();
+    }
+
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     this.applyOnAirStateToUI();
     this.setKeyLegendHighlight(document.hasFocus());
@@ -203,6 +211,8 @@ export default class extends Controller {
 
   disconnect() {
     console.log("QuizReaderController disconnected");
+    this.#buzzerChannel?.close();
+    this.#buzzerChannel = null;
     this.stopSampleAudio();
     this.sampleAudioBuffer = undefined;
     this.quizReaderOrchestrator.dispose();
@@ -512,6 +522,12 @@ export default class extends Controller {
       console.error("サンプル音声の再生に失敗しました:", e);
       alert("サンプル音声の再生に失敗しました");
     }
+  }
+
+  commitBuzzerResult(event: KeyboardEvent): void {
+    if (event.repeat) return;
+    if (this.isAnyModalOpen()) return;
+    this.#buzzerChannel?.post({ type: "commit" });
   }
 
   onWindowFocus() {

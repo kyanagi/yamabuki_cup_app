@@ -12,6 +12,8 @@ interface QuizReaderHTMLOptions {
   omitSoundIdValue?: boolean;
   keyLegendFocused?: boolean;
   includeWindowFocusActions?: boolean;
+  includeCommitBuzzerAction?: boolean;
+  settingsModalActive?: boolean;
 }
 
 /**
@@ -28,20 +30,26 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
     omitSoundIdValue = false,
     keyLegendFocused = false,
     includeWindowFocusActions = false,
+    includeCommitBuzzerAction = false,
+    settingsModalActive = false,
   } = options;
   const questionIdAttribute = omitQuestionIdValue ? "" : `data-quiz-reader-question-id-value="${questionId}"`;
   const soundIdAttribute = omitSoundIdValue ? "" : `data-quiz-reader-sound-id-value="${soundId}"`;
-  const windowFocusActions = includeWindowFocusActions
-    ? "focus@window->quiz-reader#onWindowFocus blur@window->quiz-reader#onWindowBlur"
-    : "";
+  const actions = [
+    includeWindowFocusActions ? "focus@window->quiz-reader#onWindowFocus blur@window->quiz-reader#onWindowBlur" : "",
+    includeCommitBuzzerAction ? "keydown.c@document->quiz-reader#commitBuzzerResult:prevent" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
   const keyLegendClass = keyLegendFocused ? "field notification has-background-info" : "field notification";
+  const settingsModalClass = settingsModalActive ? "modal is-active" : "modal";
 
   return `
     <div
       data-controller="quiz-reader"
       ${questionIdAttribute}
       ${soundIdAttribute}
-      ${windowFocusActions ? `data-action="${windowFocusActions}"` : ""}
+      ${actions ? `data-action="${actions}"` : ""}
     >
       <input
         type="checkbox"
@@ -97,7 +105,7 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
       </div>
 
       <!-- Settings modal -->
-      <div data-quiz-reader-target="settingsModal" class="modal">
+      <div data-quiz-reader-target="settingsModal" class="${settingsModalClass}">
         <!-- Sample audio buttons -->
         <button data-quiz-reader-target="samplePlayButton" disabled data-action="click->quiz-reader#playSampleAudio">再生</button>
         <button data-quiz-reader-target="sampleStopButton" disabled data-action="click->quiz-reader#stopSampleAudio">停止</button>

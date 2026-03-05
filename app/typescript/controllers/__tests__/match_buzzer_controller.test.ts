@@ -315,6 +315,120 @@ describe("MatchBuzzerController", () => {
     });
   });
 
+  describe("commit シグナル", () => {
+    it("モーダル開放中に commit → 表示中の「正解を送信」ボタンがクリックされる", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      // correct シグナルで「正解を送信」を表示させてから
+      latestChannel().simulateMessage({ type: "correct" });
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      const correctButton = modal?.querySelector<HTMLElement>("[data-buzzer-result='correct']");
+      const clicked = vi.fn();
+      correctButton?.addEventListener("click", clicked);
+
+      latestChannel().simulateMessage({ type: "commit" });
+
+      expect(clicked).toHaveBeenCalledOnce();
+
+      teardownControllerTest(application);
+    });
+
+    it("モーダル開放中に commit → 表示中の「誤答を送信」ボタンがクリックされる", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      // wrong シグナルで「誤答を送信」を表示させてから
+      latestChannel().simulateMessage({ type: "wrong" });
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      const wrongButton = modal?.querySelector<HTMLElement>("[data-buzzer-result='wrong']");
+      const clicked = vi.fn();
+      wrongButton?.addEventListener("click", clicked);
+
+      latestChannel().simulateMessage({ type: "commit" });
+
+      expect(clicked).toHaveBeenCalledOnce();
+
+      teardownControllerTest(application);
+    });
+
+    it("送信ボタンが両方 is-hidden のとき commit を受けても何もしない", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      const correctButton = modal?.querySelector<HTMLElement>("[data-buzzer-result='correct']");
+      const wrongButton = modal?.querySelector<HTMLElement>("[data-buzzer-result='wrong']");
+      const correctClicked = vi.fn();
+      const wrongClicked = vi.fn();
+      correctButton?.addEventListener("click", correctClicked);
+      wrongButton?.addEventListener("click", wrongClicked);
+
+      // ボタンは両方 is-hidden のまま
+      latestChannel().simulateMessage({ type: "commit" });
+
+      expect(correctClicked).not.toHaveBeenCalled();
+      expect(wrongClicked).not.toHaveBeenCalled();
+
+      teardownControllerTest(application);
+    });
+
+    it("モーダルが開いていない状態で commit シグナルを受け取っても何もしない", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithSendButtons(true),
+        "match-buzzer",
+      );
+
+      const correctButton = element.querySelector<HTMLElement>("[data-buzzer-result='correct']");
+      const clicked = vi.fn();
+      correctButton?.addEventListener("click", clicked);
+
+      latestChannel().simulateMessage({ type: "commit" });
+
+      expect(clicked).not.toHaveBeenCalled();
+
+      teardownControllerTest(application);
+    });
+
+    it("スイッチOFF のとき commit シグナルを受け取っても何もしない", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      // correct で「正解を送信」を表示させてから
+      latestChannel().simulateMessage({ type: "correct" });
+
+      // スイッチを OFF に
+      const sw = element.querySelector<HTMLInputElement>("[data-match-buzzer-target='switch']");
+      if (sw) sw.checked = false;
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      const correctButton = modal?.querySelector<HTMLElement>("[data-buzzer-result='correct']");
+      const clicked = vi.fn();
+      correctButton?.addEventListener("click", clicked);
+
+      latestChannel().simulateMessage({ type: "commit" });
+
+      expect(clicked).not.toHaveBeenCalled();
+
+      teardownControllerTest(application);
+    });
+  });
+
   describe("resetBuzzerButtons", () => {
     it("button_pressed でモーダルを開くとき、開く前に送信ボタンがリセットされる", async () => {
       // seat=0 のモーダルが開いており、「正解を送信」が表示済みの状態から開始

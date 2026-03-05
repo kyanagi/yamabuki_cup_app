@@ -73,6 +73,13 @@ export default class extends Controller {
         modal.querySelector<HTMLElement>("[data-buzzer-result='correct']")?.classList.add("is-hidden");
         break;
       }
+      case "commit": {
+        const modal = this.element.querySelector<HTMLElement>(".modal.is-active");
+        if (!modal) return;
+        const visibleButton = modal.querySelector<HTMLElement>("[data-buzzer-result]:not(.is-hidden)");
+        visibleButton?.click();
+        break;
+      }
       // reset はハードウェアリセットを意味し、判定取り消しではないため無視する
       default:
         break;
