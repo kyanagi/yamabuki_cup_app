@@ -38,6 +38,32 @@ RSpec.describe "Admin::QuizReader", type: :request do
       sign_in_admin(create(:admin_user, role: :admin))
     end
 
+    it "keyLegend ターゲットが存在すること" do
+      get "/admin/quiz_reader"
+
+      expect(response).to have_http_status(:ok)
+
+      document = response.parsed_body
+      key_legend = document.at_css('[data-quiz-reader-target~="keyLegend"]')
+      expect(key_legend).not_to be_nil
+    end
+
+    it "コントローラ要素の data-action に focus@window->quiz-reader#onWindowFocus が含まれること" do
+      get "/admin/quiz_reader"
+
+      document = response.parsed_body
+      controller_element = document.at_css('[data-controller="quiz-reader"]')
+      expect(controller_element["data-action"]).to include("focus@window->quiz-reader#onWindowFocus")
+    end
+
+    it "コントローラ要素の data-action に blur@window->quiz-reader#onWindowBlur が含まれること" do
+      get "/admin/quiz_reader"
+
+      document = response.parsed_body
+      controller_element = document.at_css('[data-controller="quiz-reader"]')
+      expect(controller_element["data-action"]).to include("blur@window->quiz-reader#onWindowBlur")
+    end
+
     it "問い読みOFFが初期状態のとき、Next問題文は非表示でカードはグレーアウトされること" do
       get "/admin/quiz_reader"
 

@@ -10,6 +10,8 @@ interface QuizReaderHTMLOptions {
   isSlashOn?: boolean;
   omitQuestionIdValue?: boolean;
   omitSoundIdValue?: boolean;
+  keyLegendFocused?: boolean;
+  includeWindowFocusActions?: boolean;
 }
 
 /**
@@ -24,15 +26,22 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
     isSlashOn = true,
     omitQuestionIdValue = false,
     omitSoundIdValue = false,
+    keyLegendFocused = false,
+    includeWindowFocusActions = false,
   } = options;
   const questionIdAttribute = omitQuestionIdValue ? "" : `data-quiz-reader-question-id-value="${questionId}"`;
   const soundIdAttribute = omitSoundIdValue ? "" : `data-quiz-reader-sound-id-value="${soundId}"`;
+  const windowFocusActions = includeWindowFocusActions
+    ? "focus@window->quiz-reader#onWindowFocus blur@window->quiz-reader#onWindowBlur"
+    : "";
+  const keyLegendClass = keyLegendFocused ? "field notification has-background-info" : "field notification";
 
   return `
     <div
       data-controller="quiz-reader"
       ${questionIdAttribute}
       ${soundIdAttribute}
+      ${windowFocusActions ? `data-action="${windowFocusActions}"` : ""}
     >
       <input
         type="checkbox"
@@ -52,6 +61,9 @@ export function createQuizReaderHTML(options: QuizReaderHTMLOptions = {}): strin
         ${isSlashOn ? "checked" : ""}
       />
       <span data-quiz-reader-target="slashLabel">${isSlashOn ? "スラッシュON" : "スラッシュOFF"}</span>
+
+      <!-- キー凡例 -->
+      <div class="${keyLegendClass}" data-quiz-reader-target="keyLegend"></div>
 
       <!-- Folder selection -->
       <span data-quiz-reader-target="folderStatus" class="has-text-grey">未選択</span>

@@ -46,6 +46,7 @@ export default class extends Controller {
     "next2QuestionBox",
     "nextQuestionContent",
     "next2QuestionContent",
+    "keyLegend",
   ];
   static values = {
     questionId: Number,
@@ -84,6 +85,7 @@ export default class extends Controller {
   declare next2QuestionBoxTarget: HTMLElement;
   declare nextQuestionContentTarget: HTMLElement;
   declare next2QuestionContentTarget: HTMLElement;
+  declare keyLegendTarget: HTMLElement;
   declare hasNextQuestionBoxTarget: boolean;
   declare hasNext2QuestionBoxTarget: boolean;
   declare hasNextQuestionContentTarget: boolean;
@@ -196,6 +198,7 @@ export default class extends Controller {
 
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     this.applyOnAirStateToUI();
+    this.setKeyLegendHighlight(document.hasFocus());
   }
 
   disconnect() {
@@ -509,6 +512,18 @@ export default class extends Controller {
       console.error("サンプル音声の再生に失敗しました:", e);
       alert("サンプル音声の再生に失敗しました");
     }
+  }
+
+  onWindowFocus() {
+    this.setKeyLegendHighlight(true);
+  }
+
+  onWindowBlur() {
+    this.setKeyLegendHighlight(false);
+  }
+
+  private setKeyLegendHighlight(focused: boolean) {
+    this.keyLegendTarget.classList.toggle("has-background-info", focused);
   }
 
   stopSampleAudio() {
