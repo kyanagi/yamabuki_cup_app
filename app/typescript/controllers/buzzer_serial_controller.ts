@@ -4,8 +4,9 @@ import { createBuzzerService } from "../lib/buzzer/buzzer_service";
 import type { BuzzerService } from "../lib/buzzer/buzzer_service";
 import {
   BUZZER_EMULATOR_BUTTON_PRESS_EVENT,
-  BUZZER_EMULATOR_RESET_EVENT,
+  BUZZER_SERIAL_BUTTON_PRESS_EVENT,
   BUZZER_SERIAL_CORRECT_EVENT,
+  BUZZER_SERIAL_RESET_EVENT,
   BUZZER_SERIAL_WRONG_EVENT,
 } from "../lib/buzzer/events";
 import type { SerialProtocolSignal } from "../lib/buzzer/serial_protocol";
@@ -60,14 +61,16 @@ type SerialApiLike = {
 type NavigatorWithSerial = Navigator & { serial?: SerialApiLike };
 
 export default class extends Controller {
-  static targets = ["status", "connectButton", "disconnectButton"];
+  static targets = ["status", "connectButton", "disconnectButton", "lastPressed"];
 
   declare statusTarget: HTMLElement;
   declare connectButtonTarget: HTMLButtonElement;
   declare disconnectButtonTarget: HTMLButtonElement;
+  declare lastPressedTarget: HTMLElement;
   declare readonly hasStatusTarget: boolean;
   declare readonly hasConnectButtonTarget: boolean;
   declare readonly hasDisconnectButtonTarget: boolean;
+  declare readonly hasLastPressedTarget: boolean;
 
   #port: SerialPortLike | null = null;
   #reader: SerialReaderLike | null = null;
@@ -81,9 +84,17 @@ export default class extends Controller {
 
   connect(): void {
     this.#setState(this.#serialApi ? "disconnected" : "unsupported");
+    window.addEventListener(BUZZER_SERIAL_BUTTON_PRESS_EVENT, this.#serialButtonPressHandler as EventListener);
+    window.addEventListener(BUZZER_SERIAL_CORRECT_EVENT, this.#correctHandler);
+    window.addEventListener(BUZZER_SERIAL_RESET_EVENT, this.#resetHandler);
+    window.addEventListener(BUZZER_SERIAL_WRONG_EVENT, this.#wrongHandler);
   }
 
   disconnect(): void {
+    window.removeEventListener(BUZZER_SERIAL_BUTTON_PRESS_EVENT, this.#serialButtonPressHandler as EventListener);
+    window.removeEventListener(BUZZER_SERIAL_CORRECT_EVENT, this.#correctHandler);
+    window.removeEventListener(BUZZER_SERIAL_RESET_EVENT, this.#resetHandler);
+    window.removeEventListener(BUZZER_SERIAL_WRONG_EVENT, this.#wrongHandler);
     void this.#disconnectFromPort();
   }
 
@@ -197,6 +208,26 @@ export default class extends Controller {
     }
   }
 
+  #serialButtonPressHandler = (event: CustomEvent<{ buttonId: ButtonId }>): void => {
+    if (!this.hasLastPressedTarget) return;
+    this.lastPressedTarget.textContent = String(event.detail.buttonId);
+  };
+
+  #correctHandler = (): void => {
+    if (!this.hasLastPressedTarget) return;
+    this.lastPressedTarget.textContent = "正解";
+  };
+
+  #wrongHandler = (): void => {
+    if (!this.hasLastPressedTarget) return;
+    this.lastPressedTarget.textContent = "誤答";
+  };
+
+  #resetHandler = (): void => {
+    if (!this.hasLastPressedTarget) return;
+    this.lastPressedTarget.textContent = "リセット";
+  };
+
   /** シリアルシグナルを対応する CustomEvent に変換して window へ送出する */
   #handleSignal(signal: SerialProtocolSignal): void {
     switch (signal.type) {
@@ -206,9 +237,14 @@ export default class extends Controller {
             detail: { buttonId: signal.buttonId },
           }),
         );
+        window.dispatchEvent(
+          new CustomEvent<{ buttonId: ButtonId }>(BUZZER_SERIAL_BUTTON_PRESS_EVENT, {
+            detail: { buttonId: signal.buttonId },
+          }),
+        );
         return;
       case "reset":
-        window.dispatchEvent(new CustomEvent(BUZZER_EMULATOR_RESET_EVENT));
+        window.dispatchEvent(new CustomEvent(BUZZER_SERIAL_RESET_EVENT));
         return;
       case "correct":
         window.dispatchEvent(new CustomEvent(BUZZER_SERIAL_CORRECT_EVENT));

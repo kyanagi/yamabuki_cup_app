@@ -174,7 +174,7 @@ describe("BuzzerSerialController", () => {
     };
 
     window.addEventListener("buzzer:emulator:button-press", pressedHandler);
-    window.addEventListener("buzzer:emulator:reset", resetHandler);
+    window.addEventListener("buzzer:serial:reset", resetHandler);
     window.addEventListener("buzzer:serial:correct", correctHandler);
     window.addEventListener("buzzer:serial:wrong", wrongHandler);
 
@@ -206,9 +206,39 @@ describe("BuzzerSerialController", () => {
     await waitForEffects();
 
     window.removeEventListener("buzzer:emulator:button-press", pressedHandler);
-    window.removeEventListener("buzzer:emulator:reset", resetHandler);
+    window.removeEventListener("buzzer:serial:reset", resetHandler);
     window.removeEventListener("buzzer:serial:correct", correctHandler);
     window.removeEventListener("buzzer:serial:wrong", wrongHandler);
+  });
+
+  it("resetシグナル受信時に最終押下表示を「リセット」に更新する", async () => {
+    const reader = new MockReader();
+    const serialApi: SerialApiLike = {
+      getPorts: vi.fn(async () => [new MockPort(reader)]),
+      requestPort: vi.fn(async () => new MockPort(new MockReader())),
+    };
+    installSerialApi(serialApi);
+
+    const ctx = await setupControllerTest<BuzzerSerialController>(
+      BuzzerSerialController,
+      createBuzzerSerialHTML(),
+      "buzzer-serial",
+    );
+    application = ctx.application;
+
+    const connectButton = ctx.element.querySelector('[data-buzzer-serial-target="connectButton"]');
+    if (!connectButton) throw new Error("required element not found");
+    connectButton.dispatchEvent(new Event("click"));
+    await waitForEffects();
+
+    capturedOnSignal?.({ type: "button_pressed", buttonId: 2 as ButtonId });
+    capturedOnSignal?.({ type: "reset" });
+
+    const lastPressed = ctx.element.querySelector('[data-buzzer-serial-target="lastPressed"]');
+    expect(lastPressed?.textContent).toBe("リセット");
+
+    reader.enqueueDone();
+    await waitForEffects();
   });
 
   it("受信チャンクが processChunk に渡される", async () => {

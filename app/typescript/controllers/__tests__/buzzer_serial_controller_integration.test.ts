@@ -63,7 +63,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
       resetCount += 1;
     };
     window.addEventListener("buzzer:emulator:button-press", pressedHandler);
-    window.addEventListener("buzzer:emulator:reset", resetHandler);
+    window.addEventListener("buzzer:serial:reset", resetHandler);
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
@@ -81,7 +81,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
     expect(resetCount).toBe(1);
 
     window.removeEventListener("buzzer:emulator:button-press", pressedHandler);
-    window.removeEventListener("buzzer:emulator:reset", resetHandler);
+    window.removeEventListener("buzzer:serial:reset", resetHandler);
   });
 
   it('"2"（改行なし）のチャンク後に接続終了すると flush で button-press が発火する', async () => {
@@ -139,7 +139,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
       resetCount += 1;
     };
     window.addEventListener("buzzer:emulator:button-press", pressedHandler);
-    window.addEventListener("buzzer:emulator:reset", resetHandler);
+    window.addEventListener("buzzer:serial:reset", resetHandler);
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
@@ -181,6 +181,6 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
     expect(resetCount).toBe(0);
 
     window.removeEventListener("buzzer:emulator:button-press", pressedHandler);
-    window.removeEventListener("buzzer:emulator:reset", resetHandler);
+    window.removeEventListener("buzzer:serial:reset", resetHandler);
   });
 });

@@ -1,16 +1,11 @@
 import { Controller } from "@hotwired/stimulus";
-import { createButtonId } from "../lib/buzzer/button_id";
+import { createButtonId, type ButtonId } from "../lib/buzzer/button_id";
 import {
-  type BuzzerStateChangedDetail,
   BUZZER_EMULATOR_BUTTON_PRESS_EVENT,
   BUZZER_EMULATOR_CORRECT_EVENT,
   BUZZER_EMULATOR_WRONG_EVENT,
   BUZZER_EMULATOR_RESET_EVENT,
-  BUZZER_STATE_CHANGED_EVENT,
-  BUZZER_VIEW_REQUEST_STATE_EVENT,
 } from "../lib/buzzer/events";
-
-const INITIAL_LAST_PRESSED_TEXT = "未入力";
 
 export default class extends Controller {
   static targets = ["lastPressed"];
@@ -18,12 +13,11 @@ export default class extends Controller {
   declare lastPressedTarget: HTMLElement;
 
   connect(): void {
-    window.addEventListener(BUZZER_STATE_CHANGED_EVENT, this.#stateChangedHandler as EventListener);
-    this.#requestState();
+    window.addEventListener(BUZZER_EMULATOR_BUTTON_PRESS_EVENT, this.#buttonPressHandler as EventListener);
   }
 
   disconnect(): void {
-    window.removeEventListener(BUZZER_STATE_CHANGED_EVENT, this.#stateChangedHandler as EventListener);
+    window.removeEventListener(BUZZER_EMULATOR_BUTTON_PRESS_EVENT, this.#buttonPressHandler as EventListener);
   }
 
   pressButton(event: Event): void {
@@ -36,7 +30,6 @@ export default class extends Controller {
   }
 
   reset(): void {
-    // BUZZER_STATE_CHANGED_EVENT が同期的に発火して "未入力" を設定するため、その後に上書きする
     window.dispatchEvent(new CustomEvent(BUZZER_EMULATOR_RESET_EVENT));
     this.lastPressedTarget.textContent = "リセット";
   }
@@ -51,14 +44,7 @@ export default class extends Controller {
     this.lastPressedTarget.textContent = "誤答";
   }
 
-  #requestState(): void {
-    window.dispatchEvent(new CustomEvent(BUZZER_VIEW_REQUEST_STATE_EVENT));
-  }
-
-  #stateChangedHandler = (event: CustomEvent<BuzzerStateChangedDetail>): void => {
-    const lastPressedButtonId = event.detail?.lastPressedButtonId;
-    this.lastPressedTarget.textContent = Number.isInteger(lastPressedButtonId)
-      ? String(lastPressedButtonId)
-      : INITIAL_LAST_PRESSED_TEXT;
+  #buttonPressHandler = (event: CustomEvent<{ buttonId: ButtonId }>): void => {
+    this.lastPressedTarget.textContent = String(event.detail.buttonId);
   };
 }

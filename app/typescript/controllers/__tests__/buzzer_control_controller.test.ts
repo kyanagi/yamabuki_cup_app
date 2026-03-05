@@ -254,6 +254,35 @@ describe("BuzzerControlController", () => {
     window.removeEventListener("buzzer:state-changed", handler);
   });
 
+  it("serial reset イベントで reset を送信し state を初期化する", async () => {
+    localStorage.setItem("buzzerMapping", JSON.stringify({ "2": 1 }));
+    const states: BuzzerStateChangedDetail[] = [];
+    const handler = (event: Event) => {
+      states.push((event as CustomEvent<BuzzerStateChangedDetail>).detail);
+    };
+    window.addEventListener("buzzer:state-changed", handler);
+
+    const { application } = await setupControllerTest<BuzzerControlController>(
+      BuzzerControlController,
+      '<div data-controller="buzzer-control"></div>',
+      "buzzer-control",
+    );
+
+    window.dispatchEvent(new CustomEvent("buzzer:assignment:toggle-learning", { detail: { seat: 0 } }));
+    window.dispatchEvent(new CustomEvent("buzzer:emulator:button-press", { detail: { buttonId: 2 } }));
+    window.dispatchEvent(new CustomEvent("buzzer:serial:reset"));
+
+    expect(lastState(states)).toEqual({
+      learningSeat: null,
+      lastPressedButtonId: null,
+      mapping: new Map([[2, 0]]),
+    });
+    expect(latestChannel().postMessage).toHaveBeenCalledWith({ type: "reset" });
+
+    teardownControllerTest(application);
+    window.removeEventListener("buzzer:state-changed", handler);
+  });
+
   it("emulator correct イベントで correct を channel に送信する", async () => {
     const { application } = await setupControllerTest<BuzzerControlController>(
       BuzzerControlController,

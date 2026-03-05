@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { setupControllerTest, teardownControllerTest } from "../../__tests__/helpers/stimulus-test-helper";
 import type { ButtonId } from "../../lib/buzzer/button_id";
-import type { SeatId } from "../../lib/buzzer/seat_id";
 import BuzzerEmulatorController from "../buzzer_emulator_controller";
 
 function createHTML(): string {
@@ -38,26 +37,7 @@ function createHTML(): string {
 }
 
 describe("BuzzerEmulatorController", () => {
-  it("接続時に現在状態の要求イベントを送出する", async () => {
-    let requested = false;
-    const requestHandler = () => {
-      requested = true;
-    };
-    window.addEventListener("buzzer:view:request-state", requestHandler);
-
-    const { application } = await setupControllerTest<BuzzerEmulatorController>(
-      BuzzerEmulatorController,
-      createHTML(),
-      "buzzer-emulator",
-    );
-
-    expect(requested).toBe(true);
-
-    teardownControllerTest(application);
-    window.removeEventListener("buzzer:view:request-state", requestHandler);
-  });
-
-  it("状態イベントを受け取ると最終押下表示を更新する", async () => {
+  it("buzzer:emulator:button-press イベントを受け取ると最終押下表示を更新する", async () => {
     const { application, element } = await setupControllerTest<BuzzerEmulatorController>(
       BuzzerEmulatorController,
       createHTML(),
@@ -65,12 +45,8 @@ describe("BuzzerEmulatorController", () => {
     );
 
     window.dispatchEvent(
-      new CustomEvent("buzzer:state-changed", {
-        detail: {
-          learningSeat: null,
-          lastPressedButtonId: 2,
-          mapping: new Map<ButtonId, SeatId>(),
-        },
+      new CustomEvent<{ buttonId: ButtonId }>("buzzer:emulator:button-press", {
+        detail: { buttonId: 2 as ButtonId },
       }),
     );
 
@@ -80,7 +56,7 @@ describe("BuzzerEmulatorController", () => {
     teardownControllerTest(application);
   });
 
-  it("lastPressedButtonId が null の場合は未入力を表示する", async () => {
+  it("buzzer:serial:button-press イベントを受け取っても最終押下表示を更新しない", async () => {
     const { application, element } = await setupControllerTest<BuzzerEmulatorController>(
       BuzzerEmulatorController,
       createHTML(),
@@ -88,12 +64,8 @@ describe("BuzzerEmulatorController", () => {
     );
 
     window.dispatchEvent(
-      new CustomEvent("buzzer:state-changed", {
-        detail: {
-          learningSeat: null,
-          lastPressedButtonId: null,
-          mapping: new Map<ButtonId, SeatId>(),
-        },
+      new CustomEvent<{ buttonId: ButtonId }>("buzzer:serial:button-press", {
+        detail: { buttonId: 5 as ButtonId },
       }),
     );
 

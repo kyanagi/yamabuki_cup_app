@@ -10,6 +10,7 @@ import {
   BUZZER_EMULATOR_WRONG_EVENT,
   BUZZER_EMULATOR_RESET_EVENT,
   BUZZER_SERIAL_CORRECT_EVENT,
+  BUZZER_SERIAL_RESET_EVENT,
   BUZZER_SERIAL_WRONG_EVENT,
   BUZZER_STATE_CHANGED_EVENT,
   BUZZER_VIEW_REQUEST_STATE_EVENT,
@@ -51,6 +52,7 @@ export default class extends Controller {
     window.addEventListener(BUZZER_EMULATOR_WRONG_EVENT, this.#emulatorWrongHandler);
     window.addEventListener(BUZZER_EMULATOR_RESET_EVENT, this.#resetHandler);
     window.addEventListener(BUZZER_SERIAL_CORRECT_EVENT, this.#serialCorrectHandler);
+    window.addEventListener(BUZZER_SERIAL_RESET_EVENT, this.#resetHandler);
     window.addEventListener(BUZZER_SERIAL_WRONG_EVENT, this.#serialWrongHandler);
     window.addEventListener(BUZZER_VIEW_REQUEST_STATE_EVENT, this.#requestStateHandler);
 
@@ -65,6 +67,7 @@ export default class extends Controller {
     window.removeEventListener(BUZZER_EMULATOR_WRONG_EVENT, this.#emulatorWrongHandler);
     window.removeEventListener(BUZZER_EMULATOR_RESET_EVENT, this.#resetHandler);
     window.removeEventListener(BUZZER_SERIAL_CORRECT_EVENT, this.#serialCorrectHandler);
+    window.removeEventListener(BUZZER_SERIAL_RESET_EVENT, this.#resetHandler);
     window.removeEventListener(BUZZER_SERIAL_WRONG_EVENT, this.#serialWrongHandler);
     window.removeEventListener(BUZZER_VIEW_REQUEST_STATE_EVENT, this.#requestStateHandler);
 

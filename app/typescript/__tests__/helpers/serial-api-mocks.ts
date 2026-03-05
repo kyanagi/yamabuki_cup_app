@@ -94,6 +94,7 @@ export function createBuzzerSerialHTML(): string {
   return `
     <div data-controller="buzzer-serial">
       <p>接続状態: <span data-buzzer-serial-target="status">未接続</span></p>
+      <p>最終押下: <span data-buzzer-serial-target="lastPressed">未入力</span></p>
       <button type="button" data-buzzer-serial-target="connectButton" data-action="click->buzzer-serial#requestConnect">接続</button>
       <button type="button" data-buzzer-serial-target="disconnectButton" data-action="click->buzzer-serial#requestDisconnect">切断</button>
     </div>
