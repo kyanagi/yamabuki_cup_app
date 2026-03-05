@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@hotwired/stimulus": "3.2.2",
-    "@hotwired/turbo": "8.0.21",
-    "@hotwired/turbo-rails": "8.0.21",
+    "@hotwired/turbo": "8.0.23",
+    "@hotwired/turbo-rails": "8.0.23",
     "idb": "8.0.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -26,18 +26,18 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",
-    "@vitest/coverage-v8": "^4.0.16",
-    "jsdom": "^27.4.0",
+    "@vitest/coverage-v8": "^4.0.18",
+    "jsdom": "^28.1.0",
     "oxfmt": "^0.35.0",
-    "oxlint": "^1.49.0",
-    "oxlint-tsgolint": "^0.14.2",
-    "stylelint": "^17.0.0",
+    "oxlint": "^1.50.0",
+    "oxlint-tsgolint": "^0.15.0",
+    "stylelint": "^17.4.0",
     "stylelint-config-recommended": "^18.0.0",
     "typescript": "5.9.3",
-    "vite": "^6.3.5",
+    "vite": "^6.4.1",
     "vite-plugin-full-reload": "1.2.0",
     "vite-plugin-ruby": "5.1.1",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.18"
   },
   "packageManager": "pnpm@10.29.2"
 }
