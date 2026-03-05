@@ -33,6 +33,16 @@ function buttonPressedSignal(seatNumber: number): BuzzerSignal {
   return { type: "button_pressed", seat };
 }
 
+// 送信ボタン HTML（早押し機正誤連動用）
+function sendButtonsHTML(): string {
+  return `
+    <button type="button" class="is-hidden" data-buzzer-result="correct" data-action="click->match-buzzer#submitBuzzerResult">正解を送信</button>
+    <button type="button" class="is-hidden" data-buzzer-result="wrong" data-action="click->match-buzzer#submitBuzzerResult">誤答を送信</button>
+    <button type="submit" data-buzzer-submit="correct">正解</button>
+    <button type="submit" data-buzzer-submit="wrong">誤答</button>
+  `;
+}
+
 // 全モーダルが閉じた状態の HTML
 function createHTML(switchChecked = false): string {
   return `
@@ -53,6 +63,43 @@ function createHTML(switchChecked = false): string {
           <td><div class="modal"></div></td>
         </tr>
       </table>
+    </div>
+  `;
+}
+
+// 送信ボタンを含む全モーダルが閉じた状態の HTML
+function createHTMLWithSendButtons(switchChecked = true): string {
+  return `
+    <div data-controller="match-buzzer">
+      <input type="checkbox" data-match-buzzer-target="switch" ${switchChecked ? "checked" : ""}>
+      <table>
+        <tr data-controller="modal" data-seat="0">
+          <td><div class="modal">${sendButtonsHTML()}</div></td>
+        </tr>
+        <tr data-controller="modal" data-seat="1">
+          <td><div class="modal">${sendButtonsHTML()}</div></td>
+        </tr>
+      </table>
+    </div>
+  `;
+}
+
+// 送信ボタンを含み、特定 seat のモーダルが開いている HTML
+function createHTMLWithActiveModalAndSendButtons(activeSeat: number): string {
+  const rows = [0, 1]
+    .map(
+      (seat) => `
+        <tr data-controller="modal" data-seat="${seat}">
+          <td><div class="modal${seat === activeSeat ? " is-active" : ""}">${sendButtonsHTML()}</div></td>
+        </tr>
+      `,
+    )
+    .join("");
+
+  return `
+    <div data-controller="match-buzzer">
+      <input type="checkbox" data-match-buzzer-target="switch" checked>
+      <table>${rows}</table>
     </div>
   `;
 }
@@ -148,17 +195,14 @@ describe("MatchBuzzerController", () => {
     teardownControllerTest(application);
   });
 
-  it("button_pressed 以外のシグナル（correct / wrong / reset）は無視する", async () => {
+  it("reset シグナルは無視する（モーダルの is-active に影響しない）", async () => {
     const { application, element } = await setupControllerTest<MatchBuzzerController>(
       MatchBuzzerController,
       createHTML(true),
       "match-buzzer",
     );
 
-    const signals: BuzzerSignal[] = [{ type: "correct" }, { type: "wrong" }, { type: "reset" }];
-    for (const signal of signals) {
-      latestChannel().simulateMessage(signal);
-    }
+    latestChannel().simulateMessage({ type: "reset" });
 
     const modal0 = element.querySelector('[data-seat="0"] .modal');
     const modal1 = element.querySelector('[data-seat="1"] .modal');
@@ -166,6 +210,199 @@ describe("MatchBuzzerController", () => {
     expect(modal1?.classList.contains("is-active")).toBe(false);
 
     teardownControllerTest(application);
+  });
+
+  describe("correct / wrong シグナルによる送信ボタン表示", () => {
+    it("モーダル開放中に correct シグナルを受けると「正解を送信」が表示され「誤答を送信」は非表示のまま", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      latestChannel().simulateMessage({ type: "correct" });
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      expect(modal?.querySelector("[data-buzzer-result='correct']")?.classList.contains("is-hidden")).toBe(false);
+      expect(modal?.querySelector("[data-buzzer-result='wrong']")?.classList.contains("is-hidden")).toBe(true);
+
+      teardownControllerTest(application);
+    });
+
+    it("モーダル開放中に wrong シグナルを受けると「誤答を送信」が表示され「正解を送信」は非表示のまま", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      latestChannel().simulateMessage({ type: "wrong" });
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      expect(modal?.querySelector("[data-buzzer-result='wrong']")?.classList.contains("is-hidden")).toBe(false);
+      expect(modal?.querySelector("[data-buzzer-result='correct']")?.classList.contains("is-hidden")).toBe(true);
+
+      teardownControllerTest(application);
+    });
+
+    it("correct → wrong の順に受けると「誤答を送信」のみ表示される", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      latestChannel().simulateMessage({ type: "correct" });
+      latestChannel().simulateMessage({ type: "wrong" });
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      expect(modal?.querySelector("[data-buzzer-result='wrong']")?.classList.contains("is-hidden")).toBe(false);
+      expect(modal?.querySelector("[data-buzzer-result='correct']")?.classList.contains("is-hidden")).toBe(true);
+
+      teardownControllerTest(application);
+    });
+
+    it("wrong → correct の順に受けると「正解を送信」のみ表示される", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      latestChannel().simulateMessage({ type: "wrong" });
+      latestChannel().simulateMessage({ type: "correct" });
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      expect(modal?.querySelector("[data-buzzer-result='correct']")?.classList.contains("is-hidden")).toBe(false);
+      expect(modal?.querySelector("[data-buzzer-result='wrong']")?.classList.contains("is-hidden")).toBe(true);
+
+      teardownControllerTest(application);
+    });
+
+    it("モーダルが開いていない状態で correct シグナルを受けても送信ボタンは変化しない", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithSendButtons(true),
+        "match-buzzer",
+      );
+
+      latestChannel().simulateMessage({ type: "correct" });
+
+      for (const btn of element.querySelectorAll<HTMLElement>("[data-buzzer-result]")) {
+        expect(btn.classList.contains("is-hidden")).toBe(true);
+      }
+
+      teardownControllerTest(application);
+    });
+
+    it("スイッチ OFF のとき correct シグナルを受けても送信ボタンは変化しない", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      // スイッチを OFF に
+      const sw = element.querySelector<HTMLInputElement>("[data-match-buzzer-target='switch']");
+      if (sw) sw.checked = false;
+
+      latestChannel().simulateMessage({ type: "correct" });
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      expect(modal?.querySelector("[data-buzzer-result='correct']")?.classList.contains("is-hidden")).toBe(true);
+
+      teardownControllerTest(application);
+    });
+  });
+
+  describe("resetBuzzerButtons", () => {
+    it("button_pressed でモーダルを開くとき、開く前に送信ボタンがリセットされる", async () => {
+      // seat=0 のモーダルが開いており、「正解を送信」が表示済みの状態から開始
+      const html = createHTMLWithActiveModalAndSendButtons(0);
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        html,
+        "match-buzzer",
+      );
+
+      // correct シグナルで「正解を送信」を表示させる
+      latestChannel().simulateMessage({ type: "correct" });
+      // モーダルを手動で閉じる
+      element.querySelector('[data-seat="0"] .modal')?.classList.remove("is-active");
+
+      // seat=1 の button_pressed シグナルで別モーダルを開く
+      latestChannel().simulateMessage(buttonPressedSignal(1));
+
+      // seat=0 の送信ボタンがリセットされている（seat=1 の新しいモーダルが開いた）
+      const modal0 = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      expect(modal0?.querySelector("[data-buzzer-result='correct']")?.classList.contains("is-hidden")).toBe(true);
+
+      teardownControllerTest(application);
+    });
+
+    it("resetBuzzerButtons() を呼ぶと全送信ボタンが is-hidden になる", async () => {
+      const { application, element, controller } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      // correct で「正解を送信」を表示
+      latestChannel().simulateMessage({ type: "correct" });
+      const modal = element.querySelector('[data-seat="0"] .modal');
+      expect(modal?.querySelector("[data-buzzer-result='correct']")?.classList.contains("is-hidden")).toBe(false);
+
+      // resetBuzzerButtons() を呼ぶ
+      controller.resetBuzzerButtons();
+
+      for (const btn of element.querySelectorAll<HTMLElement>("[data-buzzer-result]")) {
+        expect(btn.classList.contains("is-hidden")).toBe(true);
+      }
+
+      teardownControllerTest(application);
+    });
+  });
+
+  describe("submitBuzzerResult", () => {
+    it("「正解を送信」ボタンをクリックすると対応する submit ボタンがクリックされる", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      const correctSubmit = modal?.querySelector<HTMLButtonElement>("[data-buzzer-submit='correct']");
+      const clicked = vi.fn();
+      correctSubmit?.addEventListener("click", clicked);
+
+      const sendButton = modal?.querySelector<HTMLButtonElement>("[data-buzzer-result='correct']");
+      sendButton?.click();
+
+      expect(clicked).toHaveBeenCalledOnce();
+
+      teardownControllerTest(application);
+    });
+
+    it("「誤答を送信」ボタンをクリックすると対応する submit ボタンがクリックされる", async () => {
+      const { application, element } = await setupControllerTest<MatchBuzzerController>(
+        MatchBuzzerController,
+        createHTMLWithActiveModalAndSendButtons(0),
+        "match-buzzer",
+      );
+
+      const modal = element.querySelector<HTMLElement>('[data-seat="0"] .modal');
+      const wrongSubmit = modal?.querySelector<HTMLButtonElement>("[data-buzzer-submit='wrong']");
+      const clicked = vi.fn();
+      wrongSubmit?.addEventListener("click", clicked);
+
+      const sendButton = modal?.querySelector<HTMLButtonElement>("[data-buzzer-result='wrong']");
+      sendButton?.click();
+
+      expect(clicked).toHaveBeenCalledOnce();
+
+      teardownControllerTest(application);
+    });
   });
 
   it("対応する [data-seat] がない seat でも例外が発生しない", async () => {

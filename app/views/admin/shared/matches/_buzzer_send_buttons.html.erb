@@ -1,0 +1,17 @@
+<%# locals: () %>
+<%# 早押し機正誤連動の「送信」ボタン群。match_buzzer_controller から制御される。 %>
+<%# reset シグナルは「早押し機ハードウェアのリセット」を意味するため、このUIでは無視する。 %>
+<div class="buttons mt-3">
+  <button type="button"
+          class="button is-info is-fullwidth is-hidden"
+          data-buzzer-result="correct"
+          data-action="click->match-buzzer#submitBuzzerResult">
+    正解を送信
+  </button>
+  <button type="button"
+          class="button is-danger is-fullwidth is-hidden"
+          data-buzzer-result="wrong"
+          data-action="click->match-buzzer#submitBuzzerResult">
+    誤答を送信
+  </button>
+</div>

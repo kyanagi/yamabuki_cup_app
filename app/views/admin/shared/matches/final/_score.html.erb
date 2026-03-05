@@ -15,9 +15,9 @@
     <%= button_tag "#{score.matching.player.player_profile.family_name} #{score.matching.player.player_profile.given_name}",
       class: "button #{player_button_color(score.status)}",
       disabled: button_disabled,
-      data: { action: "click->modal#open" } %>
+      data: { action: "click->modal#open click->match-buzzer#resetBuzzerButtons" } %>
     <div class="modal" data-modal-target="modal">
-      <div class="modal-background" data-action="click->modal#close"></div>
+      <div class="modal-background" data-action="click->modal#close click->match-buzzer#resetBuzzerButtons"></div>
       <div class="modal-content">
         <div class="box">
           <p class="is-size-2">
@@ -31,7 +31,7 @@
               <%= hidden_field_tag "question_player_results_attributes[][player_id]", score.matching.player_id %>
               <%= hidden_field_tag "question_player_results_attributes[][situation]", 'pushed' %>
               <%= hidden_field_tag "question_player_results_attributes[][result]", 'correct' %>
-              <%= f.submit '正解', class: 'button is-info', disabled: button_disabled %>
+              <%= f.submit '正解', class: 'button is-info', disabled: button_disabled, data: { buzzer_submit: "correct" } %>
             <% end %>
             <%= form_with url: "/admin/matches/#{score.matching.match_id}/question_closings",
                          method: :post,
@@ -39,12 +39,13 @@
               <%= hidden_field_tag "question_player_results_attributes[][player_id]", score.matching.player_id %>
               <%= hidden_field_tag "question_player_results_attributes[][situation]", 'pushed' %>
               <%= hidden_field_tag "question_player_results_attributes[][result]", 'wrong' %>
-              <%= f.submit '誤答', class: 'button is-danger', disabled: button_disabled %>
+              <%= f.submit '誤答', class: 'button is-danger', disabled: button_disabled, data: { buzzer_submit: "wrong" } %>
             <% end %>
           </div>
+          <%= render "admin/shared/matches/buzzer_send_buttons" %>
         </div>
       </div>
-      <button class="modal-close is-large" aria-label="close" data-action="click->modal#close"></button>
+      <button class="modal-close is-large" aria-label="close" data-action="click->modal#close click->match-buzzer#resetBuzzerButtons"></button>
     </div>
   </td>
   <td class="has-text-centered is-vcentered"><%= score.stars %></td>
