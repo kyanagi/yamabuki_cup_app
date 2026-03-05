@@ -1,3 +1,11 @@
+/**
+ * 早押し機の状態管理を担う中央コントローラ。
+ *
+ * - ボタン割り当て（学習モード）の管理
+ * - エミュレータおよびシリアル接続からのボタン押下イベントの受信
+ * - BuzzerChannel を通じた他タブ・他ウィンドウへの状態ブロードキャスト
+ * - BUZZER_STATE_CHANGED_EVENT による UI への状態通知
+ */
 import { Controller } from "@hotwired/stimulus";
 import { type ButtonId, isButtonId } from "../lib/buzzer/button_id";
 import { type BuzzerChannel, createBuzzerChannel } from "../lib/buzzer/channel";

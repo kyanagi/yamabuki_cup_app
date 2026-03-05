@@ -1,3 +1,10 @@
+/**
+ * 早押し機のボタン割り当て UI を管理するコントローラ。
+ *
+ * - 座席ごとの「設定」ボタンから学習モードの開始・解除をトリガーする
+ * - BUZZER_STATE_CHANGED_EVENT を購読し、割り当て状態を DOM に反映する
+ * - 「全クリア」操作で全座席のマッピングをリセットする
+ */
 import { Controller } from "@hotwired/stimulus";
 import type { ButtonId } from "../lib/buzzer/button_id";
 import {

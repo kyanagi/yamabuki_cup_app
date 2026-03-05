@@ -1,3 +1,10 @@
+/**
+ * 試合画面で早押し機の入力を受け取り、正誤入力モーダルを開くコントローラ。
+ *
+ * - BuzzerChannel（BroadcastChannel）を通じて他タブからの button_pressed シグナルを受信する
+ * - 早押し機連動スイッチが ON のときのみ反応する
+ * - 対応する座席の行のモーダルを開く（既にモーダルが開いている場合は無視）
+ */
 import { Controller } from "@hotwired/stimulus";
 import type { BuzzerChannel } from "../lib/buzzer/channel";
 import { createBuzzerChannel } from "../lib/buzzer/channel";

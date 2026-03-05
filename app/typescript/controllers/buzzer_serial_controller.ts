@@ -1,3 +1,11 @@
+/**
+ * Web Serial API を使って実機早押し機とシリアル通信するコントローラ。
+ *
+ * - ポートの接続・切断ライフサイクルを管理する
+ * - 受信バイト列を BuzzerService（Worker）に渡してシグナルに変換する
+ * - シグナルを BUZZER_SERIAL_* カスタムイベントとして window へ送出する
+ * - 接続状態をステータス表示・ボタン有効化に反映する
+ */
 import { Controller } from "@hotwired/stimulus";
 import type { ButtonId } from "../lib/buzzer/button_id";
 import { createBuzzerService } from "../lib/buzzer/buzzer_service";
