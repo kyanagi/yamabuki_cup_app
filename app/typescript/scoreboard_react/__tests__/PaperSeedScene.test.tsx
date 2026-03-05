@@ -1,5 +1,6 @@
-import { render, screen, act, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
+import { dispatchAnimationEnd } from "../../__tests__/helpers/animation";
 import { PaperSeedScene } from "../components/PaperSeedScene";
 import type { Scene } from "../types";
 
@@ -73,12 +74,12 @@ describe("PaperSeedScene", () => {
 
   it("アニメーション終了後に paper-seed-player--exited クラスに変わる", () => {
     const { container } = render(<PaperSeedScene scene={makeScene({ isExiting: true })} />);
-    const firstSlot = container.querySelector("#paper-seed-player-1");
+    const firstSlot = container.querySelector<HTMLElement>("#paper-seed-player-1");
+    if (!firstSlot) {
+      throw new Error("#paper-seed-player-1 が見つかりません");
+    }
 
-    // React のイベントシステムを通じてアニメーション終了イベントを発火
-    act(() => {
-      fireEvent.animationEnd(firstSlot!);
-    });
+    dispatchAnimationEnd(firstSlot);
 
     expect(firstSlot?.className).toContain("paper-seed-player--exited");
   });

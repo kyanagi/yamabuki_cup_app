@@ -1,5 +1,6 @@
-import { act, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
+import { dispatchAnimationEnd } from "../../__tests__/helpers/animation";
 import { Question } from "../components/Question";
 import type { QuestionState } from "../types";
 
@@ -24,14 +25,8 @@ const MOCK_QUESTION3: QuestionState = {
   unreadText: "3問目の問題文です",
 };
 
-// jsdom は AnimationEvent をコンストラクタとしてサポートしないため、
-// Object.defineProperty で animationName を設定した Event を使う
 function fireAnimationEnd(el: HTMLElement, animationName: string) {
-  act(() => {
-    const event = new Event("animationend", { bubbles: true });
-    Object.defineProperty(event, "animationName", { value: animationName });
-    el.dispatchEvent(event);
-  });
+  dispatchAnimationEnd(el, { animationName });
 }
 
 describe("Question", () => {
