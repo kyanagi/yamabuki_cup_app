@@ -21,7 +21,6 @@ export default class extends Controller {
   #channel: BuzzerChannel | null = null;
 
   connect(): void {
-    if (typeof BroadcastChannel === "undefined") return;
     this.#channel = createBuzzerChannel();
     this.#channel.onMessage((signal) => this.#handleSignal(signal));
   }

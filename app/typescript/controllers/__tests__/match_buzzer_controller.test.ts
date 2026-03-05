@@ -134,21 +134,6 @@ describe("MatchBuzzerController", () => {
     vi.unstubAllGlobals();
   });
 
-  it("BroadcastChannel 非対応環境でも connect() がエラーにならない", async () => {
-    vi.unstubAllGlobals();
-    vi.stubGlobal("BroadcastChannel", undefined);
-
-    const { application } = await setupControllerTest<MatchBuzzerController>(
-      MatchBuzzerController,
-      createHTML(),
-      "match-buzzer",
-    );
-
-    expect(MockBroadcastChannel.instances).toHaveLength(0);
-
-    teardownControllerTest(application);
-  });
-
   it("スイッチがOFFのとき button_pressed シグナルを受け取っても何もしない", async () => {
     const { application, element } = await setupControllerTest<MatchBuzzerController>(
       MatchBuzzerController,

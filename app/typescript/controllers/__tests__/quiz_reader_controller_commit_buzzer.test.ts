@@ -124,31 +124,4 @@ describe("QuizReaderController: commit シグナル送信", () => {
 
     teardownControllerTest(application);
   });
-
-  it("BroadcastChannel 非対応環境で C キーを押してもエラーにならない", async () => {
-    // Arrange
-    vi.unstubAllGlobals();
-    vi.stubGlobal("BroadcastChannel", undefined);
-    vi.stubGlobal(
-      "AudioContext",
-      vi.fn(function AudioContextStub() {
-        return new MockAudioContext();
-      }),
-    );
-    vi.spyOn(document, "hasFocus").mockReturnValue(false);
-
-    const html = createQuizReaderHTML({
-      questionId: 1,
-      soundId: "001",
-      includeCommitBuzzerAction: true,
-    });
-    const { application } = await setupControllerTest(QuizReaderController, html, "quiz-reader");
-
-    // Act & Assert: エラーにならないこと
-    expect(() => {
-      document.dispatchEvent(new KeyboardEvent("keydown", { key: "c", bubbles: true }));
-    }).not.toThrow();
-
-    teardownControllerTest(application);
-  });
 });

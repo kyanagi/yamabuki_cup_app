@@ -17,8 +17,6 @@ export function useBuzzerChannel(matchState: MatchState | null): SeatId | null {
   }, [matchState]);
 
   useEffect(() => {
-    if (typeof BroadcastChannel === "undefined") return;
-
     const channel = createBuzzerChannel();
 
     channel.onMessage((signal: BuzzerSignal) => {

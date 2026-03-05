@@ -200,9 +200,7 @@ export default class extends Controller {
     // localStorageから音量を復元
     this.restoreVolume();
 
-    if (typeof BroadcastChannel !== "undefined") {
-      this.#buzzerChannel = createBuzzerChannel();
-    }
+    this.#buzzerChannel = createBuzzerChannel();
 
     document.addEventListener("turbo:before-stream-render", this.beforeStreamRenderHandler);
     this.applyOnAirStateToUI();

@@ -50,9 +50,7 @@ export default class extends Controller {
 
   connect(): void {
     this.#mapping = loadBuzzerMapping();
-    if (typeof BroadcastChannel !== "undefined") {
-      this.#channel = createBuzzerChannel();
-    }
+    this.#channel = createBuzzerChannel();
 
     window.addEventListener(BUZZER_ASSIGNMENT_TOGGLE_LEARNING_EVENT, this.#toggleLearningHandler as EventListener);
     window.addEventListener(BUZZER_ASSIGNMENT_CLEAR_EVENT, this.#clearMappingsHandler);
