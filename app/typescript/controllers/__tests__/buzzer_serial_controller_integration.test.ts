@@ -43,7 +43,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
     vi.unstubAllGlobals();
   });
 
-  it('"2\\r\\n99\\r\\n" を送ると button-press と reset の両 CustomEvent が発火する', async () => {
+  it('"2\\r\\n99\\r\\n" を送ると serial button-press と reset の両 CustomEvent が発火する', async () => {
     const reader = new MockReader();
     reader.enqueueText("2\r\n99\r\n");
     reader.enqueueDone();
@@ -62,7 +62,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
     const resetHandler = () => {
       resetCount += 1;
     };
-    window.addEventListener("buzzer:emulator:button-press", pressedHandler);
+    window.addEventListener("buzzer:serial:button-press", pressedHandler);
     window.addEventListener("buzzer:serial:reset", resetHandler);
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
@@ -80,11 +80,11 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
     expect(pressed).toEqual([2]);
     expect(resetCount).toBe(1);
 
-    window.removeEventListener("buzzer:emulator:button-press", pressedHandler);
+    window.removeEventListener("buzzer:serial:button-press", pressedHandler);
     window.removeEventListener("buzzer:serial:reset", resetHandler);
   });
 
-  it('"2"（改行なし）のチャンク後に接続終了すると flush で button-press が発火する', async () => {
+  it('"2"（改行なし）のチャンク後に接続終了すると flush で serial button-press が発火する', async () => {
     const reader = new MockReader();
     reader.enqueueText("2");
     reader.enqueueDone();
@@ -99,7 +99,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
     const pressedHandler = (event: Event) => {
       pressed.push((event as CustomEvent<{ buttonId: ButtonId }>).detail.buttonId);
     };
-    window.addEventListener("buzzer:emulator:button-press", pressedHandler);
+    window.addEventListener("buzzer:serial:button-press", pressedHandler);
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
       BuzzerSerialController,
@@ -116,7 +116,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
     // BuzzerService が flush を同期処理するため button-press が 1 件届く
     expect(pressed).toEqual([2]);
 
-    window.removeEventListener("buzzer:emulator:button-press", pressedHandler);
+    window.removeEventListener("buzzer:serial:button-press", pressedHandler);
   });
 
   it("[競合系] connect → disconnect → reconnect で旧 Service の残留メッセージが二重発火しない", async () => {
@@ -138,7 +138,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
     const resetHandler = () => {
       resetCount += 1;
     };
-    window.addEventListener("buzzer:emulator:button-press", pressedHandler);
+    window.addEventListener("buzzer:serial:button-press", pressedHandler);
     window.addEventListener("buzzer:serial:reset", resetHandler);
 
     const ctx = await setupControllerTest<BuzzerSerialController>(
@@ -180,7 +180,7 @@ describe("BuzzerSerialController 結合テスト（BuzzerDecoder 直接使用）
     expect(pressed).toEqual([2]);
     expect(resetCount).toBe(0);
 
-    window.removeEventListener("buzzer:emulator:button-press", pressedHandler);
+    window.removeEventListener("buzzer:serial:button-press", pressedHandler);
     window.removeEventListener("buzzer:serial:reset", resetHandler);
   });
 });

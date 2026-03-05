@@ -173,7 +173,7 @@ describe("BuzzerSerialController", () => {
       wrongCount += 1;
     };
 
-    window.addEventListener("buzzer:emulator:button-press", pressedHandler);
+    window.addEventListener("buzzer:serial:button-press", pressedHandler);
     window.addEventListener("buzzer:serial:reset", resetHandler);
     window.addEventListener("buzzer:serial:correct", correctHandler);
     window.addEventListener("buzzer:serial:wrong", wrongHandler);
@@ -205,10 +205,44 @@ describe("BuzzerSerialController", () => {
     reader.enqueueDone();
     await waitForEffects();
 
-    window.removeEventListener("buzzer:emulator:button-press", pressedHandler);
+    window.removeEventListener("buzzer:serial:button-press", pressedHandler);
     window.removeEventListener("buzzer:serial:reset", resetHandler);
     window.removeEventListener("buzzer:serial:correct", correctHandler);
     window.removeEventListener("buzzer:serial:wrong", wrongHandler);
+  });
+
+  it("button_pressed シグナルで buzzer:emulator:button-press は送出しない", async () => {
+    const reader = new MockReader();
+    const serialApi: SerialApiLike = {
+      getPorts: vi.fn(async () => [new MockPort(reader)]),
+      requestPort: vi.fn(async () => new MockPort(new MockReader())),
+    };
+    installSerialApi(serialApi);
+
+    let emulatorPressCount = 0;
+    const emulatorPressHandler = () => {
+      emulatorPressCount += 1;
+    };
+    window.addEventListener("buzzer:emulator:button-press", emulatorPressHandler);
+
+    const ctx = await setupControllerTest<BuzzerSerialController>(
+      BuzzerSerialController,
+      createBuzzerSerialHTML(),
+      "buzzer-serial",
+    );
+    application = ctx.application;
+
+    const connectButton = ctx.element.querySelector('[data-buzzer-serial-target="connectButton"]');
+    if (!connectButton) throw new Error("required element not found");
+    connectButton.dispatchEvent(new Event("click"));
+    await waitForEffects();
+
+    capturedOnSignal?.({ type: "button_pressed", buttonId: 2 as ButtonId });
+    expect(emulatorPressCount).toBe(0);
+
+    reader.enqueueDone();
+    await waitForEffects();
+    window.removeEventListener("buzzer:emulator:button-press", emulatorPressHandler);
   });
 
   it("resetシグナル受信時に最終押下表示を「リセット」に更新する", async () => {

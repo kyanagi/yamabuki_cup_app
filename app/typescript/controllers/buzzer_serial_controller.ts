@@ -3,7 +3,6 @@ import type { ButtonId } from "../lib/buzzer/button_id";
 import { createBuzzerService } from "../lib/buzzer/buzzer_service";
 import type { BuzzerService } from "../lib/buzzer/buzzer_service";
 import {
-  BUZZER_EMULATOR_BUTTON_PRESS_EVENT,
   BUZZER_SERIAL_BUTTON_PRESS_EVENT,
   BUZZER_SERIAL_CORRECT_EVENT,
   BUZZER_SERIAL_RESET_EVENT,
@@ -232,11 +231,6 @@ export default class extends Controller {
   #handleSignal(signal: SerialProtocolSignal): void {
     switch (signal.type) {
       case "button_pressed":
-        window.dispatchEvent(
-          new CustomEvent<{ buttonId: ButtonId }>(BUZZER_EMULATOR_BUTTON_PRESS_EVENT, {
-            detail: { buttonId: signal.buttonId },
-          }),
-        );
         window.dispatchEvent(
           new CustomEvent<{ buttonId: ButtonId }>(BUZZER_SERIAL_BUTTON_PRESS_EVENT, {
             detail: { buttonId: signal.buttonId },

@@ -171,6 +171,25 @@ describe("BuzzerControlController", () => {
     teardownControllerTest(application);
   });
 
+  it("serial button-press でも割り当て済み seat を button_pressed で送信する", async () => {
+    localStorage.setItem("buzzerMapping", JSON.stringify({ "2": 1 }));
+
+    const { application } = await setupControllerTest<BuzzerControlController>(
+      BuzzerControlController,
+      '<div data-controller="buzzer-control"></div>',
+      "buzzer-control",
+    );
+
+    window.dispatchEvent(new CustomEvent("buzzer:serial:button-press", { detail: { buttonId: 2 } }));
+
+    expect(latestChannel().postMessage).toHaveBeenCalledWith({
+      type: "button_pressed",
+      seat: 1,
+    });
+
+    teardownControllerTest(application);
+  });
+
   it("未割り当てボタン押下時は送信しない", async () => {
     const { application } = await setupControllerTest<BuzzerControlController>(
       BuzzerControlController,
