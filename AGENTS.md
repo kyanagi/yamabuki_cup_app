@@ -23,7 +23,7 @@
 - バックエンド: Ruby on Rails 8 with Hotwire (Turbo + Stimulus)
 - フロントエンド: TypeScript with Vite bundling, Hotwired Turbo for real-time updates
 - データベース: SQLite
-- ActionCable によるリアルタイム更新
+- SSE（Server-Sent Events）によるリアルタイム更新（スコアボード）
 - Bulma CSS フレームワーク
 - 得点表示画面においては、Bulmaを使わずCSSを直接使っている
 
@@ -34,6 +34,8 @@
 ### フロントエンド（React + TypeScript + Stimulus）
 
 - Stimulus のコントローラは `app/typescript/controllers` ディレクトリにある。
+- スコアボード用 React コンポーネントは `app/typescript/scoreboard_react/` ディレクトリにある。
+- エントリーポイントは `app/typescript/entrypoints/` にある（application.ts, admin.ts, scoreboard_react.tsx）。
 
 ## 仕様書
 
@@ -65,7 +67,7 @@ bin/rubocop                         # Ruby linting (*.rb files only)
 bin/brakeman --no-prism             # Security analysis
 pnpm run fmt:check                  # oxfmtによるフォーマットのチェック
 pnpm run fmt                        # oxfmtによる自動フォーマット
-pnpm run fmt                        # oxlintによるlintチェック
+pnpm run lint                       # oxlintによるlintチェック
 pnpm run lint:css                   # Lint CSS code with Stylelint
 pnpm test                           # Run Vitest (frontend unit tests)
 pnpm run test:run                   # Run Vitest once without watch mode
@@ -148,7 +150,7 @@ All match operations are recorded as `ScoreOperation` records forming an immutab
 Each round type has a specific `MatchRule` class (Final, Hayabo, Hayaoshi, etc.) that handles scoring logic, match progression, and format-specific rules.
 
 **Real-time Updates:**
-Uses ActionCable (`ScoreboardChannel`) to broadcast live score updates to connected browsers during matches.
+Uses SSE (Server-Sent Events) via `scoreboard/sse_subscriptions.rb` to broadcast live score updates to connected browsers during matches.
 
 **Form Objects:**
 Complex forms use ActiveType::Object (like `Registration` and `PlayerProfileEdit`) rather than plain Rails forms for better encapsulation. Form objects should initialize with current data as defaults when editing existing records.
