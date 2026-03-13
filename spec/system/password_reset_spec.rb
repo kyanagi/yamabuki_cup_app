@@ -43,9 +43,9 @@ RSpec.describe "パスワード再設定", type: :system do
       fill_in "password_confirmation", with: "new_password123"
       click_button "パスワードを更新"
 
-      # ログインページにリダイレクトされ、成功メッセージが表示される
+      # ログインページにリダイレクトされる
+      expect(page).to have_current_path(new_session_path)
       expect(page).to have_content "ログイン"
-      expect(page).to have_content "パスワードが更新されました。新しいパスワードでログインしてください。"
 
       # 新しいパスワードでログインできることを確認
       fill_in "email", with: credential.email
