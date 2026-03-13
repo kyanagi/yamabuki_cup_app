@@ -1,0 +1,391 @@
+/* 認証ページ（ログイン・パスワードリセット等）共通スタイル */
+/* Pencil Registration Screen デザインに準拠 */
+
+:root {
+  --auth-bg-page: #f5f4f1;
+  --auth-bg-card: #ffffff;
+  --auth-text-primary: #1a1918;
+  --auth-text-secondary: #6d6c6a;
+  --auth-text-tertiary: #9c9b99;
+  --auth-accent-green: #3d8a5a;
+  --auth-accent-green-dark: #326e48;
+  --auth-accent-green-light: #c8f0d8;
+  --auth-border-strong: #d1d0cd;
+  --auth-border-subtle: #e5e4e1;
+  --auth-danger: #c0392b;
+  --auth-danger-bg: #fde8e8;
+}
+
+.auth-page {
+  min-height: 100svh;
+  background-color: var(--auth-bg-page);
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  background-color: var(--auth-bg-card);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* カード幅: 登録フォームは項目が多いため少し広め */
+.auth-card--wide {
+  max-width: 480px;
+}
+
+.auth-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--auth-text-primary);
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+.auth-subtitle {
+  font-size: 0.875rem;
+  color: var(--auth-text-secondary);
+  margin: 0 0 1.75rem;
+}
+
+.auth-subtitle a {
+  color: var(--auth-accent-green);
+  text-decoration: none;
+}
+
+@media (any-hover: hover) {
+  .auth-subtitle a:hover {
+    text-decoration: underline;
+  }
+}
+
+/* フラッシュメッセージ */
+.auth-flash {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+}
+
+.auth-flash--success {
+  background-color: var(--auth-accent-green-light);
+  color: var(--auth-accent-green);
+}
+
+.auth-flash--danger {
+  background-color: var(--auth-danger-bg);
+  color: var(--auth-danger);
+}
+
+/* エラーメッセージリスト */
+.auth-error-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+/* フォームフィールド */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.auth-field--checkbox {
+  gap: 0.5rem;
+}
+
+.auth-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--auth-text-primary);
+}
+
+.auth-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.9375rem;
+  color: var(--auth-text-primary);
+}
+
+.auth-checkbox {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--auth-accent-green);
+}
+
+.auth-input,
+.auth-textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: var(--auth-text-primary);
+  background-color: var(--auth-bg-card);
+  border: 1px solid var(--auth-border-strong);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+/* テキストエリア専用 */
+.auth-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.auth-input::placeholder,
+.auth-textarea::placeholder {
+  color: var(--auth-text-tertiary);
+}
+
+.auth-input:focus,
+.auth-textarea:focus {
+  border-color: var(--auth-accent-green);
+}
+
+.auth-input:focus-visible,
+.auth-textarea:focus-visible {
+  border-color: var(--auth-accent-green);
+  outline: 2px solid var(--auth-accent-green);
+  outline-offset: 2px;
+}
+
+/* 入力エラー状態 */
+.auth-input.is-danger,
+.auth-input.is-danger:focus {
+  border-color: var(--auth-danger);
+}
+
+/* ヘルプテキスト（説明・エラー） */
+.auth-help {
+  font-size: 0.8125rem;
+  color: var(--auth-text-secondary);
+  margin: 0;
+}
+
+.auth-help--danger {
+  font-size: 0.8125rem;
+  color: var(--auth-danger);
+  margin: 0;
+}
+
+/* 送信・確認ボタン（全幅プライマリ） */
+.auth-submit {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--auth-bg-card);
+  background-color: var(--auth-accent-green);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  margin-top: 0.5rem;
+}
+
+@media (any-hover: hover) {
+  .auth-submit:hover {
+    background-color: var(--auth-accent-green-dark);
+  }
+}
+
+.auth-submit:focus-visible {
+  background-color: var(--auth-accent-green-dark);
+  outline: 2px solid var(--auth-accent-green);
+  outline-offset: 2px;
+}
+
+/* フッターリンク */
+.auth-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--auth-border-subtle);
+}
+
+.auth-footer-link {
+  text-align: right;
+}
+
+.auth-footer-link a {
+  font-size: 0.875rem;
+  color: var(--auth-text-secondary);
+  text-decoration: none;
+}
+
+@media (any-hover: hover) {
+  .auth-footer-link a:hover {
+    color: var(--auth-accent-green);
+    text-decoration: underline;
+  }
+}
+
+.auth-footer-link a:focus-visible {
+  color: var(--auth-accent-green);
+  text-decoration: underline;
+}
+
+/* ---- 登録フォーム拡張スタイル ---- */
+
+/* 2列グリッド（姓/名など横並びフィールド） */
+.auth-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.auth-field-group-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.625rem;
+}
+
+.auth-field-group-inputs .auth-field {
+  gap: 0.25rem;
+}
+
+/* ---- 確認モーダル ---- */
+
+.auth-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.auth-modal.is-active {
+  display: flex;
+}
+
+.auth-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+
+.auth-modal-box {
+  position: relative;
+  z-index: 1;
+  background-color: var(--auth-bg-card);
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90svh;
+  overflow-y: auto;
+}
+
+.auth-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--auth-text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.auth-modal-desc {
+  font-size: 0.875rem;
+  color: var(--auth-text-secondary);
+  margin: 0 0 1.25rem;
+}
+
+/* 確認テーブル */
+.auth-confirm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.auth-confirm-table th,
+.auth-confirm-table td {
+  padding: 0.625rem 0.5rem;
+  border-bottom: 1px solid var(--auth-border-subtle);
+  text-align: left;
+  vertical-align: top;
+}
+
+.auth-confirm-table th {
+  color: var(--auth-text-secondary);
+  font-weight: 600;
+  width: 40%;
+  white-space: nowrap;
+}
+
+.auth-confirm-table td {
+  color: var(--auth-text-primary);
+  word-break: break-all;
+}
+
+/* モーダルフッターボタン */
+.auth-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.auth-btn-cancel {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--auth-text-secondary);
+  background-color: var(--auth-bg-page);
+  border: 1px solid var(--auth-border-strong);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+@media (any-hover: hover) {
+  .auth-btn-cancel:hover {
+    background-color: var(--auth-border-subtle);
+  }
+}
+
+.auth-btn-cancel:focus-visible {
+  background-color: var(--auth-border-subtle);
+  outline: 2px solid var(--auth-border-strong);
+  outline-offset: 2px;
+}
+
+.auth-btn-submit {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--auth-bg-card);
+  background-color: var(--auth-accent-green);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+@media (any-hover: hover) {
+  .auth-btn-submit:hover {
+    background-color: var(--auth-accent-green-dark);
+  }
+}
+
+.auth-btn-submit:focus-visible {
+  background-color: var(--auth-accent-green-dark);
+  outline: 2px solid var(--auth-accent-green);
+  outline-offset: 2px;
+}

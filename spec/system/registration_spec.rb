@@ -39,11 +39,13 @@ RSpec.describe "新規エントリー", type: :system do
 
       click_button "確認する"
 
-      within ".modal" do
+      within ".auth-modal.is-active" do
         expect(page).to have_content "エントリー内容の確認"
         expect(page).to have_content valid_attributes[:email]
-        expect(page).to have_content "#{valid_attributes[:family_name]} #{valid_attributes[:given_name]}"
-        expect(page).to have_content "#{valid_attributes[:family_name_kana]} #{valid_attributes[:given_name_kana]}"
+        expect(page).to have_content valid_attributes[:family_name]
+        expect(page).to have_content valid_attributes[:given_name]
+        expect(page).to have_content valid_attributes[:family_name_kana]
+        expect(page).to have_content valid_attributes[:given_name_kana]
         expect(page).to have_content valid_attributes[:entry_list_name]
         expect(page).to have_content "当日のお手伝いを依頼してもよい"
         expect(page).to have_content valid_attributes[:notes]
@@ -70,7 +72,7 @@ RSpec.describe "新規エントリー", type: :system do
       expect(player.entry.priority).to be_nil
     end
 
-    it "確認モーダルでキャンセルできる" do
+    it "確認ダイアログでキャンセルできる" do
       visit new_registration_path
 
       expect(page).to have_css("[data-controller='entry-form modal']")
@@ -85,13 +87,13 @@ RSpec.describe "新規エントリー", type: :system do
 
       click_button "確認する"
 
-      expect(page).to have_css(".modal.is-active")
+      expect(page).to have_css(".auth-modal.is-active")
 
-      within ".modal.is-active" do
+      within ".auth-modal.is-active" do
         click_button "キャンセル"
       end
 
-      expect(page).not_to have_css(".modal.is-active")
+      expect(page).not_to have_css(".auth-modal.is-active")
       expect(page).to have_content "新規エントリー"
       expect(Player.joins(:player_email_credential).where(player_email_credentials: { email: valid_attributes[:email] })).to be_empty
     end
@@ -111,7 +113,7 @@ RSpec.describe "新規エントリー", type: :system do
       expect(page).to have_content "名（ふりがな）を入力してください"
       expect(page).to have_content "エントリーリストの名前を入力してください"
 
-      expect(page).not_to have_css(".modal.is-active")
+      expect(page).not_to have_css(".auth-modal.is-active")
     end
 
     it "メールアドレスの形式が不正な場合はエラーが表示される" do
@@ -146,7 +148,7 @@ RSpec.describe "新規エントリー", type: :system do
 
       click_button "確認する"
 
-      within ".modal" do
+      within ".auth-modal.is-active" do
         click_button "送信する"
       end
 
