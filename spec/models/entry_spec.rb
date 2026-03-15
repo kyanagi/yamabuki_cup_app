@@ -28,6 +28,38 @@ RSpec.describe Entry, type: :model do
     end
   end
 
+  describe ".public_entry_list" do
+    it "priority ありを優先順位順、その後に priority なしを id 順で返す" do
+      pending_b = create(:entry, status: :pending, priority: nil)
+      accepted_priority3 = create(:entry, status: :accepted, priority: 3)
+      accepted_priority1 = create(:entry, status: :accepted, priority: 1)
+      pending_a = create(:entry, status: :pending, priority: nil)
+      create(:entry, status: :waitlisted, priority: 2)
+      create(:entry, status: :cancelled, priority: 99)
+
+      expect(described_class.public_entry_list.pluck(:id)).to eq([
+        accepted_priority1.id,
+        accepted_priority3.id,
+        pending_b.id,
+        pending_a.id,
+      ])
+    end
+  end
+
+  describe ".waitlisted_for_entry_list" do
+    it "waitlisted のみを priority 順で返す" do
+      waitlisted_priority3 = create(:entry, status: :waitlisted, priority: 3)
+      create(:entry, status: :accepted, priority: 1)
+      waitlisted_priority2 = create(:entry, status: :waitlisted, priority: 2)
+      create(:entry, status: :cancelled, priority: 4)
+
+      expect(described_class.waitlisted_for_entry_list.pluck(:id)).to eq([
+        waitlisted_priority2.id,
+        waitlisted_priority3.id,
+      ])
+    end
+  end
+
   describe "#cancel!" do
     it "accepted のキャンセル時は waitlisted の先頭を繰り上げる" do
       accepted = create(:entry, status: :accepted, priority: 10)

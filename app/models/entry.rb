@@ -11,13 +11,16 @@ class Entry < ApplicationRecord
   validates :priority, uniqueness: true, allow_nil: true
 
   scope :promotion_candidates, -> { waitlisted.where.not(priority: nil).order(priority: :asc, id: :asc) }
-  scope :for_entry_list, -> do
-    where.not(status: :cancelled).order(
+  scope :entry_list_order, -> do
+    order(
       Arel.sql("CASE WHEN priority IS NULL THEN 1 ELSE 0 END"),
       :priority,
       :id
     )
   end
+  scope :for_entry_list, -> { where.not(status: :cancelled).entry_list_order }
+  scope :public_entry_list, -> { where(status: [:pending, :accepted]).entry_list_order }
+  scope :waitlisted_for_entry_list, -> { waitlisted.entry_list_order }
 
   def cancellable?
     !cancelled?
@@ -46,6 +49,7 @@ class Entry < ApplicationRecord
     end
   end
 
+  # 二次エントリーでのレコード作成
   def self.create_secondary!(player:, capacity:)
     transaction do
       lock.load

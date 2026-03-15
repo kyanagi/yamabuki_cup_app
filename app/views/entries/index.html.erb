@@ -2,27 +2,48 @@
   <div class="container is-max-tablet">
     <h1 class="title is-3">公開エントリーリスト</h1>
 
-    <% if @entries.any? %>
+    <p>定員：<%=  Setting.capacity %></p>
+
+    <table class="table is-fullwidth is-striped is-hoverable">
+      <thead>
+        <tr>
+          <th class="has-text-centered">ステータス</th>
+          <th class="has-text-centered">No.</th>
+          <th>エントリーリストの名前</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @entries.each do |entry| %>
+          <tr>
+            <td class="has-text-centered"><%= entry.status_label %></td>
+            <td class="has-text-centered"><%= entry.id %></td>
+            <td><%= entry.player.player_profile&.entry_list_name %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <% if @waitlisted_entries.any? %>
+      <h2 class="title is-4">キャンセル待ち一覧</h2>
+
       <table class="table is-fullwidth is-striped is-hoverable">
         <thead>
           <tr>
+            <th class="has-text-centered">キャンセル待ち順位</th>
             <th class="has-text-centered">No.</th>
-            <th class="has-text-centered">優先順位</th>
             <th>エントリーリストの名前</th>
           </tr>
         </thead>
         <tbody>
-          <% @entries.each do |entry| %>
+          <% @waitlisted_entries.each.with_index(1) do |entry, i| %>
             <tr>
+              <td class="has-text-centered"><%= i %></td>
               <td class="has-text-centered"><%= entry.id %></td>
-              <td class="has-text-centered"><%= entry.priority || "抽選待ち" %></td>
               <td><%= entry.player.player_profile&.entry_list_name %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
-    <% else %>
-      <p>現在、表示できるエントリーはありません。</p>
     <% end %>
   </div>
 </section>
