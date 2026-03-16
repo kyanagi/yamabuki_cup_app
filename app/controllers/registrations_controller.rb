@@ -2,7 +2,7 @@ class RegistrationsController < PublicController
   allow_unauthenticated_access
 
   def new
-    if !Setting.registerable
+    if Setting.entry_phase.nil?
       render :closed
       return
     end
@@ -11,7 +11,7 @@ class RegistrationsController < PublicController
   end
 
   def create
-    if !Setting.registerable
+    if Setting.entry_phase.nil?
       render :closed
       return
     end

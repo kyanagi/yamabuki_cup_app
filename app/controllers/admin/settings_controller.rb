@@ -16,7 +16,6 @@ module Admin
 
     def setting_params
       {
-        registerable: params[:registerable].present?,
         round3_course_preference_editable: params[:round3_course_preference_editable].present?,
         round2_group_visible_on_mypage: params[:round2_group_visible_on_mypage].present?,
         capacity: params[:capacity],

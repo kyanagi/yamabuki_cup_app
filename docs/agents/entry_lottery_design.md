@@ -4,7 +4,7 @@
 
 ## 背景
 
-現在のシステムでは、`Setting.registerable` の on/off でエントリー受付を制御しているのみで、定員管理・抽選・キャンセル待ちの仕組みがない。Player モデルがエントリーそのものとして機能しており、エントリー状態を管理する仕組みが存在しない。
+現在のシステムでは、`Setting.entry_phase` の値でエントリー受付状態を制御しているのみで、定員管理・抽選・キャンセル待ちの仕組みがない。Player モデルがエントリーそのものとして機能しており、エントリー状態を管理する仕組みが存在しない。
 
 ## 目的
 
@@ -74,7 +74,6 @@ entries
 
 ```ruby
 ATTRIBUTES = [
-  [:registerable, true],
   [:round3_course_preference_editable, true],
   [:capacity, 0],         # 定員（必須。0以上の整数）
   [:entry_phase, nil],    # 現在のエントリーフェーズ。nil / "primary" / "secondary"
@@ -257,12 +256,12 @@ end
 
 ## 運用フロー
 
-1. 管理者: `entry_phase` を `"primary"` に設定、`registerable` を `true` に設定、`capacity` を設定
+1. 管理者: `entry_phase` を `"primary"` に設定、`capacity` を設定
 2. 参加者: エントリー登録 → Entry(entry_phase: primary, status: pending) が作成される
-3. 管理者: `registerable` を `false` に設定（一次エントリー締め切り）
+3. 管理者: `entry_phase` を `nil` に設定（一次エントリー締め切り）
 4. 管理者: アプリ外で抽選を実施
 5. 管理者: 抽選結果（priority）をアプリに入力 → accepted / waitlisted に振り分け
-6. 管理者: `entry_phase` を `"secondary"` に設定、`registerable` を `true` に設定
+6. 管理者: `entry_phase` を `"secondary"` に設定
 7. 参加者: エントリー登録 → `priority = (現在の最大priority + 1)` を付与。定員に空きがあれば即座に accepted、なければ waitlisted
-8. 管理者: `registerable` を `false` に設定（二次エントリー締め切り）
+8. 管理者: `entry_phase` を `nil` に設定（二次エントリー締め切り）
 9. 以降: キャンセルがあれば繰り上がりが発生

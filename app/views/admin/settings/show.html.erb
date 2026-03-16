@@ -15,13 +15,6 @@
     <%= form_with url: admin_settings_path, method: :put do |f| %>
       <div class="field">
         <label class="switch is-rounded">
-          <%= check_box_tag :registerable, true, Setting.registerable %>
-          <span class="check"></span>
-          <span class="control-label">エントリー受付</span>
-        </label>
-      </div>
-      <div class="field">
-        <label class="switch is-rounded">
           <%= check_box_tag :round3_course_preference_editable, true, Setting.round3_course_preference_editable %>
           <span class="check"></span>
           <span class="control-label">3Rコース希望の変更</span>
@@ -41,13 +34,13 @@
         </div>
       </div>
       <div class="field">
-        <%= label_tag :entry_phase, "エントリーフェーズ", class: "label" %>
+        <%= label_tag :entry_phase, "受付状態", class: "label" %>
         <div class="control">
           <div class="select is-fullwidth">
             <%= select_tag :entry_phase, options_for_select([
               ["受付期間外", nil],
-              ["一次エントリー", "primary"],
-              ["二次エントリー", "secondary"],
+              ["一次エントリー受付中", "primary"],
+              ["二次エントリー受付中", "secondary"],
             ], Setting.entry_phase) %>
           </div>
         </div>

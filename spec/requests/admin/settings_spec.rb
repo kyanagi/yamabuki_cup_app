@@ -9,7 +9,6 @@ RSpec.describe "Admin::Settings", type: :request do
     it "設定を更新できる" do
       put admin_settings_path,
           params: {
-            registerable: "true",
             round3_course_preference_editable: "true",
             round2_group_visible_on_mypage: "true",
             capacity: "123",
@@ -17,7 +16,6 @@ RSpec.describe "Admin::Settings", type: :request do
           }
 
       expect(response).to redirect_to(admin_settings_path)
-      expect(Setting.registerable).to be true
       expect(Setting.round3_course_preference_editable).to be true
       expect(Setting.round2_group_visible_on_mypage).to be true
       expect(Setting.capacity).to eq(123)
@@ -32,7 +30,6 @@ RSpec.describe "Admin::Settings", type: :request do
           }
 
       expect(response).to redirect_to(admin_settings_path)
-      expect(Setting.registerable).to be false
       expect(Setting.round3_course_preference_editable).to be false
       expect(Setting.round2_group_visible_on_mypage).to be false
     end
@@ -40,7 +37,6 @@ RSpec.describe "Admin::Settings", type: :request do
     it "不正な capacity は422で再表示する" do
       put admin_settings_path,
           params: {
-            registerable: "true",
             round3_course_preference_editable: "true",
             round2_group_visible_on_mypage: "true",
             capacity: "-1",

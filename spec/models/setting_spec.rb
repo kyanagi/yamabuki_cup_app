@@ -1,17 +1,6 @@
 require "rails_helper"
 
 RSpec.describe Setting, type: :model do
-  describe ".registerable" do
-    it "デフォルトでtrueを返す" do
-      expect(Setting.registerable).to be true
-    end
-
-    it "保存された値を返す" do
-      Setting.update!(registerable: false)
-      expect(Setting.registerable).to be false
-    end
-  end
-
   describe ".round3_course_preference_editable" do
     it "デフォルトでtrueを返す" do
       expect(Setting.round3_course_preference_editable).to be true
@@ -73,14 +62,12 @@ RSpec.describe Setting, type: :model do
     it "設定を更新できる" do
       expect do
         Setting.update!(
-          registerable: false,
           round3_course_preference_editable: false,
           round2_group_visible_on_mypage: true,
           capacity: 10,
           entry_phase: "primary"
         )
-      end.to change { Setting.registerable }.from(true).to(false)
-        .and change { Setting.round3_course_preference_editable }.from(true).to(false)
+      end.to change { Setting.round3_course_preference_editable }.from(true).to(false)
         .and change { Setting.round2_group_visible_on_mypage }.from(false).to(true)
         .and change { Setting.capacity }.from(0).to(10)
         .and change { Setting.entry_phase }.from(nil).to("primary")

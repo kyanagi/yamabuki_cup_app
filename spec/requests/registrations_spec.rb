@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Registrations", type: :request do
   before do
     Rails.application.load_seed
-    Setting.update!(registerable: true, entry_phase: "primary", capacity: 100)
+    Setting.update!(entry_phase: "primary", capacity: 100)
   end
 
   describe "POST /registrations" do
@@ -122,22 +122,22 @@ RSpec.describe "Registrations", type: :request do
 
     context "entry_phase が nil の場合" do
       before do
-        Setting.update!(registerable: true, entry_phase: nil, capacity: 100)
+        Setting.update!(entry_phase: nil, capacity: 100)
       end
 
-      it "エラーとなり登録されない" do
+      it "受付停止ページを表示し登録しない" do
         expect do
           post registrations_path, params: valid_params
         end.not_to change(Player, :count)
 
-        expect(response).to have_http_status(422)
+        expect(response).to have_http_status(:ok)
         expect(response.body).to include("エントリー受付期間外です")
       end
     end
 
     context "二次エントリーで定員に空きがある場合" do
       before do
-        Setting.update!(registerable: true, entry_phase: "secondary", capacity: 1)
+        Setting.update!(entry_phase: "secondary", capacity: 1)
       end
 
       it "accepted として登録される" do
@@ -152,7 +152,7 @@ RSpec.describe "Registrations", type: :request do
 
     context "二次エントリーで定員が埋まっている場合" do
       before do
-        Setting.update!(registerable: true, entry_phase: "secondary", capacity: 1)
+        Setting.update!(entry_phase: "secondary", capacity: 1)
         create(:entry, status: :accepted, priority: 1)
       end
 

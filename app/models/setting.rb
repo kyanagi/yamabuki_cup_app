@@ -2,7 +2,6 @@
 class Setting < ApplicationRecord
   # 設定名とデフォルト値のペア
   ATTRIBUTES = [
-    [:registerable, true],
     [:round3_course_preference_editable, true],
     [:round2_group_visible_on_mypage, false],
     [:capacity, 0],
@@ -45,10 +44,6 @@ class Setting < ApplicationRecord
 
     def normalize_attributes(attributes)
       normalized = attributes.dup
-
-      if normalized.key?(:registerable)
-        normalized[:registerable] = cast_boolean!("registerable", normalized[:registerable])
-      end
 
       if normalized.key?(:round3_course_preference_editable)
         normalized[:round3_course_preference_editable] = cast_boolean!(

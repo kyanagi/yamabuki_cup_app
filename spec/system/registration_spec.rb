@@ -16,7 +16,7 @@ RSpec.describe "新規エントリー", type: :system do
 
   before do
     Rails.application.load_seed
-    Setting.update!(registerable: true, entry_phase: "primary", capacity: 100)
+    Setting.update!(entry_phase: "primary", capacity: 100)
   end
 
   describe "正常なエントリーフロー" do
@@ -152,13 +152,13 @@ RSpec.describe "新規エントリー", type: :system do
 
   describe "エントリー受付停止時" do
     before do
-      Setting.update!(registerable: false, entry_phase: "primary", capacity: 100)
+      Setting.update!(entry_phase: nil, capacity: 100)
     end
 
     it "エントリー受付停止ページが表示される" do
       visit new_registration_path
 
-      expect(page).to have_content "エントリー受付は終了しました"
+      expect(page).to have_content "エントリー受付期間外です"
       expect(page).not_to have_content "新規エントリー"
     end
   end
