@@ -38,19 +38,19 @@ RSpec.describe "GET /entries", type: :request do
     expect(tables.size).to eq(2)
 
     public_entry_table = tables[0]
-    expect(public_entry_table.css("thead th").map { |th| th.text.strip }).to match_array(["ステータス", "No.", "エントリーリストの名前"])
-    expect(table_rows_by_header(public_entry_table)).to match_array([
+    expect(public_entry_table.css("thead th").map { |th| th.text.strip }).to contain_exactly("ステータス", "No.", "エントリーリストの名前")
+    expect(table_rows_by_header(public_entry_table)).to contain_exactly(
       { "ステータス" => "参加確定", "No." => entry_priority1.id.to_s, "エントリーリストの名前" => "優先1" },
       { "ステータス" => "抽選待ち", "No." => entry_pending_a.id.to_s, "エントリーリストの名前" => "抽選待ちA" },
-      { "ステータス" => "抽選待ち", "No." => entry_pending_b.id.to_s, "エントリーリストの名前" => "抽選待ちB" },
-    ])
+      { "ステータス" => "抽選待ち", "No." => entry_pending_b.id.to_s, "エントリーリストの名前" => "抽選待ちB" }
+    )
 
     waitlisted_table = tables[1]
-    expect(waitlisted_table.css("thead th").map { |th| th.text.strip }).to match_array(["キャンセル待ち順位", "No.", "エントリーリストの名前"])
-    expect(table_rows_by_header(waitlisted_table)).to match_array([
-      { "キャンセル待ち順位" => "1", "No." => waitlisted_priority2.id.to_s, "エントリーリストの名前" => "優先2" },
-      { "キャンセル待ち順位" => "2", "No." => waitlisted_priority3.id.to_s, "エントリーリストの名前" => "優先3" },
-    ])
+    expect(waitlisted_table.css("thead th").map { |th| th.text.strip }).to contain_exactly("キャンセル待ち順位", "No.", "エントリーリストの名前")
+    expect(table_rows_by_header(waitlisted_table)).to contain_exactly(
+      { "キャンセル待ち順位" => "1", "No." => waitlisted_priority2.id.to_s,
+        "エントリーリストの名前" => "優先2", }, { "キャンセル待ち順位" => "2", "No." => waitlisted_priority3.id.to_s, "エントリーリストの名前" => "優先3" }
+    )
     expect(doc.css("tbody tr").map(&:text).join("\n")).not_to include("キャンセル")
   end
 
