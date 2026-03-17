@@ -38,6 +38,7 @@ class RegistrationsController < PublicController
       :given_name_kana,
       :entry_list_name,
       :notes,
+      :is_playing_staff_candidate,
     ])
   end
 end

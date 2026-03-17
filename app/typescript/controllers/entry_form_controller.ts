@@ -70,7 +70,8 @@ type ConfirmationValueTargetKey =
   | "givenNameKanaTarget"
   | "entryListNameTarget"
   | "notesTarget"
-  | "passwordTarget";
+  | "passwordTarget"
+  | "eventDayHelpTarget";
 type ConfirmationDisplayTargetKey =
   | "confirmationEmailTarget"
   | "confirmationFamilyNameTarget"
@@ -79,13 +80,15 @@ type ConfirmationDisplayTargetKey =
   | "confirmationGivenNameKanaTarget"
   | "confirmationEntryListNameTarget"
   | "confirmationNotesTarget"
-  | "confirmationPasswordTarget";
-type ConfirmationGuardKey = "hasNotesTarget" | "hasConfirmationPasswordTarget";
+  | "confirmationPasswordTarget"
+  | "confirmationEventDayHelpTarget";
+type ConfirmationGuardKey = "hasNotesTarget" | "hasConfirmationPasswordTarget" | "hasConfirmationEventDayHelpTarget";
 type ConfirmationFieldDefinition = {
   valueTarget: ConfirmationValueTargetKey;
   confirmationTarget: ConfirmationDisplayTargetKey;
   guard?: ConfirmationGuardKey;
-  formatter?: (value: string) => string;
+  isCheckbox?: true;
+  formatter?: (value: string | boolean) => string;
 };
 const ConfirmationFields: readonly ConfirmationFieldDefinition[] = [
   { valueTarget: "emailTarget", confirmationTarget: "confirmationEmailTarget" },
@@ -105,6 +108,13 @@ const ConfirmationFields: readonly ConfirmationFieldDefinition[] = [
     guard: "hasConfirmationPasswordTarget",
     formatter: (value) => (value ? "変更あり" : "変更なし"),
   },
+  {
+    valueTarget: "eventDayHelpTarget",
+    confirmationTarget: "confirmationEventDayHelpTarget",
+    guard: "hasConfirmationEventDayHelpTarget",
+    isCheckbox: true,
+    formatter: (value) => (value ? "当日のお手伝いを依頼してもよい" : "未選択"),
+  },
 ] as const;
 
 export default class extends Controller {
@@ -119,6 +129,7 @@ export default class extends Controller {
     "givenNameKana",
     "entryListName",
     "notes",
+    "eventDayHelp",
     "confirmationEmail",
     "confirmationFamilyName",
     "confirmationGivenName",
@@ -127,6 +138,7 @@ export default class extends Controller {
     "confirmationEntryListName",
     "confirmationNotes",
     "confirmationPassword",
+    "confirmationEventDayHelp",
     "errorElement",
     "emailError",
     "passwordError",
@@ -146,6 +158,7 @@ export default class extends Controller {
   declare givenNameKanaTarget: HTMLInputElement;
   declare entryListNameTarget: HTMLInputElement;
   declare notesTarget: HTMLTextAreaElement;
+  declare eventDayHelpTarget: HTMLInputElement;
   declare confirmationEmailTarget: HTMLElement;
   declare confirmationFamilyNameTarget: HTMLElement;
   declare confirmationGivenNameTarget: HTMLElement;
@@ -154,6 +167,7 @@ export default class extends Controller {
   declare confirmationEntryListNameTarget: HTMLElement;
   declare confirmationNotesTarget: HTMLElement;
   declare confirmationPasswordTarget: HTMLElement;
+  declare confirmationEventDayHelpTarget: HTMLElement;
   declare errorElementTargets: HTMLElement[];
   declare emailErrorTarget: HTMLElement;
   declare passwordErrorTarget: HTMLElement;
@@ -165,6 +179,7 @@ export default class extends Controller {
   declare editModeValue: boolean;
   declare hasNotesTarget: boolean;
   declare hasConfirmationPasswordTarget: boolean;
+  declare hasConfirmationEventDayHelpTarget: boolean;
 
   validate(event: Event) {
     for (const element of this.formElementTargets) {
@@ -207,8 +222,9 @@ export default class extends Controller {
       if (field.guard && !this[field.guard]) {
         continue;
       }
-      const value = this[field.valueTarget].value;
-      this[field.confirmationTarget].textContent = field.formatter ? field.formatter(value) : value;
+      const target = this[field.valueTarget];
+      const value: string | boolean = field.isCheckbox ? (target as HTMLInputElement).checked : target.value;
+      this[field.confirmationTarget].textContent = field.formatter ? field.formatter(value) : String(value);
     }
   }
 }

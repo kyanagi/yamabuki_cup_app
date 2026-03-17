@@ -11,6 +11,7 @@ RSpec.describe "新規エントリー", type: :system do
       given_name_kana: "たろう",
       entry_list_name: "山吹太郎",
       notes: "よろしくお願いします",
+      is_playing_staff_candidate: true,
     }
   end
 
@@ -34,6 +35,7 @@ RSpec.describe "新規エントリー", type: :system do
       fill_in "registration[given_name_kana]", with: valid_attributes[:given_name_kana]
       fill_in "registration[entry_list_name]", with: valid_attributes[:entry_list_name]
       fill_in "registration[notes]", with: valid_attributes[:notes]
+      check "当日のお手伝いを依頼してもよい"
 
       click_button "確認する"
 
@@ -43,6 +45,7 @@ RSpec.describe "新規エントリー", type: :system do
         expect(page).to have_content "#{valid_attributes[:family_name]} #{valid_attributes[:given_name]}"
         expect(page).to have_content "#{valid_attributes[:family_name_kana]} #{valid_attributes[:given_name_kana]}"
         expect(page).to have_content valid_attributes[:entry_list_name]
+        expect(page).to have_content "当日のお手伝いを依頼してもよい"
         expect(page).to have_content valid_attributes[:notes]
 
         click_button "送信する"
@@ -59,6 +62,7 @@ RSpec.describe "新規エントリー", type: :system do
       expect(profile.family_name_kana).to eq valid_attributes[:family_name_kana]
       expect(profile.given_name_kana).to eq valid_attributes[:given_name_kana]
       expect(profile.entry_list_name).to eq valid_attributes[:entry_list_name]
+      expect(profile.is_playing_staff_candidate).to be(true)
       expect(player.round3_course_preference).to be_present
 
       expect(player.entry).to be_primary

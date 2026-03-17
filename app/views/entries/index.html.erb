@@ -2,7 +2,7 @@
   <div class="container is-max-tablet">
     <h1 class="title is-3">エントリーリスト</h1>
 
-    <p>エントリー人数 <%= @entries.size %>/<%=  Setting.capacity %></p>
+    <p>エントリー数: <%= @entries.size + @waitlisted_entries.size %>/<%=  Setting.capacity %></p>
 
     <table class="table is-fullwidth is-striped is-hoverable">
       <thead>

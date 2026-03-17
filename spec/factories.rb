@@ -79,6 +79,7 @@ FactoryBot.define do
     family_name_kana { name.family.hiragana }
     given_name { name.given.kanji }
     given_name_kana { name.given.hiragana }
+    is_playing_staff_candidate { false }
   end
 
   factory :match do

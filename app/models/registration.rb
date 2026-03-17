@@ -7,6 +7,7 @@ class Registration < ActiveType::Object
   attribute :given_name_kana, :string
   attribute :entry_list_name, :string
   attribute :notes, :text
+  attribute :is_playing_staff_candidate, :boolean, default: false
 
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true
@@ -39,7 +40,15 @@ class Registration < ActiveType::Object
         raise ActiveRecord::Rollback
       end
       PlayerEmailCredential.create!(player: @player, email:, password:, password_confirmation: password)
-      PlayerProfile.create!(player: @player, family_name:, given_name:, family_name_kana:, given_name_kana:, entry_list_name:)
+      PlayerProfile.create!(
+        player: @player,
+        family_name:,
+        given_name:,
+        family_name_kana:,
+        given_name_kana:,
+        entry_list_name:,
+        is_playing_staff_candidate:
+      )
 
       attrs = [*1..4].zip(Round::ROUND3.matches).to_h { |i, match| ["choice#{i}_match", match] }
       Round3CoursePreference.create!(player: @player, **attrs)

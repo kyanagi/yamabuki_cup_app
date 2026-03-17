@@ -7,12 +7,14 @@ type EntryFormFixtureOptions = {
   editMode?: boolean;
   includeNotes?: boolean;
   includeConfirmationPassword?: boolean;
+  includeEventDayHelp?: boolean;
 };
 
 function createEntryFormFixture({
   editMode = false,
   includeNotes = false,
   includeConfirmationPassword = false,
+  includeEventDayHelp = false,
 }: EntryFormFixtureOptions = {}): string {
   return `
     <div data-controller="entry-form" ${editMode ? 'data-entry-form-edit-mode-value="true"' : ""}>
@@ -24,6 +26,7 @@ function createEntryFormFixture({
       <input type="text" data-entry-form-target="formElement givenNameKana" />
       <input type="text" data-entry-form-target="formElement entryListName" />
       ${includeNotes ? '<textarea data-entry-form-target="formElement notes"></textarea>' : ""}
+      ${includeEventDayHelp ? '<input type="checkbox" data-entry-form-target="formElement eventDayHelp" />' : ""}
 
       <p data-entry-form-target="errorElement emailError"></p>
       <p data-entry-form-target="errorElement passwordError"></p>
@@ -41,6 +44,7 @@ function createEntryFormFixture({
       <div data-entry-form-target="confirmationEntryListName"></div>
       ${includeNotes ? '<div data-entry-form-target="confirmationNotes"></div>' : ""}
       ${includeConfirmationPassword ? '<div data-entry-form-target="confirmationPassword"></div>' : ""}
+      ${includeEventDayHelp ? '<div data-entry-form-target="confirmationEventDayHelp"></div>' : ""}
     </div>
   `;
 }
@@ -56,6 +60,14 @@ function findFieldTarget(element: HTMLElement, targetName: string): HTMLInputEle
 function setFieldValue(element: HTMLElement, targetName: string, value: string): void {
   const target = findFieldTarget(element, targetName);
   target.value = value;
+}
+
+function setCheckboxValue(element: HTMLElement, targetName: string, checked: boolean): void {
+  const target = findFieldTarget(element, targetName);
+  if (!(target instanceof HTMLInputElement)) {
+    throw new Error(`Checkbox target not found: ${targetName}`);
+  }
+  target.checked = checked;
 }
 
 function errorText(element: HTMLElement, targetName: string): string {
@@ -130,7 +142,9 @@ describe("EntryFormController", () => {
 
   describe("updateConfirmationDisplay()", () => {
     it("新規入力画面では確認表示に入力値を反映し、notes も更新する", async () => {
-      const { controller, element } = await setupEntryFormController(createEntryFormFixture({ includeNotes: true }));
+      const { controller, element } = await setupEntryFormController(
+        createEntryFormFixture({ includeNotes: true, includeEventDayHelp: true }),
+      );
 
       setFieldValue(element, "email", "yamabuki@example.com");
       setFieldValue(element, "familyName", "山吹");
@@ -139,6 +153,7 @@ describe("EntryFormController", () => {
       setFieldValue(element, "givenNameKana", "たろう");
       setFieldValue(element, "entryListName", "やまぶきたろう");
       setFieldValue(element, "notes", "連絡事項");
+      setCheckboxValue(element, "eventDayHelp", true);
 
       controller.updateConfirmationDisplay();
 
@@ -149,6 +164,7 @@ describe("EntryFormController", () => {
       expect(confirmationText(element, "confirmationGivenNameKana")).toBe("たろう");
       expect(confirmationText(element, "confirmationEntryListName")).toBe("やまぶきたろう");
       expect(confirmationText(element, "confirmationNotes")).toBe("連絡事項");
+      expect(confirmationText(element, "confirmationEventDayHelp")).toBe("当日のお手伝いを依頼してもよい");
     });
 
     it("編集画面ではパスワード確認表示を入力有無に応じて切り替える", async () => {
@@ -169,6 +185,16 @@ describe("EntryFormController", () => {
       setFieldValue(element, "password", "new-password");
       controller.updateConfirmationDisplay();
       expect(confirmationText(element, "confirmationPassword")).toBe("変更あり");
+    });
+
+    it("チェックなしの確認表示は未選択になる", async () => {
+      const { controller, element } = await setupEntryFormController(
+        createEntryFormFixture({ editMode: true, includeConfirmationPassword: true, includeEventDayHelp: true }),
+      );
+
+      controller.updateConfirmationDisplay();
+
+      expect(confirmationText(element, "confirmationEventDayHelp")).toBe("未選択");
     });
   });
 });

@@ -66,6 +66,17 @@
         <p class="help is-danger" data-entry-form-target="errorElement entryListNameError"></p>
       </div>
       <div class="field">
+        <%= f.label :is_playing_staff_candidate, "当日のお手伝い", class: "label" %>
+        <div class="control">
+          <label class="checkbox">
+            <%= f.check_box :is_playing_staff_candidate, data: { entry_form_target: "formElement eventDayHelp" } %>
+            当日のお手伝いを依頼してもよい
+          </label>
+        </div>
+        <p class="help">この大会では、当日の進行の一部で参加者の方にお手伝いをお願いしたいと考えています。お願いする仕事は、主に「2Rにおけるホワイトボードでの得点付け」を予定しています。お手伝いを依頼してもよいという方はチェックしてください。</p>
+        <p class="help">組分けの都合上、2Rの組分け発表後に担当いただく方を決め、お願いをする予定です。必ずしもチェックを入れた方全員にお願いするとは限らないことをご了承ください。</p>
+      </div>
+      <div class="field">
         <%= f.label :notes, "その他", class: "label" %>
         <div class="control">
           <%= f.text_area :notes, rows: 4, class: "textarea", data: { entry_form_target: "formElement notes" } %>
@@ -106,6 +117,10 @@
                 <tr>
                   <th>エントリーリストの名前</th>
                   <td data-entry-form-target="confirmationEntryListName"></td>
+                </tr>
+                <tr>
+                  <th>当日のお手伝い</th>
+                  <td data-entry-form-target="confirmationEventDayHelp"></td>
                 </tr>
                 <tr>
                   <th>その他</th>

@@ -7,6 +7,7 @@ class PlayerProfileEdit < ActiveType::Object
   attribute :family_name_kana, :string
   attribute :given_name_kana, :string
   attribute :entry_list_name, :string
+  attribute :is_playing_staff_candidate, :boolean, default: false
 
   belongs_to :player
 
@@ -32,6 +33,7 @@ class PlayerProfileEdit < ActiveType::Object
         family_name_kana: profile&.family_name_kana,
         given_name_kana: profile&.given_name_kana,
         entry_list_name: profile&.entry_list_name,
+        is_playing_staff_candidate: profile&.is_playing_staff_candidate,
       }
 
       super(defaults.merge(attributes))
@@ -50,7 +52,8 @@ class PlayerProfileEdit < ActiveType::Object
         given_name:,
         family_name_kana:,
         given_name_kana:,
-        entry_list_name:
+        entry_list_name:,
+        is_playing_staff_candidate:
       )
 
       # Update PlayerEmailCredential

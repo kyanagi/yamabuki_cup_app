@@ -19,7 +19,8 @@ RSpec.describe PlayerProfileEdit, type: :model do
         given_name: "太郎",
         family_name_kana: "タナカ",
         given_name_kana: "タロウ",
-        entry_list_name: "たなかちゃん"
+        entry_list_name: "たなかちゃん",
+        is_playing_staff_candidate: true
       )
       expect(player_profile_edit).to be_valid
     end
@@ -51,7 +52,8 @@ RSpec.describe PlayerProfileEdit, type: :model do
         given_name: "太郎",
         family_name_kana: "タナカ",
         given_name_kana: "タロウ",
-        entry_list_name: "たなかちゃん"
+        entry_list_name: "たなかちゃん",
+        is_playing_staff_candidate: false
         # password is not provided
       )
       expect(player_profile_edit).to be_valid
@@ -69,6 +71,7 @@ RSpec.describe PlayerProfileEdit, type: :model do
       expect(player_profile_edit.family_name_kana).to eq(player_profile.family_name_kana)
       expect(player_profile_edit.given_name_kana).to eq(player_profile.given_name_kana)
       expect(player_profile_edit.entry_list_name).to eq(player_profile.entry_list_name)
+      expect(player_profile_edit.is_playing_staff_candidate).to eq(player_profile.is_playing_staff_candidate)
     end
 
     it "属性がmergeされた場合、提供された値が優先される" do
@@ -102,7 +105,8 @@ RSpec.describe PlayerProfileEdit, type: :model do
         given_name: "太郎",
         family_name_kana: "タナカ",
         given_name_kana: "タロウ",
-        entry_list_name: "たなかちゃん"
+        entry_list_name: "たなかちゃん",
+        is_playing_staff_candidate: true
       )
     end
 
@@ -122,6 +126,7 @@ RSpec.describe PlayerProfileEdit, type: :model do
       expect(player.player_profile.family_name_kana).to eq("タナカ")
       expect(player.player_profile.given_name_kana).to eq("タロウ")
       expect(player.player_profile.entry_list_name).to eq("たなかちゃん")
+      expect(player.player_profile.is_playing_staff_candidate).to be(true)
     end
 
     it "パスワードが空の場合、パスワードは更新されない" do
@@ -135,7 +140,8 @@ RSpec.describe PlayerProfileEdit, type: :model do
         given_name: "太郎",
         family_name_kana: "タナカ",
         given_name_kana: "タロウ",
-        entry_list_name: "たなかちゃん"
+        entry_list_name: "たなかちゃん",
+        is_playing_staff_candidate: true
       )
 
       player_profile_edit.save!
@@ -157,7 +163,8 @@ RSpec.describe PlayerProfileEdit, type: :model do
         given_name: "太郎",
         family_name_kana: "タナカ",
         given_name_kana: "タロウ",
-        entry_list_name: "たなかちゃん"
+        entry_list_name: "たなかちゃん",
+        is_playing_staff_candidate: true
       )
 
       player_profile_edit.save!

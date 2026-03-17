@@ -15,7 +15,8 @@ RSpec.describe Registration, type: :model do
         given_name: "博文",
         family_name_kana: "イトウ",
         given_name_kana: "ヒロブミ",
-        entry_list_name: "総理"
+        entry_list_name: "総理",
+        is_playing_staff_candidate: true
       )
       expect(registration).to be_valid
     end
@@ -40,7 +41,8 @@ RSpec.describe Registration, type: :model do
         given_name: "博文",
         family_name_kana: "イトウ",
         given_name_kana: "ヒロブミ",
-        entry_list_name: "総理"
+        entry_list_name: "総理",
+        is_playing_staff_candidate: false
       )
       expect(registration).not_to be_valid
       expect(registration.errors[:email]).to include("は不正な値です")
@@ -57,7 +59,8 @@ RSpec.describe Registration, type: :model do
         given_name: "博文",
         family_name_kana: "イトウ",
         given_name_kana: "ヒロブミ",
-        entry_list_name: "総理"
+        entry_list_name: "総理",
+        is_playing_staff_candidate: true
       )
       expect(registration).not_to be_valid
       expect(registration.errors[:email]).to include("は既に登録されています。ログインページからログインしてください。")
@@ -73,7 +76,8 @@ RSpec.describe Registration, type: :model do
         given_name: "博文",
         family_name_kana: "イトウ",
         given_name_kana: "ヒロブミ",
-        entry_list_name: "総理"
+        entry_list_name: "総理",
+        is_playing_staff_candidate: true
       )
     end
 
@@ -97,6 +101,7 @@ RSpec.describe Registration, type: :model do
         expect(player.player_profile.family_name_kana).to eq("イトウ")
         expect(player.player_profile.given_name_kana).to eq("ヒロブミ")
         expect(player.player_profile.entry_list_name).to eq("総理")
+        expect(player.player_profile.is_playing_staff_candidate).to be(true)
 
         expect(player.entry).to be_primary
         expect(player.entry).to be_pending

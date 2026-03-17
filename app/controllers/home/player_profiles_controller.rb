@@ -20,7 +20,7 @@ module Home
     def player_profile_edit_params
       params.require(:player_profile_edit).permit(
         :player_id, :email, :password, :family_name, :given_name,
-        :family_name_kana, :given_name_kana, :entry_list_name
+        :family_name_kana, :given_name_kana, :entry_list_name, :is_playing_staff_candidate
       )
     end
   end

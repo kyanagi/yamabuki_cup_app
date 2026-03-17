@@ -18,6 +18,7 @@ RSpec.describe "Registrations", type: :request do
           given_name_kana: "ヒロブミ",
           entry_list_name: "総理",
           notes: "",
+          is_playing_staff_candidate: "1",
         },
       }
     end
@@ -38,6 +39,7 @@ RSpec.describe "Registrations", type: :request do
         expect(entry).to be_primary
         expect(entry).to be_pending
         expect(entry.priority).to be_nil
+        expect(PlayerProfile.last.is_playing_staff_candidate).to be(true)
       end
     end
 
