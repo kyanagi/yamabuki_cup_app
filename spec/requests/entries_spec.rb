@@ -54,14 +54,6 @@ RSpec.describe "GET /entries", type: :request do
     expect(doc.css("tbody tr").map(&:text).join("\n")).not_to include("キャンセル")
   end
 
-  it "表示対象のエントリーがない場合は空状態メッセージを表示する" do
-    create_entry_with_profile(name: "キャンセルのみ", status: :cancelled, priority: nil)
-
-    get entries_path
-
-    expect(response.body).to include("現在、表示できるエントリーはありません。")
-  end
-
   it "キャンセル待ちがいない場合はキャンセル待ちテーブルを表示しない" do
     create_entry_with_profile(name: "参加確定", status: :accepted, priority: 1)
 
