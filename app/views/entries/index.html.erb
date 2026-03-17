@@ -1,8 +1,8 @@
 <section class="section">
   <div class="container is-max-tablet">
-    <h1 class="title is-3">公開エントリーリスト</h1>
+    <h1 class="title is-3">エントリーリスト</h1>
 
-    <p>定員：<%=  Setting.capacity %></p>
+    <p>エントリー人数 <%= @entries.size %>/<%=  Setting.capacity %></p>
 
     <table class="table is-fullwidth is-striped is-hoverable">
       <thead>
@@ -24,7 +24,7 @@
     </table>
 
     <% if @waitlisted_entries.any? %>
-      <h2 class="title is-4">キャンセル待ち一覧</h2>
+      <h2 class="title is-4">キャンセル待ち</h2>
 
       <table class="table is-fullwidth is-striped is-hoverable">
         <thead>
