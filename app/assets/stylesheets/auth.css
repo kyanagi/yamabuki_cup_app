@@ -45,12 +45,12 @@ body {
   border-radius: 12px;
   padding: 2.5rem 2rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 600px;
 }
 
 /* カード幅: 登録フォームは項目が多いため少し広め */
 .auth-card--wide {
-  max-width: 480px;
+  max-width: 600px;
 }
 
 .auth-title {
