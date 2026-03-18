@@ -1,0 +1,198 @@
+/* エントリーリストページ スタイル */
+/* mypage.css / auth.css と同じデザイン言語に準拠 */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", "Arial", sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  --el-bg-page: #f5f4f1;
+  --el-bg-card: #ffffff;
+  --el-text-primary: #1a1918;
+  --el-text-secondary: #6d6c6a;
+  --el-text-tertiary: #9c9b99;
+  --el-accent-green: #3d8a5a;
+  --el-accent-green-dark: #326e48;
+  --el-hero-start: #4daf73;
+  --el-hero-end: #2d6b48;
+  --el-border-subtle: #e5e4e1;
+  --el-border-strong: #d1d0cd;
+}
+
+/* ---- ページ全体 ---- */
+
+.el-page {
+  min-height: 100svh;
+  background-color: var(--el-bg-page);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- ヒーローヘッダー ---- */
+
+.el-hero {
+  background: linear-gradient(180deg, var(--el-hero-start) 0%, var(--el-hero-end) 100%);
+  padding: 28px 20px 36px;
+}
+
+.el-hero-inner {
+  max-width: 640px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.el-hero-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.el-hero-meta {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+.el-hero-meta-count {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* ---- コンテンツエリア ---- */
+
+.el-content {
+  max-width: 640px;
+  margin-inline: auto;
+  width: 100%;
+  padding: 20px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---- カード ---- */
+
+.el-card {
+  background: var(--el-bg-card);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+}
+
+.el-card-header {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--el-border-subtle);
+}
+
+.el-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--el-text-primary);
+  margin: 0;
+}
+
+/* ---- テーブル ---- */
+
+.el-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.el-table thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--el-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 10px 20px;
+  text-align: left;
+  background-color: #faf9f7;
+  border-bottom: 1px solid var(--el-border-subtle);
+}
+
+.el-table thead th.el-col-center {
+  text-align: center;
+}
+
+.el-table tbody td {
+  padding: 14px 20px;
+  font-size: 0.9375rem;
+  color: var(--el-text-primary);
+  border-bottom: 1px solid var(--el-border-subtle);
+  vertical-align: middle;
+}
+
+/* キャンセル待ちカード（グレー） */
+.el-card--muted {
+  background: #f0efed;
+  box-shadow: none;
+}
+
+.el-card--muted .el-card-header {
+  border-bottom-color: #dddcda;
+}
+
+.el-card--muted .el-card-title {
+  color: var(--el-text-secondary);
+}
+
+.el-card--muted .el-table thead th {
+  background-color: #eae9e6;
+  border-bottom-color: #dddcda;
+  color: var(--el-text-tertiary);
+}
+
+.el-card--muted .el-table tbody td {
+  color: var(--el-text-secondary);
+  border-bottom-color: #dddcda;
+}
+
+.el-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+@media (any-hover: hover) {
+  .el-table tbody tr:hover td {
+    background-color: #faf9f7;
+  }
+
+  .el-card--muted .el-table tbody tr:hover td {
+    background-color: #e8e7e4;
+  }
+}
+
+.el-col-center {
+  text-align: center;
+}
+
+/* 行番号 */
+.el-col-no {
+  width: 60px;
+  font-variant-numeric: tabular-nums;
+  color: var(--el-text-tertiary);
+  font-size: 0.875rem;
+}
+
+/* ステータス列 */
+.el-col-status {
+  width: 100px;
+}
+
+/* 名前 */
+.el-name {
+  font-weight: 500;
+}
+

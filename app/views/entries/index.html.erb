@@ -1,49 +1,63 @@
-<section class="section">
-  <div class="container is-max-tablet">
-    <h1 class="title is-3">エントリーリスト</h1>
+<div class="el-page">
+  <header class="el-hero">
+    <div class="el-hero-inner">
+      <h1 class="el-hero-title">エントリーリスト</h1>
+      <p class="el-hero-meta">
+        エントリー数:
+        <span class="el-hero-meta-count"><%= @entries.size + @waitlisted_entries.size %> / <%= Setting.capacity %></span>
+      </p>
+    </div>
+  </header>
 
-    <p>エントリー数: <%= @entries.size + @waitlisted_entries.size %>/<%=  Setting.capacity %></p>
-
-    <table class="table is-fullwidth is-striped is-hoverable">
-      <thead>
-        <tr>
-          <th class="has-text-centered">ステータス</th>
-          <th class="has-text-centered">No.</th>
-          <th>エントリーリストの名前</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @entries.each do |entry| %>
-          <tr>
-            <td class="has-text-centered"><%= entry.status_label %></td>
-            <td class="has-text-centered"><%= entry.id %></td>
-            <td><%= entry.player.player_profile&.entry_list_name %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-
-    <% if @waitlisted_entries.any? %>
-      <h2 class="title is-4">キャンセル待ち</h2>
-
-      <table class="table is-fullwidth is-striped is-hoverable">
+  <div class="el-content">
+    <div class="el-card">
+      <div class="el-card-header">
+        <h2 class="el-card-title">参加者</h2>
+      </div>
+      <table class="el-table">
         <thead>
           <tr>
-            <th class="has-text-centered">キャンセル待ち順位</th>
-            <th class="has-text-centered">No.</th>
+            <th class="el-col-status el-col-center">ステータス</th>
+            <th class="el-col-no el-col-center">No.</th>
             <th>エントリーリストの名前</th>
           </tr>
         </thead>
         <tbody>
-          <% @waitlisted_entries.each.with_index(1) do |entry, i| %>
+          <% @entries.each do |entry| %>
             <tr>
-              <td class="has-text-centered"><%= i %></td>
-              <td class="has-text-centered"><%= entry.id %></td>
-              <td><%= entry.player.player_profile&.entry_list_name %></td>
+              <td class="el-col-status el-col-center"><%= entry.status_label %></td>
+              <td class="el-col-no el-col-center"><%= entry.id %></td>
+              <td class="el-name"><%= entry.player.player_profile&.entry_list_name %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
+    </div>
+
+    <% if @waitlisted_entries.any? %>
+      <div class="el-card el-card--muted">
+        <div class="el-card-header">
+          <h2 class="el-card-title">キャンセル待ち</h2>
+        </div>
+        <table class="el-table">
+          <thead>
+            <tr>
+              <th class="el-col-status el-col-center">順位</th>
+              <th class="el-col-no el-col-center">No.</th>
+              <th>エントリーリストの名前</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @waitlisted_entries.each.with_index(1) do |entry, i| %>
+              <tr>
+                <td class="el-col-status el-col-center"><%= i %></td>
+                <td class="el-col-no el-col-center"><%= entry.id %></td>
+                <td class="el-name"><%= entry.player.player_profile&.entry_list_name %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     <% end %>
   </div>
-</section>
+</div>

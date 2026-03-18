@@ -441,6 +441,22 @@ body {
   cursor: not-allowed;
 }
 
+/* 危険な操作（削除・キャンセル等）用ボタン */
+.auth-btn-submit--danger {
+  background-color: var(--auth-danger);
+}
+
+@media (any-hover: hover) {
+  .auth-btn-submit--danger:hover {
+    background-color: #a93226;
+  }
+}
+
+.auth-btn-submit--danger:focus-visible {
+  background-color: #a93226;
+  outline-color: var(--auth-danger);
+}
+
 /* フォームフッター（戻るボタン + 確認ボタン） */
 .auth-form-footer {
   display: flex;
