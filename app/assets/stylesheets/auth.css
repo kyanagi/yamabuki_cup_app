@@ -141,7 +141,8 @@ body {
 }
 
 .auth-input,
-.auth-textarea {
+.auth-textarea,
+.auth-select {
   width: 100%;
   padding: 0.625rem 0.875rem;
   font-size: 0.9375rem;
@@ -152,6 +153,23 @@ body {
   border-radius: 8px;
   outline: none;
   transition: border-color 0.15s;
+}
+
+.auth-select {
+  padding-right: 2.5rem;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236d6c6a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+.auth-select:disabled,
+.auth-input:disabled {
+  background-color: var(--auth-bg-page);
+  color: var(--auth-text-tertiary);
+  cursor: not-allowed;
 }
 
 /* テキストエリア専用 */
@@ -166,12 +184,14 @@ body {
 }
 
 .auth-input:focus,
-.auth-textarea:focus {
+.auth-textarea:focus,
+.auth-select:focus {
   border-color: var(--auth-accent-green);
 }
 
 .auth-input:focus-visible,
-.auth-textarea:focus-visible {
+.auth-textarea:focus-visible,
+.auth-select:focus-visible {
   border-color: var(--auth-accent-green);
   outline: 2px solid var(--auth-accent-green);
   outline-offset: 2px;
@@ -221,6 +241,11 @@ body {
   background-color: var(--auth-accent-green-dark);
   outline: 2px solid var(--auth-accent-green);
   outline-offset: 2px;
+}
+
+.auth-submit:disabled {
+  background-color: var(--auth-text-tertiary);
+  cursor: not-allowed;
 }
 
 /* フッターリンク */
@@ -409,6 +434,11 @@ body {
   background-color: var(--auth-accent-green-dark);
   outline: 2px solid var(--auth-accent-green);
   outline-offset: 2px;
+}
+
+.auth-btn-submit:disabled {
+  background-color: var(--auth-text-tertiary);
+  cursor: not-allowed;
 }
 
 /* フォームフッター（戻るボタン + 確認ボタン） */

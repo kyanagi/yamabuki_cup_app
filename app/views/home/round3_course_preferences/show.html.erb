@@ -1,49 +1,53 @@
 <% disabled = !Setting.round3_course_preference_editable %>
-<section class="section">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <h1 class="title is-3">3Rコース選択希望の変更</h1>
-        <%= form_with model: [:home, @preference] do |f| %>
-          <% if notice %>
-            <div class="notification is-success is-light">
-              <%= notice %>
-            </div>
-          <% end %>
-          <% if @preference.errors.any? %>
-            <div class="notification is-danger is-light">
-              <ul>
-                <% @preference.errors.full_messages.each do |msg| %>
-                  <li><%= msg %></li>
-                <% end %>
-              </ul>
-            </div>
-          <% end %>
-          <div class="block">
-            <div class="block">
-              <p>3Rの希望コースを入力してください。第1希望から第4希望まで、重複がないように選択してください。</p>
-            </div>
-            <% (1..4).each do |i| %>
-              <div class="field">
-                <%= f.label "choice#{i}_match_id", "第#{i}希望", class: "label" %>
-                <div class="control">
-                  <div class="select is-fullwidth">
-                    <%= f.select "choice#{i}_match_id",
-                        options_from_collection_for_select(Round::ROUND3.matches, :id, :name, @preference.send("choice#{i}_match_id")),
-                        { include_blank: false },
-                        disabled: disabled %>
-                  </div>
-                </div>
-              </div>
+<% content_for :head do %>
+  <%= stylesheet_link_tag "auth", "data-turbo-track": "reload" %>
+<% end %>
+
+<div class="auth-page">
+  <div class="auth-card auth-card--wide">
+    <h1 class="auth-title">3Rコース選択希望の変更</h1>
+    <p class="auth-subtitle">
+      3Rの希望コースを選択してください。第1希望から第4希望まで、重複がないように選択してください。
+    </p>
+
+    <%= form_with model: [:home, @preference] do |f| %>
+      <% if notice %>
+        <div class="auth-flash auth-flash--success">
+          <%= notice %>
+        </div>
+      <% end %>
+      <% if disabled %>
+        <div class="auth-flash auth-flash--danger">
+          現在、コース選択希望の変更は受け付けていません。
+        </div>
+      <% end %>
+      <% if @preference.errors.any? %>
+        <div class="auth-flash auth-flash--danger">
+          <ul class="auth-error-list">
+            <% @preference.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
             <% end %>
-          </div>
-          <div class="field is-grouped is-grouped-right">
-            <div class="control">
-              <%= f.submit "更新", class: "button is-primary", disabled: disabled %>
-            </div>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="auth-form">
+        <% (1..4).each do |i| %>
+          <div class="auth-field">
+            <%= f.label "choice#{i}_match_id", "第#{i}希望", class: "auth-label" %>
+            <%= f.select "choice#{i}_match_id",
+                options_from_collection_for_select(Round::ROUND3.matches, :id, :name, @preference.send("choice#{i}_match_id")),
+                { include_blank: false },
+                class: "auth-select",
+                disabled: disabled %>
           </div>
         <% end %>
+
+        <div class="auth-form-footer">
+          <%= link_to "マイページに戻る", home_path, class: "auth-btn-cancel" %>
+          <%= f.submit "更新", class: "auth-btn-submit", disabled: disabled %>
+        </div>
       </div>
-    </div>
+    <% end %>
   </div>
-</section>
+</div>
