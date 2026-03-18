@@ -1,10 +1,8 @@
 class HomeController < PublicController
-  layout "mypage", only: [:show]
-
   def show
     if session[:registration_completed]
       session.delete(:registration_completed)
-      render :registration_completed, layout: "application"
+      render :registration_completed
       return
     end
 

@@ -1,3 +1,7 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag "entries", "data-turbo-track": "reload" %>
+<% end %>
+
 <div class="el-page">
   <header class="el-hero">
     <div class="el-hero-inner">
@@ -42,7 +46,7 @@
         <table class="el-table">
           <thead>
             <tr>
-              <th class="el-col-status el-col-center">順位</th>
+              <th class="el-col-status el-col-center">キャンセル待ち順位</th>
               <th class="el-col-no el-col-center">No.</th>
               <th>エントリーリストの名前</th>
             </tr>

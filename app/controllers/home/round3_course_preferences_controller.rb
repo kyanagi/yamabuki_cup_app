@@ -1,7 +1,5 @@
 module Home
   class Round3CoursePreferencesController < PublicController
-    layout "mypage"
-
     def show
       @preference = Current.session.player.round3_course_preference
     end

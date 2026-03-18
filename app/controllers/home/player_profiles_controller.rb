@@ -1,7 +1,5 @@
 module Home
   class PlayerProfilesController < PublicController
-    layout "mypage"
-
     def edit
       @player_profile_edit = PlayerProfileEdit.new(player_id: Current.player.id)
     end

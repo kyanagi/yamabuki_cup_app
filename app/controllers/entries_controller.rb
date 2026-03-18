@@ -1,5 +1,4 @@
 class EntriesController < PublicController
-  layout "entries", only: :index
   allow_unauthenticated_access only: :index
 
   def index
