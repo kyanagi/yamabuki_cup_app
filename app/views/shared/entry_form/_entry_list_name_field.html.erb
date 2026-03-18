@@ -1,0 +1,11 @@
+<%# locals: (f:) %>
+<div class="auth-field">
+  <%= f.label :entry_list_name, "エントリーリストの名前", class: "auth-label" %>
+  <%= f.text_field :entry_list_name,
+        class: "auth-input",
+        data: { entry_form_target: "formElement entryListName" },
+        autocomplete: "nickname",
+        placeholder: "表示名を入力" %>
+  <p class="auth-help">エントリーリストにはこちらの名前で表示します。</p>
+  <p class="auth-help--danger" data-entry-form-target="errorElement entryListNameError"></p>
+</div>

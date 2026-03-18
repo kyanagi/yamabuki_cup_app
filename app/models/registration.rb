@@ -6,7 +6,7 @@ class Registration < ActiveType::Object
   attribute :family_name_kana, :string
   attribute :given_name_kana, :string
   attribute :entry_list_name, :string
-  attribute :notes, :text
+  attribute :notes, :text, default: ->(_) { "" }
   attribute :is_playing_staff_candidate, :boolean, default: false
 
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -47,7 +47,8 @@ class Registration < ActiveType::Object
         family_name_kana:,
         given_name_kana:,
         entry_list_name:,
-        is_playing_staff_candidate:
+        is_playing_staff_candidate:,
+        notes:
       )
 
       attrs = [*1..4].zip(Round::ROUND3.matches).to_h { |i, match| ["choice#{i}_match", match] }

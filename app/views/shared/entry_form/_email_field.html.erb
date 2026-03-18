@@ -1,0 +1,11 @@
+<%# locals: (f:) %>
+<div class="auth-field">
+  <%= f.label :email, "メールアドレス", class: "auth-label" %>
+  <%= f.email_field :email,
+        class: "auth-input",
+        data: { entry_form_target: "formElement email" },
+        autocomplete: "email",
+        placeholder: "yamabuki@example.com" %>
+  <p class="auth-help">メールを確認できるメールアドレスを入力してください。マイページにログインする際にも使用します。</p>
+  <p class="auth-help--danger" data-entry-form-target="errorElement emailError"></p>
+</div>

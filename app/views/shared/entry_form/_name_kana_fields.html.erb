@@ -1,0 +1,22 @@
+<%# locals: (f:) %>
+<div class="auth-field-group">
+  <%= f.label :family_name_kana, "姓/名 ふりがな", class: "auth-label" %>
+  <div class="auth-field-group-inputs">
+    <div class="auth-field">
+      <%= f.text_field :family_name_kana,
+            class: "auth-input",
+            data: { entry_form_target: "formElement familyNameKana" },
+            autocomplete: "family-name",
+            placeholder: "やまぶき" %>
+      <p class="auth-help--danger" data-entry-form-target="errorElement familyNameKanaError"></p>
+    </div>
+    <div class="auth-field">
+      <%= f.text_field :given_name_kana,
+            class: "auth-input",
+            data: { entry_form_target: "formElement givenNameKana" },
+            autocomplete: "given-name",
+            placeholder: "たろう" %>
+      <p class="auth-help--danger" data-entry-form-target="errorElement givenNameKanaError"></p>
+    </div>
+  </div>
+</div>

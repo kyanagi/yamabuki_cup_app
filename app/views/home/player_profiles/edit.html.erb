@@ -1,151 +1,69 @@
-<section class="section">
-  <div class="container is-max-tablet" data-controller="entry-form modal" data-entry-form-edit-mode-value="true">
-    <h1 class="title is-2">エントリー内容の変更</h1>
+<% content_for :head do %>
+  <%= stylesheet_link_tag "auth", "data-turbo-track": "reload" %>
+<% end %>
+
+<div class="auth-page">
+  <div class="auth-card auth-card--wide" data-controller="entry-form modal" data-entry-form-edit-mode-value="true">
+    <h1 class="auth-title">エントリー内容の変更</h1>
+
     <%= form_with model: @player_profile_edit, url: home_player_profile_path, method: :patch do |f| %>
       <% if notice %>
-        <div class="notification is-success is-light">
+        <div class="auth-flash auth-flash--success">
           <%= notice %>
         </div>
       <% end %>
       <% if @player_profile_edit.errors.any? %>
-        <div class="notification is-danger">
-          <h2 class="subtitle">
-            <%= pluralize(@player_profile_edit.errors.count, "error") %> が発生しました：
-          </h2>
-          <ul>
+        <div class="auth-flash auth-flash--danger">
+          <ul class="auth-error-list">
             <% @player_profile_edit.errors.full_messages.each do |message| %>
               <li><%= message %></li>
             <% end %>
           </ul>
         </div>
       <% end %>
-      <div class="field">
-        <%= f.label :email, "メールアドレス", class: "label" %>
-        <div class="control has-icons-left has-icons-right">
-          <%= f.email_field :email, class: "input", data: { entry_form_target: "formElement email" }, autocomplete: "email", placeholder: "yamabuki@example.com" %>
-          <span class="icon is-small is-left">
-            <i class="fas fa-envelope"></i>
-          </span>
+
+      <div class="auth-form">
+        <%= render "shared/entry_form/email_field", f: f %>
+        <%= render "shared/entry_form/password_field", f: f,
+              placeholder: "変更する場合のみ入力してください",
+              help_text: "パスワードを変更する場合のみ入力してください。空白の場合は変更されません。" %>
+        <%= render "shared/entry_form/name_fields", f: f %>
+        <%= render "shared/entry_form/name_kana_fields", f: f %>
+        <%= render "shared/entry_form/entry_list_name_field", f: f %>
+        <%= render "shared/entry_form/playing_staff_field", f: f %>
+
+        <%# その他 %>
+        <div class="auth-field">
+          <%= f.label :notes, "その他", class: "auth-label" %>
+          <%= f.text_area :notes,
+                rows: 4,
+                class: "auth-textarea",
+                data: { entry_form_target: "formElement notes" } %>
+          <p class="auth-help">その他、主催者への連絡事項などありましたら入力してください。</p>
         </div>
-        <p class="help">メールを確認できるメールアドレスを入力してください。マイページにログインする際にも使用します。</p>
-        <p class="help is-danger" data-entry-form-target="errorElement emailError"></p>
-      </div>
-      <div class="field">
-        <%= f.label :password, "パスワード", class: "label" %>
-        <div class="control has-icons-left">
-          <%= f.password_field :password, class: "input", data: { entry_form_target: "formElement password" }, autocomplete: "new-password", placeholder: "変更する場合のみ入力してください" %>
-          <span class="icon is-small is-left">
-            <i class="fas fa-lock"></i>
-          </span>
-        </div>
-        <p class="help">パスワードを変更する場合のみ入力してください。空白の場合は変更されません。</p>
-        <p class="help is-danger" data-entry-form-target="errorElement passwordError"></p>
-      </div>
-      <%= f.label :family_name, "姓/名", class: "label" %>
-      <div class="field is-grouped">
-        <div class="control is-expanded">
-          <%= f.text_field :family_name, class: "input", data: { entry_form_target: "formElement familyName" }, autocomplete: "family-name", placeholder: "山吹" %>
-          <p class="help is-danger" data-entry-form-target="errorElement familyNameError"></p>
-        </div>
-        <div class="control is-expanded">
-          <%= f.text_field :given_name, class: "input", data: { entry_form_target: "formElement givenName" }, autocomplete: "given-name", placeholder: "太郎" %>
-          <p class="help is-danger" data-entry-form-target="errorElement givenNameError"></p>
+
+        <%# ボタン %>
+        <div class="auth-form-footer">
+          <%= link_to "マイページに戻る", home_path, class: "auth-btn-cancel" %>
+          <%= button_tag "確認する",
+                class: "auth-btn-submit",
+                data: {
+                  action: "entry-form#validate:prevent entry-form#updateConfirmationDisplay:prevent modal#open:prevent"
+                } %>
         </div>
       </div>
-      <%= f.label :family_name, "姓/名 ふりがな", class: "label" %>
-      <div class="field is-grouped">
-        <div class="control is-expanded">
-          <%= f.text_field :family_name_kana, class: "input", data: { entry_form_target: "formElement familyNameKana" }, autocomplete: "family-name", placeholder: "やまぶき" %>
-          <p class="help is-danger" data-entry-form-target="errorElement familyNameKanaError"></p>
-        </div>
-        <div class="control is-expanded">
-          <%= f.text_field :given_name_kana, class: "input", data: { entry_form_target: "formElement givenNameKana" }, autocomplete: "given-name", placeholder: "たろう" %>
-          <p class="help is-danger" data-entry-form-target="errorElement givenNameKanaError"></p>
-        </div>
-      </div>
-      <div class="field">
-        <%= f.label :entry_list_name, "エントリーリストの名前", class: "label" %>
-        <div class="control">
-          <%= f.text_field :entry_list_name, class: "input", data: { entry_form_target: "formElement entryListName" }, autocomplete: "nickname" %>
-        </div>
-        <p class="help is-danger" data-entry-form-target="errorElement entryListNameError"></p>
-      </div>
-      <div class="field">
-        <%= f.label :is_playing_staff_candidate, "当日のお手伝い", class: "label" %>
-        <div class="control">
-          <label class="checkbox">
-            <%= f.check_box :is_playing_staff_candidate, data: { entry_form_target: "formElement eventDayHelp" } %>
-            当日のお手伝いを依頼してもよい
-          </label>
-        </div>
-        <p class="help">この大会では、当日の進行の一部で参加者の方にお手伝いをお願いしたいと考えています。お願いする仕事は、主に「2Rにおけるホワイトボードでの得点付け」を予定しています。お手伝いを依頼してもよいという方はチェックしてください。</p>
-        <p class="help">組分けの都合上、2Rの組分け発表後に担当いただく方を決め、お願いをする予定です。必ずしもチェックを入れた方全員にお願いするとは限らないことをご了承ください。</p>
-      </div>
-      <div class="field is-grouped is-grouped-right">
-        <div class="control">
-          <%= link_to "マイページに戻る", home_path, class: "button" %>
-        </div>
-        <div class="control">
-          <%= button_tag "確認する", class: "button is-primary", data: { action: "entry-form#validate:prevent entry-form#updateConfirmationDisplay:prevent modal#open:prevent" } %>
-        </div>
-      </div>
-      <div class="modal" data-modal-target="modal">
-        <div class="modal-background" data-action="click->modal#close"></div>
-        <div class="modal-content">
-          <div class="box">
-            <h2 class="title is-4">エントリー内容の確認</h2>
-            <p>以下の内容で更新します。</p>
-            <table class="table is-fullwidth">
-              <tbody>
-                <tr>
-                  <th>メールアドレス</th>
-                  <td data-entry-form-target="confirmationEmail"></td>
-                </tr>
-                <tr>
-                  <th>パスワード</th>
-                  <td data-entry-form-target="confirmationPassword"></td>
-                </tr>
-                <tr>
-                  <th>姓/名</th>
-                  <td>
-                    <span data-entry-form-target="confirmationFamilyName"></span>
-                    <span data-entry-form-target="confirmationGivenName"></span>
-                  </td>
-                </tr>
-                <tr>
-                  <th>姓/名 ふりがな</th>
-                  <td>
-                    <span data-entry-form-target="confirmationFamilyNameKana"></span>
-                    <span data-entry-form-target="confirmationGivenNameKana"></span>
-                  </td>
-                </tr>
-                <tr>
-                  <th>エントリーリストの名前</th>
-                  <td data-entry-form-target="confirmationEntryListName"></td>
-                </tr>
-                <tr>
-                  <th>当日のお手伝い</th>
-                  <td data-entry-form-target="confirmationEventDayHelp"></td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="is-flex is-justify-content-space-between buttons are-large">
-              <button class="button" data-action="click->modal#close:prevent">キャンセル</button>
-              <%= f.submit "更新する", class: "button is-primary" %>
-            </div>
-          </div>
-        </div>
-        <button class="modal-close is-large" aria-label="close" data-action="click->modal#close:prevent"></button>
-      </div>
+
+      <%= render "shared/entry_form/confirmation_modal", f: f,
+            description: "以下の内容で更新します。",
+            submit_label: "更新する",
+            show_password: true,
+            show_notes: true %>
     <% end %>
 
     <% if Current.player.entry&.cancellable? %>
-      <hr class="my-5">
-      <div class="field">
-        <p class="help">
-          <%= link_to "エントリーをキャンセルしたい方はこちら", cancel_home_entry_path, class: "has-text-danger" %>
-        </p>
+      <div class="auth-footer">
+        <%= link_to "エントリーをキャンセルしたい方はこちら", cancel_home_entry_path, class: "auth-cancel-entry-link" %>
       </div>
     <% end %>
   </div>
-</section>
+</div>

@@ -21,101 +21,14 @@
       <% end %>
 
       <div class="auth-form">
-        <%# メールアドレス %>
-        <div class="auth-field">
-          <%= f.label :email, "メールアドレス", class: "auth-label" %>
-          <%= f.email_field :email,
-                class: "auth-input",
-                data: { entry_form_target: "formElement email" },
-                autocomplete: "email",
-                placeholder: "yamabuki@example.com" %>
-          <p class="auth-help">メールを確認できるメールアドレスを入力してください。マイページにログインする際にも使用します。</p>
-          <p class="auth-help--danger" data-entry-form-target="errorElement emailError"></p>
-        </div>
-
-        <%# パスワード %>
-        <div class="auth-field">
-          <%= f.label :password, "パスワード", class: "auth-label" %>
-          <%= f.password_field :password,
-                class: "auth-input",
-                data: { entry_form_target: "formElement password" },
-                autocomplete: "new-password",
-                placeholder: "8文字以上のパスワード" %>
-          <p class="auth-help">ログインする際に使用するパスワードを入力してください。</p>
-          <p class="auth-help--danger" data-entry-form-target="errorElement passwordError"></p>
-        </div>
-
-        <%# 姓/名 %>
-        <div class="auth-field-group">
-          <%= f.label :family_name, "姓/名", class: "auth-label" %>
-          <div class="auth-field-group-inputs">
-            <div class="auth-field">
-              <%= f.text_field :family_name,
-                    class: "auth-input",
-                    data: { entry_form_target: "formElement familyName" },
-                    autocomplete: "family-name",
-                    placeholder: "山吹" %>
-              <p class="auth-help--danger" data-entry-form-target="errorElement familyNameError"></p>
-            </div>
-            <div class="auth-field">
-              <%= f.text_field :given_name,
-                    class: "auth-input",
-                    data: { entry_form_target: "formElement givenName" },
-                    autocomplete: "given-name",
-                    placeholder: "太郎" %>
-              <p class="auth-help--danger" data-entry-form-target="errorElement givenNameError"></p>
-            </div>
-          </div>
-          <p class="auth-help">大会当日に使用する名前を入力してください。一心精進への報告や記録集でもこの名前を使用します。基本的に本名またはそれに類する名前（旧姓や芸能人の方の芸名など）でのエントリーをお願いしたいと考えていますが、これら以外の名前でのエントリーを禁止するものではありません。姓/名が分かれていない場合は、「姓」の欄に入力し、「名」は空白にしてください。</p>
-        </div>
-
-        <%# 姓/名 ふりがな %>
-        <div class="auth-field-group">
-          <%= f.label :family_name_kana, "姓/名 ふりがな", class: "auth-label" %>
-          <div class="auth-field-group-inputs">
-            <div class="auth-field">
-              <%= f.text_field :family_name_kana,
-                    class: "auth-input",
-                    data: { entry_form_target: "formElement familyNameKana" },
-                    autocomplete: "family-name",
-                    placeholder: "やまぶき" %>
-              <p class="auth-help--danger" data-entry-form-target="errorElement familyNameKanaError"></p>
-            </div>
-            <div class="auth-field">
-              <%= f.text_field :given_name_kana,
-                    class: "auth-input",
-                    data: { entry_form_target: "formElement givenNameKana" },
-                    autocomplete: "given-name",
-                    placeholder: "たろう" %>
-              <p class="auth-help--danger" data-entry-form-target="errorElement givenNameKanaError"></p>
-            </div>
-          </div>
-        </div>
-
-        <%# エントリーリストの名前 %>
-        <div class="auth-field">
-          <%= f.label :entry_list_name, "エントリーリストの名前", class: "auth-label" %>
-          <%= f.text_field :entry_list_name,
-                class: "auth-input",
-                data: { entry_form_target: "formElement entryListName" },
-                autocomplete: "nickname",
-                placeholder: "表示名を入力" %>
-          <p class="auth-help">エントリーリストにはこちらの名前で表示します。</p>
-          <p class="auth-help--danger" data-entry-form-target="errorElement entryListNameError"></p>
-        </div>
-
-        <%# 当日のお手伝い %>
-        <div class="auth-field auth-field--checkbox">
-          <span class="auth-label">当日のお手伝い</span>
-          <label class="auth-checkbox-label">
-            <%= f.check_box :is_playing_staff_candidate,
-                  class: "auth-checkbox",
-                  data: { entry_form_target: "formElement eventDayHelp" } %>
-            <span>当日のお手伝いを依頼してもよい</span>
-          </label>
-          <p class="auth-help">この大会では、当日の進行の一部で参加者の方にお手伝いをお願いしたいと考えています。お願いする仕事は、主に「2Rにおけるホワイトボードでの得点付け」を予定しています。お手伝いを依頼してもよいという方はチェックしてください。</p>
-          <p class="auth-help">組分けの都合上、2Rの組分け発表後に担当いただく方を決め、お願いをする予定です。必ずしもチェックを入れた方全員にお願いするとは限らないことをご了承ください。</p>
-        </div>
+        <%= render "shared/entry_form/email_field", f: f %>
+        <%= render "shared/entry_form/password_field", f: f,
+              placeholder: "8文字以上のパスワード",
+              help_text: "ログインする際に使用するパスワードを入力してください。" %>
+        <%= render "shared/entry_form/name_fields", f: f %>
+        <%= render "shared/entry_form/name_kana_fields", f: f %>
+        <%= render "shared/entry_form/entry_list_name_field", f: f %>
+        <%= render "shared/entry_form/playing_staff_field", f: f %>
 
         <%# その他 %>
         <div class="auth-field">
@@ -123,8 +36,7 @@
           <%= f.text_area :notes,
                 rows: 4,
                 class: "auth-textarea",
-                data: { entry_form_target: "formElement notes" },
-                placeholder: "自由に入力してください..." %>
+                data: { entry_form_target: "formElement notes" } %>
           <p class="auth-help">その他、主催者への連絡事項などありましたら入力してください。</p>
         </div>
 
@@ -135,52 +47,10 @@
               } %>
       </div>
 
-      <%# 確認モーダル %>
-      <div class="auth-modal" data-modal-target="modal">
-        <div class="auth-modal-overlay" data-action="click->modal#close"></div>
-        <div class="auth-modal-box">
-          <h2 class="auth-modal-title">エントリー内容の確認</h2>
-          <p class="auth-modal-desc">以下の内容でエントリーします。</p>
-          <table class="auth-confirm-table">
-            <tbody>
-              <tr>
-                <th>メールアドレス</th>
-                <td data-entry-form-target="confirmationEmail"></td>
-              </tr>
-              <tr>
-                <th>姓/名</th>
-                <td>
-                  <span data-entry-form-target="confirmationFamilyName"></span>
-                  <span data-entry-form-target="confirmationGivenName"></span>
-                </td>
-              </tr>
-              <tr>
-                <th>姓/名 ふりがな</th>
-                <td>
-                  <span data-entry-form-target="confirmationFamilyNameKana"></span>
-                  <span data-entry-form-target="confirmationGivenNameKana"></span>
-                </td>
-              </tr>
-              <tr>
-                <th>エントリーリストの名前</th>
-                <td data-entry-form-target="confirmationEntryListName"></td>
-              </tr>
-              <tr>
-                <th>当日のお手伝い</th>
-                <td data-entry-form-target="confirmationEventDayHelp"></td>
-              </tr>
-              <tr>
-                <th>その他</th>
-                <td data-entry-form-target="confirmationNotes"></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="auth-modal-actions">
-            <button class="auth-btn-cancel" data-action="click->modal#close:prevent">キャンセル</button>
-            <%= f.submit "送信する", class: "auth-btn-submit" %>
-          </div>
-        </div>
-      </div>
+      <%= render "shared/entry_form/confirmation_modal", f: f,
+            description: "以下の内容でエントリーします。",
+            submit_label: "送信する",
+            show_notes: true %>
     <% end %>
   </div>
 </div>

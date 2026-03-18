@@ -1,0 +1,23 @@
+<%# locals: (f:) %>
+<div class="auth-field-group">
+  <%= f.label :family_name, "姓/名", class: "auth-label" %>
+  <div class="auth-field-group-inputs">
+    <div class="auth-field">
+      <%= f.text_field :family_name,
+            class: "auth-input",
+            data: { entry_form_target: "formElement familyName" },
+            autocomplete: "family-name",
+            placeholder: "山吹" %>
+      <p class="auth-help--danger" data-entry-form-target="errorElement familyNameError"></p>
+    </div>
+    <div class="auth-field">
+      <%= f.text_field :given_name,
+            class: "auth-input",
+            data: { entry_form_target: "formElement givenName" },
+            autocomplete: "given-name",
+            placeholder: "太郎" %>
+      <p class="auth-help--danger" data-entry-form-target="errorElement givenNameError"></p>
+    </div>
+  </div>
+  <p class="auth-help">大会当日に使用する名前を入力してください。一心精進への報告や記録集でもこの名前を使用します。基本的に本名またはそれに類する名前（旧姓や芸能人の方の芸名など）でのエントリーをお願いしたいと考えていますが、これら以外の名前でのエントリーを禁止するものではありません。姓/名が分かれていない場合は、「姓」の欄に入力し、「名」は空白にしてください。</p>
+</div>

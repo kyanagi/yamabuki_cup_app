@@ -1,0 +1,54 @@
+<%# locals: (f:, description:, submit_label:, show_password: false, show_notes: false) %>
+<div class="auth-modal" data-modal-target="modal">
+  <div class="auth-modal-overlay" data-action="click->modal#close"></div>
+  <div class="auth-modal-box">
+    <h2 class="auth-modal-title">エントリー内容の確認</h2>
+    <p class="auth-modal-desc"><%= description %></p>
+    <table class="auth-confirm-table">
+      <tbody>
+        <tr>
+          <th>メールアドレス</th>
+          <td data-entry-form-target="confirmationEmail"></td>
+        </tr>
+        <% if show_password %>
+          <tr>
+            <th>パスワード</th>
+            <td data-entry-form-target="confirmationPassword"></td>
+          </tr>
+        <% end %>
+        <tr>
+          <th>姓/名</th>
+          <td>
+            <span data-entry-form-target="confirmationFamilyName"></span>
+            <span data-entry-form-target="confirmationGivenName"></span>
+          </td>
+        </tr>
+        <tr>
+          <th>姓/名 ふりがな</th>
+          <td>
+            <span data-entry-form-target="confirmationFamilyNameKana"></span>
+            <span data-entry-form-target="confirmationGivenNameKana"></span>
+          </td>
+        </tr>
+        <tr>
+          <th>エントリーリストの名前</th>
+          <td data-entry-form-target="confirmationEntryListName"></td>
+        </tr>
+        <tr>
+          <th>当日のお手伝い</th>
+          <td data-entry-form-target="confirmationEventDayHelp"></td>
+        </tr>
+        <% if show_notes %>
+          <tr>
+            <th>その他</th>
+            <td data-entry-form-target="confirmationNotes"></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <div class="auth-modal-actions">
+      <button class="auth-btn-cancel" data-action="click->modal#close:prevent">キャンセル</button>
+      <%= f.submit submit_label, class: "auth-btn-submit" %>
+    </div>
+  </div>
+</div>

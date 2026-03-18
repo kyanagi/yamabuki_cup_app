@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_17_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_18_051056) do
   create_table "admin_sessions", force: :cascade do |t|
     t.integer "admin_user_id", null: false
     t.datetime "created_at", null: false
@@ -98,6 +98,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_000000) do
     t.string "given_name", default: "", null: false
     t.string "given_name_kana", default: "", null: false
     t.boolean "is_playing_staff_candidate", default: false, null: false
+    t.text "notes", default: "", null: false
     t.integer "player_id", null: false
     t.datetime "updated_at", null: false
     t.index ["player_id"], name: "index_player_profiles_on_player_id", unique: true
