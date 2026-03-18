@@ -3,7 +3,7 @@ class Setting < ApplicationRecord
   # 設定名とデフォルト値のペア
   ATTRIBUTES = [
     [:round3_course_preference_editable, true],
-    [:round2_group_visible_on_mypage, false],
+    [:result_visible_on_mypage, false],
     [:capacity, 0],
     [:entry_phase, nil],
   ]
@@ -52,10 +52,10 @@ class Setting < ApplicationRecord
         )
       end
 
-      if normalized.key?(:round2_group_visible_on_mypage)
-        normalized[:round2_group_visible_on_mypage] = cast_boolean!(
-          "round2_group_visible_on_mypage",
-          normalized[:round2_group_visible_on_mypage]
+      if normalized.key?(:result_visible_on_mypage)
+        normalized[:result_visible_on_mypage] = cast_boolean!(
+          "result_visible_on_mypage",
+          normalized[:result_visible_on_mypage]
         )
       end
 

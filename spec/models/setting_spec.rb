@@ -12,14 +12,14 @@ RSpec.describe Setting, type: :model do
     end
   end
 
-  describe ".round2_group_visible_on_mypage" do
+  describe ".result_visible_on_mypage" do
     it "デフォルトでfalseを返す" do
-      expect(Setting.round2_group_visible_on_mypage).to be false
+      expect(Setting.result_visible_on_mypage).to be false
     end
 
     it "保存された値を返す" do
-      Setting.update!(round2_group_visible_on_mypage: true)
-      expect(Setting.round2_group_visible_on_mypage).to be true
+      Setting.update!(result_visible_on_mypage: true)
+      expect(Setting.result_visible_on_mypage).to be true
     end
   end
 
@@ -63,12 +63,12 @@ RSpec.describe Setting, type: :model do
       expect do
         Setting.update!(
           round3_course_preference_editable: false,
-          round2_group_visible_on_mypage: true,
+          result_visible_on_mypage: true,
           capacity: 10,
           entry_phase: "primary"
         )
       end.to change { Setting.round3_course_preference_editable }.from(true).to(false)
-        .and change { Setting.round2_group_visible_on_mypage }.from(false).to(true)
+        .and change { Setting.result_visible_on_mypage }.from(false).to(true)
         .and change { Setting.capacity }.from(0).to(10)
         .and change { Setting.entry_phase }.from(nil).to("primary")
     end

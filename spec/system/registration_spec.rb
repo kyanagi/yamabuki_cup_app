@@ -24,7 +24,7 @@ RSpec.describe "新規エントリー", type: :system do
     it "新規エントリーページから正常にエントリーが完了する" do
       visit new_registration_path
 
-      expect(page).to have_content "新規エントリー"
+      expect(page).to have_content "やまぶき杯エントリー"
       expect(page).to have_link "こちらからログイン", href: new_session_path
 
       fill_in "registration[email]", with: valid_attributes[:email]
@@ -94,7 +94,7 @@ RSpec.describe "新規エントリー", type: :system do
       end
 
       expect(page).not_to have_css(".auth-modal.is-active")
-      expect(page).to have_content "新規エントリー"
+      expect(page).to have_content "やまぶき杯エントリー"
       expect(Player.joins(:player_email_credential).where(player_email_credentials: { email: valid_attributes[:email] })).to be_empty
     end
   end
@@ -165,7 +165,7 @@ RSpec.describe "新規エントリー", type: :system do
       visit new_registration_path
 
       expect(page).to have_content "エントリー受付期間外です"
-      expect(page).not_to have_content "新規エントリー"
+      expect(page).not_to have_content "やまぶき杯エントリー"
     end
   end
 end

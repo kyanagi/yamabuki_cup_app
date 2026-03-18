@@ -1,10 +1,14 @@
 class HomeController < PublicController
+  layout "mypage", only: [:show]
+
   def show
     if session[:registration_completed]
       session.delete(:registration_completed)
-      render :registration_completed
+      render :registration_completed, layout: "application"
       return
     end
+
+    return unless Setting.result_visible_on_mypage
 
     @round2_group_on_mypage = round2_group_on_mypage
   end
@@ -12,8 +16,6 @@ class HomeController < PublicController
   private
 
   def round2_group_on_mypage
-    return unless Setting.round2_group_visible_on_mypage
-
     round2_matching = Current.player.matchings
       .joins(:match)
       .where(matches: { round_id: Round::ROUND2.id })

@@ -4,7 +4,7 @@
 
 <div class="auth-page">
   <div class="auth-card auth-card--wide" data-controller="entry-form modal">
-    <h1 class="auth-title">新規エントリー</h1>
+    <h1 class="auth-title">やまぶき杯エントリー</h1>
     <p class="auth-subtitle">
       エントリー済みの方は<%= link_to "こちらからログイン", new_session_path %>してください。
     </p>
@@ -66,6 +66,7 @@
               <p class="auth-help--danger" data-entry-form-target="errorElement givenNameError"></p>
             </div>
           </div>
+          <p class="auth-help">大会当日に使用する名前を入力してください。一心精進への報告や記録集でもこの名前を使用します。基本的に本名またはそれに類する名前（旧姓や芸能人の方の芸名など）でのエントリーをお願いしたいと考えていますが、これら以外の名前でのエントリーを禁止するものではありません。姓/名が分かれていない場合は、「姓」の欄に入力し、「名」は空白にしてください。</p>
         </div>
 
         <%# 姓/名 ふりがな %>
@@ -99,6 +100,7 @@
                 data: { entry_form_target: "formElement entryListName" },
                 autocomplete: "nickname",
                 placeholder: "表示名を入力" %>
+          <p class="auth-help">エントリーリストにはこちらの名前で表示します。</p>
           <p class="auth-help--danger" data-entry-form-target="errorElement entryListNameError"></p>
         </div>
 

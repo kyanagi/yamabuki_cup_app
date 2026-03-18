@@ -10,14 +10,14 @@ RSpec.describe "Admin::Settings", type: :request do
       put admin_settings_path,
           params: {
             round3_course_preference_editable: "true",
-            round2_group_visible_on_mypage: "true",
+            result_visible_on_mypage: "true",
             capacity: "123",
             entry_phase: "secondary",
           }
 
       expect(response).to redirect_to(admin_settings_path)
       expect(Setting.round3_course_preference_editable).to be true
-      expect(Setting.round2_group_visible_on_mypage).to be true
+      expect(Setting.result_visible_on_mypage).to be true
       expect(Setting.capacity).to eq(123)
       expect(Setting.entry_phase).to eq("secondary")
     end
@@ -31,14 +31,14 @@ RSpec.describe "Admin::Settings", type: :request do
 
       expect(response).to redirect_to(admin_settings_path)
       expect(Setting.round3_course_preference_editable).to be false
-      expect(Setting.round2_group_visible_on_mypage).to be false
+      expect(Setting.result_visible_on_mypage).to be false
     end
 
     it "不正な capacity は422で再表示する" do
       put admin_settings_path,
           params: {
             round3_course_preference_editable: "true",
-            round2_group_visible_on_mypage: "true",
+            result_visible_on_mypage: "true",
             capacity: "-1",
             entry_phase: "primary",
           }
