@@ -17,7 +17,7 @@
       </div>
     <% end %>
 
-    <%= form_with url: password_path(params[:token]), method: :put, local: true do |form| %>
+    <%= form_with url: password_path(params[:token]), method: :put, data: { turbo: false } do |form| %>
       <div class="auth-form">
         <div class="auth-field">
           <%= form.label :password, "新しいパスワード", class: "auth-label" %>

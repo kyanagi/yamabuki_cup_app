@@ -281,6 +281,46 @@ body {
   text-decoration: underline;
 }
 
+/* フラッシュ内の見出し・本文 */
+.auth-flash-heading {
+  font-weight: 600;
+  margin: 0 0 0.375rem;
+}
+
+.auth-flash-body {
+  margin: 0;
+}
+
+/* ヒント・注意書きボックス */
+.auth-tips {
+  background-color: var(--auth-bg-page);
+  border: 1px solid var(--auth-border-subtle);
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: var(--auth-text-secondary);
+  margin-top: 1rem;
+}
+
+.auth-tips-heading {
+  font-weight: 600;
+  color: var(--auth-text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.auth-tips-list {
+  margin: 0 0 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.auth-tips-list li {
+  margin-bottom: 0.25rem;
+}
+
+.auth-tips p:last-child {
+  margin: 0;
+}
+
 /* ---- 登録フォーム拡張スタイル ---- */
 
 /* 2列グリッド（姓/名など横並びフィールド） */

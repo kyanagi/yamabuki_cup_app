@@ -18,7 +18,7 @@
       </div>
     <% end %>
 
-    <%= form_with url: passwords_path, local: true do |form| %>
+    <%= form_with url: passwords_path, data: { turbo: false } do |form| %>
       <div class="auth-form">
         <div class="auth-field">
           <%= form.label :email, "メールアドレス", class: "auth-label" %>

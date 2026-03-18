@@ -7,6 +7,8 @@ RSpec.describe "パスワード再設定", type: :system do
   let!(:player_profile) { create(:player_profile, player:) }
 
   before do
+    driven_by :rack_test
+
     # メール送信をテスト環境で確認するため
     ActionMailer::Base.deliveries.clear
   end
