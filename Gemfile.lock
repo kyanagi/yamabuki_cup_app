@@ -303,8 +303,9 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.3.1)
-    rbs (3.10.3)
+    rbs (4.0.1)
       logger
+      prism (>= 1.6.0)
       tsort
     rdoc (7.2.0)
       erb
@@ -313,9 +314,9 @@ GEM
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
-    repl_type_completor (0.1.13)
+    repl_type_completor (0.1.15)
       prism (~> 1.0)
-      rbs (>= 2.7.0, < 4.0.0)
+      rbs (>= 2.7.0)
     rexml (3.4.4)
     rspec-core (3.13.6)
       rspec-support (~> 3.13.0)
